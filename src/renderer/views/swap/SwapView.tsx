@@ -232,8 +232,6 @@ const SuccessRouteView: React.FC<Props> = ({
     O.none
   )
 
-  const { openExplorerTxUrl, getExplorerTxUrl } = useOpenExplorerTxUrl(O.some(THORChain))
-
   const renderError = useCallback(
     (e: Error) => (
       <ErrorView
@@ -412,8 +410,6 @@ const SuccessRouteView: React.FC<Props> = ({
                 <Swap
                   keystore={keystore}
                   validatePassword$={validatePassword$}
-                  goToTransaction={openExplorerTxUrl}
-                  getExplorerTxUrl={getExplorerTxUrl}
                   assets={{
                     source: mockAssetSource,
 
@@ -497,8 +493,6 @@ const SuccessRouteView: React.FC<Props> = ({
                 <Swap
                   keystore={keystore}
                   validatePassword$={validatePassword$}
-                  goToTransaction={openExplorerTxUrl}
-                  getExplorerTxUrl={getExplorerTxUrl}
                   assets={{
                     source: { ...sourceAsset, price: sourceAssetDetail.assetPrice },
                     target: { ...targetAsset, price: targetAssetDetail.assetPrice }

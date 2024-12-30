@@ -1,7 +1,7 @@
 import * as RD from '@devexperts/remote-data-ts'
 import { Meta, StoryFn } from '@storybook/react'
 import { BTCChain, BTC_DECIMAL } from '@xchainjs/xchain-bitcoin'
-import { Network, TxHash } from '@xchainjs/xchain-client'
+import { Network } from '@xchainjs/xchain-client'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { assetAmount, assetToBase, assetToString, baseAmount, bn } from '@xchainjs/xchain-util'
 import * as O from 'fp-ts/lib/Option'
@@ -89,11 +89,6 @@ const defaultProps: SwapProps = {
     ]),
     loading: false
   },
-  goToTransaction: (txHash) => {
-    console.log(txHash)
-    return Promise.resolve(true)
-  },
-  getExplorerTxUrl: (txHash: TxHash) => O.some(`url/asset-${txHash}`),
   // mock password validation
   // Password: "123"
   validatePassword$: mockValidatePassword$,

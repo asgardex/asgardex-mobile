@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { QuoteSwap as QuoteSwapProtocol } from '@xchainjs/xchain-aggregator'
 import { Network } from '@xchainjs/xchain-client'
-import { AssetCacao } from '@xchainjs/xchain-mayachain'
+import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
 import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
 import {
   Asset,
@@ -80,6 +80,7 @@ import {
   getWalletTypeLabel,
   hasLedgerInBalancesByAsset
 } from '../../helpers/walletHelper'
+import { useOpenExplorerTxUrl } from '../../hooks/useOpenExplorerTxUrl'
 import { usePricePool } from '../../hooks/usePricePool'
 import { usePricePoolMaya } from '../../hooks/usePricePoolMaya'
 import { useSubscriptionState } from '../../hooks/useSubscriptionState'
@@ -138,8 +139,6 @@ export const Swap = ({
   poolDetailsThor,
   poolDetailsMaya,
   walletBalances,
-  goToTransaction,
-  getExplorerTxUrl,
   validatePassword$,
   reloadFees,
   reloadBalances = FP.constVoid,
@@ -200,6 +199,12 @@ export const Swap = ({
   const [oTargetWalletType, setTargetWalletType] = useState<O.Option<WalletType>>(oInitialTargetWalletType)
 
   const [isStreaming, setIsStreaming] = useState<Boolean>(true)
+  const openExplorer = useOpenExplorerTxUrl(
+    FP.pipe(
+      oQuoteProtocol,
+      O.chain((quoteSwap) => (quoteSwap.protocol === 'Thorchain' ? O.some(THORChain) : O.some(MAYAChain)))
+    )
+  )
 
   // Update state needed - initial target walletAddress is loaded async and can be different at first run
   useEffect(() => {
@@ -559,11 +564,7 @@ export const Swap = ({
     const swapOutFee = FP.pipe(
       oQuoteProtocol,
       O.fold(
-        () =>
-          new CryptoAmount(
-            swapFees.outFee.amount,
-            targetAsset.type === AssetType.SYNTH ? AssetRuneNative : targetAsset
-          ),
+        () => new CryptoAmount(swapFees.outFee.amount, targetAsset.type === AssetType.SYNTH ? AssetCacao : targetAsset),
         (txDetails) => {
           const txOutFee = txDetails.fees.outboundFee
           return txOutFee
@@ -2170,7 +2171,7 @@ export const Swap = ({
               <div className="flex items-center">
                 {intl.formatMessage(
                   { id: 'common.confirmation.time' },
-                  { chain: targetAsset.type === AssetType.SYNTH ? THORChain : targetAsset.chain }
+                  { chain: targetAsset.type === AssetType.SYNTH ? MAYAChain : targetAsset.chain }
                 )}
               </div>
               <div>{formatSwapTime(Number(DefaultChainAttributes[targetAsset.chain].avgBlockTimeInSecs))}</div>
@@ -2748,8 +2749,8 @@ export const Swap = ({
         sourceChain={sourceChain}
         extraTxModalContent={extraTxModalContent}
         oQuoteProtocol={oQuoteProtocol}
-        goToTransaction={goToTransaction}
-        getExplorerTxUrl={getExplorerTxUrl}
+        goToTransaction={openExplorer.openExplorerTxUrl}
+        getExplorerTxUrl={openExplorer.getExplorerTxUrl}
         onCloseTxModal={onCloseTxModal}
         onFinishTxModal={onFinishTxModal}
       />
