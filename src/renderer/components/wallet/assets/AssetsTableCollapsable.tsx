@@ -179,8 +179,9 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
             <Styled.Label nowrap>
               <Styled.TickerLabel>{asset.ticker}</Styled.TickerLabel>
               <Styled.ChainLabelWrapper>
-                {!isSynthAsset(asset) && <Styled.ChainLabel>{asset.chain}</Styled.ChainLabel>}
+                {!isSynthAsset(asset) && !isSecuredAsset(asset) && <Styled.ChainLabel>{asset.chain}</Styled.ChainLabel>}
                 {isSynthAsset(asset) && <Styled.AssetSynthLabel>synth</Styled.AssetSynthLabel>}
+                {isSecuredAsset(asset) && <Styled.AssetSecuredLabel>secured</Styled.AssetSecuredLabel>}
               </Styled.ChainLabelWrapper>
             </Styled.Label>
           </div>
