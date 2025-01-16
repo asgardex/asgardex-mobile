@@ -780,16 +780,19 @@ export const Swap = ({
     const fetchSwap = async () => {
       setIsFetchingEstimate(true)
       try {
-        const result = await estimateSwap({
-          fromAsset: sourceAsset,
-          destinationAsset: targetAsset,
-          amount: new CryptoAmount(convertBaseAmountDecimal(amountToSwapMax1e8, sourceAssetDecimal), sourceAsset),
-          fromAddress: sourceWalletAddress,
-          destinationAddress: quoteOnly ? undefined : destinationWalletAddress,
-          streamingInterval: isStreaming ? streamingInterval : 0,
-          streamingQuantity: isStreaming ? streamingQuantity : 0,
-          toleranceBps: isStreaming || network === Network.Stagenet ? 10000 : slipTolerance * 100 // convert to basis points
-        })
+        const result = await estimateSwap(
+          {
+            fromAsset: sourceAsset,
+            destinationAsset: targetAsset,
+            amount: new CryptoAmount(convertBaseAmountDecimal(amountToSwapMax1e8, sourceAssetDecimal), sourceAsset),
+            fromAddress: sourceWalletAddress,
+            destinationAddress: quoteOnly ? undefined : destinationWalletAddress,
+            streamingInterval: isStreaming ? streamingInterval : 0,
+            streamingQuantity: isStreaming ? streamingQuantity : 0,
+            toleranceBps: isStreaming || network === Network.Stagenet ? 10000 : slipTolerance * 100 // convert to basis points
+          },
+          applyBps
+        )
         setQuoteProtocol(O.some(result))
         setErrorProtocol(O.none)
       } catch (err) {
@@ -802,6 +805,7 @@ export const Swap = ({
     fetchSwap()
   }, [
     amountToSwapMax1e8,
+    applyBps,
     destinationWalletAddress,
     estimateSwap,
     isStreaming,
@@ -1029,7 +1033,7 @@ export const Swap = ({
           poolAddress,
           asset: sourceAsset,
           amount: amountToSwap,
-          memo: updateMemo(quoteSwap.memo, applyBps, network),
+          memo: updateMemo(quoteSwap.memo, network),
           walletType,
           sender: walletAddress,
           walletAccount,
@@ -1047,7 +1051,6 @@ export const Swap = ({
     amountToSwapMax1e8,
     sourceAssetAmount.decimal,
     sourceAsset,
-    applyBps,
     network,
     sourceChainAssetAmount,
     swapFees.inFee.amount
