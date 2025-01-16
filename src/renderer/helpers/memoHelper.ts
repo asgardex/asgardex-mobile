@@ -1,7 +1,7 @@
 import { Network } from '@xchainjs/xchain-client'
 import { Address, AnyAsset, AssetType, BaseAmount } from '@xchainjs/xchain-util'
 
-import { getAsgardexAffiliateFee, getAsgardexThorname } from '../../shared/const'
+import { getAsgardexThorname } from '../../shared/const'
 
 const DELIMITER = ':'
 
@@ -120,14 +120,13 @@ export const getSwapMemo = ({
   const memo = '='
   return mkMemo([memo, target, targetAddress, toleranceBps, streaming, affiliateName, affiliateBps])
 }
-// temp fix
+// With stagenet, remove all affiliate config from memo
 export const updateMemo = (memo: string, network: Network): string => {
-  const fee = getAsgardexAffiliateFee(network)
   const pattern = /:dx:\d+$/
-  const replacement = network === Network.Stagenet ? `` : `:dx:${fee}`
+  const replacement = ``
 
-  // Check if the string ends with ":dx:<number>"
-  if (pattern.test(memo)) {
+  // Check if the string ends with ":dx:<number>" if its stagenet remove affiliate from memo
+  if (network === Network.Stagenet) {
     return memo.replace(pattern, replacement)
   }
 
