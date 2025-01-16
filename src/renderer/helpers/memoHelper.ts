@@ -121,8 +121,8 @@ export const getSwapMemo = ({
   return mkMemo([memo, target, targetAddress, toleranceBps, streaming, affiliateName, affiliateBps])
 }
 // temp fix
-export const updateMemo = (memo: string, applyBps: boolean, network: Network): string => {
-  const fee = applyBps ? getAsgardexAffiliateFee(network) : 0
+export const updateMemo = (memo: string, network: Network): string => {
+  const fee = getAsgardexAffiliateFee(network)
   const pattern = /:dx:\d+$/
   const replacement = network === Network.Stagenet ? `` : `:dx:${fee}`
 
