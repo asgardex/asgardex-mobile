@@ -732,8 +732,7 @@ export const Swap = ({
   // https://gitlab.com/thorchain/thornode/-/commit/f96350ab3d5adda18c61d134caa98b6d5af2b006
   const applyBps = useMemo(() => {
     const txFeeCovered = priceAmountToSwapMax1e8.assetAmount.gt(ASGARDEX_AFFILIATE_FEE_MIN)
-    const applyBps = txFeeCovered
-    return applyBps
+    return txFeeCovered
   }, [priceAmountToSwapMax1e8.assetAmount])
 
   const priceAffiliateFeeLabel = useMemo(() => {

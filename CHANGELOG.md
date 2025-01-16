@@ -1,10 +1,13 @@
 # 1.30.1 (2024-12-16)
 
 ## add
+
 - support for reading secured asset balances [#573] (https://github.com/asgardex/asgardex-desktop/pull/576)
 
 ## Updates/Fixes
+
 - fix small swap interface UI issues [#573] (https://github.com/asgardex/asgardex-desktop/pull/576)
+- update quote logic [#579] (https://github.com/asgardex/asgardex-desktop/pull/579)
 
 # 1.30.0 (2024-12-16)
 
@@ -23,7 +26,6 @@
 - Udpated UI to show correct outbound fee [#565](https://github.com/asgardex/asgardex-desktop/pull/565)
 - updated Stagenet support to THORChain ledger [#562](https://github.com/asgardex/asgardex-desktop/pull/562)
 - Only Mayachain supports Synthetic assets for swapping [#564] (https://github.com/asgardex/asgardex-desktop/pull/564)
-
 
 # 1.22.9 (2024-11-26)
 
