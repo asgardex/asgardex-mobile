@@ -1,4 +1,9 @@
-# 1.30.1 (2024-12-16)
+# 1.30.2 (2025-1-17)
+
+## Add 
+- min threshold dust amount check [#590](https://github.com/asgardex/asgardex-desktop/pull/591)
+
+# 1.30.1 (2025-1-17)
 
 ## add
 

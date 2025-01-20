@@ -1339,6 +1339,17 @@ export const Swap = ({
     return true
   }, [oQuoteProtocol])
 
+  const belowDustThreshold = useMemo(() => {
+    const isBelowDustThreshold: boolean = FP.pipe(
+      oQuoteProtocol,
+      O.fold(
+        () => false,
+        (quoteSwap) => quoteSwap.dustThreshold.baseAmount.gt(amountToSwapMax1e8)
+      )
+    )
+    return isBelowDustThreshold
+  }, [amountToSwapMax1e8, oQuoteProtocol])
+
   // // sets the locked asset amount to be the asset pool depth
   useEffect(() => {
     if (lockedWallet) {
@@ -1748,9 +1759,10 @@ export const Swap = ({
           // Default error display
           return <div key={index}>{error}</div>
         })}
+        {belowDustThreshold && <>{`Amount to swap is Below DustThreshold`}</>}
       </ErrorLabel>
     )
-  }, [oQuoteProtocol, sourceAsset])
+  }, [belowDustThreshold, oQuoteProtocol, sourceAsset])
 
   const sourceChainFeeErrorLabel: JSX.Element = useMemo(() => {
     if (!sourceChainFeeError) {
@@ -2059,7 +2071,8 @@ export const Swap = ({
         !canSwap ||
         customAddressEditActive ||
         isTargetChainDisabled ||
-        isSourceChainDisabled),
+        isSourceChainDisabled ||
+        belowDustThreshold),
     [
       network,
       lockedWallet,
@@ -2076,7 +2089,8 @@ export const Swap = ({
       canSwap,
       customAddressEditActive,
       isTargetChainDisabled,
-      isSourceChainDisabled
+      isSourceChainDisabled,
+      belowDustThreshold
     ]
   )
 
@@ -2270,7 +2284,7 @@ export const Swap = ({
           onChange={setAmountToSwapMax1e8}
           onChangePercent={setAmountToSwapFromPercentValue}
           onBlur={reloadFeesHandler}
-          showError={minAmountError}
+          showError={minAmountError || belowDustThreshold}
           hasLedger={hasSourceAssetLedger}
           useLedger={useSourceAssetLedger}
           useLedgerHandler={onClickUseSourceAssetLedger}
