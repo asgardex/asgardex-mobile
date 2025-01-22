@@ -44,6 +44,7 @@ import * as RxOp from 'rxjs/operators'
 
 import { ASGARDEX_AFFILIATE_FEE_MIN, getAsgardexAffiliateFee, getAsgardexThorname } from '../../../shared/const'
 import { ONE_RUNE_BASE_AMOUNT } from '../../../shared/mock/amount'
+import { isMayaSupportedAsset, isTCSupportedAsset } from '../../../shared/utils/asset'
 import {
   chainToString,
   DEFAULT_ENABLED_CHAINS,
@@ -1396,11 +1397,20 @@ export const Swap = ({
         A.map(({ asset }) => asset),
         // Remove target assets from source list
         A.filter((asset) => !eqAsset.equals(asset, targetAsset)),
+        // Remove unsupported tokens
+        A.filter((asset) => {
+          if (isTCSupportedAsset(targetAsset, poolDetailsThor) && isTCSupportedAsset(asset, poolDetailsThor))
+            return true
+          if (isMayaSupportedAsset(targetAsset, poolDetailsMaya) && isMayaSupportedAsset(asset, poolDetailsMaya))
+            return true
+
+          return false
+        }),
         // Merge duplications
         (assets) => unionAssets(assets)(assets)
       ),
 
-    [allBalances, targetAsset]
+    [allBalances, poolDetailsMaya, poolDetailsThor, targetAsset]
   )
 
   /**
@@ -1413,6 +1423,15 @@ export const Swap = ({
     (): AnyAsset[] =>
       FP.pipe(
         poolAssets,
+        // Remove unsupported tokens
+        A.filter((asset) => {
+          if (isTCSupportedAsset(sourceAsset, poolDetailsThor) && isTCSupportedAsset(asset, poolDetailsThor))
+            return true
+          if (isMayaSupportedAsset(sourceAsset, poolDetailsMaya) && isMayaSupportedAsset(asset, poolDetailsMaya))
+            return true
+
+          return false
+        }),
         A.chain((asset) => {
           if (isRuneNativeAsset(asset) || isCacaoAsset(asset)) {
             // Keep native Rune or Cacao assets as is
@@ -1444,7 +1463,7 @@ export const Swap = ({
         A.filter((asset) => !eqAsset.equals(asset, sourceAsset)),
         (assets) => unionAssets(assets)(assets)
       ),
-    [poolAssets, sourceAsset]
+    [poolAssets, poolDetailsMaya, poolDetailsThor, sourceAsset]
   )
 
   const [showPasswordModal, setShowPasswordModal] = useState(ModalState.None)
