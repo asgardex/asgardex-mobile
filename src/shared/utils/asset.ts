@@ -41,6 +41,9 @@ export const isTCSupportedAsset = (asset: AnyAsset, poolDetails: PoolDetails) =>
   const assets = poolDetails.map((poolDetail) => poolDetail.asset.toUpperCase())
 
   if (assets.includes(assetToString(asset).toUpperCase())) return true
+  if (assets.includes(assetToString(asset).replace('-', '.').toUpperCase())) return true
+  if (assets.includes(assetToString(asset).replace('~', '.').toUpperCase())) return true
+
   return false
 }
 
@@ -50,5 +53,7 @@ export const isMayaSupportedAsset = (asset: AnyAsset, poolDetails: PoolDetailsMa
   const assets = poolDetails.map((poolDetail) => poolDetail.asset.toUpperCase())
 
   if (assets.includes(assetToString(asset).toUpperCase())) return true
+  if (assets.includes(assetToString(asset).replace('/', '.').toUpperCase())) return true
+
   return false
 }

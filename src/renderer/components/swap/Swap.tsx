@@ -50,7 +50,6 @@ import {
   DEFAULT_ENABLED_CHAINS,
   DefaultChainAttributes,
   EnabledChain,
-  isChainOfMaya,
   isChainOfThor
 } from '../../../shared/utils/chain'
 import { isLedgerWallet } from '../../../shared/utils/guard'
@@ -1437,7 +1436,7 @@ export const Swap = ({
             // Keep native Rune or Cacao assets as is
             return [asset]
           }
-          if (isChainOfMaya(asset.chain)) {
+          if (isMayaSupportedAsset(asset, poolDetailsMaya) && isMayaSupportedAsset(sourceAsset, poolDetailsMaya)) {
             // Synthesize MAYAChain assets
             return [
               asset,
@@ -1448,7 +1447,7 @@ export const Swap = ({
               } as SynthAsset
             ]
           }
-          if (isChainOfThor(asset.chain)) {
+          if (isTCSupportedAsset(asset, poolDetailsThor) && isTCSupportedAsset(sourceAsset, poolDetailsThor)) {
             // Create secured assets for ThorChain
             return [
               asset,
