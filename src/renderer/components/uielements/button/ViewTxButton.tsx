@@ -64,9 +64,9 @@ export const ViewTxButton: React.FC<Props> = ({
             {label || intl.formatMessage({ id: 'common.trackTransaction' })}
           </Styled.ViewTxButton>
         )}
-        <div>
-          <p>
-            URL:{' '}
+        <div className="flex space-x-6">
+          <div className="flex items-center justify-center">
+            <span className="mt-1 text-text2 dark:text-text1d">URL : </span>
             <Styled.CopyLabel
               copyable={
                 FP.pipe(
@@ -77,10 +77,11 @@ export const ViewTxButton: React.FC<Props> = ({
                   })),
                   O.toUndefined
                 ) || false
-              }></Styled.CopyLabel>
-          </p>
-          <p>
-            HASH:{' '}
+              }
+            />
+          </div>
+          <div className="flex items-center justify-center">
+            <span className="mt-1 text-text2 dark:text-text1d">HASH : </span>
             <Styled.CopyLabel
               copyable={
                 FP.pipe(
@@ -91,8 +92,9 @@ export const ViewTxButton: React.FC<Props> = ({
                   })),
                   O.toUndefined
                 ) || false
-              }></Styled.CopyLabel>
-          </p>
+              }
+            />
+          </div>
         </div>
       </Styled.Wrapper>
     </div>
