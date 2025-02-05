@@ -427,6 +427,7 @@ type SettingMessageKey =
   | 'setting.notconnected'
   | 'setting.connected'
   | 'setting.add.device'
+  | 'setting.wallet.whitelist.modal'
   | 'setting.wallet.index'
   | 'setting.wallet.account'
   | 'setting.wallet.index.info'
