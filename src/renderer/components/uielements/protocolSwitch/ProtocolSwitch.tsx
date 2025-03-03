@@ -2,35 +2,37 @@ import { useCallback, useMemo } from 'react'
 
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { THORChain } from '@xchainjs/xchain-thorchain'
-import { Chain } from '@xchainjs/xchain-util'
 
-import { AVAILABLE_DEXS } from '../../../services/const'
 import { Tooltip } from '../common/Common.styles'
 import { RadioGroup } from '../radioGroup'
+import { Props, Protocol, Protocols, ProtocolsWithAll } from './types'
 
-export type Props = {
-  protocol: Chain
-  setProtocol: (protocol: Chain) => void
-}
+export const ProtocolSwitch = ({ protocol, setProtocol, withAll = false }: Props) => {
+  const protocols = useMemo(() => (withAll ? ProtocolsWithAll : Protocols), [withAll])
 
-export const ProtocolSwitch = ({ protocol, setProtocol }: Props) => {
   const activeIndex = useMemo(() => {
-    const currentIndex = AVAILABLE_DEXS.findIndex((availableDex) => availableDex.chain === protocol)
-    return currentIndex ?? 0
-  }, [protocol])
+    const currentIndex = protocols.findIndex((availableProtocol) => availableProtocol === protocol)
+
+    if (currentIndex === -1) {
+      setProtocol(protocols[0])
+      return 0
+    }
+
+    return currentIndex
+  }, [protocol, protocols, setProtocol])
 
   const onChange = useCallback(
     (index: number) => {
-      setProtocol(AVAILABLE_DEXS[index].chain)
+      setProtocol(protocols[index])
     },
-    [setProtocol]
+    [protocols, setProtocol]
   )
 
   const protocolOptions = useMemo(() => {
     return [
       {
         label: (
-          <Tooltip title="Switch pools to THORChain" placement="bottom">
+          <Tooltip title="Switch to THORChain" placement="bottom">
             <span className="px-1 text-text2 dark:text-text2d">THORChain</span>
           </Tooltip>
         ),
@@ -38,14 +40,26 @@ export const ProtocolSwitch = ({ protocol, setProtocol }: Props) => {
       },
       {
         label: (
-          <Tooltip title="Switch pools to MAYAChain" placement="bottom">
+          <Tooltip title="Switch to MAYAChain" placement="bottom">
             <span className="px-1 text-text2 dark:text-text2d">MAYAChain</span>
           </Tooltip>
         ),
         value: MAYAChain
-      }
+      },
+      ...(withAll
+        ? [
+            {
+              label: (
+                <Tooltip title="All" placement="bottom">
+                  <span className="px-1 text-text2 dark:text-text2d">All</span>
+                </Tooltip>
+              ),
+              value: Protocol.All
+            }
+          ]
+        : [])
     ]
-  }, [])
+  }, [withAll])
 
   return (
     <div>
