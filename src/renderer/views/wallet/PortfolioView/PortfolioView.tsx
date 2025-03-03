@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { Squares2X2Icon, ChartPieIcon } from '@heroicons/react/24/outline'
-import { AssetCacao } from '@xchainjs/xchain-mayachain'
+import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
 import { PoolDetails } from '@xchainjs/xchain-midgard'
 import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
 import {
@@ -26,6 +26,7 @@ import { EnabledChain } from '../../../../shared/utils/chain'
 import { RefreshButton } from '../../../components/uielements/button'
 import { PieChart } from '../../../components/uielements/charts'
 import { ProtocolSwitch } from '../../../components/uielements/protocolSwitch'
+import { Protocol } from '../../../components/uielements/protocolSwitch/types'
 import { RadioGroup } from '../../../components/uielements/radioGroup'
 import { AssetUSDC, DEFAULT_WALLET_TYPE } from '../../../const'
 import { useMidgardContext } from '../../../contexts/MidgardContext'
@@ -126,9 +127,8 @@ export const PortfolioView: React.FC = (): JSX.Element => {
   // Separate price pool data states for each chain
   const { poolData: pricePoolDataThor } = useObservableState(selectedPricePoolThor$, RUNE_PRICE_POOL)
   const { poolData: pricePoolDataMaya } = useObservableState(selectedPricePoolMaya$, MAYA_PRICE_POOL)
-  const allPoolDetails$ = protocol === THORChain ? allPoolDetailsThor$ : allPoolDetailsMaya$
-  const poolDetailsRD = useObservableState(allPoolDetails$, RD.pending)
   const poolDetailsThorRD = useObservableState(allPoolDetailsThor$, RD.pending)
+  const poolDetailsMayaRD = useObservableState(allPoolDetailsMaya$, RD.pending)
 
   useEffect(() => {
     const subscription = userChains$.subscribe((chains: EnabledChain[]) => {
@@ -305,24 +305,42 @@ export const PortfolioView: React.FC = (): JSX.Element => {
     walletAddresses.THOR
   ])
 
-  const { allSharesRD } = usePoolShares(protocol)
+  const { allSharesRD: allThorSharesRD } = usePoolShares(THORChain)
+  const { allSharesRD: allMayaSharesRD } = usePoolShares(MAYAChain)
   const { allSaverProviders } = useAllSaverProviders(poolAsset)
 
   const renderSharesTotal = useMemo((): string => {
-    const sharesTotalRD: BaseAmountRD = FP.pipe(
-      RD.combine(allSharesRD, poolDetailsRD),
-      RD.map(([poolShares, poolDetails]) =>
-        H.getSharesTotal(
-          poolShares,
-          poolDetails,
-          protocol === THORChain ? pricePoolDataThor : pricePoolDataMaya,
-          protocol
-        )
-      )
+    const sharesThorTotalRD: BaseAmountRD = FP.pipe(
+      RD.combine(allThorSharesRD, poolDetailsThorRD),
+      RD.map(([poolShares, poolDetails]) => H.getSharesTotal(poolShares, poolDetails, pricePoolDataThor, THORChain))
+    )
+    const sharesMayaTotalRD: BaseAmountRD = FP.pipe(
+      RD.combine(allMayaSharesRD, poolDetailsMayaRD),
+      RD.map(([poolShares, poolDetails]) => H.getSharesTotal(poolShares, poolDetails, pricePoolDataMaya, MAYAChain))
     )
 
+    if (protocol === Protocol.All) {
+      return FP.pipe(
+        RD.combine(sharesThorTotalRD, sharesMayaTotalRD),
+        RD.fold(
+          () => '',
+          () => 'Loading...',
+          (error) => intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message }),
+          ([sharesThorTotal, sharesMayaTotal]) => {
+            return isPrivate
+              ? hiddenString
+              : formatAssetAmountCurrency({
+                  amount: baseToAsset(sharesThorTotal.plus(sharesMayaTotal)),
+                  asset: selectedPricePoolThor.asset,
+                  decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
+                })
+          }
+        )
+      )
+    }
+
     return FP.pipe(
-      sharesTotalRD,
+      protocol === THORChain ? sharesThorTotalRD : sharesMayaTotalRD,
       RD.fold(
         () => '',
         () => 'Loading...',
@@ -338,13 +356,15 @@ export const PortfolioView: React.FC = (): JSX.Element => {
       )
     )
   }, [
-    allSharesRD,
+    allThorSharesRD,
+    poolDetailsThorRD,
+    allMayaSharesRD,
+    poolDetailsMayaRD,
     protocol,
-    intl,
-    isPrivate,
-    poolDetailsRD,
     pricePoolDataThor,
     pricePoolDataMaya,
+    intl,
+    isPrivate,
     selectedPricePoolThor.asset
   ])
 
@@ -551,8 +571,8 @@ export const PortfolioView: React.FC = (): JSX.Element => {
   return (
     <>
       <div className="flex w-full justify-between pb-10px">
-        <ProtocolSwitch protocol={protocol} setProtocol={setProtocol} />
-        <RefreshButton onClick={refreshHandler}></RefreshButton>
+        <ProtocolSwitch protocol={protocol} setProtocol={setProtocol} withAll />
+        <RefreshButton onClick={refreshHandler} />
       </div>
       <div className="flex flex-col rounded-lg bg-bg1 p-4 dark:bg-bg1d">
         <div className="flex justify-end">
