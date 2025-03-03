@@ -2,12 +2,14 @@ import { useCallback, useMemo } from 'react'
 
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { THORChain } from '@xchainjs/xchain-thorchain'
+import { useIntl } from 'react-intl'
 
 import { Tooltip } from '../common/Common.styles'
 import { RadioGroup } from '../radioGroup'
 import { Props, Protocol, Protocols, ProtocolsWithAll } from './types'
 
 export const ProtocolSwitch = ({ protocol, setProtocol, withAll = false }: Props) => {
+  const intl = useIntl()
   const protocols = useMemo(() => (withAll ? ProtocolsWithAll : Protocols), [withAll])
 
   const activeIndex = useMemo(() => {
@@ -51,7 +53,7 @@ export const ProtocolSwitch = ({ protocol, setProtocol, withAll = false }: Props
             {
               label: (
                 <Tooltip title="All" placement="bottom">
-                  <span className="px-1 text-text2 dark:text-text2d">All</span>
+                  <span className="px-1 text-text2 dark:text-text2d">{intl.formatMessage({ id: 'common.all' })}</span>
                 </Tooltip>
               ),
               value: Protocol.All
@@ -59,7 +61,7 @@ export const ProtocolSwitch = ({ protocol, setProtocol, withAll = false }: Props
           ]
         : [])
     ]
-  }, [withAll])
+  }, [intl, withAll])
 
   return (
     <div>
