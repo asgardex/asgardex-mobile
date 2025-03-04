@@ -17,7 +17,6 @@ export const RadioGroup = ({
             key={option.value}
             className={clsx(
               'cursor-pointer rounded-lg p-2',
-              // 'first:rounded-l-lg last:rounded-r-lg',
               activeIndex === index
                 ? 'bg-turquoise dark:bg-turquoise-dark'
                 : 'bg-bg0 hover:bg-turquoise/20 dark:bg-bg0d hover:dark:bg-turquoise-dark/20'
