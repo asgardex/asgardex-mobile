@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react'
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { Chain } from '@xchainjs/xchain-util'
+import clsx from 'clsx'
 
 import { AVAILABLE_DEXS } from '../../../services/const'
 import { Tooltip } from '../common/Common.styles'
@@ -31,7 +32,15 @@ export const ProtocolSwitch = ({ protocol, setProtocol }: Props) => {
       {
         label: (
           <Tooltip title="Switch pools to THORChain" placement="bottom">
-            <span className="px-1 text-text2 dark:text-text2d">THORChain</span>
+            <span
+              className={clsx(
+                'px-1',
+                activeIndex === 0
+                  ? 'text-white'
+                  : 'text-text2 hover:text-turquoise dark:text-text2d hover:dark:text-turquoise-dark'
+              )}>
+              THORChain
+            </span>
           </Tooltip>
         ),
         value: THORChain
@@ -39,13 +48,21 @@ export const ProtocolSwitch = ({ protocol, setProtocol }: Props) => {
       {
         label: (
           <Tooltip title="Switch pools to MAYAChain" placement="bottom">
-            <span className="px-1 text-text2 dark:text-text2d">MAYAChain</span>
+            <span
+              className={clsx(
+                'px-1',
+                activeIndex === 1
+                  ? 'text-white'
+                  : 'text-text2 hover:text-turquoise dark:text-text2d hover:dark:text-turquoise-dark'
+              )}>
+              MAYAChain
+            </span>
           </Tooltip>
         ),
         value: MAYAChain
       }
     ]
-  }, [])
+  }, [activeIndex])
 
   return (
     <div>

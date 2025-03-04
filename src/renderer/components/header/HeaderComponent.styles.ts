@@ -5,14 +5,7 @@ import { palette, size } from 'styled-theme'
 export const HeaderContainer = styled(Layout.Header)`
   height: ${size('headerHeight', '70px')};
   width: 100%;
-  background-color: ${palette('background', 3)};
 
-  /* id's defined in svg */
-  #asgardex_logo {
-    > * {
-      fill: ${palette('text', 1)};
-    }
-  }
   /* Make sure following id's are defined in svg */
   #menu_icon,
   #close_icon,

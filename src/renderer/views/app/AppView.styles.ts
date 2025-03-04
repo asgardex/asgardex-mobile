@@ -42,7 +42,6 @@ export const AppLayout = styled(A.Layout)`
   display: flex;
   flex-direction: row;
   height: 100%;
-  background: ${palette('background', 3)};
 `
 
 export const Alert = styled(UIAlert)`

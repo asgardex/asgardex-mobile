@@ -104,6 +104,6 @@ export const ExpandIcon = styled(CaretRightOutlined)`
   svg {
     width: 20px;
     height: 20px;
-    color: ${palette('primary', 0)};
+    color: ${palette('primary', 2)};
   }
 `
