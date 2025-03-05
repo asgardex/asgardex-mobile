@@ -175,7 +175,7 @@ export const HeaderStats: React.FC<Props> = (props): JSX.Element => {
         className="flex cursor-pointer items-center space-x-2 rounded-xl bg-bg0 py-1 pl-1 pr-2 drop-shadow dark:bg-gray0d"
         onClick={reloadThorStats}>
         <AssetIcon size="xsmall" asset={AssetRuneNative} network={network} />
-        <Styled.Protocol chain={THORChain}>{THORChain}</Styled.Protocol>
+        <Styled.Protocol>{THORChain}</Styled.Protocol>
         <Styled.Label loading={RD.isPending(runePriceRD) ? 'true' : 'false'}>{runePriceLabel}</Styled.Label>
 
         {!isSmallMobileView && (
@@ -192,9 +192,7 @@ export const HeaderStats: React.FC<Props> = (props): JSX.Element => {
         className="flex cursor-pointer items-center space-x-2 rounded-xl bg-bg0 py-1 pl-1 pr-2 drop-shadow dark:bg-gray0d"
         onClick={reloadMayaStats}>
         <AssetIcon size="xsmall" asset={AssetCacao} network={network} />
-        <Styled.Protocol className="drop-shadow-none" chain={MAYAChain}>
-          {MAYAChain}
-        </Styled.Protocol>
+        <Styled.Protocol>{MAYAChain}</Styled.Protocol>
         <Styled.Label loading={RD.isPending(mayaPriceRD) ? 'true' : 'false'}>{mayaPriceLabel}</Styled.Label>
 
         {!isSmallMobileView && (

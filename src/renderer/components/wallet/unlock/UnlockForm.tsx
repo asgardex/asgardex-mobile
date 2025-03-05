@@ -181,7 +181,7 @@ export const UnlockForm = (props: Props): JSX.Element => {
               <h1 className="mb-12px inline-block w-full font-mainSemiBold text-18 uppercase text-text1 dark:text-text1d">
                 {intl.formatMessage({ id: 'wallet.unlock.label' })}
               </h1>
-              <h2 className="mb-30px w-full text-11 text-gray2 dark:text-gray2d">
+              <h2 className="mb-30px w-full text-11 text-text2 dark:text-text2d">
                 {intl.formatMessage({ id: 'wallet.unlock.password' })}
               </h2>
             </div>
@@ -224,7 +224,7 @@ export const UnlockForm = (props: Props): JSX.Element => {
             <div className="flex w-full flex-col items-center border-t border-solid border-gray1 dark:border-gray0d">
               <div className="flex w-full flex-col justify-between space-y-3 pt-4">
                 {/* TODO: update locale */}
-                <h2 className="mb-2 w-full text-11 text-gray2 dark:text-gray2d">Don&apos;t you have a wallet yet?</h2>
+                <h2 className="mb-2 w-full text-11 text-text2 dark:text-text2d">Don&apos;t you have a wallet yet?</h2>
                 <BorderButton
                   className="mr-20px w-full min-w-[200px] sm:mb-0"
                   size="normal"

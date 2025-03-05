@@ -39,7 +39,7 @@ type SectionProps = {
   className?: string
 }
 
-const Section: React.FC<SectionProps> = ({ title, subtitle, className, children }) => (
+const Section = ({ title, subtitle, className, children }: SectionProps) => (
   <div
     className={clsx(
       'flex w-full items-center justify-between py-6 px-4',
