@@ -32,6 +32,18 @@ export const ProtocolSwitch = ({ protocol, setProtocol, withAll = false }: Props
 
   const protocolOptions = useMemo(() => {
     return [
+      ...(withAll
+        ? [
+            {
+              label: (
+                <Tooltip title="All" placement="bottom">
+                  <span className="px-1 text-text2 dark:text-text2d">{intl.formatMessage({ id: 'common.all' })}</span>
+                </Tooltip>
+              ),
+              value: Protocol.All
+            }
+          ]
+        : []),
       {
         label: (
           <Tooltip title="Switch to THORChain" placement="bottom">
@@ -47,19 +59,7 @@ export const ProtocolSwitch = ({ protocol, setProtocol, withAll = false }: Props
           </Tooltip>
         ),
         value: MAYAChain
-      },
-      ...(withAll
-        ? [
-            {
-              label: (
-                <Tooltip title="All" placement="bottom">
-                  <span className="px-1 text-text2 dark:text-text2d">{intl.formatMessage({ id: 'common.all' })}</span>
-                </Tooltip>
-              ),
-              value: Protocol.All
-            }
-          ]
-        : [])
+      }
     ]
   }, [intl, withAll])
 

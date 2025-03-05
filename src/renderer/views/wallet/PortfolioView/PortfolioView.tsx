@@ -91,8 +91,9 @@ const CardItem = ({ title, value, route }: { title: string; value: React.ReactNo
 
 export const PortfolioView: React.FC = (): JSX.Element => {
   const [activeIndex, setActiveIndex] = useState(PortfolioTabKey.ChartView)
+  const [protocol, setProtocol] = useState<string>(Protocol.All)
 
-  const { isPrivate, protocol, setProtocol } = useApp()
+  const { isPrivate } = useApp()
   const intl = useIntl()
   const [balancesState] = useObservableState(
     () =>

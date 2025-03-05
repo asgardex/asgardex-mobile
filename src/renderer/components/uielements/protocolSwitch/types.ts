@@ -1,11 +1,11 @@
 export enum Protocol {
+  All = 'All',
   THORChain = 'THOR',
-  MAYAChain = 'MAYA',
-  All = 'All'
+  MAYAChain = 'MAYA'
 }
 
 export const Protocols: Protocol[] = [Protocol.THORChain, Protocol.MAYAChain]
-export const ProtocolsWithAll: Protocol[] = [Protocol.THORChain, Protocol.MAYAChain, Protocol.All]
+export const ProtocolsWithAll: Protocol[] = [Protocol.All, Protocol.THORChain, Protocol.MAYAChain]
 
 export type Props = {
   protocol: string
