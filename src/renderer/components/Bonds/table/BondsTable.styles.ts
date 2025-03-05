@@ -61,7 +61,7 @@ export const WatchlistButton = styled(UIButton).attrs({ typevalue: 'transparent'
   &.ant-btn {
     min-width: auto;
     padding: 0;
-    color: #23dcc8;
+    color: ${palette('primary', 2)};
   }
 `
 

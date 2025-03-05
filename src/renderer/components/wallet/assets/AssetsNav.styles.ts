@@ -20,7 +20,7 @@ export const Menu = styled(MenuUI)`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid ${palette('gray', 1)};
+  border-bottom: 1px solid ${palette('gray', 0)};
 
   border-radius: 8px 8px 0 0;
 
