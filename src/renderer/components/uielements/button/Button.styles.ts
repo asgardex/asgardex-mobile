@@ -61,7 +61,7 @@ type ColorGroups = {
 
 const colorGroups: ColorGroups = {
   primary: {
-    main: palette('gradient', 0),
+    main: palette('primary', 2),
     darken: palette('gradient', 1),
     lighten: palette('gradient', 2),
     text: palette('primary', 2),
