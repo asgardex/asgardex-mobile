@@ -152,11 +152,9 @@ export const HideIcon = styled(EyeInvisibleOutlined)`
 
 const ICON_SIZE = 16
 
-export const CopyLabelContainer = styled.span``
-
 export const CopyLabel = styled(A.Typography.Text)`
   text-transform: uppercase;
-  color: ${palette('primary', 0)};
+  color: ${palette('primary', 2)};
   border: 1px solid ${palette('gray', 1)};
   border-radius: 8px;
   margin-left: 8px;

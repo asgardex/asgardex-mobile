@@ -66,19 +66,6 @@ export const OptionLabel = styled(UILabel)`
   min-height: 38px;
 `
 
-export const Button = styled(UIButton)`
-  font-family: 'MainFontRegular';
-  text-transform: uppercase;
-
-  span {
-    font-size: 14px;
-  }
-
-  :disabled:hover {
-    color: ${palette('primary', 0)} !important;
-  }
-`
-
 export const AccountCard = styled(A.Card)`
   border: 1px solid ${palette('gray', 0)};
 
@@ -167,7 +154,7 @@ export const QRCodeIcon = styled(QrcodeOutlined)`
 
 export const EyeOutlined = styled(EyeOutlinedUI)`
   cursor: pointer;
-  color: ${palette('primary', 0)};
+  color: ${palette('primary', 2)};
   height: ${ICON_SIZE}px;
   width: ${ICON_SIZE}px;
 

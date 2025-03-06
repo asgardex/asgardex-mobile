@@ -74,7 +74,7 @@ export const HeaderDrawerItem = styled(Row)<{ selected?: boolean }>`
   text-transform: uppercase;
   font-family: 'MainFontSemiBold';
   font-size: 18px;
-  color: ${({ selected }) => (selected ? palette('primary', 0) : palette('text', 1))};
+  color: ${({ selected }) => (selected ? palette('primary', 2) : palette('text', 1))};
   &.last {
     border: none;
   }

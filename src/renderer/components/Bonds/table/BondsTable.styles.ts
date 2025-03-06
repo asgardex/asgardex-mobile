@@ -1,4 +1,3 @@
-import * as AIcons from '@ant-design/icons/lib'
 import { CaretRightOutlined } from '@ant-design/icons/lib'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
@@ -43,11 +42,6 @@ export const AddressEllipsis = styled(UIAddressEllipsis)`
   font-size: 16px;
   color: ${palette('text', 1)};
   text-transform: none;
-`
-
-export const InfoArrow = styled(AIcons.ArrowUpOutlined)`
-  transform: rotateZ(45deg);
-  color: ${palette('primary', 0)};
 `
 
 export const TextLabel = styled(UILabel).attrs({ textTransform: 'uppercase' })`

@@ -27,7 +27,7 @@ export const AppWrapper = styled.div`
       transition: none;
     }
     &-spin-dot-item {
-      background-color: ${palette('primary', 0)};
+      background-color: ${palette('primary', 2)};
     }
     &-form-item-explain {
       text-transform: uppercase;
