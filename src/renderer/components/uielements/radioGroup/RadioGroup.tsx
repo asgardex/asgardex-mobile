@@ -16,10 +16,10 @@ export const RadioGroup = ({
           <div
             key={option.value}
             className={clsx(
-              'cursor-pointer rounded-lg p-2',
+              'flex min-w-[64px] cursor-pointer items-center justify-center rounded-lg p-2',
               activeIndex === index
-                ? 'bg-turquoise dark:bg-turquoise-dark'
-                : 'bg-bg0 hover:bg-turquoise/20 dark:bg-bg0d hover:dark:bg-turquoise-dark/20'
+                ? 'bg-turquoise text-white dark:bg-turquoise-dark'
+                : 'bg-bg0 text-text2 hover:bg-turquoise/20 hover:text-turquoise dark:bg-bg0d dark:text-text2d hover:dark:bg-turquoise-dark/20 hover:dark:text-turquoise-dark'
             )}
             onClick={() => onChange(index)}>
             {option.label}
