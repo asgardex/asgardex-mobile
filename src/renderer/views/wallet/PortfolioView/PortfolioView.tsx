@@ -15,6 +15,7 @@ import {
   CryptoAmount,
   formatAssetAmountCurrency
 } from '@xchainjs/xchain-util'
+import clsx from 'clsx'
 import * as FP from 'fp-ts/function'
 import * as A from 'fp-ts/lib/Array'
 import * as O from 'fp-ts/Option'
@@ -63,11 +64,6 @@ import * as H from '../PoolShareView.helper'
 import { getSaversTotal } from '../SaversTableView.helper'
 import * as Styled from './PortfolioView.style'
 import { PortfolioTabKey } from './utils'
-
-const options = [
-  { label: <ChartPieIcon className="h-6 w-6 text-text2 dark:text-text2d" />, value: PortfolioTabKey.ChartView },
-  { label: <Squares2X2Icon className="h-6 w-6 text-text2 dark:text-text2d" />, value: PortfolioTabKey.CardView }
-]
 
 const CardItem = ({ title, value, route }: { title: string; value: React.ReactNode; route: string }) => {
   const navigate = useNavigate()
@@ -555,6 +551,38 @@ export const PortfolioView: React.FC = (): JSX.Element => {
   }, [portfolioDatasource])
 
   const filteredChainData = useMemo(() => chainChartData.filter((entry) => entry.value !== 0.0), [chainChartData])
+
+  const options = useMemo(
+    () => [
+      {
+        label: (
+          <ChartPieIcon
+            className={clsx(
+              'h-6 w-6',
+              activeIndex === 0
+                ? 'text-white'
+                : 'text-text2 hover:text-turquoise dark:text-text2d hover:dark:text-turquoise-dark'
+            )}
+          />
+        ),
+        value: PortfolioTabKey.ChartView
+      },
+      {
+        label: (
+          <Squares2X2Icon
+            className={clsx(
+              'h-6 w-6',
+              activeIndex === 1
+                ? 'text-white'
+                : 'text-text2 hover:text-turquoise dark:text-text2d hover:dark:text-turquoise-dark'
+            )}
+          />
+        ),
+        value: PortfolioTabKey.CardView
+      }
+    ],
+    [activeIndex]
+  )
 
   const refreshHandler = useCallback(async () => {
     const delay = 1000

@@ -37,7 +37,7 @@ export const ProtocolSwitch = ({ protocol, setProtocol, withAll = false }: Props
             {
               label: (
                 <Tooltip title="All" placement="bottom">
-                  <span className="px-1 text-text2 dark:text-text2d">{intl.formatMessage({ id: 'common.all' })}</span>
+                  <span>{intl.formatMessage({ id: 'common.all' })}</span>
                 </Tooltip>
               ),
               value: Protocol.All
@@ -46,22 +46,22 @@ export const ProtocolSwitch = ({ protocol, setProtocol, withAll = false }: Props
         : []),
       {
         label: (
-          <Tooltip title="Switch to THORChain" placement="bottom">
-            <span className="px-1 text-text2 dark:text-text2d">THORChain</span>
+          <Tooltip title="Switch pools to THORChain" placement="bottom">
+            <span>THORChain</span>
           </Tooltip>
         ),
         value: THORChain
       },
       {
         label: (
-          <Tooltip title="Switch to MAYAChain" placement="bottom">
-            <span className="px-1 text-text2 dark:text-text2d">MAYAChain</span>
+          <Tooltip title="Switch pools to MAYAChain" placement="bottom">
+            <span>MAYAChain</span>
           </Tooltip>
         ),
         value: MAYAChain
       }
     ]
-  }, [intl, withAll])
+  }, [withAll, intl])
 
   return (
     <div>
