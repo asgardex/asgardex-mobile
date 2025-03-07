@@ -65,7 +65,17 @@ import { getSaversTotal } from '../SaversTableView.helper'
 import * as Styled from './PortfolioView.style'
 import { PortfolioTabKey } from './utils'
 
-const CardItem = ({ title, value, route }: { title: string; value: React.ReactNode; route: string }) => {
+const CardItem = ({
+  title,
+  value,
+  route,
+  isPrivate
+}: {
+  title: string
+  value: React.ReactNode
+  route: string
+  isPrivate: boolean
+}) => {
   const navigate = useNavigate()
 
   const handleManage = useCallback(() => {
@@ -75,12 +85,12 @@ const CardItem = ({ title, value, route }: { title: string; value: React.ReactNo
   return (
     <div className="rounded-lg border border-l-4 border-solid border-gray0 !border-l-turquoise py-2 px-4 dark:border-gray0d">
       <div className="flex w-full items-center justify-between">
-        <div className="text-[13px] text-gray2 dark:text-gray2d">{title}</div>
+        <div className="text-[13px] text-text2 dark:text-text2d">{title}</div>
         <div className="cursor-pointer text-[13px] text-turquoise" onClick={handleManage}>
           Manage
         </div>
       </div>
-      <div className="text-[20px] text-text2 dark:text-text2d">{value}</div>
+      <div className="text-[20px] text-text2 dark:text-text2d">{isPrivate ? hiddenString : value}</div>
     </div>
   )
 }
@@ -260,42 +270,46 @@ export const PortfolioView: React.FC = (): JSX.Element => {
         (nodes) => {
           const totals = calculateTotalBondByChain(nodes)
 
+          if (protocol === Protocol.All) {
+            return formatAssetAmountCurrency({
+              amount: baseToAsset(
+                getValueOfRuneInAsset(totals.THOR, pricePoolDataThor).plus(
+                  getValueOfRuneInAsset(totals.MAYA, pricePoolDataMaya)
+                )
+              ),
+              asset: selectedPricePoolThor.asset,
+              decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
+            })
+          }
+
           // Format THOR and MAYA amounts as strings
           const thorTotal = totals.THOR.amount().isGreaterThan(0)
-            ? `${
-                isPrivate
-                  ? hiddenString
-                  : formatAssetAmountCurrency({
-                      amount: baseToAsset(getValueOfRuneInAsset(totals.THOR, pricePoolDataThor)),
-                      asset: selectedPricePoolThor.asset,
-                      decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
-                    })
-              }`
+            ? formatAssetAmountCurrency({
+                amount: baseToAsset(getValueOfRuneInAsset(totals.THOR, pricePoolDataThor)),
+                asset: selectedPricePoolThor.asset,
+                decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
+              })
             : '$ 0.00'
 
           const mayaTotal = totals.MAYA.amount().isGreaterThan(0)
-            ? `${
-                isPrivate
-                  ? hiddenString
-                  : formatAssetAmountCurrency({
-                      amount: baseToAsset(getValueOfRuneInAsset(totals.MAYA, pricePoolDataMaya)),
-                      asset: selectedPricePoolMaya.asset,
-                      decimal: isUSDAsset(selectedPricePoolMaya.asset) ? 2 : 4
-                    })
-              }`
-            : ''
+            ? formatAssetAmountCurrency({
+                amount: baseToAsset(getValueOfRuneInAsset(totals.MAYA, pricePoolDataMaya)),
+                asset: selectedPricePoolMaya.asset,
+                decimal: isUSDAsset(selectedPricePoolMaya.asset) ? 2 : 4
+              })
+            : '$ 0.00'
 
           // Concatenate the strings for THOR and MAYA, separated by a newline if both are present
-          return [thorTotal, mayaTotal].filter(Boolean).join('\n')
+          return protocol === Protocol.THORChain ? thorTotal : mayaTotal
         }
       )
     )
   }, [
     intl,
-    isPrivate,
     nodeInfos,
     pricePoolDataMaya,
     pricePoolDataThor,
+    protocol,
     selectedPricePoolMaya.asset,
     selectedPricePoolThor.asset,
     walletAddresses.MAYA,
@@ -324,13 +338,11 @@ export const PortfolioView: React.FC = (): JSX.Element => {
           () => 'Loading...',
           (error) => intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message }),
           ([sharesThorTotal, sharesMayaTotal]) => {
-            return isPrivate
-              ? hiddenString
-              : formatAssetAmountCurrency({
-                  amount: baseToAsset(sharesThorTotal.plus(sharesMayaTotal)),
-                  asset: selectedPricePoolThor.asset,
-                  decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
-                })
+            return formatAssetAmountCurrency({
+              amount: baseToAsset(sharesThorTotal.plus(sharesMayaTotal)),
+              asset: selectedPricePoolThor.asset,
+              decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
+            })
           }
         )
       )
@@ -343,13 +355,11 @@ export const PortfolioView: React.FC = (): JSX.Element => {
         () => 'Loading...',
         (error) => intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message }),
         (total) =>
-          isPrivate
-            ? hiddenString
-            : formatAssetAmountCurrency({
-                amount: baseToAsset(total),
-                asset: selectedPricePoolThor.asset,
-                decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
-              })
+          formatAssetAmountCurrency({
+            amount: baseToAsset(total),
+            asset: selectedPricePoolThor.asset,
+            decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
+          })
       )
     )
   }, [
@@ -361,7 +371,6 @@ export const PortfolioView: React.FC = (): JSX.Element => {
     pricePoolDataThor,
     pricePoolDataMaya,
     intl,
-    isPrivate,
     selectedPricePoolThor.asset
   ])
 
@@ -404,16 +413,14 @@ export const PortfolioView: React.FC = (): JSX.Element => {
         (error) => intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message }),
         // Success state
         (total) =>
-          isPrivate
-            ? hiddenString
-            : formatAssetAmountCurrency({
-                amount: baseToAsset(total),
-                asset: selectedPricePoolThor.asset,
-                decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
-              })
+          formatAssetAmountCurrency({
+            amount: baseToAsset(total),
+            asset: selectedPricePoolThor.asset,
+            decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
+          })
       )
     )
-  }, [allRunePoolProviders, intl, isPrivate, selectedPricePoolThor.asset])
+  }, [allRunePoolProviders, intl, selectedPricePoolThor.asset])
 
   const renderSaversTotal = useMemo(() => {
     const allSaverProvidersRD = RD.success(allSaverProviders)
@@ -435,33 +442,28 @@ export const PortfolioView: React.FC = (): JSX.Element => {
         (error) => intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message }),
         // Success state
         (total) =>
-          isPrivate
-            ? hiddenString
-            : formatAssetAmountCurrency({
-                amount: baseToAsset(total),
-                asset: selectedPricePoolThor.asset,
-                decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
-              })
+          formatAssetAmountCurrency({
+            amount: baseToAsset(total),
+            asset: selectedPricePoolThor.asset,
+            decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
+          })
       )
     )
-  }, [allSaverProviders, poolDetailsThorRD, selectedPricePoolThor, intl, isPrivate])
+  }, [allSaverProviders, poolDetailsThorRD, selectedPricePoolThor, intl])
+
   const totalBalanceDisplay = useMemo(() => {
-    const chainValues = Object.entries(balancesByChain).map(([_, balance]) =>
-      isPrivate ? 0 : baseToAsset(balance).amount().toNumber()
-    )
+    const chainValues = Object.entries(balancesByChain).map(([_, balance]) => baseToAsset(balance).amount().toNumber())
     const total = chainValues.reduce((acc, value) => acc + value, 0)
     const totalCyrpto = new CryptoAmount(assetToBase(assetAmount(total, 6)), AssetUSDC)
-    const formattedTotal = isPrivate
-      ? hiddenString
-      : formatAssetAmountCurrency({
-          asset: totalCyrpto.asset,
-          amount: totalCyrpto.assetAmount,
-          trimZeros: true,
-          decimal: 0
-        })
+    const formattedTotal = formatAssetAmountCurrency({
+      asset: totalCyrpto.asset,
+      amount: totalCyrpto.assetAmount,
+      trimZeros: true,
+      decimal: 0
+    })
 
     return formattedTotal
-  }, [balancesByChain, isPrivate])
+  }, [balancesByChain])
 
   const calculatedTotal = [totalBalanceDisplay, renderSharesTotal, renderSaversTotal, renderBondTotal]
     .map((amount) => parseFloat(amount.replace(/[^0-9.-]+/g, '')))
@@ -611,13 +613,15 @@ export const PortfolioView: React.FC = (): JSX.Element => {
           <Styled.Title size="big" className="text-gray2 dark:text-gray2d">
             {intl.formatMessage({ id: 'wallet.balance.total.portfolio' })}
           </Styled.Title>
-          <div className="mb-4 !text-[28px] text-text2 dark:text-text2d">{getCurrencyFormat(calculatedTotal)}</div>
+          <div className="mb-4 !text-[28px] text-text2 dark:text-text2d">
+            {isPrivate ? hiddenString : getCurrencyFormat(calculatedTotal)}
+          </div>
         </div>
         <div className="mt-4 space-y-2">
           {activeIndex === PortfolioTabKey.CardView && (
             <div className="grid grid-cols-3 gap-4">
               {cardItemInfo.map(({ title, value, route }) => (
-                <CardItem key={route} title={title} value={value} route={route} />
+                <CardItem key={route} title={title} value={value} route={route} isPrivate={isPrivate} />
               ))}
             </div>
           )}
