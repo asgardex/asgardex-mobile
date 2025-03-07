@@ -605,7 +605,7 @@ export const PortfolioView: React.FC = (): JSX.Element => {
         <ProtocolSwitch protocol={protocol} setProtocol={setProtocol} withAll />
         <RefreshButton onClick={refreshHandler} />
       </div>
-      <div className="flex flex-col rounded-lg bg-bg1 p-4 dark:bg-bg1d">
+      <div className="flex flex-col rounded-lg bg-bg0 p-4 dark:bg-bg0d">
         <div className="flex justify-end">
           <RadioGroup options={options} activeIndex={activeIndex} onChange={setActiveIndex} />
         </div>
@@ -633,7 +633,7 @@ export const PortfolioView: React.FC = (): JSX.Element => {
                     {intl.formatMessage({ id: 'common.allocationByType' })}
                   </Styled.Title>
                   <div className="mt-8 flex items-center justify-center">
-                    <PieChart chartData={chartData} showLabelLine />
+                    <PieChart chartData={chartData} showLabelLine isPrivate={isPrivate} />
                   </div>
                 </div>
                 <div className="flex flex-1 flex-col rounded-lg border border-solid border-gray0 p-4 dark:border-gray0d">
@@ -641,7 +641,7 @@ export const PortfolioView: React.FC = (): JSX.Element => {
                     {intl.formatMessage({ id: 'common.allocationByChain' })}
                   </Styled.Title>
                   <div className="mt-8 flex items-center justify-center">
-                    <PieChart chartData={filteredChainData} showLabelLine />
+                    <PieChart chartData={filteredChainData} showLabelLine isPrivate={isPrivate} />
                   </div>
                 </div>
               </div>
