@@ -54,8 +54,18 @@ export const getBondMemo = (thorAddress: string, providerAddress?: string, nodeF
   mkMemo(['BOND', thorAddress, providerAddress, nodeFee])
 
 /**
- * Memo to unbond
+ * Memo to bond Mayachain
+ * @param assetPool asset string corresponding to the pool
+ * @param lpUnits units to unbond
+ * @param MayaAddress MAYA address to send amounts to
  *
+ * Memo is based on definition in https://github.com/asgardex/asgardex-desktop/issues/176
+ */
+export const getBondMemoMayanode = (assetPool: string, lpUnits: string, mayaNodeAddress: string) =>
+  mkMemo(['BOND', assetPool, lpUnits, mayaNodeAddress])
+
+/**
+ * Memo to unbond
  * @param thorAddress THOR address unbond from
  * @param units Base Amount of units to unbond
  *
@@ -64,6 +74,16 @@ export const getBondMemo = (thorAddress: string, providerAddress?: string, nodeF
  */
 export const getUnbondMemo = (thorAddress: string, units: BaseAmount, providerAddress?: string) =>
   mkMemo(['UNBOND', thorAddress, units.amount().toString(), providerAddress])
+
+/**
+ * Memo to unbond
+ * @param assetPool asset string corresponding to the pool
+ * @param lpUnits units to unbond
+ * @param mayaNodeAddress node address unbond from
+ *
+ */
+export const getUnbondMemoMayanode = (assetPool: string, lpUnits: string, mayaNodeAddress: string) =>
+  mkMemo(['UNBOND', assetPool, lpUnits, mayaNodeAddress])
 
 /**
  * Memo to withdraw
