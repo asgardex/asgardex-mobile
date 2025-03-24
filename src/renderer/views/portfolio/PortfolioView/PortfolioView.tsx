@@ -42,7 +42,8 @@ import { filterWalletBalancesByAssets } from '../../../helpers/walletHelper'
 import { useRunePoolProviders } from '../../../hooks/useAllRunePoolProviders'
 import { useAllSaverProviders } from '../../../hooks/useAllSaverProviders'
 import { useObserveMayaScanPrice } from '../../../hooks/useMayascanPrice'
-import { useNodeInfos } from '../../../hooks/useNodeInfos'
+import { useThorNodeInfos } from '../../../hooks/useNodeInfos'
+import { useMayaNodeInfos } from '../../../hooks/useNodeInfosMaya'
 import { usePoolShares } from '../../../hooks/usePoolShares'
 import { useTotalWalletBalance } from '../../../hooks/useWalletBalance'
 import * as walletRoutes from '../../../routes/wallet'
@@ -58,10 +59,10 @@ import { balancesState$, getLedgerAddress$, reloadBalancesByChain } from '../../
 import { DEFAULT_BALANCES_FILTER, INITIAL_BALANCES_STATE } from '../../../services/wallet/const'
 import { useApp } from '../../../store/app/hooks'
 import { BaseAmountRD } from '../../../types'
+import { WalletAddressInfo } from '../../bonds/types'
 import { getValueOfRuneInAsset } from '../../pools/Pools.utils'
-import { WalletAddressInfo } from '../BondsView'
-import * as H from '../PoolShareView.helper'
-import { getSaversTotal } from '../SaversTableView.helper'
+import * as H from '../../wallet/PoolShareView.helper'
+import { getSaversTotal } from '../../wallet/SaversTableView.helper'
 import * as Styled from './PortfolioView.style'
 import { PortfolioTabKey } from './utils'
 
@@ -216,105 +217,115 @@ export const PortfolioView: React.FC = (): JSX.Element => {
     }
   }, [allBalances])
 
-  // // Use `useNodeInfos` to manage `nodeInfos` state and observable
-  const nodeInfos = useNodeInfos({
+  const nodeInfosThor = useThorNodeInfos({
     addressesFetched,
-    walletAddresses,
+    thorWalletAddresses: walletAddresses.THOR,
     userNodes$,
-    getNodeInfos$,
+    getNodeInfosThor$: getNodeInfos$
+  })
+  const nodeInfosMaya = useMayaNodeInfos({
+    addressesFetched,
+    mayaWalletAddresses: walletAddresses.MAYA,
+    userNodes$,
     getNodeInfosMaya$
   })
 
-  const renderBondTotal = useMemo(() => {
-    const calculateTotalBondByChain = (nodes: NodeInfo[] | NodeInfoMaya[]) => {
-      const walletAddressSet = new Set([
-        ...walletAddresses.THOR.map((info) => info.address.toLowerCase()),
-        ...walletAddresses.MAYA.map((info) => info.address.toLowerCase())
-      ])
+  // THORChain-specific bond total renderer
+  const renderBondTotalThor = useMemo(() => {
+    const calculateTotalBondThor = (nodes: NodeInfo[]) => {
+      const walletAddressSet = new Set(walletAddresses.THOR.map((info) => info.address.toLowerCase()))
 
-      return nodes.reduce(
-        (acc, node) => {
-          const chain = node.address.startsWith('thor') ? 'THOR' : 'MAYA'
+      return nodes.reduce((acc, node) => {
+        const totalBondProviderAmount = node.bondProviders.providers.reduce((providerSum, provider) => {
+          const normalizedAddress = provider.bondAddress.toLowerCase()
+          if (walletAddressSet.has(normalizedAddress)) {
+            return providerSum.plus(provider.bond) // Sum THORChain provider bond (BaseAmount)
+          }
+          return providerSum
+        }, assetToBase(assetAmount(0)))
 
-          // Calculate only the total bond provider amount without adding the node's own bond
-          const totalBondProviderAmount = node.bondProviders.providers.reduce((providerSum, provider) => {
-            const normalizedAddress = provider.bondAddress.toLowerCase()
-            if (walletAddressSet.has(normalizedAddress)) {
-              return providerSum.plus(provider.bond) // Sum only bondProvider's bondAmount
-            }
-            return providerSum
-          }, assetToBase(assetAmount(0)))
-
-          // Set the bond provider amount total in the accumulator for each chain
-          acc[chain] = acc[chain] ? acc[chain].plus(totalBondProviderAmount) : totalBondProviderAmount
-          return acc
-        },
-        { THOR: assetToBase(assetAmount(0)), MAYA: assetToBase(assetAmount(0)) }
-      )
+        return acc.plus(totalBondProviderAmount)
+      }, assetToBase(assetAmount(0)))
     }
 
-    // Use RD.fold to render based on the nodeInfos state
     return FP.pipe(
-      nodeInfos,
+      nodeInfosThor,
       RD.fold(
-        // Initial loading state
-        () => '',
-
-        // Pending state
-        () => '',
-
-        // Error state
-        (error) => intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message }),
-
-        // Success state
+        () => '', // Initial loading
+        () => '', // Pending
+        (error) => intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message }), // Error
         (nodes) => {
-          const totals = calculateTotalBondByChain(nodes)
-
-          if (protocol === Protocol.All) {
-            return formatAssetAmountCurrency({
-              amount: baseToAsset(
-                getValueOfRuneInAsset(totals.THOR, pricePoolDataThor).plus(
-                  getValueOfRuneInAsset(totals.MAYA, pricePoolDataMaya)
-                )
-              ),
-              asset: selectedPricePoolThor.asset,
-              decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
-            })
-          }
-
-          // Format THOR and MAYA amounts as strings
-          const thorTotal = totals.THOR.amount().isGreaterThan(0)
-            ? formatAssetAmountCurrency({
-                amount: baseToAsset(getValueOfRuneInAsset(totals.THOR, pricePoolDataThor)),
-                asset: selectedPricePoolThor.asset,
-                decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
-              })
+          const total = calculateTotalBondThor(nodes)
+          return total.amount().isGreaterThan(0)
+            ? `${
+                isPrivate
+                  ? hiddenString
+                  : formatAssetAmountCurrency({
+                      amount: baseToAsset(getValueOfRuneInAsset(total, pricePoolDataThor)),
+                      asset: selectedPricePoolThor.asset,
+                      decimal: isUSDAsset(selectedPricePoolThor.asset) ? 2 : 4
+                    })
+              }`
             : '$ 0.00'
-
-          const mayaTotal = totals.MAYA.amount().isGreaterThan(0)
-            ? formatAssetAmountCurrency({
-                amount: baseToAsset(getValueOfRuneInAsset(totals.MAYA, pricePoolDataMaya)),
-                asset: selectedPricePoolMaya.asset,
-                decimal: isUSDAsset(selectedPricePoolMaya.asset) ? 2 : 4
-              })
-            : '$ 0.00'
-
-          // Concatenate the strings for THOR and MAYA, separated by a newline if both are present
-          return protocol === Protocol.THORChain ? thorTotal : mayaTotal
         }
       )
     )
-  }, [
-    intl,
-    nodeInfos,
-    pricePoolDataMaya,
-    pricePoolDataThor,
-    protocol,
-    selectedPricePoolMaya.asset,
-    selectedPricePoolThor.asset,
-    walletAddresses.MAYA,
-    walletAddresses.THOR
-  ])
+  }, [intl, isPrivate, nodeInfosThor, pricePoolDataThor, selectedPricePoolThor.asset, walletAddresses.THOR])
+
+  // MayaChain-specific bond total renderer
+  const renderBondTotalMaya = useMemo(() => {
+    const calculateTotalBondMaya = (nodes: NodeInfoMaya[]) => {
+      const walletAddressSet = new Set(walletAddresses.MAYA.map((info) => info.address.toLowerCase()))
+
+      return nodes.reduce((acc, node) => {
+        const totalBondProviderAmount = node.bondProviders.providers.reduce((providerSum, provider) => {
+          const normalizedAddress = provider.bondAddress.toLowerCase()
+          if (walletAddressSet.has(normalizedAddress)) {
+            const poolSum = Object.values(provider.pools).reduce(
+              (sum, amount) => sum.plus(baseAmount(amount.units, 8)), // Assuming 8 decimals; adjust as needed
+              assetToBase(assetAmount(0))
+            )
+            return providerSum.plus(poolSum)
+          }
+          return providerSum
+        }, assetToBase(assetAmount(0)))
+
+        return acc.plus(totalBondProviderAmount)
+      }, assetToBase(assetAmount(0)))
+    }
+
+    return FP.pipe(
+      nodeInfosMaya,
+      RD.fold(
+        () => '', // Initial loading
+        () => '', // Pending
+        (error) => intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message }), // Error
+        (nodes) => {
+          const total = calculateTotalBondMaya(nodes)
+          return total.amount().isGreaterThan(0)
+            ? `${
+                isPrivate
+                  ? hiddenString
+                  : formatAssetAmountCurrency({
+                      amount: baseToAsset(getValueOfRuneInAsset(total, pricePoolDataMaya)),
+                      asset: selectedPricePoolMaya.asset,
+                      decimal: isUSDAsset(selectedPricePoolMaya.asset) ? 2 : 4
+                    })
+              }`
+            : ''
+        }
+      )
+    )
+  }, [intl, isPrivate, nodeInfosMaya, pricePoolDataMaya, selectedPricePoolMaya.asset, walletAddresses.MAYA])
+
+  // Combine totals based on protocol
+  const renderBondTotal = useMemo(() => {
+    const thorTotal = renderBondTotalThor
+    const mayaTotal = renderBondTotalMaya
+    if (protocol === THORChain) return thorTotal
+    if (protocol === MAYAChain) return mayaTotal
+    return [thorTotal, mayaTotal].filter(Boolean).join('\n')
+  }, [protocol, renderBondTotalThor, renderBondTotalMaya])
 
   const { allSharesRD: allThorSharesRD } = usePoolShares(THORChain)
   const { allSharesRD: allMayaSharesRD } = usePoolShares(MAYAChain)

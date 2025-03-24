@@ -7,6 +7,7 @@
 ## Update/Fixes
 
 - fix synth fee issue [#622] (https://github.com/asgardex/asgardex-desktop/pull/622)
+- fix Evm token helper function [#635] (https://github.com/asgardex/asgardex-desktop/pull/635)
 
 # 1.30.2 (2025-1-17)
 
