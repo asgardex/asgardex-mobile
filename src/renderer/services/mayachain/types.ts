@@ -243,6 +243,26 @@ export type SaverProvider = {
 export type SaverProviderRD = RD.RemoteData<Error, SaverProvider>
 export type SaverProviderLD = LiveData<Error, SaverProvider>
 
+export type MayanodePool = {
+  balanceCacao: BaseAmount
+  balanceAsset: BaseAmount
+  asset: AnyAsset
+  lpUnits: BigNumber
+  poolUnits: BigNumber
+  status: string
+  decimals: number | undefined
+  synthUnits: string
+  synthSupply: string
+  pendingCacaoInbound: BaseAmount
+  pendingAssetInbound: BaseAmount
+  saversUnits: string
+  synthMintPaused: boolean
+  bondable: boolean
+}
+export type MayanodePools = MayanodePool[]
+export type MayanodePoolsRD = RD.RemoteData<Error, MayanodePools>
+export type MayanodePoolsLD = LiveData<Error, MayanodePools>
+
 export const erc20WhitelistTokenIO = t.type({
   chainId: t.number,
   address: t.string,

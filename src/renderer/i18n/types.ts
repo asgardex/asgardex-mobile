@@ -237,6 +237,7 @@ type PoolsMessageKey =
   | 'pools.incentivependulum.info'
   | 'pools.incentivependulum.tooltip'
   | 'pools.incentivependulum.error'
+  | 'pools.bondable'
 
 export type PoolsMessages = { [key in PoolsMessageKey]: string }
 

@@ -78,6 +78,7 @@ const CardItem = ({
   isPrivate: boolean
 }) => {
   const navigate = useNavigate()
+  const intl = useIntl()
 
   const handleManage = useCallback(() => {
     navigate(route)
@@ -88,7 +89,7 @@ const CardItem = ({
       <div className="flex w-full items-center justify-between">
         <div className="text-[13px] text-text2 dark:text-text2d">{title}</div>
         <div className="cursor-pointer text-[13px] text-turquoise" onClick={handleManage}>
-          Manage
+          {intl.formatMessage({ id: 'common.manage' })}
         </div>
       </div>
       <div className="text-[20px] text-text2 dark:text-text2d">{isPrivate ? hiddenString : value}</div>

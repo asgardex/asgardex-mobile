@@ -15,6 +15,7 @@ import {
   CryptoAmount,
   assetAmount,
   assetToBase,
+  assetToString,
   baseToAsset,
   bn,
   formatAssetAmountCurrency
@@ -32,8 +33,9 @@ import { HDMode, WalletType } from '../../../../../shared/wallet/types'
 import { ZERO_BASE_AMOUNT } from '../../../../const'
 import { isUSDAsset } from '../../../../helpers/assetHelper'
 import { validateAddress } from '../../../../helpers/form/validation'
-import { getBondMemo, getLeaveMemo, getUnbondMemo } from '../../../../helpers/memoHelper'
+import { getBondMemoMayanode, getLeaveMemo, getUnbondMemoMayanode } from '../../../../helpers/memoHelper'
 import { getUSDValue } from '../../../../helpers/poolHelperMaya'
+import { useBondableAssets } from '../../../../hooks/useBondableAssets'
 import { usePricePoolMaya } from '../../../../hooks/usePricePoolMaya'
 import { useSubscriptionState } from '../../../../hooks/useSubscriptionState'
 import { FeeRD } from '../../../../services/chain/types'
@@ -46,6 +48,7 @@ import {
   NodeInfos,
   NodeInfosRD
 } from '../../../../services/mayachain/types'
+import { PoolShare, PoolSharesRD } from '../../../../services/mayaMigard/types'
 import { ValidatePasswordHandler, WalletBalance } from '../../../../services/wallet/types'
 import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../../../modal/confirmation'
 import { TxModal } from '../../../modal/tx'
@@ -64,7 +67,7 @@ import * as H from './Interact.helpers'
 import * as Styled from './Interact.styles'
 import { InteractType } from './Interact.types'
 
-type FormValues = {
+export type FormValues = {
   memo: string
   mayaAddress: string
   providerAddress: string
@@ -100,6 +103,7 @@ type Props = {
   network: Network
   poolDetails: PoolDetails
   nodes: NodeInfosRD
+  poolShares: PoolSharesRD
 }
 export const InteractFormMaya: React.FC<Props> = (props) => {
   const {
@@ -119,13 +123,17 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
     validatePassword$,
     mayachainQuery,
     network,
-    nodes: nodesRD
+    nodes: nodesRD,
+    poolShares
   } = props
   const intl = useIntl()
 
   const { asset } = balance
   const { walletAddress } = balance
   const pricePool = usePricePoolMaya()
+
+  console.log(poolShares)
+  const bondableAssets = useBondableAssets()
 
   const [hasProviderAddress, setHasProviderAddress] = useState(false)
 
@@ -442,25 +450,26 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
   const [sendTxStartTime, setSendTxStartTime] = useState<number>(0)
 
   const getMemo = useCallback(() => {
-    const mayaAddress = form.getFieldValue('mayaAddress')
-    const providerAddress =
-      form.getFieldValue('providerAddress') === undefined ? undefined : form.getFieldValue('providerAddress')
-    const nodeOperatorFee = form.getFieldValue('operatorFee')
-    const feeInBasisPoints = nodeOperatorFee ? nodeOperatorFee * 100 : undefined
+    const mayaNodeAddress = form.getFieldValue('mayaAddress')
+    // const providerAddress =
+    //   form.getFieldValue('providerAddress') === undefined ? undefined : form.getFieldValue('providerAddress')
 
     let createMemo = ''
 
+    const assetPool = ''
+    const lpUnits = ''
+
     switch (interactType) {
       case InteractType.Bond: {
-        createMemo = getBondMemo(mayaAddress, providerAddress, feeInBasisPoints)
+        createMemo = getBondMemoMayanode(assetPool, lpUnits, mayaNodeAddress)
         break
       }
       case InteractType.Unbond: {
-        createMemo = getUnbondMemo(mayaAddress, amountToSend, providerAddress)
+        createMemo = getUnbondMemoMayanode(assetPool, lpUnits, mayaNodeAddress)
         break
       }
       case InteractType.Leave: {
-        createMemo = getLeaveMemo(mayaAddress)
+        createMemo = getLeaveMemo(mayaNodeAddress)
         break
       }
       case InteractType.Custom: {
@@ -474,7 +483,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
     }
     setMemo(createMemo)
     return createMemo
-  }, [amountToSend, currentMemo, form, interactType, memo])
+  }, [currentMemo, form, interactType, memo])
 
   const onChangeInput = useCallback(
     async (value: BigNumber) => {
@@ -640,11 +649,8 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
   const submitLabel = useMemo(() => {
     switch (interactType) {
       case InteractType.Bond:
-        if (hasProviderAddress) {
-          return intl.formatMessage({ id: 'deposit.interact.actions.addBondProvider' })
-        } else {
-          return intl.formatMessage({ id: 'deposit.interact.actions.bond' })
-        }
+        return intl.formatMessage({ id: 'deposit.interact.actions.bond' })
+
       case InteractType.Unbond:
         return intl.formatMessage({ id: 'deposit.interact.actions.unbond' })
       case InteractType.Leave:
@@ -658,7 +664,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
           return intl.formatMessage({ id: 'deposit.interact.actions.buyMayaname' })
         }
     }
-  }, [interactType, hasProviderAddress, intl, isOwner])
+  }, [interactType, intl, isOwner])
 
   const uiFeesRD: UIFeesRD = useMemo(
     () =>
@@ -670,14 +676,14 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
       ),
     [feeRD]
   )
-  const onClickHasProviderAddress = useCallback(() => {
-    // clean address
-    form.setFieldsValue({ providerAddress: undefined })
-    form.setFieldsValue({ operatorFee: undefined })
-    // toggle
-    setHasProviderAddress((v) => !v)
-    getMemo()
-  }, [form, getMemo])
+  // const onClickHasProviderAddress = useCallback(() => {
+  //   // clean address
+  //   form.setFieldsValue({ providerAddress: undefined })
+  //   form.setFieldsValue({ operatorFee: undefined })
+  //   // toggle
+  //   setHasProviderAddress((v) => !v)
+  //   getMemo()
+  // }, [form, getMemo])
 
   useEffect(() => {
     // Whenever `amountToSend` has been updated, we put it back into input field
@@ -696,6 +702,88 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
     reset()
     setMemo('')
   }, [interactType, reset])
+
+  const PoolShareItem = useCallback<
+    React.FC<{
+      share: PoolShare
+      isLoading: boolean
+    }>
+  >(
+    ({ share, isLoading }) => {
+      const assetString = assetToString(share.asset)
+      const isBondable = bondableAssets.includes(assetString)
+
+      return (
+        <div className="flex items-center justify-between border-b pb-2 dark:border-gray1d">
+          <div>
+            <div className="font-main text-[12px]">{assetString}</div>
+            <div className="font-main text-[10px] text-gray1 dark:text-gray1d">
+              {intl.formatMessage({ id: 'pools.bondable' })}:{' '}
+              {bondableAssets.length === 0 ? intl.formatMessage({ id: 'common.loading' }) : isBondable ? 'Yes' : 'No'}
+            </div>
+          </div>
+          <FlatButton size="small" disabled={isLoading || bondableAssets.length === 0 || !isBondable}>
+            {intl.formatMessage({ id: 'deposit.interact.actions.bond' })}
+          </FlatButton>
+        </div>
+      )
+    },
+    [bondableAssets, intl]
+  )
+
+  // Updated renderPoolShares
+  const renderPoolShares = useMemo(() => {
+    return FP.pipe(
+      poolShares,
+      RD.fold(
+        // Initial state
+        () => (
+          <div className="p-4">
+            <div className="font-main text-[12px] text-gray1 dark:text-gray1d">
+              {intl.formatMessage({ id: 'common.initial' })}
+            </div>
+          </div>
+        ),
+        // Pending state
+        () => (
+          <div className="p-4">
+            <div className="font-main text-[12px] text-gray1 dark:text-gray1d">
+              {intl.formatMessage({ id: 'common.loading' })}
+            </div>
+          </div>
+        ),
+        // Failure state
+        (error) => (
+          <div className="p-4">
+            <div className="font-main text-[12px] text-error0 dark:text-error0d">
+              {intl.formatMessage({ id: 'common.error' })}: {error.message}
+            </div>
+          </div>
+        ),
+        // Success state
+        (shares) => (
+          <div className="p-4">
+            <h3 className="font-mainBold text-[16px] text-gray2 dark:text-gray2d">
+              {intl.formatMessage({ id: 'wallet.nav.poolshares' })}
+            </h3>
+            {shares.length === 0 ? (
+              <div className="font-main text-[12px] text-gray1 dark:text-gray1d">
+                {intl.formatMessage({ id: 'common.noResult' })}
+              </div>
+            ) : (
+              shares.map((share) => (
+                <PoolShareItem
+                  key={`${assetToString(share.asset)}-${share.units.toString()}`}
+                  share={share}
+                  isLoading={isLoading}
+                />
+              ))
+            )}
+          </div>
+        )
+      )
+    )
+  }, [poolShares, intl, PoolShareItem, isLoading])
 
   const [showDetails, setShowDetails] = useState<boolean>(true)
 
@@ -750,8 +838,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
           </Styled.InputContainer>
         )}
 
-        {/* Provider address input (BOND/UNBOND/ only) */}
-        {(interactType === InteractType.Bond || interactType === InteractType.Unbond) && (
+        {/* Provider address input (BOND/UNBOND/ only)         {(interactType === InteractType.Bond || interactType === InteractType.Unbond) && (
           <Styled.InputContainer style={{ paddingBottom: '20px' }}>
             <CheckButton checked={hasProviderAddress} clickHandler={onClickHasProviderAddress} disabled={isLoading}>
               {intl.formatMessage({ id: 'deposit.interact.label.bondprovider' })}
@@ -772,7 +859,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
               </>
             )}
           </Styled.InputContainer>
-        )}
+        )}*/}
 
         {/* Amount input (BOND/UNBOND/CUSTOM only) */}
         {!hasProviderAddress && (
@@ -820,6 +907,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
                     </div>
                   </div>
                 )}
+                {renderPoolShares}
                 <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
                 {isFeeError && renderFeeError}
               </Styled.InputContainer>
