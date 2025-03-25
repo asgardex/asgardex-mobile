@@ -37,6 +37,7 @@ import { validateAddress } from '../../../../helpers/form/validation'
 import { getBondMemoMayanode, getLeaveMemo, getUnbondMemoMayanode } from '../../../../helpers/memoHelper'
 import { getUSDValue } from '../../../../helpers/poolHelperMaya'
 import { useBondableAssets } from '../../../../hooks/useBondableAssets'
+import { useNetwork } from '../../../../hooks/useNetwork'
 import { usePricePoolMaya } from '../../../../hooks/usePricePoolMaya'
 import { useSubscriptionState } from '../../../../hooks/useSubscriptionState'
 import { FeeRD } from '../../../../services/chain/types'
@@ -55,6 +56,7 @@ import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../../
 import { TxModal } from '../../../modal/tx'
 import { SendAsset } from '../../../modal/tx/extra/SendAsset'
 import * as StyledR from '../../../shared/form/Radio.styles'
+import { AssetIcon } from '../../../uielements/assets/assetIcon'
 import { BaseButton, FlatButton, ViewTxButton } from '../../../uielements/button'
 import { CheckButton } from '../../../uielements/button/CheckButton'
 import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'
@@ -699,7 +701,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
       RD.fold(
         // Initial state
         () => (
-          <div className="p-4">
+          <div className="py-4">
             <div className="font-main text-[12px] text-gray1 dark:text-gray1d">
               {intl.formatMessage({ id: 'common.initial' })}
             </div>
@@ -707,7 +709,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
         ),
         // Pending state
         () => (
-          <div className="p-4">
+          <div className="py-4">
             <div className="font-main text-[12px] text-gray1 dark:text-gray1d">
               {intl.formatMessage({ id: 'common.loading' })}
             </div>
@@ -715,7 +717,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
         ),
         // Failure state
         (error) => (
-          <div className="p-4">
+          <div className="py-4">
             <div className="font-main text-[12px] text-error0 dark:text-error0d">
               {intl.formatMessage({ id: 'common.error' })}: {error.message}
             </div>
@@ -723,7 +725,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
         ),
         // Success state
         (shares) => (
-          <div className="p-4">
+          <div className="py-4">
             <h3 className="font-mainBold text-[16px] text-gray2 dark:text-gray2d">
               {intl.formatMessage({ id: 'wallet.nav.poolshares' })}
             </h3>
@@ -840,7 +842,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
             </div>
           </div>
         )}
-        {interactType === InteractType.Bond && <>{renderPoolShares}</>}
+        {interactType === InteractType.Bond && renderPoolShares}
         <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
         {isFeeError && renderFeeError}
 
@@ -1123,6 +1125,7 @@ const PoolShareItem: React.FC<{
   const [mode, setMode] = useState<'half' | 'max' | 'custom'>('max')
   const [customPercentage, setCustomPercentage] = useState<string>('') // Add state for percentage
   const intl = useIntl()
+  const { network } = useNetwork()
   const assetString = assetToString(share.asset)
   const bondableAssets = useBondableAssets()
   const isBondable = bondableAssets.includes(assetString)
@@ -1164,41 +1167,44 @@ const PoolShareItem: React.FC<{
 
   return (
     <div className="flex items-center justify-between border-b pb-2 dark:border-gray1d">
-      <div className="flex flex-col">
-        <div className="font-main text-[12px]">{assetString}</div>
-        <div className="font-main text-[10px] text-gray1 dark:text-gray1d">
-          {`${intl.formatMessage({ id: 'pools.bondable' })} : ${
-            bondableAssets.length === 0 ? intl.formatMessage({ id: 'common.loading' }) : isBondable ? 'Yes' : 'No'
-          }`}
+      <div className="flex items-center space-x-2">
+        <AssetIcon asset={share.asset} network={network} />
+        <div className="flex flex-col">
+          <div className="font-main text-[12px] text-text2 dark:text-text2d">{assetString}</div>
+          <div className="font-main text-[10px] text-gray1 dark:text-gray1d">
+            {`${intl.formatMessage({ id: 'pools.bondable' })} : ${
+              bondableAssets.length === 0 ? intl.formatMessage({ id: 'common.loading' }) : isBondable ? 'Yes' : 'No'
+            }`}
+          </div>
+          <div className="font-main text-[10px] text-gray1 dark:text-gray1d">
+            {`${intl.formatMessage({ id: 'deposit.share.units' })} : ${share.units.toString()}`}
+          </div>
+          {mode === 'custom' && (
+            <Form.Item
+              name={`unitsToBond-${assetString}`}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter a percentage'
+                },
+                {
+                  validator: (_, value) =>
+                    value && (parseFloat(value) <= 0 || parseFloat(value) > 100)
+                      ? Promise.reject('Percentage must be between 0 and 100')
+                      : Promise.resolve()
+                }
+              ]}>
+              <Styled.Input
+                size="small"
+                disabled={isLoading || bondableAssets.length === 0 || !isBondable}
+                value={customPercentage}
+                onChange={handleCustomPercentageChange}
+                suffix="%"
+                placeholder="Enter percentage (0-100)"
+              />
+            </Form.Item>
+          )}
         </div>
-        <div className="font-main text-[10px] text-gray1 dark:text-gray1d">
-          {`${intl.formatMessage({ id: 'deposit.share.units' })} : ${share.units.toString()}`}
-        </div>
-        {mode === 'custom' && (
-          <Form.Item
-            name={`unitsToBond-${assetString}`}
-            rules={[
-              {
-                required: true,
-                message: 'Please enter a percentage'
-              },
-              {
-                validator: (_, value) =>
-                  value && (parseFloat(value) <= 0 || parseFloat(value) > 100)
-                    ? Promise.reject('Percentage must be between 0 and 100')
-                    : Promise.resolve()
-              }
-            ]}>
-            <Styled.Input
-              size="small"
-              disabled={isLoading || bondableAssets.length === 0 || !isBondable}
-              value={customPercentage}
-              onChange={handleCustomPercentageChange}
-              suffix="%"
-              placeholder="Enter percentage (0-100)"
-            />
-          </Form.Item>
-        )}
       </div>
       <div className="flex space-x-2">
         <FlatButton
