@@ -255,6 +255,7 @@ export const InteractFormThor: React.FC<Props> = (props) => {
         return _amountToSend
       case InteractType.Leave:
       case InteractType.Unbond:
+      case InteractType.whitelist:
         return ZERO_BASE_AMOUNT
       case InteractType.RunePool: {
         const amnt = runePoolAction === Action.add ? _amountToSend : ZERO_BASE_AMOUNT

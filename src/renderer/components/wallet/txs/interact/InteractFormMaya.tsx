@@ -29,12 +29,18 @@ import * as O from 'fp-ts/lib/Option'
 import { debounce } from 'lodash'
 import { useIntl } from 'react-intl'
 
+import { ONE_CACAO_BASE_AMOUNT } from '../../../../../shared/mock/amount'
 import { isKeystoreWallet, isLedgerWallet } from '../../../../../shared/utils/guard'
 import { HDMode, WalletType } from '../../../../../shared/wallet/types'
 import { ZERO_BASE_AMOUNT } from '../../../../const'
 import { isUSDAsset } from '../../../../helpers/assetHelper'
 import { validateAddress } from '../../../../helpers/form/validation'
-import { getBondMemoMayanode, getLeaveMemo, getUnbondMemoMayanode } from '../../../../helpers/memoHelper'
+import {
+  getBondMemoMayanode,
+  getLeaveMemo,
+  getUnbondMemoMayanode,
+  getWhitelistMemo
+} from '../../../../helpers/memoHelper'
 import { getUSDValue } from '../../../../helpers/poolHelperMaya'
 import { useBondableAssets } from '../../../../hooks/useBondableAssets'
 import { useNetwork } from '../../../../hooks/useNetwork'
@@ -140,7 +146,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
   const [hasProviderAddress, setHasProviderAddress] = useState(false)
 
   const [userNodeInfo, setUserNodeInfo] = useState<UserNodeInfo | undefined>(undefined)
-  const [_amountToSend, setAmountToSend] = useState<BaseAmount>(ZERO_BASE_AMOUNT)
+  const [_amountToSend, setAmountToSend] = useState<BaseAmount>(ONE_CACAO_BASE_AMOUNT)
 
   const nodes: NodeInfos = useMemo(
     () =>
@@ -178,6 +184,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
   const amountToSend = useMemo(() => {
     switch (interactType) {
       case InteractType.Bond:
+      case InteractType.whitelist:
       case InteractType.Custom:
       case InteractType.MAYAName:
       case InteractType.THORName:
@@ -452,10 +459,12 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
 
   const getMemo = useCallback(() => {
     const mayaNodeAddress = form.getFieldValue('mayaAddress')
-    let createMemo = ''
-
+    const whitelistAdd = form.getFieldValue('providerAddress')
+    const nodeOperatorFee = form.getFieldValue('operatorFee')
     const assetPool = form.getFieldValue('assetPool')
     const lpUnits = form.getFieldValue('bondLpUnits')
+    const feeInBasisPoints = nodeOperatorFee ? nodeOperatorFee * 100 : undefined
+    let createMemo = ''
 
     switch (interactType) {
       case InteractType.Bond: {
@@ -468,6 +477,10 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
       }
       case InteractType.Leave: {
         createMemo = getLeaveMemo(mayaNodeAddress)
+        break
+      }
+      case InteractType.whitelist: {
+        createMemo = getWhitelistMemo(mayaNodeAddress, whitelistAdd, feeInBasisPoints)
         break
       }
       case InteractType.Custom: {
@@ -524,7 +537,7 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
     form.resetFields()
     setHasProviderAddress(false)
     setMemo('')
-    setAmountToSend(ZERO_BASE_AMOUNT)
+    setAmountToSend(ONE_CACAO_BASE_AMOUNT)
     setMayaname(O.none)
     setIsOwner(false)
     setMayanameQuoteValid(false)
@@ -649,13 +662,14 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
     switch (interactType) {
       case InteractType.Bond:
         return intl.formatMessage({ id: 'deposit.interact.actions.bond' })
-
       case InteractType.Unbond:
         return intl.formatMessage({ id: 'deposit.interact.actions.unbond' })
       case InteractType.Leave:
         return intl.formatMessage({ id: 'deposit.interact.actions.leave' })
       case InteractType.Custom:
         return intl.formatMessage({ id: 'wallet.action.send' })
+      case InteractType.whitelist:
+        return intl.formatMessage({ id: 'deposit.interact.actions.whitelist' })
       case InteractType.MAYAName:
         if (isOwner) {
           return intl.formatMessage({ id: 'common.isUpdateMayaname' })
@@ -752,6 +766,16 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
 
   const [showDetails, setShowDetails] = useState<boolean>(true)
 
+  const exampleMemos = [
+    { type: 'Bond', memo: 'BOND:ASSET:LPUNITS:NODEADDRESS' },
+    { type: 'Unbond', memo: 'UNBOND:ASSET:LPUNITS:NODEADDRESS' },
+    { type: 'Leave', memo: 'LEAVE:NODEADDRESS' },
+    { type: 'Whitelist Bond Provider', memo: 'BOND:::NODE_ADDRESS:BOND_PROVIDER_ADDRESS:FEE' },
+    { type: 'Unwhitelist Bond Provider', memo: 'UNBOND:::NODE_ADDRESS:BOND_PROVIDER_ADDRESS' },
+    { type: 'Add LP symmetrical', memo: '+:POOL:PAIREDADDR' },
+    { type: 'Withdraw Lp', memo: 'WITHDRAW:POOL:10000' }
+  ]
+
   // const bond = userNodeInfo ? userNodeInfo.pools.map((value) => value.asset) : []
 
   return (
@@ -781,12 +805,27 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
               <Styled.Input disabled={isLoading} onChange={handleMemo} size="large" />
             </Form.Item>
             {swapMemoDetected && <div className="pb-20px text-warning0 dark:text-warning0d ">{affiliateTracking}</div>}
+            {/* Display example memos */}
+            <div className="mt-4">
+              <Styled.InputLabel>{intl.formatMessage({ id: 'common.examples' }, { name: 'Memos' })}</Styled.InputLabel>
+              <div className="rounded-lg bg-gray0 p-4 dark:bg-gray0d">
+                {exampleMemos.map((example, index) => (
+                  <div
+                    key={index}
+                    className="mb-2 flex items-center justify-between text-[12px] text-gray2 dark:text-gray2d">
+                    <span className="font-mainBold">{example.type}:</span>
+                    <span className="font-main">{example.memo}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </Styled.InputContainer>
         )}
 
         {/* Node address input (BOND/UNBOND/LEAVE only) */}
         {(interactType === InteractType.Bond ||
           interactType === InteractType.Unbond ||
+          interactType === InteractType.whitelist ||
           interactType === InteractType.Leave) && (
           <Styled.InputContainer>
             <Styled.InputLabel>{intl.formatMessage({ id: 'common.nodeAddress' })}</Styled.InputLabel>
@@ -800,6 +839,46 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
               ]}>
               <Styled.Input disabled={isLoading} onChange={() => getMemo()} size="large" />
             </Form.Item>
+          </Styled.InputContainer>
+        )}
+
+        {/* Provider address input (whitelist only) */}
+        {interactType === InteractType.whitelist && (
+          <Styled.InputContainer>
+            {
+              <>
+                <Styled.InputLabel>{intl.formatMessage({ id: 'common.providerAddress' })}</Styled.InputLabel>
+                <Form.Item
+                  name="providerAddress"
+                  rules={[
+                    {
+                      required: true,
+                      validator: addressValidator
+                    }
+                  ]}>
+                  <Styled.Input disabled={isLoading} onChange={() => getMemo()} size="large" />
+                </Form.Item>
+              </>
+            }
+          </Styled.InputContainer>
+        )}
+        {interactType === InteractType.whitelist && (
+          <Styled.InputContainer>
+            <Styled.InputLabel>{intl.formatMessage({ id: 'common.fee.nodeOperator' })}</Styled.InputLabel>
+            <Styled.FormItem
+              name="operatorFee"
+              rules={[
+                {
+                  required: false
+                }
+              ]}>
+              <Styled.Input
+                placeholder="Enter a % value, memo will populate with Basis Points automatically"
+                disabled={isLoading}
+                size="large"
+                onChange={() => getMemo()}
+              />
+            </Styled.FormItem>
           </Styled.InputContainer>
         )}
         {/* Amount input (BOND/UNBOND/CUSTOM only) */}

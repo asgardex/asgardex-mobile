@@ -165,6 +165,26 @@ export const updateMemo = (memo: string, network: Network): string => {
 export const getLeaveMemo = (thorAddress: string) => mkMemo(['LEAVE', thorAddress])
 
 /**
+ * Memo to whitelist
+ *
+ * @param nodeAddress address to bond to
+ * @param whitelistAddress address to whitelist
+ *
+ */
+export const getWhitelistMemo = (nodeAddress: string, whitelistAddress: string, fee?: number) =>
+  mkMemo(['BOND::', nodeAddress, whitelistAddress, fee])
+
+/**
+ * Memo to Unwhitelist
+ *
+ * @param nodeAddress address to bond to
+ * @param whitelistAddress address to whitelist
+ *
+ */
+export const getUnWhitelistMemo = (nodeAddress: string, whitelistAddress: string) =>
+  mkMemo(['UNBOND::', nodeAddress, whitelistAddress])
+
+/**
  * Memo to deposit
  *
  * @param asset Asset to deposit into a specified pool

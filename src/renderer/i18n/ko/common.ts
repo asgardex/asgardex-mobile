@@ -6,6 +6,7 @@ const common: CommonMessages = {
   'common.dex': 'Dex',
   'common.faqs': '자주 묻는 질문',
   'common.greeting': '{name}님, 안녕하세요',
+  'common.examples': '예시 {name}',
   'common.copyright': '©',
   'common.type': '유형',
   'common.chain': '체인',
