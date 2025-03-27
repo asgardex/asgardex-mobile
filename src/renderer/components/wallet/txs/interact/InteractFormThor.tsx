@@ -804,6 +804,8 @@ export const InteractFormThor: React.FC<Props> = (props) => {
         return intl.formatMessage({ id: 'deposit.interact.actions.unbond' })
       case InteractType.Leave:
         return intl.formatMessage({ id: 'deposit.interact.actions.leave' })
+      case InteractType.Whitelist:
+        return intl.formatMessage({ id: 'deposit.interact.actions.whitelist' })
       case InteractType.RunePool: {
         const label =
           runePoolAction === Action.add
@@ -860,6 +862,10 @@ export const InteractFormThor: React.FC<Props> = (props) => {
     getMemo()
   }, [form, getMemo, feeRD])
 
+  const handleLearn = useCallback(() => {
+    window.apiUrl.openExternal('https://dev.thorchain.org/concepts/memos.html')
+  }, [])
+
   useEffect(() => {
     // Whenever `amountToSend` has been updated, we put it back into input field
     form.setFieldsValue({
@@ -882,6 +888,14 @@ export const InteractFormThor: React.FC<Props> = (props) => {
   const address = ''
   const amount = bn(0)
   const bondBaseAmount = userNodeInfo?.bondAmount ? userNodeInfo.bondAmount : baseAmount(0)
+
+  const exampleMemos = [
+    { type: 'Bond', memo: 'BOND:NODEADDRESS:PROVIDER:FEE' },
+    { type: 'Unbond', memo: 'UNBOND:NODEADDRESS:AMOUNT:PROVIDER' },
+    { type: 'Leave', memo: 'LEAVE:NODEADDRESS' },
+    { type: 'Add LP symmetrical', memo: 'ADD:POOL:PAIREDADDR:AFFILIATE:FEE' },
+    { type: 'Withdraw Lp', memo: 'WITHDRAW:POOL:BASISPOINTS:ASSET' }
+  ]
 
   return (
     <Styled.Form
@@ -909,6 +923,27 @@ export const InteractFormThor: React.FC<Props> = (props) => {
               ]}>
               <Styled.Input disabled={isLoading} onChange={handleMemo} size="large" />
             </Form.Item>
+            {/* Display example memos */}
+            <div className="mt-4">
+              <Styled.InputLabel>{intl.formatMessage({ id: 'common.examples' }, { name: 'Memos' })}</Styled.InputLabel>
+              <div className="rounded-lg bg-gray0 p-4 dark:bg-gray0d">
+                {exampleMemos.map((example, index) => (
+                  <div
+                    key={index}
+                    className="mb-2 flex items-center justify-between text-[12px] text-text2 dark:text-text2d">
+                    <span className="font-mainBold">{example.type}:</span>
+                    <span className="font-main">{example.memo}</span>
+                  </div>
+                ))}
+                <div className="flex justify-end border-t border-solid border-gray2/50 pt-2 dark:border-gray2d/50">
+                  <span
+                    className="cursor-pointer rounded-full bg-turquoise px-2 text-[12px] text-white"
+                    onClick={handleLearn}>
+                    Learn More...
+                  </span>
+                </div>
+              </div>
+            </div>
           </Styled.InputContainer>
         )}
         {/** Rune Pool Only */}
