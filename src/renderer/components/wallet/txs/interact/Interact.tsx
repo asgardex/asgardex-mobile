@@ -36,6 +36,7 @@ export const Interact: React.FC<Props> = ({
         { type: InteractType.Bond, label: intl.formatMessage({ id: 'deposit.interact.actions.bond' }) },
         { type: InteractType.Unbond, label: intl.formatMessage({ id: 'deposit.interact.actions.unbond' }) },
         { type: InteractType.Leave, label: intl.formatMessage({ id: 'deposit.interact.actions.leave' }) },
+        { type: InteractType.Whitelist, label: intl.formatMessage({ id: 'deposit.interact.actions.whitelist' }) },
         { type: InteractType.Custom, label: intl.formatMessage({ id: 'common.custom' }) },
         { type: name, label: intl.formatMessage({ id: `common.${name}` }) }
       ]

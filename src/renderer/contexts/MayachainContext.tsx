@@ -32,7 +32,9 @@ import {
   getLiquidityProviders,
   reloadLiquidityProviders,
   getLiquidityProvider,
-  reloadLiquidityProvider
+  reloadLiquidityProvider,
+  getMayanodePools,
+  reloadMayanodePools
 } from '../services/mayachain'
 
 export type MayachainContextValue = {
@@ -68,6 +70,8 @@ export type MayachainContextValue = {
   reloadLiquidityProviders: typeof reloadLiquidityProviders
   getLiquidityProvider: typeof getLiquidityProvider
   reloadLiquidityProvider: typeof reloadLiquidityProvider
+  getMayanodePools: typeof getMayanodePools
+  reloadMayanodePools: typeof reloadMayanodePools
 }
 
 const initialContext: MayachainContextValue = {
@@ -101,6 +105,8 @@ const initialContext: MayachainContextValue = {
   reloadMayachainLastblock,
   getLiquidityProviders,
   reloadLiquidityProviders,
+  getMayanodePools,
+  reloadMayanodePools,
   getLiquidityProvider,
   reloadLiquidityProvider
 }

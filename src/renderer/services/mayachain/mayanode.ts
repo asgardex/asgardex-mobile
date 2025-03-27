@@ -14,7 +14,9 @@ import {
   LiquidityProviderSummary,
   LiquidityProvidersResponse,
   Saver,
-  LiquidityProvider
+  LiquidityProvider,
+  PoolsApi,
+  PoolsResponse
 } from '@xchainjs/xchain-mayanode'
 import { SaversApi } from '@xchainjs/xchain-thornode'
 import {
@@ -27,6 +29,7 @@ import {
   bnOrZero
 } from '@xchainjs/xchain-util'
 import { AxiosResponse } from 'axios'
+import BigNumber from 'bignumber.js'
 import * as A from 'fp-ts/Array'
 import * as FP from 'fp-ts/function'
 import * as N from 'fp-ts/lib/number'
@@ -46,7 +49,9 @@ import {
   LiquidityProvider as LiquidityProvidersMaya,
   NodeStatusEnum,
   LiquidityProviderForPool,
-  LiquidityProviderForPoolLD
+  LiquidityProviderForPoolLD,
+  MayanodePoolsLD,
+  MayanodePools
 } from '../mayachain/types'
 import {
   Mimir,
@@ -466,6 +471,54 @@ export const createMayanodeService$ = (network$: Network$, clientUrl$: ClientUrl
       RxOp.startWith(RD.pending)
     )
 
+  const apiGetMayanodePools$ = (): LiveData<Error, PoolsResponse> =>
+    FP.pipe(
+      mayanodeUrl$,
+      liveData.chain((basePath) =>
+        FP.pipe(
+          Rx.from(new PoolsApi(getMayanodeAPIConfiguration(basePath)).pools()),
+          RxOp.map((response: AxiosResponse<PoolsResponse>) => RD.success(response.data)), // Extract data from AxiosResponse
+          RxOp.catchError((e: Error) => Rx.of(RD.failure(e)))
+        )
+      ),
+      RxOp.startWith(RD.pending)
+    )
+
+  const { stream$: reloadMayanodePools$, trigger: reloadMayanodePools } = triggerStream()
+
+  const getMayanodePools = (): MayanodePoolsLD =>
+    FP.pipe(
+      reloadMayanodePools$,
+      RxOp.debounceTime(300),
+      RxOp.switchMap((_) => apiGetMayanodePools$()),
+      liveData.map(
+        // transform pools
+        (pools): MayanodePools => {
+          // Assuming pools is an array of raw pool data from the API
+          return pools.map((pool) => {
+            return {
+              balanceCacao: baseAmount(pool.balance_cacao, CACAO_DECIMAL),
+              balanceAsset: baseAmount(pool.balance_asset),
+              asset: assetFromStringEx(pool.asset),
+              lpUnits: new BigNumber(pool.LP_units),
+              poolUnits: new BigNumber(pool.pool_units),
+              status: pool.status,
+              decimals: pool.decimals,
+              synthUnits: pool.synth_units,
+              synthSupply: pool.synth_supply,
+              pendingCacaoInbound: baseAmount(pool.pending_inbound_cacao, CACAO_DECIMAL),
+              pendingAssetInbound: baseAmount(pool.pending_inbound_asset),
+              saversUnits: pool.savers_units,
+              synthMintPaused: pool.synth_mint_paused,
+              bondable: pool.bondable
+            }
+          })
+        }
+      ),
+      RxOp.catchError((): MayanodePoolsLD => Rx.of(RD.failure(Error(`Failed to load mayanodePools`)))),
+      RxOp.startWith(RD.pending)
+    )
+
   return {
     mayanodeUrl$,
     reloadMayanodeUrl,
@@ -485,6 +538,8 @@ export const createMayanodeService$ = (network$: Network$, clientUrl$: ClientUrl
     getLiquidityProviders,
     reloadLiquidityProviders,
     getSaverProvider$,
-    reloadSaverProvider
+    reloadSaverProvider,
+    getMayanodePools,
+    reloadMayanodePools
   }
 }

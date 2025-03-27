@@ -7,6 +7,7 @@ const deposit: DepositMessages = {
   'deposit.interact.actions.bond': '채권',
   'deposit.interact.actions.unbond': '채권 해제',
   'deposit.interact.actions.leave': '나가기',
+  'deposit.interact.actions.whitelist': '화이트리스트',
   'deposit.interact.actions.runePool': 'Rune 풀',
   'deposit.interact.actions.buyThorname': 'THORName 구매',
   'deposit.interact.actions.buyMayaname': 'MAYAName 구매',

@@ -2,6 +2,7 @@ import { Locale } from '../../shared/i18n/types'
 
 export type CommonMessageKey =
   | 'common.greeting'
+  | 'common.examples'
   | 'common.copyright'
   | 'common.stats'
   | 'common.network'
@@ -237,6 +238,7 @@ type PoolsMessageKey =
   | 'pools.incentivependulum.info'
   | 'pools.incentivependulum.tooltip'
   | 'pools.incentivependulum.error'
+  | 'pools.bondable'
 
 export type PoolsMessages = { [key in PoolsMessageKey]: string }
 
@@ -500,6 +502,7 @@ type DepositMessageKey =
   | 'deposit.interact.actions.addBondProvider'
   | 'deposit.interact.actions.unbond'
   | 'deposit.interact.actions.leave'
+  | 'deposit.interact.actions.whitelist'
   | 'deposit.interact.actions.runePool'
   | 'deposit.interact.actions.buyThorname'
   | 'deposit.interact.actions.buyMayaname'

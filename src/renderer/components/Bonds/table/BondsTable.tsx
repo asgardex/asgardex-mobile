@@ -190,11 +190,14 @@ export const BondsTable: React.FC<Props> = ({
           const uniquePools = [...new Set(allPools)]
 
           return (
-            <div className="flex flex-row items-center">
+            <div className="flex flex-row items-center justify-end space-x-2">
               {uniquePools.map((assetPool) => (
-                <div key={assetPool} className="mr-2">
-                  <AssetIcon asset={getChainAsset(assetPool.split('.')[0])} size="small" network={network} />
-                </div>
+                <AssetIcon
+                  key={assetPool}
+                  asset={getChainAsset(assetPool.split('.')[0])}
+                  size="small"
+                  network={network}
+                />
               ))}
             </div>
           )
