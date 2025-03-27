@@ -975,6 +975,13 @@ export const InteractFormThor: React.FC<Props> = (props) => {
           </div>
         )}
 
+        {interactType === InteractType.Whitelist && (
+          <div className="mb-2 flex items-center justify-end space-x-2">
+            <span className="dark:text=text2d text-14 text-text2">Toggle Whitelist / Unwhitelist</span>
+            <SwitchButton active={whitelisting} onChange={onWhitelistAddress} />
+          </div>
+        )}
+
         {/* Node address input (BOND/UNBOND/LEAVE only) */}
         {(interactType === InteractType.Bond ||
           interactType === InteractType.Unbond ||
@@ -1279,22 +1286,18 @@ export const InteractFormThor: React.FC<Props> = (props) => {
           )}
         </>
       </>
-      {thornameQuoteValid && (
-        <>
-          <div>
-            <FlatButton
-              className="mt-10px min-w-[200px]"
-              loading={isLoading}
-              disabled={isLoading || !!form.getFieldsError().filter(({ errors }) => errors.length).length}
-              type="submit"
-              size="large">
-              {submitLabel}
-            </FlatButton>
-          </div>
-        </>
-      )}
+      <div className="flex items-center justify-center">
+        {thornameQuoteValid && (
+          <FlatButton
+            className="mt-10px min-w-[200px]"
+            loading={isLoading}
+            disabled={isLoading || !!form.getFieldsError().filter(({ errors }) => errors.length).length}
+            type="submit"
+            size="large">
+            {submitLabel}
+          </FlatButton>
+        )}
 
-      <div>
         {interactType === InteractType.RunePool && (
           <FlatButton
             className="mt-10px min-w-[200px]"
@@ -1313,23 +1316,16 @@ export const InteractFormThor: React.FC<Props> = (props) => {
             {submitLabel}
           </FlatButton>
         )}
-      </div>
 
-      <div>
         {interactType !== InteractType.RunePool && interactType !== InteractType.THORName && (
-          <>
-            {interactType === InteractType.Whitelist && (
-              <SwitchButton active={whitelisting} onChange={onWhitelistAddress} />
-            )}
-            <FlatButton
-              className="mt-10px min-w-[200px]"
-              loading={isLoading}
-              disabled={isLoading}
-              type="submit"
-              size="large">
-              {submitLabel}
-            </FlatButton>
-          </>
+          <FlatButton
+            className="mt-10px min-w-[200px]"
+            loading={isLoading}
+            disabled={isLoading}
+            type="submit"
+            size="large">
+            {submitLabel}
+          </FlatButton>
         )}
       </div>
       <div className="pt-10px font-main text-[14px] text-gray2 dark:text-gray2d">
