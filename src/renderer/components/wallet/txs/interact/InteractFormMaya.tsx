@@ -115,7 +115,7 @@ type Props = {
   nodes: NodeInfosRD
   poolShares: PoolSharesRD
 }
-export const InteractFormMaya: React.FC<Props> = (props) => {
+export const InteractFormMaya = (props: Props) => {
   const {
     interactType,
     poolDetails,
@@ -1180,12 +1180,17 @@ export const InteractFormMaya: React.FC<Props> = (props) => {
   )
 }
 
-const PoolShareItem: React.FC<{
+const PoolShareItem = ({
+  share,
+  isLoading,
+  form,
+  getMemo
+}: {
   share: PoolShare
   isLoading: boolean
   form: FormInstance
   getMemo: () => string
-}> = ({ share, isLoading, form, getMemo }) => {
+}) => {
   const [mode, setMode] = useState<'half' | 'max' | 'custom'>('max')
   const [customPercentage, setCustomPercentage] = useState<string>('') // Add state for percentage
   const intl = useIntl()
@@ -1230,66 +1235,71 @@ const PoolShareItem: React.FC<{
   }
 
   return (
-    <div className="flex items-center justify-between border-b pb-2 dark:border-gray1d">
-      <div className="flex items-center space-x-2">
-        <AssetIcon asset={share.asset} network={network} />
-        <div className="flex flex-col">
-          <div className="font-main text-[12px] text-text2 dark:text-text2d">{assetString}</div>
-          <div className="font-main text-[10px] text-gray1 dark:text-gray1d">
-            {`${intl.formatMessage({ id: 'pools.bondable' })} : ${
-              bondableAssets.length === 0 ? intl.formatMessage({ id: 'common.loading' }) : isBondable ? 'Yes' : 'No'
-            }`}
+    <div className="flex flex-col border-b pb-2 pt-2 first:pt-0 dark:border-gray1d">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <AssetIcon asset={share.asset} network={network} />
+          <div className="flex flex-col">
+            <div className="font-main text-[12px] text-text2 dark:text-text2d">{assetString}</div>
+            <div className="font-main text-[10px] text-gray1 dark:text-gray1d">
+              {`${intl.formatMessage({ id: 'pools.bondable' })} : ${
+                bondableAssets.length === 0 ? intl.formatMessage({ id: 'common.loading' }) : isBondable ? 'Yes' : 'No'
+              }`}
+            </div>
+            <div className="font-main text-[10px] text-gray1 dark:text-gray1d">
+              {`${intl.formatMessage({ id: 'deposit.share.units' })} : ${share.units.toString()}`}
+            </div>
           </div>
-          <div className="font-main text-[10px] text-gray1 dark:text-gray1d">
-            {`${intl.formatMessage({ id: 'deposit.share.units' })} : ${share.units.toString()}`}
-          </div>
-          {mode === 'custom' && (
-            <Form.Item
-              name={`unitsToBond-${assetString}`}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please enter a percentage'
-                },
-                {
-                  validator: (_, value) =>
-                    value && (parseFloat(value) <= 0 || parseFloat(value) > 100)
-                      ? Promise.reject('Percentage must be between 0 and 100')
-                      : Promise.resolve()
-                }
-              ]}>
-              <Styled.Input
-                size="small"
-                disabled={isLoading || bondableAssets.length === 0 || !isBondable}
-                value={customPercentage}
-                onChange={handleCustomPercentageChange}
-                suffix="%"
-                placeholder="Enter percentage (0-100)"
-              />
-            </Form.Item>
-          )}
+        </div>
+        <div className="flex space-x-2">
+          <FlatButton
+            size="small"
+            onClick={handleHalfClick}
+            disabled={isLoading || bondableAssets.length === 0 || !isBondable}>
+            {intl.formatMessage({ id: 'common.half' })}
+          </FlatButton>
+          <FlatButton
+            size="small"
+            onClick={handleMaxClick}
+            disabled={isLoading || bondableAssets.length === 0 || !isBondable}>
+            {intl.formatMessage({ id: 'common.max' })}
+          </FlatButton>
+          <FlatButton
+            size="small"
+            onClick={handleCustomClick}
+            disabled={isLoading || bondableAssets.length === 0 || !isBondable}>
+            {intl.formatMessage({ id: 'common.custom' })}
+          </FlatButton>
         </div>
       </div>
-      <div className="flex space-x-2">
-        <FlatButton
-          size="small"
-          onClick={handleHalfClick}
-          disabled={isLoading || bondableAssets.length === 0 || !isBondable}>
-          {intl.formatMessage({ id: 'common.half' })}
-        </FlatButton>
-        <FlatButton
-          size="small"
-          onClick={handleMaxClick}
-          disabled={isLoading || bondableAssets.length === 0 || !isBondable}>
-          {intl.formatMessage({ id: 'common.max' })}
-        </FlatButton>
-        <FlatButton
-          size="small"
-          onClick={handleCustomClick}
-          disabled={isLoading || bondableAssets.length === 0 || !isBondable}>
-          {intl.formatMessage({ id: 'common.custom' })}
-        </FlatButton>
-      </div>
+
+      {mode === 'custom' && (
+        <Form.Item
+          className="!m-0"
+          name={`unitsToBond-${assetString}`}
+          rules={[
+            {
+              required: true,
+              message: 'Please enter a percentage'
+            },
+            {
+              validator: (_, value) =>
+                value && (parseFloat(value) <= 0 || parseFloat(value) > 100)
+                  ? Promise.reject('Percentage must be between 0 and 100')
+                  : Promise.resolve()
+            }
+          ]}>
+          <Styled.Input
+            className="mt-2 [&>input]:!bg-bg0 [&>input]:!p-1 [&>input]:!text-text2 dark:[&>input]:!bg-bg0d dark:[&>input]:!text-text2d"
+            size="small"
+            disabled={isLoading || bondableAssets.length === 0 || !isBondable}
+            value={customPercentage}
+            onChange={handleCustomPercentageChange}
+            suffix="%"
+            placeholder="Enter percentage (0-100)"
+          />
+        </Form.Item>
+      )}
     </div>
   )
 }
