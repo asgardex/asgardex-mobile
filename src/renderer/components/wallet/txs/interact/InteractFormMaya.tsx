@@ -676,6 +676,10 @@ export const InteractFormMaya = (props: Props) => {
     [feeRD]
   )
 
+  const handleLearn = useCallback(() => {
+    window.apiUrl.openExternal('https://docs.mayaprotocol.com/mayachain-dev-docs/concepts/transaction-memos')
+  }, [])
+
   useEffect(() => {
     // Whenever `amountToSend` has been updated, we put it back into input field
     form.setFieldsValue({
@@ -797,11 +801,18 @@ export const InteractFormMaya = (props: Props) => {
                 {exampleMemos.map((example, index) => (
                   <div
                     key={index}
-                    className="mb-2 flex items-center justify-between text-[12px] text-gray2 dark:text-gray2d">
+                    className="mb-2 flex items-center justify-between text-[12px] text-text2 dark:text-text2d">
                     <span className="font-mainBold">{example.type}:</span>
                     <span className="font-main">{example.memo}</span>
                   </div>
                 ))}
+                <div className="flex justify-end border-t border-solid border-gray2 pt-2">
+                  <span
+                    className="cursor-pointer rounded-full bg-turquoise px-2 text-[12px] text-white"
+                    onClick={handleLearn}>
+                    Learn More...
+                  </span>
+                </div>
               </div>
             </div>
           </Styled.InputContainer>
