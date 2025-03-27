@@ -92,7 +92,7 @@ export const isInteractType = (u: unknown): u is InteractType =>
   u === InteractType.THORName ||
   u === InteractType.MAYAName ||
   u === InteractType.RunePool ||
-  u === InteractType.whitelist
+  u === InteractType.Whitelist
 
 export const getInteractTypeFromNullableString = (s?: string): O.Option<InteractType> =>
   FP.pipe(s, optionFromNullableString, O.chain(O.fromPredicate(isInteractType)))

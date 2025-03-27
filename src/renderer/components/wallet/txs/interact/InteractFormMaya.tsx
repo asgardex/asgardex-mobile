@@ -183,7 +183,7 @@ export const InteractFormMaya = (props: Props) => {
   const amountToSend = useMemo(() => {
     switch (interactType) {
       case InteractType.Bond:
-      case InteractType.whitelist:
+      case InteractType.Whitelist:
       case InteractType.Custom:
       case InteractType.MAYAName:
       case InteractType.THORName:
@@ -465,7 +465,7 @@ export const InteractFormMaya = (props: Props) => {
         createMemo = getLeaveMemo(mayaNodeAddress)
         break
       }
-      case InteractType.whitelist: {
+      case InteractType.Whitelist: {
         createMemo = getWhitelistMemo(mayaNodeAddress, whitelistAdd, feeInBasisPoints)
         break
       }
@@ -654,7 +654,7 @@ export const InteractFormMaya = (props: Props) => {
         return intl.formatMessage({ id: 'deposit.interact.actions.leave' })
       case InteractType.Custom:
         return intl.formatMessage({ id: 'wallet.action.send' })
-      case InteractType.whitelist:
+      case InteractType.Whitelist:
         return intl.formatMessage({ id: 'deposit.interact.actions.whitelist' })
       case InteractType.MAYAName:
         if (isOwner) {
@@ -821,7 +821,7 @@ export const InteractFormMaya = (props: Props) => {
         {/* Node address input (BOND/UNBOND/LEAVE only) */}
         {(interactType === InteractType.Bond ||
           interactType === InteractType.Unbond ||
-          interactType === InteractType.whitelist ||
+          interactType === InteractType.Whitelist ||
           interactType === InteractType.Leave) && (
           <Styled.InputContainer>
             <Styled.InputLabel>{intl.formatMessage({ id: 'common.nodeAddress' })}</Styled.InputLabel>
@@ -839,7 +839,7 @@ export const InteractFormMaya = (props: Props) => {
         )}
 
         {/* Provider address input (whitelist only) */}
-        {interactType === InteractType.whitelist && (
+        {interactType === InteractType.Whitelist && (
           <Styled.InputContainer>
             {
               <>
@@ -858,7 +858,7 @@ export const InteractFormMaya = (props: Props) => {
             }
           </Styled.InputContainer>
         )}
-        {interactType === InteractType.whitelist && (
+        {interactType === InteractType.Whitelist && (
           <Styled.InputContainer>
             <Styled.InputLabel>{intl.formatMessage({ id: 'common.fee.nodeOperator' })}</Styled.InputLabel>
             <Styled.FormItem
