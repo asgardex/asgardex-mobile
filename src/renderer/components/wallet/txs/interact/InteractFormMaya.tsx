@@ -806,7 +806,7 @@ export const InteractFormMaya = (props: Props) => {
                     <span className="font-main">{example.memo}</span>
                   </div>
                 ))}
-                <div className="flex justify-end border-t border-solid border-gray2 pt-2">
+                <div className="flex justify-end border-t border-solid border-gray2/50 pt-2 dark:border-gray2d/50">
                   <span
                     className="cursor-pointer rounded-full bg-turquoise px-2 text-[12px] text-white"
                     onClick={handleLearn}>
