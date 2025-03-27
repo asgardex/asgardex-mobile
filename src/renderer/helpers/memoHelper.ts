@@ -1,5 +1,6 @@
 import { Network } from '@xchainjs/xchain-client'
-import { Address, AnyAsset, AssetType, BaseAmount } from '@xchainjs/xchain-util'
+import { THORChain } from '@xchainjs/xchain-thorchain'
+import { Address, AnyAsset, AssetType, BaseAmount, Chain } from '@xchainjs/xchain-util'
 
 import { getAsgardexThorname } from '../../shared/const'
 
@@ -171,18 +172,34 @@ export const getLeaveMemo = (thorAddress: string) => mkMemo(['LEAVE', thorAddres
  * @param whitelistAddress address to whitelist
  *
  */
-export const getWhitelistMemo = (nodeAddress: string, whitelistAddress: string, fee?: number) =>
-  mkMemo(['BOND::', nodeAddress, whitelistAddress, fee])
+export const getWhitelistMemo = (
+  whitelisting: boolean,
+  protocol: Chain,
+  nodeAddress: string,
+  whitelistAddress: string,
+  fee?: number
+) => {
+  return whitelisting
+    ? protocol === THORChain
+      ? mkMemo(['BOND', nodeAddress, whitelistAddress, fee])
+      : mkMemo(['BOND::', nodeAddress, whitelistAddress, fee])
+    : protocol === THORChain
+    ? mkMemo(['UNBOND', nodeAddress, whitelistAddress])
+    : mkMemo(['UNBOND::', nodeAddress, whitelistAddress])
+}
 
-/**
- * Memo to Unwhitelist
- *
- * @param nodeAddress address to bond to
- * @param whitelistAddress address to whitelist
- *
- */
-export const getUnWhitelistMemo = (nodeAddress: string, whitelistAddress: string) =>
-  mkMemo(['UNBOND::', nodeAddress, whitelistAddress])
+// /**
+//  * Memo to Unwhitelist
+//  *
+//  * @param nodeAddress address to bond to
+//  * @param whitelistAddress address to whitelist
+//  *
+//  */
+// export const getUnWhitelistMemo = (protocol: Chain, nodeAddress: string, whitelistAddress: string) => {
+//   return protocol === THORChain
+//     ? mkMemo(['UNBOND', nodeAddress, whitelistAddress])
+//     : mkMemo(['UNBOND::', nodeAddress, whitelistAddress])
+// }
 
 /**
  * Memo to deposit
