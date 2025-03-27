@@ -1255,7 +1255,9 @@ export const InteractFormThor: React.FC<Props> = (props) => {
                       }
                     ]}>
                     <StyledR.Radio.Group>
-                      <StyledR.Radio value={AssetRuneNative.chain}>THOR</StyledR.Radio>
+                      <StyledR.Radio className="text-gray2 dark:text-gray2d" value={AssetRuneNative.chain}>
+                        THOR
+                      </StyledR.Radio>
                     </StyledR.Radio.Group>
                   </Styled.FormItem>
                   <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasAddress' })}</Styled.InputLabel>

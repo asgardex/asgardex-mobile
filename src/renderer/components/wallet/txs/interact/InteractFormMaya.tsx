@@ -824,6 +824,13 @@ export const InteractFormMaya = (props: Props) => {
           </Styled.InputContainer>
         )}
 
+        {interactType === InteractType.Whitelist && (
+          <div className="mb-2 flex items-center justify-end space-x-2">
+            <span className="dark:text=text2d text-14 text-text2">Toggle Whitelist / Unwhitelist</span>
+            <SwitchButton active={whitelisting} onChange={onWhitelistAddress} />
+          </div>
+        )}
+
         {/* Node address input (BOND/UNBOND/LEAVE only) */}
         {(interactType === InteractType.Bond ||
           interactType === InteractType.Whitelist ||
@@ -846,7 +853,6 @@ export const InteractFormMaya = (props: Props) => {
         {/* Provider address input (whitelist only) */}
         {interactType === InteractType.Whitelist && (
           <>
-            {' '}
             <Styled.InputContainer>
               {
                 <>
@@ -968,7 +974,9 @@ export const InteractFormMaya = (props: Props) => {
         )}
 
         {interactType === InteractType.Bond && renderPoolShares}
-        <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
+        {interactType !== InteractType.MAYAName && (
+          <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
+        )}
         {isFeeError && renderFeeError}
 
         {/* Mayaname Button and Details*/}
@@ -1070,7 +1078,9 @@ export const InteractFormMaya = (props: Props) => {
                     }
                   ]}>
                   <StyledR.Radio.Group>
-                    <StyledR.Radio value={AssetCacao.chain}>MAYA</StyledR.Radio>
+                    <StyledR.Radio className="text-gray2 dark:text-gray2d" value={AssetCacao.chain}>
+                      MAYA
+                    </StyledR.Radio>
                   </StyledR.Radio.Group>
                 </Styled.FormItem>
                 <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasAddress' })}</Styled.InputLabel>
@@ -1100,8 +1110,8 @@ export const InteractFormMaya = (props: Props) => {
           </Styled.InputContainer>
         )}
       </>
-      {mayanameQuoteValid && (
-        <div>
+      <div className="flex items-center justify-center">
+        {mayanameQuoteValid && (
           <FlatButton
             className="mt-10px min-w-[200px]"
             loading={isLoading}
@@ -1110,23 +1120,16 @@ export const InteractFormMaya = (props: Props) => {
             size="large">
             {submitLabel}
           </FlatButton>
-        </div>
-      )}
-      <div>
+        )}
         {interactType !== InteractType.MAYAName && (
-          <>
-            {interactType === InteractType.Whitelist && (
-              <SwitchButton active={whitelisting} onChange={onWhitelistAddress} />
-            )}
-            <FlatButton
-              className="mt-10px min-w-[200px]"
-              loading={isLoading}
-              disabled={isLoading || !!form.getFieldsError().filter(({ errors }) => errors.length).length}
-              type="submit"
-              size="large">
-              {submitLabel}
-            </FlatButton>
-          </>
+          <FlatButton
+            className="mt-10px min-w-[200px]"
+            loading={isLoading}
+            disabled={isLoading || !!form.getFieldsError().filter(({ errors }) => errors.length).length}
+            type="submit"
+            size="large">
+            {submitLabel}
+          </FlatButton>
         )}
       </div>
       <div className="pt-10px font-main text-[14px] text-gray2 dark:text-gray2d">
