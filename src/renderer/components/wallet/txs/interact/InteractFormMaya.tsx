@@ -66,6 +66,7 @@ import { AssetIcon } from '../../../uielements/assets/assetIcon'
 import { BaseButton, FlatButton, ViewTxButton } from '../../../uielements/button'
 import { CheckButton } from '../../../uielements/button/CheckButton'
 import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'
+import { SwitchButton } from '../../../uielements/button/SwitchButton'
 import { UIFees, UIFeesRD } from '../../../uielements/fees'
 import { InfoIcon } from '../../../uielements/info'
 import { InputBigNumber } from '../../../uielements/input'
@@ -142,8 +143,6 @@ export const InteractFormMaya = (props: Props) => {
   const { walletAddress } = balance
   const pricePool = usePricePoolMaya()
 
-  const [hasProviderAddress, setHasProviderAddress] = useState(false)
-
   const [userNodeInfo, setUserNodeInfo] = useState<UserNodeInfo | undefined>(undefined)
   const [_amountToSend, setAmountToSend] = useState<BaseAmount>(ONE_CACAO_BASE_AMOUNT)
 
@@ -205,6 +204,7 @@ export const InteractFormMaya = (props: Props) => {
 
   const [form] = Form.useForm<FormValues>()
   const [currentMemo, setCurrentMemo] = useState('')
+  const [whitelisting, setWhitelisting] = useState<boolean>(true)
 
   const oFee: O.Option<BaseAmount> = useMemo(() => FP.pipe(feeRD, RD.toOption), [feeRD])
 
@@ -405,12 +405,6 @@ export const InteractFormMaya = (props: Props) => {
     }
   }, [balance.walletAddress, form, isOwner, mayachainQuery, mayanameRegister, mayanameUpdate])
 
-  // const handleRadioAssetChange = useCallback((e: RadioChangeEvent) => {
-  //   const asset = e.target.value
-  //   console.log(asset)
-  //   setPreferredAsset(asset)
-  // }, [])
-
   const handleRadioChainChange = useCallback((e: RadioChangeEvent) => {
     const chain = e.target.value
     setAliasChain(chain)
@@ -451,7 +445,6 @@ export const InteractFormMaya = (props: Props) => {
     const lpUnits = form.getFieldValue('bondLpUnits')
     const feeInBasisPoints = nodeOperatorFee ? nodeOperatorFee * 100 : undefined
     let createMemo = ''
-
     switch (interactType) {
       case InteractType.Bond: {
         createMemo = getBondMemoMayanode(assetPool, lpUnits, mayaNodeAddress)
@@ -466,7 +459,7 @@ export const InteractFormMaya = (props: Props) => {
         break
       }
       case InteractType.Whitelist: {
-        createMemo = getWhitelistMemo(mayaNodeAddress, whitelistAdd, feeInBasisPoints)
+        createMemo = getWhitelistMemo(whitelisting, MAYAChain, mayaNodeAddress, whitelistAdd, feeInBasisPoints)
         break
       }
       case InteractType.Custom: {
@@ -480,7 +473,7 @@ export const InteractFormMaya = (props: Props) => {
     }
     setMemo(createMemo)
     return createMemo
-  }, [currentMemo, form, interactType, memo])
+  }, [currentMemo, form, interactType, memo, whitelisting])
 
   const onChangeInput = useCallback(
     async (value: BigNumber) => {
@@ -521,7 +514,6 @@ export const InteractFormMaya = (props: Props) => {
   const reset = useCallback(() => {
     resetInteractState()
     form.resetFields()
-    setHasProviderAddress(false)
     setMemo('')
     setAmountToSend(ONE_CACAO_BASE_AMOUNT)
     setMayaname(O.none)
@@ -655,7 +647,9 @@ export const InteractFormMaya = (props: Props) => {
       case InteractType.Custom:
         return intl.formatMessage({ id: 'wallet.action.send' })
       case InteractType.Whitelist:
-        return intl.formatMessage({ id: 'deposit.interact.actions.whitelist' })
+        return whitelisting
+          ? intl.formatMessage({ id: 'deposit.interact.actions.whitelist' })
+          : intl.formatMessage({ id: 'common.remove' })
       case InteractType.MAYAName:
         if (isOwner) {
           return intl.formatMessage({ id: 'common.isUpdateMayaname' })
@@ -663,7 +657,7 @@ export const InteractFormMaya = (props: Props) => {
           return intl.formatMessage({ id: 'deposit.interact.actions.buyMayaname' })
         }
     }
-  }, [interactType, intl, isOwner])
+  }, [interactType, intl, isOwner, whitelisting])
 
   const uiFeesRD: UIFeesRD = useMemo(
     () =>
@@ -675,6 +669,20 @@ export const InteractFormMaya = (props: Props) => {
       ),
     [feeRD]
   )
+
+  const onWhitelistAddress = useCallback(() => {
+    setWhitelisting(!whitelisting)
+    getMemo()
+  }, [whitelisting, getMemo])
+
+  const handleUnbond = (nodeAddress: string, pool: MayaLpUnits) => {
+    const unitsToUnbond = pool.units.toString()
+    const asset = assetToString(pool.asset)
+    form.setFieldValue('mayaAddress', nodeAddress)
+    form.setFieldValue('bondLpUnits', unitsToUnbond)
+    form.setFieldValue('assetPool', asset)
+    getMemo()
+  }
 
   const handleLearn = useCallback(() => {
     window.apiUrl.openExternal('https://docs.mayaprotocol.com/mayachain-dev-docs/concepts/transaction-memos')
@@ -766,8 +774,6 @@ export const InteractFormMaya = (props: Props) => {
     { type: 'Withdraw Lp', memo: 'WITHDRAW:POOL:10000' }
   ]
 
-  // const bond = userNodeInfo ? userNodeInfo.pools.map((value) => value.asset) : []
-
   return (
     <Styled.Form
       form={form}
@@ -818,9 +824,15 @@ export const InteractFormMaya = (props: Props) => {
           </Styled.InputContainer>
         )}
 
+        {interactType === InteractType.Whitelist && (
+          <div className="mb-2 flex items-center justify-end space-x-2">
+            <span className="dark:text=text2d text-14 text-text2">Toggle Whitelist / Unwhitelist</span>
+            <SwitchButton active={whitelisting} onChange={onWhitelistAddress} />
+          </div>
+        )}
+
         {/* Node address input (BOND/UNBOND/LEAVE only) */}
         {(interactType === InteractType.Bond ||
-          interactType === InteractType.Unbond ||
           interactType === InteractType.Whitelist ||
           interactType === InteractType.Leave) && (
           <Styled.InputContainer>
@@ -840,43 +852,44 @@ export const InteractFormMaya = (props: Props) => {
 
         {/* Provider address input (whitelist only) */}
         {interactType === InteractType.Whitelist && (
-          <Styled.InputContainer>
-            {
-              <>
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.providerAddress' })}</Styled.InputLabel>
-                <Form.Item
-                  name="providerAddress"
-                  rules={[
-                    {
-                      required: true,
-                      validator: addressValidator
-                    }
-                  ]}>
-                  <Styled.Input disabled={isLoading} onChange={() => getMemo()} size="large" />
-                </Form.Item>
-              </>
-            }
-          </Styled.InputContainer>
+          <>
+            <Styled.InputContainer>
+              {
+                <>
+                  <Styled.InputLabel>{intl.formatMessage({ id: 'common.providerAddress' })}</Styled.InputLabel>
+                  <Form.Item
+                    name="providerAddress"
+                    rules={[
+                      {
+                        required: true,
+                        validator: addressValidator
+                      }
+                    ]}>
+                    <Styled.Input disabled={isLoading} onChange={() => getMemo()} size="large" />
+                  </Form.Item>
+                </>
+              }
+            </Styled.InputContainer>
+            <Styled.InputContainer>
+              <Styled.InputLabel>{intl.formatMessage({ id: 'common.fee.nodeOperator' })}</Styled.InputLabel>
+              <Styled.FormItem
+                name="operatorFee"
+                rules={[
+                  {
+                    required: false
+                  }
+                ]}>
+                <Styled.Input
+                  placeholder="Enter a % value, memo will populate with Basis Points automatically"
+                  disabled={isLoading}
+                  size="large"
+                  onChange={() => getMemo()}
+                />
+              </Styled.FormItem>
+            </Styled.InputContainer>
+          </>
         )}
-        {interactType === InteractType.Whitelist && (
-          <Styled.InputContainer>
-            <Styled.InputLabel>{intl.formatMessage({ id: 'common.fee.nodeOperator' })}</Styled.InputLabel>
-            <Styled.FormItem
-              name="operatorFee"
-              rules={[
-                {
-                  required: false
-                }
-              ]}>
-              <Styled.Input
-                placeholder="Enter a % value, memo will populate with Basis Points automatically"
-                disabled={isLoading}
-                size="large"
-                onChange={() => getMemo()}
-              />
-            </Styled.FormItem>
-          </Styled.InputContainer>
-        )}
+
         {/* Amount input (BOND/UNBOND/CUSTOM only) */}
         {interactType === InteractType.Custom && (
           <Styled.InputContainer>
@@ -905,63 +918,67 @@ export const InteractFormMaya = (props: Props) => {
             )}
           </Styled.InputContainer>
         )}
-        {userNodeInfo && (
-          <div className="p-4">
-            <div className="ml-[-2px] flex w-full justify-between font-mainBold text-[14px] text-gray2 dark:text-gray2d">
-              {intl.formatMessage({ id: 'common.nodeAddress' })}
-              <div className="truncate pl-10px font-main text-[12px]">{userNodeInfo.nodeAddress}</div>
-            </div>
-            <div className="ml-[-2px] flex w-full justify-between font-mainBold text-[14px] text-gray2 dark:text-gray2d">
-              {intl.formatMessage({ id: 'common.address.self' })}
-              <div className="truncate pl-10px font-main text-[12px]">{walletAddress}</div>
-            </div>
-          </div>
+        {(interactType === InteractType.Bond || interactType === InteractType.Unbond) && (
+          <>
+            {userNodeInfo && (
+              <div className="p-4">
+                <div className="ml-[-2px] flex w-full justify-between font-mainBold text-[14px] text-gray2 dark:text-gray2d">
+                  {intl.formatMessage({ id: 'common.nodeAddress' })}
+                  <div className="truncate pl-10px font-main text-[12px]">{userNodeInfo.nodeAddress}</div>
+                </div>
+                <div className="ml-[-2px] flex w-full justify-between font-mainBold text-[14px] text-gray2 dark:text-gray2d">
+                  {intl.formatMessage({ id: 'common.address.self' })}
+                  <div className="truncate pl-10px font-main text-[12px]">{walletAddress}</div>
+                </div>
+                <div className="mt-2">
+                  <div className="pl-10px">
+                    {userNodeInfo.pools.length > 0 ? (
+                      <table className="w-full border-collapse text-[12px] text-gray1 dark:text-gray1d">
+                        <thead>
+                          <tr className="border-b border-gray1 dark:border-gray1d">
+                            <th className="p-2 text-left">{intl.formatMessage({ id: 'common.pool' })}</th>
+                            <th className="p-2 text-left">{intl.formatMessage({ id: 'deposit.share.units' })}</th>
+                            <th className="p-2 text-left">{intl.formatMessage({ id: 'common.action' })}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {userNodeInfo.pools.map((pool, index) => {
+                            const assetString = assetToString(pool.asset)
+                            return (
+                              <tr key={index} className="border-b border-gray1 last:border-0 dark:border-gray1d">
+                                <td className="p-2">{assetString}</td>
+                                <td className="p-2">{pool.units.toString()}</td>
+                                <td className="p-2">
+                                  <FlatButton
+                                    size="small"
+                                    onClick={() => handleUnbond(userNodeInfo.nodeAddress, pool)}
+                                    disabled={isLoading || interactType === InteractType.Bond}>
+                                    {intl.formatMessage({ id: 'deposit.interact.actions.unbond' })}
+                                  </FlatButton>
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="text-[12px] text-gray1 dark:text-gray1d">
+                        {intl.formatMessage({ id: 'common.noData' })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
+
         {interactType === InteractType.Bond && renderPoolShares}
-        <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
+        {interactType !== InteractType.MAYAName && (
+          <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
+        )}
         {isFeeError && renderFeeError}
 
-        {hasProviderAddress && (
-          <>
-            {interactType === InteractType.Unbond && (
-              <Styled.InputContainer>
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.amount' })}</Styled.InputLabel>
-                <Styled.FormItem
-                  name="amount"
-                  rules={[
-                    {
-                      required: true,
-                      validator: amountValidator
-                    }
-                  ]}>
-                  <InputBigNumber disabled={isLoading} size="large" decimal={CACAO_DECIMAL} onChange={onChangeInput} />
-                </Styled.FormItem>
-                <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
-                {isFeeError && renderFeeError}
-              </Styled.InputContainer>
-            )}
-          </>
-        )}
-
-        {/* Fee input (BOND only) */}
-        {hasProviderAddress && (
-          <>
-            {interactType === InteractType.Bond && (
-              <Styled.InputContainer>
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.fee.nodeOperator' })}</Styled.InputLabel>
-                <Styled.FormItem
-                  name="operatorFee"
-                  rules={[
-                    {
-                      required: true
-                    }
-                  ]}>
-                  <Styled.Input disabled={isLoading} size="large" onChange={() => getMemo()} />
-                </Styled.FormItem>
-              </Styled.InputContainer>
-            )}
-          </>
-        )}
         {/* Mayaname Button and Details*/}
         {interactType === InteractType.MAYAName && (
           <Styled.InputContainer>
@@ -1061,7 +1078,9 @@ export const InteractFormMaya = (props: Props) => {
                     }
                   ]}>
                   <StyledR.Radio.Group>
-                    <StyledR.Radio value={AssetCacao.chain}>MAYA</StyledR.Radio>
+                    <StyledR.Radio className="text-gray2 dark:text-gray2d" value={AssetCacao.chain}>
+                      MAYA
+                    </StyledR.Radio>
                   </StyledR.Radio.Group>
                 </Styled.FormItem>
                 <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasAddress' })}</Styled.InputLabel>
@@ -1091,8 +1110,8 @@ export const InteractFormMaya = (props: Props) => {
           </Styled.InputContainer>
         )}
       </>
-      {mayanameQuoteValid && (
-        <div>
+      <div className="flex items-center justify-center">
+        {mayanameQuoteValid && (
           <FlatButton
             className="mt-10px min-w-[200px]"
             loading={isLoading}
@@ -1101,9 +1120,7 @@ export const InteractFormMaya = (props: Props) => {
             size="large">
             {submitLabel}
           </FlatButton>
-        </div>
-      )}
-      <div>
+        )}
         {interactType !== InteractType.MAYAName && (
           <FlatButton
             className="mt-10px min-w-[200px]"
