@@ -1,13 +1,19 @@
-# 1.30.3 (2025-na-na)
+# 1.30.3 (2025-3-28)
 
 ## Add
 
 - Language support Korean [#631] (https://github.com/asgardex/asgardex-desktop/pull/632)
+- Add Chainflip quoting & swapping [#495](https://github.com/asgardex/asgardex-desktop/pull/495)
+- Add BOND UNBOND support for MayaChain [#636](https://github.com/asgardex/asgardex-desktop/pull/636)
 
 ## Update/Fixes
 
 - fix synth fee issue [#622] (https://github.com/asgardex/asgardex-desktop/pull/622)
 - fix Evm token helper function [#635] (https://github.com/asgardex/asgardex-desktop/pull/635)
+- fix Provider err BSC / AVAX [#641] (https://github.com/asgardex/asgardex-desktop/pull/641)
+- Update bonds view [#612](https://github.com/asgardex/asgardex-desktop/pull/612)
+- fix synth issue Mayachain [#624](https://github.com/asgardex/asgardex-desktop/pull/624)
+- Update interact form MayaChain & Thorchain [#644](https://github.com/asgardex/asgardex-desktop/pull/644)
 
 # 1.30.2 (2025-1-17)
 
