@@ -898,11 +898,13 @@ export const InteractFormThor: React.FC<Props> = (props) => {
   const bondBaseAmount = userNodeInfo?.bondAmount ? userNodeInfo.bondAmount : baseAmount(0)
 
   const exampleMemos = [
-    { type: 'Bond', memo: 'BOND:NODEADDRESS:PROVIDER:FEE' },
-    { type: 'Unbond', memo: 'UNBOND:NODEADDRESS:AMOUNT:PROVIDER' },
+    { type: 'Bond', memo: 'BOND:NODEADDRESS' },
+    { type: 'Unbond', memo: 'UNBOND:NODEADDRESS' },
     { type: 'Leave', memo: 'LEAVE:NODEADDRESS' },
-    { type: 'Add LP symmetrical', memo: 'ADD:POOL:PAIREDADDR:AFFILIATE:FEE' },
-    { type: 'Withdraw Lp', memo: 'WITHDRAW:POOL:BASISPOINTS:ASSET' }
+    { type: 'Whitelist Bond Provider', memo: 'BOND:NODEADDRESS:PROVIDERADDRESS:FEE' },
+    { type: 'Unwhitelist Bond Provider', memo: 'UNBOND:NODEADDRESS:PROVIDERADDRESS' },
+    { type: 'Add LP Symmetrical', memo: 'ADD:POOL:PAIREDADDRESS' },
+    { type: 'Withdraw Lp', memo: 'WITHDRAW:POOL:BASISPOINTS' }
   ]
 
   return (
