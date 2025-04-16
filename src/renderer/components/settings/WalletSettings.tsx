@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { DeleteOutlined, ExportOutlined, EyeOutlined, LockOutlined, SearchOutlined } from '@ant-design/icons'
 import * as RD from '@devexperts/remote-data-ts'
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { TrashIcon, ArrowUpTrayIcon, EyeIcon, LockClosedIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { ARBChain } from '@xchainjs/xchain-arbitrum'
 import { AVAXChain } from '@xchainjs/xchain-avax'
 import { BASEChain } from '@xchainjs/xchain-base'
@@ -66,7 +67,6 @@ import {
 } from '../../services/wallet/types'
 import { walletTypeToI18n } from '../../services/wallet/util'
 import { useApp } from '../../store/app/hooks'
-import { AttentionIcon } from '../icons'
 import * as StyledR from '../shared/form/Radio.styles'
 import { FlatButton } from '../uielements/button'
 import { SwitchButton } from '../uielements/button/SwitchButton'
@@ -262,7 +262,7 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
       <div className="mt-10px w-full">
         <Styled.WalletTypeLabel>{walletTypeToI18n(WalletType.Ledger, intl)}</Styled.WalletTypeLabel>
         <div className="ml-40px flex items-center pt-5px text-[12px] uppercase text-text2 dark:text-text2d">
-          <Styled.Icon component={AttentionIcon} />
+          <ExclamationTriangleIcon />
           {intl.formatMessage({ id: 'common.notsupported.fornetwork' }, { network })}
         </div>
       </div>
@@ -449,7 +449,7 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
                   },
                   { address }
                 )}>
-                <Styled.EyeOutlined onClick={() => verifyLedgerAddressHandler(walletAddress)} />
+                <EyeIcon onClick={() => verifyLedgerAddressHandler(walletAddress)} />
               </Tooltip>
               <Tooltip
                 title={intl.formatMessage(
@@ -925,22 +925,22 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
         {renderRenameWalletError}
         <div className="mt-10 flex flex-row items-center justify-center space-x-2">
           <ActionButton
-            icon={<ExportOutlined className="text-[24px]" />}
+            icon={<ArrowUpTrayIcon className="text-[24px]" />}
             text={intl.formatMessage({ id: 'setting.export' })}
             onClick={exportKeystoreHandler}
           />
           <ActionButton
-            icon={<LockOutlined className="text-[24px]" />}
+            icon={<LockClosedIcon className="text-[24px]" />}
             text={intl.formatMessage({ id: 'setting.lock' })}
             onClick={lockWallet}
           />
           <ActionButton
-            icon={<EyeOutlined className="text-[24px]" />}
+            icon={<EyeIcon className="text-[24px]" />}
             text={intl.formatMessage({ id: 'setting.view.phrase' })}
             onClick={() => setShowPasswordModal(true)}
           />
           <ActionButton
-            icon={<DeleteOutlined className="text-[24px]" />}
+            icon={<TrashIcon className="text-[24px]" />}
             text={intl.formatMessage({ id: 'wallet.remove.label' })}
             onClick={() => setShowRemoveWalletModal(true)}
           />
@@ -951,7 +951,7 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
         <div className="mt-30px flex justify-center md:ml-4 md:justify-start">
           <Styled.Input
             className="rounded-lg border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"
-            prefix={<SearchOutlined />}
+            prefix={<MagnifyingGlassIcon />}
             onChange={filterAccounts}
             allowClear
             placeholder={intl.formatMessage({ id: 'common.search' }).toUpperCase()}

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { DesktopOutlined, StopOutlined } from '@ant-design/icons'
 import * as RD from '@devexperts/remote-data-ts'
+import { ComputerDesktopIcon, StopIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { THORChain } from '@xchainjs/xchain-thorchain'
@@ -117,13 +117,13 @@ export const Status: React.FC<{ data: NodeInfo | NodeInfoMaya }> = ({ data }) =>
 
 export const Watchlist: React.FC<{ addWatchlist: () => void }> = ({ addWatchlist }) => (
   <Styled.WatchlistButton onClick={addWatchlist}>
-    <DesktopOutlined />
+    <ComputerDesktopIcon />
   </Styled.WatchlistButton>
 )
 
 export const Delete: React.FC<{ deleteNode: () => void }> = ({ deleteNode }) => (
   <Styled.DeleteButton onClick={deleteNode}>
-    <StopOutlined />
+    <StopIcon />
   </Styled.DeleteButton>
 )
 

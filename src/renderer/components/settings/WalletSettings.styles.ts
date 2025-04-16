@@ -1,5 +1,5 @@
-import AIcon, { QrcodeOutlined, PlusCircleOutlined } from '@ant-design/icons'
-import { EyeOutlined as EyeOutlinedUI } from '@ant-design/icons'
+import { QrCodeIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
+import { EyeIcon } from '@heroicons/react/24/outline'
 import * as A from 'antd'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
@@ -139,20 +139,15 @@ export const AddressLinkIcon = styled(ExternalLinkIconUI)`
   }
 `
 
-export const QRCodeIcon = styled(QrcodeOutlined)`
+export const QRCodeIcon = styled(QrCodeIcon)`
   margin-left: 5px;
   cursor: pointer;
   color: ${palette('primary', 2)};
   height: ${ICON_SIZE}px;
   width: ${ICON_SIZE}px;
-
-  & svg {
-    height: ${ICON_SIZE}px;
-    width: ${ICON_SIZE}px;
-  }
 `
 
-export const EyeOutlined = styled(EyeOutlinedUI)`
+export const EyeOutlined = styled(EyeIcon)`
   cursor: pointer;
   color: ${palette('primary', 2)};
   height: ${ICON_SIZE}px;
@@ -172,7 +167,7 @@ export const AddLedgerButton = styled(UIButton).attrs({
   cursor: pointer;
 `
 
-export const AddLedgerIcon = styled(PlusCircleOutlined)`
+export const AddLedgerIcon = styled(PlusCircleIcon)`
   color: ${palette('primary', 2)};
 `
 
@@ -207,9 +202,10 @@ export const WalletTypeLabel = styled(WalletTypeLabelUI)`
   display: inline-block;
 `
 
-export const Icon = styled(AIcon)`
+export const Icon = styled.div`
   display: inline-block;
   margin-right: 5px;
+
   svg {
     width: 15px;
     height: 15px;

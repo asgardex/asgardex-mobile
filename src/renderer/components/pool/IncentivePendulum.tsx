@@ -25,7 +25,7 @@ export const IncentivePendulum = (props: Props): JSX.Element => {
   const loading = (
     <Styled.ContentWrapper>
       {intl.formatMessage({ id: 'pools.incentivependulum.info' }, { percentage: '...' })}
-      <Styled.AlertIcon color="grey" />
+      <Styled.AlertIcon />
     </Styled.ContentWrapper>
   )
 

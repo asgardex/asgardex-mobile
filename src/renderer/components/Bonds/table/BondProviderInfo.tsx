@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
-import { DesktopOutlined } from '@ant-design/icons'
 import * as RD from '@devexperts/remote-data-ts'
+import { ComputerDesktopIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
 import { Address, BaseAmount, assetToString, baseToAsset, formatAssetAmountCurrency } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
@@ -122,7 +122,7 @@ export const BondProviderInfo: React.FC<Props> = ({
         ) : (
           <Styled.WatchlistButton>
             <Tooltip title="Add this bond provider to the watch list">
-              <DesktopOutlined onClick={() => addWatchlist(provider.bondAddress, network)} />
+              <ComputerDesktopIcon onClick={() => addWatchlist(provider.bondAddress, network)} />
             </Tooltip>
           </Styled.WatchlistButton>
         )}

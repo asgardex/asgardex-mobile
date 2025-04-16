@@ -1,4 +1,4 @@
-import { CaretDownOutlined as CaretDownOutlinedUI } from '@ant-design/icons'
+import { ChevronDownIcon as CaretDownOutlinedUI } from '@heroicons/react/20/solid'
 import * as A from 'antd'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
@@ -47,7 +47,7 @@ export const TruncatedAddress = styled.div`
 export const CaretDownOutlined = styled(CaretDownOutlinedUI)`
   margin-left: 5px;
   padding: 5px;
-  color: ${palette('primary', 2)};
+  stroke: ${palette('primary', 2)};
 `
 
 export const Menu = styled(A.Menu)`

@@ -1,4 +1,4 @@
-import { CaretRightOutlined } from '@ant-design/icons/lib'
+import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
@@ -102,11 +102,9 @@ export const WalletTypeLabel = styled(UILabel)`
   padding: 0;
 `
 
-export const ExpandIcon = styled(CaretRightOutlined)`
+export const ExpandIcon = styled(ChevronRightIcon)`
   margin-top: 0px;
-  svg {
-    width: 20px;
-    height: 20px;
-    color: ${palette('primary', 2)};
-  }
+  width: 20px;
+  height: 20px;
+  stroke: ${palette('primary', 2)};
 `

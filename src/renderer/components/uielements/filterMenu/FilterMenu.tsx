@@ -1,6 +1,6 @@
 import React, { RefObject, useCallback, useMemo, useRef, useState } from 'react'
 
-import { SearchOutlined } from '@ant-design/icons'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { MenuProps } from 'antd/lib/menu'
 import { ItemType } from 'antd/lib/menu/hooks/useItems'
 import * as A from 'fp-ts/lib/Array'
@@ -75,7 +75,7 @@ export const FilterMenu = <T,>(props: Props<T>): JSX.Element => {
                 placeholder={(placeholder || intl.formatMessage({ id: 'common.search' })).toUpperCase()}
                 size="large"
                 typevalue="ghost"
-                suffix={<SearchOutlined />}
+                suffix={<MagnifyingGlassIcon />}
               />
             ),
             disabled: true,

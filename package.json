@@ -74,7 +74,6 @@
   ],
   "homepage": "https://thorchain.org",
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
     "@asgardex/asgardex-theme": "^0.1.3",
     "@chainflip/sdk": "^1.7.0",
     "@craco/craco": "^7.0.0",

@@ -1,17 +1,16 @@
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline' // Import Heroicon
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
-import { AlertIcon as AlertIconUI } from '../uielements/alert'
 import { Label as UILabel } from '../uielements/label'
 
 export const Container = styled.div``
 
 const ICON_SIZE = 19
-export const AlertIcon = styled(AlertIconUI)`
-  & svg {
-    height: ${ICON_SIZE}px;
-    width: ${ICON_SIZE}px;
-  }
+
+export const AlertIcon = styled(ExclamationCircleIcon)`
+  width: ${ICON_SIZE}px;
+  height: ${ICON_SIZE}px;
 `
 
 export const ContentWrapper = styled.div`

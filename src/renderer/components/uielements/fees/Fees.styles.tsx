@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { SyncOutlined } from '@ant-design/icons'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
@@ -9,7 +9,7 @@ import { Label as UILabel } from '../label'
 
 export const ReloadFeeButton = styled(UIButton).attrs({
   typevalue: 'outline',
-  children: <SyncOutlined />
+  children: <ArrowPathIcon />
 })`
   &.ant-btn {
     /* overridden */

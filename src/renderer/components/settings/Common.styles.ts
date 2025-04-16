@@ -1,4 +1,4 @@
-import { CaretRightOutlined } from '@ant-design/icons'
+import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import * as A from 'antd'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
@@ -19,13 +19,11 @@ export const Collapse = styled(A.Collapse)`
   }
 `
 
-export const ExpandIcon = styled(CaretRightOutlined)`
+export const ExpandIcon = styled(ChevronRightIcon)`
   margin-top: 0px;
-  svg {
-    width: 20px;
-    height: 20px;
-    color: ${palette('primary', 2)};
-  }
+  width: 20px;
+  height: 20px;
+  color: ${palette('primary', 2)};
 `
 
 export const Title = styled(UILabel)`

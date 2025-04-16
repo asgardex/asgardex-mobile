@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { DesktopOutlined } from '@ant-design/icons'
 import * as RD from '@devexperts/remote-data-ts'
+import { ComputerDesktopIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
@@ -286,7 +286,9 @@ export const BondsTable: React.FC<Props> = ({
   }, [nodeToRemove, removeNode])
 
   const CustomExpandIcon: React.FC<CustomExpandIconProps> = ({ expanded, onExpand, record }) => (
-    <Styled.ExpandIcon onClick={(e) => onExpand(record, e)} rotate={expanded ? 90 : 0} />
+    <span onClick={(e) => onExpand(record, e)} style={{ display: 'inline-block' }}>
+      <Styled.ExpandIcon style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }} />
+    </span>
   )
 
   const renderSubWalletType = useCallback(
@@ -440,7 +442,7 @@ export const BondsTable: React.FC<Props> = ({
                           ) : (
                             <Styled.WatchlistButton>
                               <Tooltip title="Add this bond provider to the watch list">
-                                <DesktopOutlined onClick={() => addWatchlist(provider.bondAddress, network)} />
+                                <ComputerDesktopIcon onClick={() => addWatchlist(provider.bondAddress, network)} />
                               </Tooltip>
                             </Styled.WatchlistButton>
                           )}
