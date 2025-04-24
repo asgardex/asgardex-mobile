@@ -24,14 +24,15 @@ lint:
 # Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
 runtimes:
   enabled:
+    - python@3.10.8
     - node@20.17.0
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   enabled:
     # 🧹 General Code Quality & Formatting
  #   - codespell@2.4.1                     # Spell-checking
-    - eslint@8.23.0                       # JS/TS linting
-    - prettier@2.6.2                      # Code formatting
+    - eslint@8.23.0!                       # JS/TS linting
+    - prettier@2.6.2!                      # Code formatting
     - markdownlint@0.44.0                 # Markdown formatting
     # - stylelint@16.18.0                   # CSS / SCSS linting
    # - yamllint@1.37.0                     # YAML formatting
