@@ -18,6 +18,7 @@
     "package:ci": "yarn postinstall && yarn prebuild && yarn build && yarn package:electron --publish always",
     "postinstall": "git config blame.ignoreRevsFile .git-blame-ignore-revs && yarn force-rebuild-native-deps && electron-builder install-app-deps",
     "lint": "eslint \"{src,e2e,}/**/*.{ts,tsx}\" --fix",
+    "check:trunk": "cross-env-shell ./scripts/trunk-check.sh",
     "generate:erc20whitelist": "./node_modules/.bin/ts-node --project tsconfig.scripts.json ./scripts/generateERC20Whitelist.ts",
     "generate:avaxerc20whitelist": "./node_modules/.bin/ts-node --project tsconfig.scripts.json ./scripts/generateAVAXtokenlist.ts",
     "generate:bscerc20whitelist": "./node_modules/.bin/ts-node --project tsconfig.scripts.json ./scripts/generateBSCtokenlist.ts",
@@ -66,10 +67,7 @@
     "kujira",
     "arb"
   ],
-  "workspaces": [
-    "xchainjs-lib/packages/*",
-    "asgardex-desktop"
-  ],
+  "workspaces": ["xchainjs-lib/packages/*", "asgardex-desktop"],
   "homepage": "https://thorchain.org",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -188,6 +186,7 @@
     "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-security": "1.7.1",
     "eslint-plugin-unused-imports": "^4.1.4",
     "file-loader": "^6.2.0",
     "git-revision-webpack-plugin": "^5.0.0",

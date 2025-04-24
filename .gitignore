@@ -6,7 +6,6 @@
 /build
 /release
 
-
 .DS_Store
 
 npm-debug.log*
@@ -36,3 +35,9 @@ yarn.lock
 
 dev-app-update.yml
 /.idea/
+
+# Ignore Trunk tool cache
+.trunk/tools/
+.trunk/tmp/
+.trunk/out/
+.trunk/logs/

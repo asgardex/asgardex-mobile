@@ -1,0 +1,86 @@
+# This file controls the behavior of Trunk: https://docs.trunk.io/cli
+# To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
+# trunk-ignore(prettier/SyntaxError)
+version: 0.1
+cli:
+  version: 1.22.12
+# Trunk provides extensibility via plugins. (https://docs.trunk.io/plugins)
+plugins:
+  sources:
+    - id: trunk
+      ref: v1.6.8
+      uri: https://github.com/trunk-io/plugins
+repo:
+  trunk_branch: develop
+lint:
+  enabled:
+    - prettier@3.5.3
+  definitions:
+    - name: codespell
+      commands:
+        # trunk-ignore(codespell/misspelled)
+        - run: codespell --uri-ignore-words-list=* --ignore-words-list=liquify,TE ${target}
+
+# Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
+runtimes:
+  enabled:
+    - node@20.17.0
+# This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
+lint:
+  enabled:
+    # 🧹 General Code Quality & Formatting
+ #   - codespell@2.4.1                     # Spell-checking
+    - eslint@8.23.0                       # JS/TS linting
+    - prettier@2.6.2                      # Code formatting
+    - markdownlint@0.44.0                 # Markdown formatting
+    # - stylelint@16.18.0                   # CSS / SCSS linting
+   # - yamllint@1.37.0                     # YAML formatting
+   # - shfmt@3.6.0                         # Shell formatting
+   # - svgo@3.3.2                          # Optimize SVGs
+   # - oxipng@9.1.4                        # Optimize PNGs
+
+    # 🔐 Security
+    - osv-scanner@2.0.1                   # Open source vuln scanner
+    - checkov@3.2.407                     # IaC security scanning
+    - trufflehog@3.88.25                  # Secrets detection
+    #- eslint-plugin-security              # Detect insecure JS/TS patterns
+    #- npm-audit@9.0.0                     # Scan for vulnerable npm packages
+
+    # 📦 Project Hygiene
+    #- knip@2.32.0                         # Detect unused files/exports/deps
+    - git-diff-check                      # Restrict to changed files
+    #- electron-lint@0.1.1                 # Electron-specific code hygiene
+    # 🔧 CI/CD
+    - actionlint@1.7.7                    # GitHub Actions workflows
+  ignore:
+    - linters: [ALL]
+      paths:
+        - src/renderer/i18n/**
+        - src/renderer/types/generated/**
+        - .yarn/**
+        - .storybook/**
+    - linters: [codespell]
+      paths:
+        - scripts/**
+        - src/shared/utils/**
+        - src/main/utils/**
+    - linters: [markdownlint]
+      paths:
+        - README.md
+        - CODE_OF_CONDUCT.md
+        - PACKAGE_MACOS.md
+        - CHANGELOG.md
+        - .github/ISSUE_TEMPLATE/**
+        - BRANCHING_WORKFLOW.md
+        - .github/ISSUE_TEMPLATE.md
+    - linters: [yamllint]
+      paths:
+      - .github/config.yml
+      - .github/workflows/*
+actions:
+  disabled:
+    - trunk-announce
+    - trunk-check-pre-push
+    - trunk-fmt-pre-commit
+  enabled:
+    - trunk-upgrade-available
