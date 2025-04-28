@@ -128,6 +128,13 @@ export const AssetIcon: React.FC<Props> = ({ asset, size = 'small', className = 
     if (isRuneNativeAsset(asset)) {
       return runeIcon
     }
+    /** TO DO
+     *
+    if(isTCYAsset(Asset)) {
+      reutrn tcyIcon
+      }
+     * */
+
     // Cacao
     if (isCacaoAsset(asset)) {
       return cacaoIcon

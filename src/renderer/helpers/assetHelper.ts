@@ -71,6 +71,10 @@ export const THORCHAIN_DECIMAL = 8
  */
 export const isRuneNativeAsset = (asset: AnyAsset): boolean => eqAsset.equals(asset, AssetRuneNative)
 
+//TODO
+//export const AssetTCY = assetFromStringEx('THOR.TCY') as Asset
+//export const isTCYNativeAsset = (asset: AnyAsset): boolean => eqAsset.equals(asset, AssetTCY)
+
 /**
  * Checks whether an asset is a Rune (native or non-native) asset
  */
