@@ -4,9 +4,11 @@ import { CACAO_DECIMAL } from '@xchainjs/xchain-mayachain'
 import {
   Address,
   AnyAsset,
+  Asset,
   assetAmount,
   AssetAmount,
   assetFromString,
+  assetFromStringEx,
   AssetType,
   baseAmount,
   BaseAmount,
@@ -70,6 +72,13 @@ export const THORCHAIN_DECIMAL = 8
  * Checks whether an asset is an RuneNative asset
  */
 export const isRuneNativeAsset = (asset: AnyAsset): boolean => eqAsset.equals(asset, AssetRuneNative)
+
+//TCY
+export const AssetTCY = assetFromStringEx('THOR.TCY') as Asset
+/**
+ * Checks whether an asset is a TCY asset
+ */
+export const isTCYAsset = (asset: AnyAsset): boolean => eqAsset.equals(asset, AssetTCY)
 
 /**
  * Checks whether an asset is a Rune (native or non-native) asset
