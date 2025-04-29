@@ -38,7 +38,8 @@ import {
   isAethAsset,
   isSolAsset,
   isBaseAsset,
-  iconUrlInBASEERC20Whitelist
+  iconUrlInBASEERC20Whitelist,
+  isTCYAsset
 } from '../../../../helpers/assetHelper'
 import {
   isArbChain,
@@ -69,7 +70,8 @@ import {
   uskIcon,
   xrdIcon,
   solIcon,
-  baseIcon
+  baseIcon,
+  tcyIcon
 } from '../../../icons'
 import * as Styled from './AssetIcon.styles'
 import { Size } from './AssetIcon.types'
@@ -128,13 +130,10 @@ export const AssetIcon: React.FC<Props> = ({ asset, size = 'small', className = 
     if (isRuneNativeAsset(asset)) {
       return runeIcon
     }
-    /** TO DO
-     *
-    if(isTCYAsset(Asset)) {
-      reutrn tcyIcon
-      }
-     * */
-
+    // TCY
+    if (isTCYAsset(asset)) {
+      return tcyIcon
+    }
     // Cacao
     if (isCacaoAsset(asset)) {
       return cacaoIcon
