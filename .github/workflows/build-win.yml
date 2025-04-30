@@ -1,5 +1,8 @@
 name: Electron build - Windows
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
@@ -13,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019]
+        os: [windows-2022]
 
     steps:
       - name: Checkout git repo
@@ -55,6 +58,6 @@ jobs:
         with:
           name: ${{ runner.OS }}
           path: release
- 
+
       - name: List artifacts
         run: ls ./release
