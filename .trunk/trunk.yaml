@@ -34,11 +34,11 @@ lint:
     - checkov@3.2.407           # IaC security scanning
     - trufflehog@3.88.25        # Secrets detection
     # - npm-audit@9.0.0           # Scan for vulnerable npm packages
+    - semgrep@1.120.0             # Static analysis tool that detects security issues, bugs, and code quality problems
 
     # 📦 Project Hygiene
-    # - knip                      # Detect unused files/exports/deps
     # - git-diff-check           # Restrict to changed files
-    # - electron-lint@0.1.1      # Electron-specific code hygiene
+
 
     # 🔧 CI/CD
     - actionlint@1.7.7          # GitHub Actions workflows
