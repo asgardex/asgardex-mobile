@@ -31,9 +31,8 @@ lint:
 
     # 🔐 Security
     # - osv-scanner@2.0.1         # Open source vuln scanner
-    # - checkov@3.2.407           # IaC security scanning
-    # - trufflehog@3.88.25        # Secrets detection
-    # - eslint-plugin-security    # Detect insecure JS/TS patterns
+    - checkov@3.2.407           # IaC security scanning
+    - trufflehog@3.88.25        # Secrets detection
     # - npm-audit@9.0.0           # Scan for vulnerable npm packages
 
     # 📦 Project Hygiene
