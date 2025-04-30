@@ -14,21 +14,6 @@ repo:
   trunk_branch: develop
 lint:
   enabled:
-    - prettier@3.5.3
-  definitions:
-    - name: codespell
-      commands:
-        # trunk-ignore(codespell/misspelled)
-        - run: codespell --uri-ignore-words-list=* --ignore-words-list=liquify,TE ${target}
-
-# Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
-runtimes:
-  enabled:
-    - python@3.10.8
-    - node@20.17.0
-# This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
-lint:
-  enabled:
     # 🧹 General Code Quality & Formatting
  #   - codespell@2.4.1                     # Spell-checking
     - eslint@8.23.0!                       # JS/TS linting
@@ -53,6 +38,13 @@ lint:
     #- electron-lint@0.1.1                 # Electron-specific code hygiene
     # 🔧 CI/CD
     - actionlint@1.7.7                    # GitHub Actions workflows
+
+  definitions:
+    - name: codespell
+      commands:
+        # trunk-ignore(codespell/misspelled)
+        - run: codespell --uri-ignore-words-list=* --ignore-words-list=liquify,TE ${target}
+
   ignore:
     - linters: [ALL]
       paths:
@@ -85,3 +77,11 @@ actions:
     - trunk-fmt-pre-commit
   enabled:
     - trunk-upgrade-available
+
+# Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
+runtimes:
+  enabled:
+    - python@3.10.8
+    - node@20.17.0
+# This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
+
