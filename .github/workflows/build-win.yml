@@ -55,6 +55,6 @@ jobs:
         with:
           name: ${{ runner.OS }}
           path: release
- 
+
       - name: List artifacts
         run: ls ./release
