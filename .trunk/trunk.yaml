@@ -94,10 +94,10 @@ lint:
 actions:
   disabled:
     - trunk-announce
-    - trunk-check-pre-push
 
   enabled:
     - trunk-fmt-pre-commit # Replaces lint-staged pre-commit
+    - trunk-check-pre-push
     - trunk-upgrade-available
 
 runtimes:
