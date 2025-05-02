@@ -53,11 +53,17 @@ lint:
   ignore:
     - linters: [ALL]
       paths:
+        - node_modules/**
+        - build/**
+        - release/**
+        - .yarn/**
+        - .vscode/**
         - src/renderer/i18n/**
         - src/renderer/types/generated/**
-        - .yarn/**
         - .storybook/**
-
+    - linters: [eslint]
+      paths:
+        - .stylelintrc.config.js
     - linters: [codespell]
       paths:
         - scripts/**
@@ -89,9 +95,9 @@ actions:
   disabled:
     - trunk-announce
     - trunk-check-pre-push
-    - trunk-fmt-pre-commit
 
   enabled:
+    - trunk-fmt-pre-commit # Replaces lint-staged pre-commit
     - trunk-upgrade-available
 
 runtimes:
