@@ -3,7 +3,7 @@
 ## Update/Fixes
 
 - update xchain-packages [#671](https://github.com/asgardex/asgardex-desktop/pull/673)
-- perfomance improvements to mayachain quotes [#671](https://github.com/asgardex/asgardex-desktop/pull/673)
+- performance improvements to mayachain quotes [#671](https://github.com/asgardex/asgardex-desktop/pull/673)
 - remove saver features for Thorchain & Mayachain. Support for TCY coming [#677](https://github.com/asgardex/asgardex-desktop/pull/677)
 
 ## Add
@@ -75,7 +75,7 @@
 - use Aggregator package to fetch quotes [#506] (https://github.com/asgardex/asgardex-desktop/pull/506)
 - allow testing of stagenet rune for ledger on asgardex [#562] (https://github.com/asgardex/asgardex-desktop/pull/562)
 - fix utxo send bug & update xchain clients [#568] (https://github.com/asgardex/asgardex-desktop/pull/568)
-- Udpated UI to show correct outbound fee [#565](https://github.com/asgardex/asgardex-desktop/pull/565)
+- Updated UI to show correct outbound fee [#565](https://github.com/asgardex/asgardex-desktop/pull/565)
 - updated Stagenet support to THORChain ledger [#562](https://github.com/asgardex/asgardex-desktop/pull/562)
 - Only Mayachain supports Synthetic assets for swapping [#564] (https://github.com/asgardex/asgardex-desktop/pull/564)
 
@@ -117,7 +117,7 @@
 - fixed cosmos url [#413] (https://github.com/asgardex/asgardex-desktop/pull/418)
 - fixed btc/ uxto max send [#434] (https://github.com/asgardex/asgardex-desktop/pull/437)
 - fixed deposit page bug [#426] (https://github.com/asgardex/asgardex-desktop/pull/430)
-- udpate error handling in savers [#424] (https://github.com/asgardex/asgardex-desktop/pull/441)
+- update error handling in savers [#424] (https://github.com/asgardex/asgardex-desktop/pull/441)
 
 # 1.22.6 (2024-10-6)
 
@@ -166,7 +166,7 @@
 ## Add
 
 - Rune Pool Features added [#310](https://github.com/asgardex/asgardex-desktop/pull/338)
-- Add save trusted addresss v1 [#328] (https://github.com/asgardex/asgardex-desktop/pull/341)
+- Add save trusted address v1 [#328] (https://github.com/asgardex/asgardex-desktop/pull/341)
 
 # 1.22.2 (2024-08-28)
 
@@ -196,7 +196,7 @@
 
 ## Updates/Fixes
 
-- Fix addresss indexing issue with ledger [#300](https://github.com/asgardex/asgardex-desktop/pull/300)
+- Fix address indexing issue with ledger [#300](https://github.com/asgardex/asgardex-desktop/pull/300)
 - Fix bsc usdt not showing [#304] (https://github.com/asgardex/asgardex-desktop/pull/305)
 - Fix usdt usdt crash [#305] (https://github.com/asgardex/asgardex-desktop/pull/306)
 - Fix white screen on bondtab [#301] (https://github.com/asgardex/asgardex-desktop/pull/307)
@@ -331,7 +331,7 @@
 ## Add
 
 - Maya Dex Integration [#136](https://github.com/asgardex/asgardex-desktop/issues/136)
-- Add Dash Wallet Funcitons only [#127](https://github.com/asgardex/asgardex-desktop/issues/127)
+- Add Dash Wallet Functions only [#127](https://github.com/asgardex/asgardex-desktop/issues/127)
 
 ## Updates/Fixes
 
@@ -596,7 +596,7 @@
 - [AssetInput] Add Ledger + extraContent [#2505](https://github.com/thorchain/asgardex-electron/pull/2505)
 - Refactor styles for 'warning` components (TW only) [#2504](https://github.com/thorchain/asgardex-electron/pull/2504)
 - [Deposit] Wallet types based on routes [#2506](https://github.com/thorchain/asgardex-electron/pull/2506)
-- [SWAP] Persistant wallet state while reloading or switching asset pair [#2511](https://github.com/thorchain/asgardex-electron/pull/2511)
+- [SWAP] Persistent wallet state while reloading or switching asset pair [#2511](https://github.com/thorchain/asgardex-electron/pull/2511)
 - Translation ru20 dec (pt2) by @TreefeedXavier [#2496](https://github.com/thorchain/asgardex-electron/pull/2496)
 - [Wallet] Add `Swap` to `ActionButton` to jump to swap view with one click only [#2512](https://github.com/thorchain/asgardex-electron/pull/2512)
 - [Wallet] Add `Add` to `ActionButton` to jump to LP view with one click only [#2513](https://github.com/thorchain/asgardex-electron/pull/2513)
@@ -607,7 +607,7 @@
 - [Send] Max value can't be negative [#2500](https://github.com/thorchain/asgardex-electron/issues/2500)
 - [Swap] Fees needs to be considered for max value to swap [#2498](https://github.com/thorchain/asgardex-electron/issues/2498)
 - [SymDeposit] RUNE can be selected on asset side [#2507](https://github.com/thorchain/asgardex-electron/issues/2507)
-- [Deposit] Check of asset missmatch failed [#2509](https://github.com/thorchain/asgardex-electron/issues/2509)
+- [Deposit] Check of asset mismatch failed [#2509](https://github.com/thorchain/asgardex-electron/issues/2509)
 
 ## Internal
 
@@ -744,7 +744,7 @@
 - Quick fix: Disable manage button in PoolsDetails [#2353](https://github.com/thorchain/asgardex-electron/pull/2353)
 - Use 9R Midgard by default [#2363](https://github.com/thorchain/asgardex-electron/pull/2363)
 - Fix deprecated usage of Antd.Menu children [#2372](https://github.com/thorchain/asgardex-electron/pull/2372)
-- [Ledger] Fix/extend HD pathes for ETH [#2344](https://github.com/thorchain/asgardex-electron/issues/2344)
+- [Ledger] Fix/extend HD paths for ETH [#2344](https://github.com/thorchain/asgardex-electron/issues/2344)
 - Fix: lcd-cosmos.cosmosstation.io api is down - pt2 [#2382](https://github.com/thorchain/asgardex-electron/pull/2382)
 
 ## Remove
@@ -815,7 +815,7 @@
 - Add search option for pools [#2275](https://github.com/thorchain/asgardex-electron/pull/2275)
   [PoolsOverview] Watch / unwatch pools [#2276](https://github.com/thorchain/asgardex-electron/pull/2276), [#2277](https://github.com/thorchain/asgardex-electron/pull/2277)
   [PoolDetail] Watch / unwatch pool [#2278](https://github.com/thorchain/asgardex-electron/pull/2276)
-  [Settings] Make settings collapsable [#2281](https://github.com/thorchain/asgardex-electron/pull/2281)
+  [Settings] Make settings collapsible [#2281](https://github.com/thorchain/asgardex-electron/pull/2281)
   [Settings] Filter accounts [#2282](https://github.com/thorchain/asgardex-electron/pull/2282)
 
 ## Update
@@ -939,7 +939,7 @@
 
 ## Breaking change
 
-- [Ledger] Disable THOR for hard-fork temorary [#2154](https://github.com/thorchain/asgardex-electron/issues/2154)
+- [Ledger] Disable THOR for hard-fork temporary [#2154](https://github.com/thorchain/asgardex-electron/issues/2154)
 
 # 0.11.0 (2022-03-19)
 
@@ -1464,7 +1464,7 @@
 
 - Update FR translation #1452
 - Update to latest xchain-\* libs #1477 #1486 #1508 #1510
-- [BTC] Add 10k sats treshold for swap / deposit #1481
+- [BTC] Add 10k sats threshold for swap / deposit #1481
 
 ## Fix
 

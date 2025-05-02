@@ -158,7 +158,7 @@ const getDeviceScaleFactor = () => {
 
 const langChangeHandler = (locale: Locale) => {
   setMenu(locale, IS_DEV)
-  // show menu, which is hided at start
+  // show menu, which is hidden at start
   if (mainWindow && !mainWindow.isMenuBarVisible()) {
     mainWindow.setMenuBarVisibility(true)
   }

@@ -14,7 +14,7 @@ UPSTREAM_BRANCH="develop"
 GIT_DIFF="git diff --no-color --no-pager"
 
 # Check for merge request context (GitLab/GitHub/etc.)
-if [ -n "${CI_MERGE_REQUEST_ID:-}" ] || [ -n "${GITHUB_HEAD_REF:-}" ]; then
+if [ -n "${CI_MERGE_REQUEST_ID-}" ] || [ -n "${GITHUB_HEAD_REF-}" ]; then
   echo "Running in merge/pull request context..."
 
   # Re-run all checks if Trunk config or project setup changes
