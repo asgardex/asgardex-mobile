@@ -3,7 +3,7 @@ name: CI-Test
 on:
   push:
     branches:
-      - '**' # Any Branch including Develop
+      - '**' # Trigger on all branches
 
 permissions:
   contents: read # As assets are not uploaded
@@ -14,19 +14,19 @@ env:
 jobs:
   test:
     name: Unit tests
-
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
 
       - name: Install missing dependencies on Linux
-        run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
         if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -37,6 +37,7 @@ jobs:
   trunk-check:
     name: Trunk Check
     runs-on: ubuntu-22.04
+
     steps:
       - uses: actions/checkout@v4
 
@@ -44,29 +45,37 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
+
       - name: Install missing dependencies on Linux
-        run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
         if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
 
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Install Trunk CLI
+        run: |
+          curl https://get.trunk.io -fsSL | bash
+          echo "$HOME/.trunk/bin" >> $GITHUB_PATH
+
       - name: Run Trunk via yarn check:trunk
-        run: yarn check:trunk # Tunk will also run ESLint
+        run: yarn check:trunk
 
   build:
     name: Production build
     runs-on: ubuntu-22.04
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
 
       - name: Install missing dependencies on Linux
-        run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
         if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
 
       - name: Install dependencies
         run: yarn install --immutable
