@@ -1,7 +1,6 @@
 {
   "files.associations": {
     ".electronbuildrc": "jsonc",
-    ".eslintrc": "jsonc",
     ".prettierrc": "jsonc",
     ".stylelintrc": "json",
   },

@@ -74,6 +74,7 @@ lint:
       paths:
         - README.md
         - PACKAGE_MACOS.md
+        - .github/ISSUE_TEMPLATE.md
         - .github/ISSUE_TEMPLATE/**
         - BRANCHING_WORKFLOW.md
 
