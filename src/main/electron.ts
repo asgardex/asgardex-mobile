@@ -41,7 +41,7 @@ export const PORT = process.env.PORT || 3000
 export const APP_ROOT = join(__dirname, '..', '..')
 
 const BASE_URL_DEV = `http://localhost:${PORT}`
-const BASE_URL_PROD = `file://${join(__dirname, '../build/index.html')}`
+const BASE_URL_PROD = `file://${join(__dirname, '../renderer/index.html')}`
 // use dev server for hot reload or file in production
 export const BASE_URL = IS_DEV ? BASE_URL_DEV : BASE_URL_PROD
 // Application icon
@@ -115,7 +115,7 @@ const initMainWindow = async () => {
       // From Electron 12, it will be enabled by default.
       contextIsolation: true,
       // preload script
-      preload: join(__dirname, IS_DEV ? '../../public/' : '../build/', 'preload.js'),
+      preload: join(__dirname, IS_DEV ? '../../build/preload/' : '../preload/', 'preload.js'),
       // for develop locally only to avoid CORS issues
       webSecurity: !IS_DEV,
       // `allowRunningInsecureContent` needs to set to `true`,

@@ -4,7 +4,7 @@ import * as A from 'antd'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
-import { ReactComponent as RemoveIcon } from '../../assets/svg/icon-remove.svg'
+import RemoveIcon from '../../assets/svg/icon-remove.svg'
 import { media } from '../../helpers/styleHelper'
 import * as StyledR from '../shared/form/Radio.styles'
 import { AddressEllipsis as AddressEllipsisUI } from '../uielements/addressEllipsis'

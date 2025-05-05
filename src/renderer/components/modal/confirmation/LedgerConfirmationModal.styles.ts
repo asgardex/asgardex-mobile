@@ -2,7 +2,7 @@ import AIcon, { CaretRightOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
-import { ReactComponent as LedgerConnectUI } from '../../../assets/svg/ledger-device-connect.svg'
+import LedgerConnectUI from '../../../assets/svg/ledger-device-connect.svg'
 import { media } from '../../../helpers/styleHelper'
 import { AssetIcon as AssetIconUI } from '../../uielements/assets/assetIcon'
 import { Button } from '../../uielements/button'
