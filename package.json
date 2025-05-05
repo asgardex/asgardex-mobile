@@ -26,8 +26,7 @@
     "generate:baseErc20whitelist": "./node_modules/.bin/ts-node --project tsconfig.scripts.json ./scripts/generateBASEtokenlist.ts",
     "storybook": "NODE_OPTIONS=\"--max-old-space-size=4096\" storybook dev -p 9009 ",
     "build-storybook": "NODE_OPTIONS=\"--max-old-space-size=8192\" storybook build",
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "prepare": "husky install"
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "repository": {
     "type": "git",

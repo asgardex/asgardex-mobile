@@ -44,7 +44,7 @@ lint:
   definitions:
     - name: stylelint
       commands:
-      - run: stylelint --config stylelint.config.js ${target}
+      - run: stylelint --config .stylelint.config.js ${target}
 
     - name: codespell
       commands:
@@ -63,7 +63,7 @@ lint:
         - .storybook/**
     - linters: [eslint]
       paths:
-        - .stylelintrc.config.js
+        - .stylelint.config.js
     - linters: [codespell]
       paths:
         - scripts/**
@@ -73,12 +73,9 @@ lint:
     - linters: [markdownlint]
       paths:
         - README.md
-        - CODE_OF_CONDUCT.md
         - PACKAGE_MACOS.md
-        - CHANGELOG.md
         - .github/ISSUE_TEMPLATE/**
         - BRANCHING_WORKFLOW.md
-        - .github/ISSUE_TEMPLATE.md
 
     - linters: [yamllint]
       paths:
