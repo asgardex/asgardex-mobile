@@ -2,7 +2,6 @@ import { builtinModules } from 'module'
 
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'electron-vite'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgr from 'vite-plugin-svgr'
 
 export default defineConfig({
@@ -45,23 +44,27 @@ export default defineConfig({
     },
     resolve: {
       alias: {
-        buffer: 'buffer',
+        // buffer: 'buffer',
         stream: 'stream-browserify',
         crypto: 'crypto-browserify',
         os: 'os-browserify/browser',
         path: 'path-browserify',
         fs: 'browserify-fs',
-        assert: 'assert',
-        process: 'process/browser'
+        assert: 'assert'
+        // process: 'process/browser'
       }
     },
     optimizeDeps: {
-      include: ['process', 'buffer']
+      include: ['process', 'buffer'],
+      esbuildOptions: {
+        inject: ['./src/shims/buffer-shim.js'],
+        process: ['./src/shims/process-shim.js']
+      }
     },
     plugins: [
       // Usa @vitejs/plugin-react si usas React
       // Usa vite-plugin-svgr para importar SVG como componentes
-      nodePolyfills(),
+      // nodePolyfills(),
       react(),
       svgr()
       // inject({
