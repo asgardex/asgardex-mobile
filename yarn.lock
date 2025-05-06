@@ -11321,6 +11321,7 @@ __metadata:
     react-scripts: "npm:^5.0.1"
     redux-logger: "npm:^3.0.6"
     rimraf: "npm:5.0.10"
+    rollup-plugin-visualizer: "npm:^5.14.0"
     rxjs: "npm:^6.6.7"
     source-map-explorer: "npm:^2.5.2"
     storybook: "npm:^8.5.4"
@@ -25435,6 +25436,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-visualizer@npm:^5.14.0":
+  version: 5.14.0
+  resolution: "rollup-plugin-visualizer@npm:5.14.0"
+  dependencies:
+    open: "npm:^8.4.0"
+    picomatch: "npm:^4.0.2"
+    source-map: "npm:^0.7.4"
+    yargs: "npm:^17.5.1"
+  peerDependencies:
+    rolldown: 1.x
+    rollup: 2.x || 3.x || 4.x
+  peerDependenciesMeta:
+    rolldown:
+      optional: true
+    rollup:
+      optional: true
+  bin:
+    rollup-plugin-visualizer: dist/bin/cli.js
+  checksum: 10/c892a3d36bfa7a26507b8cc0c4c29763ec40de8585115e6655154c2ff35e4bfabc877739e1b9927bb01231b1c51d7dd6b0f2f9c5898826efcbd2dcd60c5d2b73
+  languageName: node
+  linkType: hard
+
 "rollup@npm:^2.43.1":
   version: 2.78.1
   resolution: "rollup@npm:2.78.1"
@@ -29490,7 +29513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.6.2":
+"yargs@npm:^17.5.1, yargs@npm:^17.6.2":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:

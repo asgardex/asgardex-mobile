@@ -1,4 +1,5 @@
-import { Buffer } from 'buffer'
+// ✅ src/shims/custom-buffer-shim.js
+import { Buffer as NodeBuffer } from 'node:buffer'
 
-export { Buffer }
-export default { Buffer }
+export const Buffer = NodeBuffer
+export default NodeBuffer

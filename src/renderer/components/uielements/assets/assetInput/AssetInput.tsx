@@ -14,7 +14,7 @@ import clsx from 'clsx'
 import * as FP from 'fp-ts/lib/function'
 import { useIntl } from 'react-intl'
 
-import WalletIcon from '../../../../assets/svg/icon-wallet.svg'
+import WalletIcon from '../../../../assets/svg/icon-wallet.svg?react'
 import { isUSDAsset } from '../../../../helpers/assetHelper'
 import { AssetWithAmount, FixmeType } from '../../../../types/asgardex'
 import { Button } from '../../button'

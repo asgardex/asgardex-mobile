@@ -35,8 +35,8 @@ import { openExternal } from './api/url'
 import IPCMessages from './ipc/messages'
 import { setMenu } from './menu'
 
-export const IS_DEV = isDev && import.meta.env.NODE_ENV !== 'production'
-export const PORT = import.meta.env.PORT || 3000
+export const IS_DEV = isDev && import.meta.env.VITE_NODE_ENV !== 'production'
+export const PORT = import.meta.env.VITE_PORT || 3000
 
 export const APP_ROOT = join(__dirname, '..', '..')
 
@@ -59,7 +59,7 @@ const initLogger = () => {
 initLogger()
 
 // disable the Electron Security Warnings shown when access the dev url
-// import.meta.env.ELECTRON_DISABLE_SECURITY_WARNINGS = `${IS_DEV}` // TODO: Re enable
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = `${IS_DEV}`
 
 log.debug(`Starting Electron main process`)
 
@@ -138,6 +138,8 @@ const initMainWindow = async () => {
   mainWindow.loadURL(BASE_URL)
   // hide menu at start, we need to wait for locale sent by `ipcRenderer`
   mainWindow.setMenuBarVisibility(false)
+
+  mainWindow.webContents.openDevTools() // TODO: Remove
 }
 
 const getDeviceScaleFactor = () => {

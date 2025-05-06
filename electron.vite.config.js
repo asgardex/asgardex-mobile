@@ -1,7 +1,7 @@
-import { builtinModules } from 'module'
-
+import inject from '@rollup/plugin-inject'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'electron-vite'
+import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 import svgr from 'vite-plugin-svgr'
 
 export default defineConfig({
@@ -9,14 +9,12 @@ export default defineConfig({
     build: {
       sourcemap: process.env.NODE_ENV !== 'production',
       outDir: 'build/main',
-      lib: { entry: 'src/main/electron.ts' },
-      rollupOptions: {
-        external: [...builtinModules, 'node-hid', 'usb']
-      }
+      lib: { entry: 'src/main/electron.ts' }
     },
     resolve: {
       extensions: ['.ts', '.js']
     },
+    plugins: [externalizeDepsPlugin()],
     define: {
       $COMMIT_HASH: JSON.stringify(process.env.COMMIT_HASH || 'dev'),
       $VERSION: JSON.stringify(process.env.npm_package_version),
@@ -30,6 +28,7 @@ export default defineConfig({
       outDir: 'build/preload',
       sourcemap: process.env.NODE_ENV !== 'production'
     },
+    plugins: [externalizeDepsPlugin()],
     resolve: {
       extensions: ['.ts', '.js']
     }
@@ -39,14 +38,29 @@ export default defineConfig({
     build: {
       outDir: 'build/renderer',
       rollupOptions: {
-        input: 'src/renderer/index.html'
+        input: 'src/renderer/index.html',
+        plugins: [
+          inject({
+            Buffer: ['buffer', 'Buffer']
+          }),
+          visualizer({
+            open: true,
+            filename: 'stats.html',
+            gzipSize: true,
+            brotliSize: true
+          })
+        ]
+      },
+      commonjsOptions: {
+        transformMixedEsModules: false
       }
     },
     resolve: {
       alias: {
-        buffer: 'buffer',
+        process: 'process/browser',
         stream: 'stream-browserify',
         crypto: 'crypto-browserify'
+        // buffer: 'buffer/browser'
         // os: 'os-browserify/browser',
         // path: 'path-browserify',
         // fs: 'browserify-fs',
@@ -60,16 +74,7 @@ export default defineConfig({
         inject: ['./src/shims/buffer-shim.js']
       }
     },
-    plugins: [
-      // Usa @vitejs/plugin-react si usas React
-      // Usa vite-plugin-svgr para importar SVG como componentes
-      // nodePolyfills(),
-      react(),
-      svgr()
-      // inject({
-      //   global: ['globalThis']
-      // })
-    ],
+    plugins: [react(), svgr()],
     define: {
       'process.env': {}, // TODO: Fix from xchain
       global: 'globalThis',

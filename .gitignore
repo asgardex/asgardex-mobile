@@ -38,3 +38,5 @@ dev-app-update.yml
 .trunk/tmp/
 .trunk/out/
 .trunk/logs/
+
+stats.html
