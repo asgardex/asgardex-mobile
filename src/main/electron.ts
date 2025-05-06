@@ -35,8 +35,8 @@ import { openExternal } from './api/url'
 import IPCMessages from './ipc/messages'
 import { setMenu } from './menu'
 
-export const IS_DEV = isDev && process.env.NODE_ENV !== 'production'
-export const PORT = process.env.PORT || 3000
+export const IS_DEV = isDev && import.meta.env.NODE_ENV !== 'production'
+export const PORT = import.meta.env.PORT || 3000
 
 export const APP_ROOT = join(__dirname, '..', '..')
 
@@ -59,7 +59,7 @@ const initLogger = () => {
 initLogger()
 
 // disable the Electron Security Warnings shown when access the dev url
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = `${IS_DEV}`
+// import.meta.env.ELECTRON_DISABLE_SECURITY_WARNINGS = `${IS_DEV}` // TODO: Re enable
 
 log.debug(`Starting Electron main process`)
 

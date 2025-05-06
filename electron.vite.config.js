@@ -44,21 +44,20 @@ export default defineConfig({
     },
     resolve: {
       alias: {
-        // buffer: 'buffer',
+        buffer: 'buffer',
         stream: 'stream-browserify',
-        crypto: 'crypto-browserify',
-        os: 'os-browserify/browser',
-        path: 'path-browserify',
-        fs: 'browserify-fs',
-        assert: 'assert'
+        crypto: 'crypto-browserify'
+        // os: 'os-browserify/browser',
+        // path: 'path-browserify',
+        // fs: 'browserify-fs',
+        // assert: 'assert'
         // process: 'process/browser'
       }
     },
     optimizeDeps: {
       include: ['process', 'buffer'],
       esbuildOptions: {
-        inject: ['./src/shims/buffer-shim.js'],
-        process: ['./src/shims/process-shim.js']
+        inject: ['./src/shims/buffer-shim.js']
       }
     },
     plugins: [
@@ -72,6 +71,7 @@ export default defineConfig({
       // })
     ],
     define: {
+      'process.env': {}, // TODO: Fix from xchain
       global: 'globalThis',
       $COMMIT_HASH: JSON.stringify(process.env.COMMIT_HASH || 'dev'),
       $VERSION: JSON.stringify(process.env.npm_package_version),
