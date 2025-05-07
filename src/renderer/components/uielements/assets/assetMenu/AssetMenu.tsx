@@ -82,8 +82,6 @@ export const AssetMenu: React.FC<Props> = (props): JSX.Element => {
   const hasSecuredAssets = useMemo(() => assets.some(isSecuredAsset), [assets])
   const hasSynthAssets = useMemo(() => assets.some(isSynthAsset), [assets])
 
-  console.log('SECURED - ', hasSecuredAssets, hasSynthAssets)
-
   const handleChangeAsset = useCallback(
     async (asset: AnyAsset) => {
       onSelect(asset)
@@ -279,11 +277,11 @@ export const AssetMenu: React.FC<Props> = (props): JSX.Element => {
               </div>
               <div className="my-2 flex w-full px-4">
                 {filterButtons
-                  // .filter(({ type }) => {
-                  //   if (type === ExtendedAssetType.Secured && !hasSecuredAssets) return false
-                  //   if (type === ExtendedAssetType.Synth && !hasSynthAssets) return false
-                  //   return true
-                  // })
+                  .filter(({ type }) => {
+                    if (type === ExtendedAssetType.Secured && !hasSecuredAssets) return false
+                    if (type === ExtendedAssetType.Synth && !hasSynthAssets) return false
+                    return true
+                  })
                   .map(({ type, text }) => (
                     <FilterButton
                       key={type}
