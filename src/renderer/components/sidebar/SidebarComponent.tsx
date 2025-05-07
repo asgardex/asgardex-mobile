@@ -242,27 +242,27 @@ export const SidebarComponent = (props: Props): JSX.Element => {
           )}
           <div>
             <FooterIcon url={ExternalUrl.ASGARDEX} onClick={clickIconHandler}>
-              <Tooltip title="Website">
+              <Tooltip title="Asgardex Website">
                 <GlobalOutlined />
               </Tooltip>
             </FooterIcon>
             <FooterIcon url={ExternalUrl.GITHUB_REPO} onClick={clickIconHandler}>
-              <Tooltip title="GitHub">
+              <Tooltip title="Asgardex GitHub">
                 <GithubOutlined />
               </Tooltip>
             </FooterIcon>
             <FooterIcon url={ExternalUrl.DISCORD} onClick={clickIconHandler}>
-              <Tooltip title="Discord">
+              <Tooltip title="Asgardex Discord">
                 <Icon component={DiscordIcon} />
               </Tooltip>
             </FooterIcon>
             <FooterIcon url={ExternalUrl.TWITTER} onClick={clickIconHandler}>
-              <Tooltip title="X">
+              <Tooltip title="Asgardex X">
                 <TwitterOutlined />
               </Tooltip>
             </FooterIcon>
             <FooterIcon url={ExternalUrl.LICENSE} onClick={clickIconHandler}>
-              <Tooltip title="License">
+              <Tooltip title="MIT License">
                 <FileTextOutlined />
               </Tooltip>
             </FooterIcon>
