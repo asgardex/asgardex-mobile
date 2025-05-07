@@ -3,7 +3,7 @@ import React, { useCallback, useState, useMemo, useRef, Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ArchiveBoxXMarkIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
-import { AnyAsset, assetToString, AssetType, Chain, isSecuredAsset, isSynthAsset } from '@xchainjs/xchain-util'
+import { AnyAsset, assetToString, AssetType, Chain } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
 import * as A from 'fp-ts/lib/Array'
 import * as FP from 'fp-ts/lib/function'
@@ -78,9 +78,6 @@ export const AssetMenu: React.FC<Props> = (props): JSX.Element => {
   }, [])
 
   const intl = useIntl()
-
-  const hasSecuredAssets = useMemo(() => assets.some(isSecuredAsset), [assets])
-  const hasSynthAssets = useMemo(() => assets.some(isSynthAsset), [assets])
 
   const handleChangeAsset = useCallback(
     async (asset: AnyAsset) => {
@@ -276,20 +273,14 @@ export const AssetMenu: React.FC<Props> = (props): JSX.Element => {
                 />
               </div>
               <div className="my-2 flex w-full px-4">
-                {filterButtons
-                  .filter(({ type }) => {
-                    if (type === ExtendedAssetType.Secured && !hasSecuredAssets) return false
-                    if (type === ExtendedAssetType.Synth && !hasSynthAssets) return false
-                    return true
-                  })
-                  .map(({ type, text }) => (
-                    <FilterButton
-                      key={type}
-                      active={activeFilter === type ? 'true' : 'false'}
-                      onClick={() => setActiveFilter(type)}>
-                      {text}
-                    </FilterButton>
-                  ))}
+                {filterButtons.map(({ type, text }) => (
+                  <FilterButton
+                    key={type}
+                    active={activeFilter === type ? 'true' : 'false'}
+                    onClick={() => setActiveFilter(type)}>
+                    {text}
+                  </FilterButton>
+                ))}
               </div>
               {renderAssets}
             </Dialog.Panel>
