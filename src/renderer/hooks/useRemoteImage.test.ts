@@ -1,7 +1,7 @@
 import * as RD from '@devexperts/remote-data-ts'
+import { vi } from 'vitest'
 
 import { useRemoteImage } from './useRemoteImage'
-import { vi } from 'vitest'
 
 const mockSetValue = vi.fn()
 

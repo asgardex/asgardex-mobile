@@ -1,13 +1,14 @@
 import { ThemeType } from '@asgardex/asgardex-theme'
-import { initialContext } from './ThemeContext'
 import { Observable } from 'rxjs'
+
+import { initialContext } from './ThemeContext'
 
 const { themeType$, toggleTheme } = initialContext
 
 const firstThemeType = (obs$: Observable<ThemeType>): Promise<ThemeType> =>
   new Promise((resolve) => {
     obs$.subscribe((val) => resolve(val))
-})
+  })
 
 describe('ThemeContext', () => {
   describe('ThemeContextValue', () => {
@@ -22,7 +23,7 @@ describe('ThemeContext', () => {
       it('toggles light to dark theme', async () => {
         const result: ThemeType[] = []
         const expected: ThemeType[] = [ThemeType.LIGHT, ThemeType.DARK]
-      
+
         const values = await new Promise<ThemeType[]>((resolve) => {
           themeType$.subscribe((type) => {
             result.push(type)
@@ -32,7 +33,7 @@ describe('ThemeContext', () => {
           })
           toggleTheme()
         })
-      
+
         expect(values).toStrictEqual(expected)
       })
     })

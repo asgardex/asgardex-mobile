@@ -6,11 +6,11 @@ import { isLeft, Either } from 'fp-ts/lib/Either'
 import { Option, isNone } from 'fp-ts/lib/Option'
 import { RunHelpers } from 'rxjs/internal/testing/TestScheduler'
 import { TestScheduler } from 'rxjs/testing'
+import { vi } from 'vitest'
 
 import { ApiKeystore, ApiLang, ApiUrl, ApiHDWallet } from './shared/api/types'
 import * as mockApi from './shared/mock/api'
-import { vi } from 'vitest'
- 
+
 // Mock URL.createObjectURL globally for all tests
 global.URL.createObjectURL = vi.fn()
 

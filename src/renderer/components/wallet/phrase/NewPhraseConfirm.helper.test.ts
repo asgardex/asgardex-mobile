@@ -1,6 +1,7 @@
+import { vi } from 'vitest'
+
 import { checkPhraseConfirmWordsFactory } from './NewPhraseConfirm.helper'
 import type { WordType } from './NewPhraseConfirm.types'
-import { vi } from 'vitest'
 
 describe('wallet/NewMnemonicConfirm', () => {
   let wordsMock: WordType[]
