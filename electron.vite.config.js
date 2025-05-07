@@ -1,7 +1,7 @@
 import inject from '@rollup/plugin-inject'
 import react from '@vitejs/plugin-react'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import { visualizer } from 'rollup-plugin-visualizer'
+// import { visualizer } from 'rollup-plugin-visualizer'
 import svgr from 'vite-plugin-svgr'
 
 export default defineConfig({
@@ -43,12 +43,12 @@ export default defineConfig({
           inject({
             Buffer: ['buffer', 'Buffer']
           }),
-          visualizer({
-            open: true,
-            filename: 'stats.html',
-            gzipSize: true,
-            brotliSize: true
-          })
+          // visualizer({
+          //   open: true,
+          //   filename: 'stats.html',
+          //   gzipSize: true,
+          //   brotliSize: true
+          // })
         ]
       },
       commonjsOptions: {
@@ -59,8 +59,8 @@ export default defineConfig({
       alias: {
         process: 'process/browser',
         stream: 'stream-browserify',
-        crypto: 'crypto-browserify'
-        // buffer: 'buffer/browser'
+        crypto: 'crypto-browserify',
+        // buffer: 'buffer'
         // os: 'os-browserify/browser',
         // path: 'path-browserify',
         // fs: 'browserify-fs',
