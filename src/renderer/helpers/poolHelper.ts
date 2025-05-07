@@ -130,7 +130,7 @@ export const getPoolTableRowsData = ({
 }
 
 /**
- * Filters a pool out with hightest value of RUNE
+ * Filters a pool out with highest value of RUNE
  */
 export const getDeepestPool = (pools: PoolDetails): O.Option<PoolDetail> =>
   pools.reduce((acc: O.Option<PoolDetail>, pool: PoolDetail) => {

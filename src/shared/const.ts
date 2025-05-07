@@ -55,6 +55,9 @@ export enum ExternalUrl {
   LICENSE = 'https://github.com/asgardex/asgardex-desktop?tab=MIT-1-ov-file'
 }
 
+export const INVALID_PATH_SEGMENT = /[\\/]|\.\./
+export const VALID_SEGMENT_PATTERN = /^[a-zA-Z0-9._-]+$/
+
 // increase it by `1` if you want to ignore previous version of `UserNodesStorage`
 const USER_NODES_STORAGE_VERSION = '1'
 

@@ -219,7 +219,7 @@ export const assetInERC20Whitelist = (asset: AnyAsset): boolean =>
   )
 
 /**
- * Get's icon url from white list
+ * Gets icon url from white list
  */
 export const iconUrlInERC20Whitelist = (asset: AnyAsset): O.Option<string> =>
   FP.pipe(
@@ -238,7 +238,7 @@ const assetInARBERC20Whitelist = (asset: AnyAsset): boolean =>
   )
 
 /**
- * Get's icon url from white list
+ * Gets icon url from white list
  */
 export const iconUrlInARBERC20Whitelist = (asset: AnyAsset): O.Option<string> =>
   FP.pipe(
@@ -258,7 +258,7 @@ const assetInAVAXERC20Whitelist = (asset: AnyAsset): boolean =>
   )
 
 /**
- * Get's icon url from white list
+ * Gets icon url from white list
  */
 export const iconUrlInAVAXERC20Whitelist = (asset: AnyAsset): O.Option<string> =>
   FP.pipe(
@@ -278,7 +278,7 @@ const assetInBSCERC20Whitelist = (asset: AnyAsset): boolean =>
   )
 
 /**
- * Get's icon url from white list
+ * Gets icon url from white list
  */
 export const iconUrlInBSCERC20Whitelist = (asset: AnyAsset): O.Option<string> =>
   FP.pipe(
@@ -288,7 +288,7 @@ export const iconUrlInBSCERC20Whitelist = (asset: AnyAsset): O.Option<string> =>
   )
 
 /**
- * Get's icon url from white list
+ * Gets icon url from white list
  */
 export const iconUrlInBASEERC20Whitelist = (asset: AnyAsset): O.Option<string> =>
   FP.pipe(
