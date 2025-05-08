@@ -171,19 +171,19 @@ const SuccessRouteView: React.FC<Props> = ({
   const pendingPoolsStateMayaRD = useObservableState(pendingPoolsStateMaya$, RD.initial)
 
   const sourceAssetDecimal$: AssetWithDecimalLD = useMemo(() => {
-    // Check if chainFlipAssets is available and contains the sourceAsset
-    if (RD.isSuccess(chainFlipAssets)) {
-      const matchingAsset = chainFlipAssets.value.find((asset) => asset.asset === sourceAsset.ticker)
-
-      if (matchingAsset) {
-        // If a matching asset is found, return its decimal value
-        return Rx.of(
+    // Check the condition to skip fetching
+    if (sourceAsset.type === AssetType.SECURED) {
+      // Resolve `getDecimal` and return the observable
+      return Rx.from(getDecimal(AssetRuneNative)).pipe(
+        RxOp.map((decimal) =>
           RD.success({
             asset: sourceAsset,
-            decimal: matchingAsset.decimals
+            decimal
           })
-        )
-      }
+        ),
+        RxOp.catchError((error) => Rx.of(RD.failure(error?.msg ?? error.toString()))),
+        RxOp.startWith(RD.pending)
+      )
     }
     // Check the condition to skip fetching
     if (sourceAsset.type === AssetType.SYNTH) {
@@ -199,7 +199,20 @@ const SuccessRouteView: React.FC<Props> = ({
         RxOp.startWith(RD.pending)
       )
     }
+    // Check if chainFlipAssets is available and contains the sourceAsset
+    if (RD.isSuccess(chainFlipAssets)) {
+      const matchingAsset = chainFlipAssets.value.find((asset) => asset.asset === sourceAsset.ticker)
 
+      if (matchingAsset) {
+        // If a matching asset is found, return its decimal value
+        return Rx.of(
+          RD.success({
+            asset: sourceAsset,
+            decimal: matchingAsset.decimals
+          })
+        )
+      }
+    }
     // Use the existing `assetWithDecimal$` function for fetching
     return assetWithDecimal$(sourceAsset)
   }, [assetWithDecimal$, chainFlipAssets, sourceAsset])
@@ -210,6 +223,19 @@ const SuccessRouteView: React.FC<Props> = ({
     if (targetAsset.type === AssetType.SYNTH) {
       // Return a default `LiveData` if the condition is met
       return Rx.from(getDecimal(AssetCacao)).pipe(
+        RxOp.map((decimal) =>
+          RD.success({
+            asset: targetAsset,
+            decimal
+          })
+        ),
+        RxOp.catchError((error) => Rx.of(RD.failure(error?.msg ?? error.toString()))),
+        RxOp.startWith(RD.pending)
+      )
+    }
+    if (targetAsset.type === AssetType.SECURED) {
+      // Return a default `LiveData` if the condition is met
+      return Rx.from(getDecimal(AssetRuneNative)).pipe(
         RxOp.map((decimal) =>
           RD.success({
             asset: targetAsset,

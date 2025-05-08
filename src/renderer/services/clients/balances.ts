@@ -18,7 +18,7 @@ import { WalletBalancesLD, XChainClient$ } from './types'
 // Currently we have two parameters only for `getBalance` in XChainClient defined,
 // but `xchain-btc` has recently added a third parameter `confirmedOnly` and XChainClient needs to be changed in the future,
 // @see `xchain-btc` PR 490 https://github.com/xchainjs/xchainjs-lib/pull/490/files#diff-8fc736951c0a12557cfeea25b9e6671889c2bd252e728501d7bd6c914e6cf5b8R105-R107
-// TEmproary workaround: Override `XChainClient` interface here
+// Temporary workaround: Override `XChainClient` interface here
 export interface XChainClientOverride extends XChainClient {
   getBalance(address: Address, assets?: AnyAsset[], confirmedOnly?: boolean): Promise<Balance[]>
 }
@@ -86,14 +86,16 @@ const loadBalances$ = <C extends XChainClientOverride>({
         Rx.from(client.getBalance(walletAddress, assets, walletBalanceType === 'confirmed')).pipe(
           map(RD.success),
           liveData.map(
-            A.map((balance) => ({
-              ...balance,
-              walletType,
-              walletAddress,
-              walletAccount,
-              walletIndex,
-              hdMode
-            }))
+            A.map((balance) => {
+              return {
+                ...balance,
+                walletType,
+                walletAddress,
+                walletAccount,
+                walletIndex,
+                hdMode
+              }
+            })
           ),
           catchError((error: Error) =>
             Rx.of(RD.failure<ApiError>({ errorId: ErrorId.GET_BALANCES, msg: error.message || 'Unknown error' }))
@@ -205,7 +207,7 @@ export const balancesByAddress$: BalancesByAddress$ =
                     client,
                     address,
                     walletType,
-                    assets: assets, // Use filtered assets
+                    assets: assets.length === 0 ? undefined : assets, // Use filtered assets
                     walletAccount,
                     walletIndex,
                     walletBalanceType,

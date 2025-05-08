@@ -819,7 +819,7 @@ export const TradeSwap = ({
     return canSwapFromTxDetails
   }, [oQuote])
 
-  // Reccommend amount in for use later
+  // Recommend amount in for use later
   const reccommendedAmountIn: CryptoAmount = useMemo(
     () =>
       FP.pipe(
@@ -1427,7 +1427,7 @@ export const TradeSwap = ({
       />
     )
   }, [swapState, sourceAsset, amountToSwapMax1e8, targetAsset, swapResultAmountMax.baseAmount, network, intl])
-  // assuming on a unsucessful tx that the swap state should remain the same
+  // assuming on a unsuccessful tx that the swap state should remain the same
   const onCloseTxModal = useCallback(() => {
     resetSwapState()
   }, [resetSwapState])

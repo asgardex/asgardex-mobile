@@ -529,7 +529,7 @@ const createPoolsService = ({
   const poolAddresses$ = (): PoolAddressesLD => FP.pipe(loadInboundAddresses$(), liveData.map(inboundToPoolAddresses))
 
   /**
-   * Get's (cached) pool addresses
+   * Gets (cached) pool addresses
    *
    * It will be updated as soon as `inboundAddressesInterval` is triggered
    * or by reloading via `reloadInboundAddresses`
@@ -542,7 +542,7 @@ const createPoolsService = ({
       return FP.pipe(
         poolAddresses,
         RD.toOption,
-        // TODO (@Veado) Will we ingore router for some cases (e.g. by withdrawing something from ETH vault not using router)=
+        // TODO (@Veado) Will we ignore router for some cases (e.g. by withdrawing something from ETH vault not using router)=
         (oPoolAddresses) => sequenceTOption(oPoolAddresses, oSelectedPoolAsset),
         O.chain(([addresses, { chain }]) => getPoolAddressesByChain(addresses, chain))
       )
