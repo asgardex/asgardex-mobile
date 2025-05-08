@@ -32,7 +32,7 @@ const ENV_NETWORK = import.meta.env.VITE_DEFAULT_NETWORK
  * But in `dev` mode only
  */
 export const DEFAULT_NETWORK: Network =
-  import.meta.env.NODE_ENV !== 'production' && isNetwork(ENV_NETWORK) && AVAILABLE_NETWORKS.includes(ENV_NETWORK)
+  import.meta.env.VITE_NODE_ENV !== 'production' && isNetwork(ENV_NETWORK) && AVAILABLE_NETWORKS.includes(ENV_NETWORK)
     ? ENV_NETWORK
     : Network.Mainnet
 

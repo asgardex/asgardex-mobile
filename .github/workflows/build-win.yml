@@ -44,6 +44,8 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=7168
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_ENV: production
+          VITE_NODE_ENV: ${{ env.NODE_ENV }}
           VITE_BLOCKCYPHER_API_KEY: ${{ secrets.REACT_APP_BLOCKCYPHER_API_KEY }}
           VITE_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
           VITE_BSCSCAN_API_KEY: ${{ secrets.REACT_APP_BSCSCAN_API_KEY }}

@@ -1,8 +1,3 @@
-// All icons used as <MysvgIcon> components
-// Note: CRA5 + webpack has some issues by importing svg properly
-// Workaround: Use `file-loader` explicit for imports
-// See https://github.com/facebook/create-react-app/issues/11770#issuecomment-1022024494
-/* eslint-disable import/no-webpack-loader-syntax */
 import cacaoIcon from '../../assets/png/asset-cacao.png'
 import dogeIcon from '../../assets/png/asset-doge.png'
 import kujiIcon from '../../assets/png/asset-kuji.png'

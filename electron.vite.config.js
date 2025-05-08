@@ -1,7 +1,6 @@
 import inject from '@rollup/plugin-inject'
 import react from '@vitejs/plugin-react'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-// import { visualizer } from 'rollup-plugin-visualizer'
 import svgr from 'vite-plugin-svgr'
 
 export default defineConfig({
@@ -38,17 +37,29 @@ export default defineConfig({
     build: {
       outDir: 'build/renderer',
       rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            crypto: ['crypto-browserify', 'stream-browserify', 'readable-stream'],
+            xchain: [
+              '@xchainjs/xchain-wallet',
+              '@xchainjs/xchain-doge',
+              '@xchainjs/xchain-litecoin',
+              '@xchainjs/xchain-bitcoin',
+              '@xchainjs/xchain-ethereum',
+              '@xchainjs/xchain-cosmos',
+              '@xchainjs/xchain-thorchain',
+              '@xchainjs/xchain-client',
+              '@xchainjs/xchain-crypto',
+              '@xchainjs/xchain-util',
+            ],
+          },
+        },
         input: 'src/renderer/index.html',
         plugins: [
           inject({
             Buffer: ['buffer', 'Buffer']
           }),
-          // visualizer({
-          //   open: true,
-          //   filename: 'stats.html',
-          //   gzipSize: true,
-          //   brotliSize: true
-          // })
         ]
       },
       commonjsOptions: {
@@ -60,12 +71,12 @@ export default defineConfig({
         process: 'process/browser',
         stream: 'stream-browserify',
         crypto: 'crypto-browserify',
-        // buffer: 'buffer'
-        // os: 'os-browserify/browser',
-        // path: 'path-browserify',
-        // fs: 'browserify-fs',
-        // assert: 'assert'
-        // process: 'process/browser'
+        url: './@empty.js',
+        https: './@empty.js',
+        http: './@empty.js',
+        zlib: './@empty.js',
+        path: './@empty.js',
+        fs: './@empty.js'
       }
     },
     optimizeDeps: {
