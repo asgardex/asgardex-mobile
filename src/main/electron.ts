@@ -139,6 +139,8 @@ const initMainWindow = async () => {
   mainWindow.loadURL(BASE_URL)
   // hide menu at start, we need to wait for locale sent by `ipcRenderer`
   mainWindow.setMenuBarVisibility(false)
+
+  mainWindow.webContents.openDevTools({ mode: 'detach' })
 }
 
 const getDeviceScaleFactor = () => {
