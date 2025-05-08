@@ -2,7 +2,6 @@ const LOAD_FAILURE_SRC = 'fail'
 const LOAD_SUCCESS_SRC = 'success'
 
 class MockImage extends EventTarget {
-  
   _src = ''
 
   set src(src) {
@@ -22,5 +21,3 @@ class MockImage extends EventTarget {
 }
 
 globalThis.Image = MockImage
-
-

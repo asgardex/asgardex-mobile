@@ -43,7 +43,7 @@ declare global {
 }
 
 // Wrapper around `testScheduler.run` to provide it globally
-(global as any).runObservable = <T>(callback: RunObservableCallback<T>) => {
+;(global as any).runObservable = <T>(callback: RunObservableCallback<T>) => {
   const ts = new TestScheduler((actual, expected) => expect(expected).toStrictEqual(actual))
   return ts.run(callback)
 }

@@ -1,6 +1,6 @@
 declare module '*.svg?url' {
-  const src: string;
-  export default src;
+  const src: string
+  export default src
 }
 declare module '*.svg?react' {
   import * as React from 'react'
@@ -11,18 +11,18 @@ declare module '*.svg?react' {
 }
 
 declare module '*.svg' {
-  const src: string;
-  export default src;
+  const src: string
+  export default src
 }
 
 declare module '*.png' {
-  const src: string;
-  export default src;
+  const src: string
+  export default src
 }
 
 interface ImportMetaEnv {
-  [key: `VITE_${string}`]: string;
+  [key: `VITE_${string}`]: string
 }
 interface ImportMeta {
-  readonly env: ImportMetaEnv;
+  readonly env: ImportMetaEnv
 }

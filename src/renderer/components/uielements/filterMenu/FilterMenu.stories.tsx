@@ -49,8 +49,7 @@ export default Coins
 
 // General (string) example
 const generalProps: ComponentProps<string> = {
-  filterFunction: (name: string, searchTerm: string) =>
-    name.toLowerCase().indexOf(searchTerm.toLowerCase()) === 0,
+  filterFunction: (name: string, searchTerm: string) => name.toLowerCase().indexOf(searchTerm.toLowerCase()) === 0,
 
   cellRenderer: (name: string) => ({
     key: `${Math.random()}-name`,

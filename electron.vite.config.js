@@ -13,9 +13,11 @@ export default defineConfig({
     resolve: {
       extensions: ['.ts', '.js']
     },
-    plugins: [externalizeDepsPlugin({
-      include: ['@ledgerhq/hw-transport-node-hid', '@ledgerhq/hw-transport', 'node-hid', 'usb']
-    })],
+    plugins: [
+      externalizeDepsPlugin({
+        include: ['@ledgerhq/hw-transport-node-hid', '@ledgerhq/hw-transport', 'node-hid', 'usb']
+      })
+    ],
     define: {
       $COMMIT_HASH: JSON.stringify(process.env.COMMIT_HASH || 'dev'),
       $VERSION: JSON.stringify(process.env.npm_package_version),
@@ -53,15 +55,15 @@ export default defineConfig({
               '@xchainjs/xchain-thorchain',
               '@xchainjs/xchain-client',
               '@xchainjs/xchain-crypto',
-              '@xchainjs/xchain-util',
-            ],
-          },
+              '@xchainjs/xchain-util'
+            ]
+          }
         },
         input: 'src/renderer/index.html',
         plugins: [
           inject({
             Buffer: ['buffer', 'Buffer']
-          }),
+          })
         ]
       },
       commonjsOptions: {

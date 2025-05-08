@@ -1,4 +1,4 @@
-const TransportNodeHidSingleton = require('@ledgerhq/hw-transport-node-hid');
+const TransportNodeHidSingleton = require('@ledgerhq/hw-transport-node-hid')
 import { FeeOption, Network, TxHash } from '@xchainjs/xchain-client'
 import { defaultEthParams } from '@xchainjs/xchain-ethereum'
 import { ClientLedger, LedgerSigner } from '@xchainjs/xchain-evm'
