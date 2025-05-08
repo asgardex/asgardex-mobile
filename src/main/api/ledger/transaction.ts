@@ -1,5 +1,4 @@
 import * as Transport from '@ledgerhq/hw-transport'
-const TransportNodeHidSingleton = require('@ledgerhq/hw-transport-node-hid')
 import { ARBChain } from '@xchainjs/xchain-arbitrum'
 import { AVAXChain } from '@xchainjs/xchain-avax'
 import { BASEChain } from '@xchainjs/xchain-base'
@@ -36,6 +35,8 @@ import * as DOGE from './doge/transaction'
 import * as ETH from './ethereum/transaction'
 import * as LTC from './litecoin/transaction'
 import * as THOR from './thorchain/transaction'
+
+const TransportNodeHidSingleton = require('@ledgerhq/hw-transport-node-hid')
 
 const chainSendFunctions: Record<
   Chain,
