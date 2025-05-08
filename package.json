@@ -8,7 +8,7 @@
     "dev": "electron-vite dev",
     "force-rebuild-native-deps": "rimraf ./node_modules/prebuild-install",
     "preview": "cross-env VITE_NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192 electron-vite preview",
-    "build": "cross-env NODE_OPTIONS=--max_old_space_size=8192 CI=false electron-vite build",
+    "build": "cross-env NODE_OPTIONS=--max_old_space_size=8192 VITE_NODE_ENV=production CI=false electron-vite build",
     "test": "vitest --config vite.test.config.ts",
     "package": "yarn build && yarn package:electron",
     "package:electron": "yarn force-rebuild-native-deps && electron-builder build -c.extraMetadata.main=build/main/electron.js --config .electronbuildrc",
