@@ -1,5 +1,5 @@
-import Transport from '@ledgerhq/hw-transport'
-import TransportNodeHidSingleton from '@ledgerhq/hw-transport-node-hid-singleton'
+import * as Transport from '@ledgerhq/hw-transport'
+const TransportNodeHidSingleton = require('@ledgerhq/hw-transport-node-hid');
 import { ARBChain } from '@xchainjs/xchain-arbitrum'
 import { AVAXChain } from '@xchainjs/xchain-avax'
 import { BASEChain } from '@xchainjs/xchain-base'
@@ -39,7 +39,7 @@ import * as THOR from './thorchain/transaction'
 
 const chainSendFunctions: Record<
   Chain,
-  (params: IPCLedgerSendTxParams & { transport: Transport }) => Promise<E.Either<LedgerError, TxHash>>
+  (params: IPCLedgerSendTxParams & { transport: Transport.default }) => Promise<E.Either<LedgerError, TxHash>>
 > = {
   [THORChain]: async ({ transport, network, asset, recipient, amount, memo, walletAccount, walletIndex }) => {
     if (!asset) {
@@ -255,7 +255,7 @@ export const sendTx = async ({
   apiKey
 }: IPCLedgerSendTxParams): Promise<E.Either<LedgerError, TxHash>> => {
   try {
-    const transport = await TransportNodeHidSingleton.create()
+    const transport = await TransportNodeHidSingleton.default.create()
 
     if (!isSupportedChain(chain) || unsupportedChains.includes(chain)) {
       return E.left({
@@ -303,7 +303,7 @@ export const sendTx = async ({
 
 const chainDepositFunctions: Record<
   Chain,
-  (params: IPCLedgerDepositTxParams & { transport: Transport }) => Promise<E.Either<LedgerError, TxHash>>
+  (params: IPCLedgerDepositTxParams & { transport: Transport.default }) => Promise<E.Either<LedgerError, TxHash>>
 > = {
   [THORChain]: async ({ transport, network, asset, amount, memo, walletAccount, walletIndex, nodeUrl }) => {
     if (!nodeUrl) {
@@ -581,7 +581,7 @@ export const deposit = async ({
   apiKey
 }: IPCLedgerDepositTxParams): Promise<E.Either<LedgerError, TxHash>> => {
   try {
-    const transport = await TransportNodeHidSingleton.create()
+    const transport = await TransportNodeHidSingleton.default.create()
 
     if (!isSupportedChain(chain) || unsupportedChains.includes(chain)) {
       return E.left({

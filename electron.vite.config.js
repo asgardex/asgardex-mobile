@@ -13,7 +13,9 @@ export default defineConfig({
     resolve: {
       extensions: ['.ts', '.js']
     },
-    plugins: [externalizeDepsPlugin()],
+    plugins: [externalizeDepsPlugin({
+      include: ['@ledgerhq/hw-transport-node-hid', '@ledgerhq/hw-transport', 'node-hid', 'usb']
+    })],
     define: {
       $COMMIT_HASH: JSON.stringify(process.env.COMMIT_HASH || 'dev'),
       $VERSION: JSON.stringify(process.env.npm_package_version),
