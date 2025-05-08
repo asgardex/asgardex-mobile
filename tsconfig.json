@@ -15,7 +15,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "isolatedModules": true,
-    "types": ["vitest", "node"]
+    "types": ["vitest/globals"]
   },
   "include": ["src/shared", "src/renderer", "src/setupTests.ts", "./jest-setup.ts"],
   "exclude": ["src/main/"]
