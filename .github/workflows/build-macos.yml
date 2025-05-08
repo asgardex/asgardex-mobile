@@ -19,9 +19,9 @@ jobs:
         exclude:
           # Ensure macOS-13 pairs with Ventura, macOS-14 pairs with Sonoma
           - os: macOS-13
-            os-name: Sonoma
-          - os: macOS-14
             os-name: Ventura
+          - os: macOS-14
+            os-name: Sonoma
 
     steps:
       - name: Checkout git repo
