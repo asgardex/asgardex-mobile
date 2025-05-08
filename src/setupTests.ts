@@ -43,6 +43,7 @@ declare global {
 }
 
 // Wrapper around `testScheduler.run` to provide it globally
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ;(global as any).runObservable = <T>(callback: RunObservableCallback<T>) => {
   const ts = new TestScheduler((actual, expected) => expect(expected).toStrictEqual(actual))
   return ts.run(callback)

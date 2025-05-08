@@ -75,12 +75,12 @@ export default defineConfig({
         process: 'process/browser',
         stream: 'stream-browserify',
         crypto: 'crypto-browserify',
-        url: './@empty.js',
-        https: './@empty.js',
-        http: './@empty.js',
-        zlib: './@empty.js',
-        path: './@empty.js',
-        fs: './@empty.js'
+        url: './empty.js',
+        https: './empty.js',
+        http: './empty.js',
+        zlib: './empty.js',
+        path: './empty.js',
+        fs: './empty.js'
       }
     },
     optimizeDeps: {
