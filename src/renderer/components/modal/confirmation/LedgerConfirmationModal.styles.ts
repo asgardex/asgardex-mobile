@@ -45,6 +45,7 @@ export const Description = styled.p`
   font-family: 'MainFontRegular';
   font-size: 12;
   text-align: center;
+  color: ${palette('text', 2)};
 `
 
 export const NoteBCH = styled.p`
