@@ -9,10 +9,11 @@
     "force-rebuild-native-deps": "rimraf ./node_modules/prebuild-install",
     "preview": "cross-env VITE_NODE_ENV=production electron-vite preview",
     "build": "cross-env VITE_NODE_ENV=production CI=false electron-vite build",
+    "build:dev": "cross-env VITE_NODE_ENV=development CI=false electron-vite build --mode development",
     "test": "vitest --config vite.test.config.ts",
     "package": "yarn build && yarn package:electron",
     "package:electron": "yarn force-rebuild-native-deps && electron-builder build -c.extraMetadata.main=build/main/electron.js --config .electronbuildrc",
-    "package:ci": "yarn postinstall && yarn prebuild && yarn build && yarn package:electron --publish always",
+    "package:ci": "yarn postinstall && yarn build && yarn package:electron --publish always",
     "postinstall": "git config blame.ignoreRevsFile .git-blame-ignore-revs && yarn force-rebuild-native-deps && electron-builder install-app-deps",
     "lint": "trunk check --filter=eslint --filter=prettier",
     "check:trunk": "cross-env-shell ./scripts/trunk-check.sh",
@@ -23,7 +24,7 @@
     "generate:baseErc20whitelist": "./node_modules/.bin/ts-node --project tsconfig.scripts.json ./scripts/generateBASEtokenlist.ts",
     "storybook": "NODE_OPTIONS=\"--max-old-space-size=4096\" storybook dev -p 9009 ",
     "build-storybook": "NODE_OPTIONS=\"--max-old-space-size=8192\" storybook build",
-    "analyze": "source-map-explorer 'build/static/js/*.js'"
+    "analyze": "yarn build:dev && source-map-explorer 'build/renderer/assets/*.js'"
   },
   "repository": {
     "type": "git",

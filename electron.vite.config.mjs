@@ -1,3 +1,5 @@
+import path from 'path'
+
 import inject from '@rollup/plugin-inject'
 import react from '@vitejs/plugin-react'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
@@ -8,12 +10,12 @@ import pkg from './package.json'
 
 const git = simpleGit()
 
-export default defineConfig(async () => {
+export default defineConfig(async ({ mode }) => {
   const commitHash = (await git.revparse(['--short', 'HEAD'])).trim()
   return {
     main: {
       build: {
-        sourcemap: process.env.NODE_ENV !== 'production',
+        sourcemap: mode === 'development',
         outDir: 'build/main',
         lib: { entry: 'src/main/electron.ts' }
       },
@@ -36,7 +38,7 @@ export default defineConfig(async () => {
       build: {
         lib: { entry: 'src/main/preload.ts' },
         outDir: 'build/preload',
-        sourcemap: process.env.NODE_ENV !== 'production'
+        sourcemap: mode === 'development'
       },
       plugins: [externalizeDepsPlugin()],
       resolve: {
@@ -45,7 +47,9 @@ export default defineConfig(async () => {
     },
 
     renderer: {
+      input: 'src/renderer/index.html',
       build: {
+        sourcemap: mode === 'development',
         outDir: 'build/renderer',
         rollupOptions: {
           output: {
@@ -66,7 +70,6 @@ export default defineConfig(async () => {
               ]
             }
           },
-          input: 'src/renderer/index.html',
           plugins: [
             inject({
               Buffer: ['buffer', 'Buffer']
@@ -82,12 +85,12 @@ export default defineConfig(async () => {
           process: 'process/browser',
           stream: 'stream-browserify',
           crypto: 'crypto-browserify',
-          url: './empty.js',
-          https: './empty.js',
-          http: './empty.js',
-          zlib: './empty.js',
-          path: './empty.js',
-          fs: './empty.js'
+          path: path.resolve(__dirname, 'empty.js'),
+          url: path.resolve(__dirname, 'empty.js'),
+          https: path.resolve(__dirname, 'empty.js'),
+          http: path.resolve(__dirname, 'empty.js'),
+          zlib: path.resolve(__dirname, 'empty.js'),
+          fs: path.resolve(__dirname, 'empty.js')
         }
       },
       optimizeDeps: {

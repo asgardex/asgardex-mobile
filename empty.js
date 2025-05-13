@@ -1,2 +1,1 @@
-// /@empty.js
 export default {}
