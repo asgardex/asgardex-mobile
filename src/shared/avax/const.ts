@@ -8,8 +8,8 @@ import { envOrDefault } from '../utils/env'
 
 const LOWER_FEE_BOUND = 100000000
 
-export const avaxscanApiKey = envOrDefault(process.env.REACT_APP_SNOWTRACE_API_KEY, '')
-export const ankrApiKey = envOrDefault(process.env.REACT_APP_ANKR_API_KEY, '')
+export const avaxscanApiKey = envOrDefault(import.meta.env.VITE_SNOWTRACE_API_KEY, '')
+export const ankrApiKey = envOrDefault(import.meta.env.VITE_ANKR_API_KEY, '')
 
 // =====Ethers providers=====
 const AVALANCHE_MAINNET_ETHERS_PROVIDER = new ethers.providers.JsonRpcProvider(

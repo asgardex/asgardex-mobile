@@ -8,7 +8,7 @@ import { envOrDefault } from '../utils/env'
 
 export const UPPER_FEE_BOUND = 2000000000
 
-export const arbscanApiKey = envOrDefault(process.env.REACT_APP_ARBISCAN_API_KEY, '')
+export const arbscanApiKey = envOrDefault(import.meta.env.VITE_ARBISCAN_API_KEY, '')
 
 // =====Ethers providers=====
 // Define JSON-RPC providers for mainnet and testnet

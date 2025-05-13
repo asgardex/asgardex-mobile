@@ -1,4 +1,3 @@
-import TransportNodeHidSingleton from '@ledgerhq/hw-transport-node-hid-singleton'
 import { FeeOption, Network, TxHash } from '@xchainjs/xchain-client'
 import { defaultEthParams } from '@xchainjs/xchain-ethereum'
 import { ClientLedger, LedgerSigner } from '@xchainjs/xchain-evm'
@@ -12,6 +11,8 @@ import { defaultBscParams } from '../../../../shared/bsc/const'
 import { getDerivationPath, getDerivationPaths } from '../../../../shared/evm/ledger'
 import { ETH_MAINNET_ETHERS_PROVIDER, ETH_TESTNET_ETHERS_PROVIDER, createEthProviders } from '../ethereum/common'
 
+const TransportNodeHidSingleton = require('@ledgerhq/hw-transport-node-hid')
+
 export const approveLedgerERC20Token = async ({
   chain,
   network,
@@ -23,7 +24,7 @@ export const approveLedgerERC20Token = async ({
   apiKey
 }: IPCLedgerApproveERC20TokenParams): Promise<TxHash> => {
   let clientParams
-  const transport = await TransportNodeHidSingleton.create()
+  const transport = await TransportNodeHidSingleton.default.create()
   switch (chain) {
     case 'ETH':
       clientParams = {

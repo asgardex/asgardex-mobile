@@ -3,7 +3,15 @@
   "productName": "ASGARDEX",
   "copyright": "Copyright © 2024 ${author}",
   "artifactName": "${productName}-${version}-${os}.${ext}",
-  "files": ["resources/icon.png", "src/renderer/assets/svg/coin-*.svg"],
+  "files": [
+    "resources/icon.png",
+    "src/renderer/assets/svg/coin-*.svg",
+    "build/main/**/*",
+    "build/renderer/**/*",
+    "build/preload/**/*",
+    "node_modules/**/*",
+    "package.json"
+  ],
   "afterSign": "scripts/notarize.js",
   "directories": {
     "buildResources": "resources",
