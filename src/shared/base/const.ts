@@ -7,7 +7,7 @@ import { BigNumber, ethers } from 'ethers'
 
 import { envOrDefault } from '../utils/env'
 
-export const baseScanApiKey = envOrDefault(process.env.REACT_APP_BASE_API_KEY, '')
+export const baseScanApiKey = envOrDefault(import.meta.env.VITE_BASE_API_KEY, '')
 
 // Define JSON-RPC providers for mainnet and testnet
 const BASE_MAINNET_ETHERS_PROVIDER = new ethers.providers.JsonRpcProvider('https://1rpc.io/base')

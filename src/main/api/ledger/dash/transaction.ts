@@ -1,4 +1,4 @@
-import Transport from '@ledgerhq/hw-transport'
+import * as Transport from '@ledgerhq/hw-transport'
 import { FeeRate, Network, TxHash } from '@xchainjs/xchain-client'
 import {
   AssetDASH,
@@ -32,7 +32,7 @@ export const send = async ({
   walletIndex,
   apiKey
 }: {
-  transport: Transport
+  transport: Transport.default
   network: Network
   sender?: Address
   recipient: Address

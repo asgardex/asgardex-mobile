@@ -111,11 +111,11 @@ This is the developer source repository, general information, and download page 
 _(in alphabetical order)_
 
 - [Ant Design](https://github.com/ant-design/ant-design/)
-- [Create React App](https://github.com/facebook/create-react-app)
+- [Vite](https://github.com/vitejs/vite)
 - [ESLint](https://github.com/eslint/eslint)
 - [Electron](https://github.com/electron/electron/)
 - [fp-ts](https://gcanti.github.io/fp-ts/)
-- [Jest](https://github.com/facebook/jest)
+- [Vitest](https://github.com/vitest-dev/vitest)
 - [Observable Hooks](https://observable-hooks.js.org/)
 - [Prettier](https://github.com/prettier/prettier)
 - [ReactJS](https://github.com/facebook/react/)
@@ -162,13 +162,7 @@ While environment variables are not required (defaults are set), you can configu
 
 ## Development
 
-- Build sources needed by [`main` process](https://www.electronjs.org/docs/glossary#main-process) (only once or whenever you change something in [`preload.ts`](./src/main/preload.ts) or [`electron.ts`](./src/main/electron.ts))
-
-```bash
-yarn prebuild
-```
-
-- Build everything needed by [`renderer` process](https://www.electronjs.org/docs/glossary#renderer-process) and run application in `watch` mode
+- Build everything needed (main, preload and renderer) and run application in `watch` mode
 
 ```bash
 yarn dev
@@ -218,13 +212,13 @@ yarn generate:arberc20whitelist
 
 ### How to auto-unlock a locked wallet while hot-reloading the app (for development only, disabled in production build)
 
-Use `REACT_APP_WALLET_PASSWORD` to run the app by replacing `password` with your own password
+Use `VITE_WALLET_PASSWORD` to run the app by replacing `password` with your own password
 
 ```bash
-REACT_APP_WALLET_PASSWORD=password yarn dev
+VITE_WALLET_PASSWORD=password yarn dev
 ```
 
-Or add to `REACT_APP_WALLET_PASSWORD=password` to `.env` file and run `yarn dev`
+Or add to `VITE_WALLET_PASSWORD=password` to `.env` file and run `yarn dev`
 
 ## Tests
 
@@ -234,21 +228,11 @@ Or add to `REACT_APP_WALLET_PASSWORD=password` to `.env` file and run `yarn dev`
 yarn test
 ```
 
-### `e2e`
-
-Note: Running test-cafe is disabled.
-
-```bash
-yarn test:e2e
-```
-
 ### `lint`
 
 ```bash
 yarn lint
 ```
-
-Note: `eslint` is provided by `react-scripts` located in `./node_modules/react-scripts/node_modules/` and don't need to be extra installed. If your editor has some issues to find `eslint`, you might point it to this location (see [VSCode settings file](.vscode/settings.json) as an example).
 
 ## Storybook
 
@@ -276,7 +260,6 @@ your GutHub personal access token. After that just play locally with version pro
 
 ```bash
 src
-├── index.ts # entry point for CRA
 ├── main # sources of Electron's main process
 ├── renderer # sources of Electron's renderer process (aka webapp)
 └── shared # shared sources for Electron's main and renderer processes

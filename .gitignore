@@ -21,9 +21,6 @@ yarn-error.log*
 
 .eslintcache
 
-/public/electron.js
-/public/preload.js
-
 # storybook static
 /storybook-static
 
@@ -38,3 +35,5 @@ dev-app-update.yml
 .trunk/tmp/
 .trunk/out/
 .trunk/logs/
+
+stats.html

@@ -4,8 +4,8 @@ import { QuoteSwap, QuoteSwap as QuoteSwapProtocol } from '@xchainjs/xchain-aggr
 import clsx from 'clsx'
 import * as O from 'fp-ts/Option'
 
-import { ReactComponent as Amount } from '../../assets/svg/amount.svg'
-import { ReactComponent as StopWatch } from '../../assets/svg/stopwatch.svg'
+import Amount from '../../assets/svg/amount.svg?react'
+import StopWatch from '../../assets/svg/stopwatch.svg?react'
 import { Spin } from '../shared/loading'
 import { Collapse } from '../uielements/collapse'
 import { ProviderIcon } from './ProviderIcon'

@@ -2,7 +2,7 @@ import AIcon, { CaretRightOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
-import { ReactComponent as LedgerConnectUI } from '../../../assets/svg/ledger-device-connect.svg'
+import LedgerConnectUI from '../../../assets/svg/ledger-device-connect.svg?react'
 import { media } from '../../../helpers/styleHelper'
 import { AssetIcon as AssetIconUI } from '../../uielements/assets/assetIcon'
 import { Button } from '../../uielements/button'
@@ -45,6 +45,7 @@ export const Description = styled.p`
   font-family: 'MainFontRegular';
   font-size: 12;
   text-align: center;
+  color: ${palette('text', 2)};
 `
 
 export const NoteBCH = styled.p`

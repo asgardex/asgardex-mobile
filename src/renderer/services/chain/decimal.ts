@@ -41,7 +41,6 @@ export const getDecimal = (asset: AnyAsset): Promise<number> => {
   if (isBscChain(chain)) {
     return Promise.resolve(BSC_GAS_ASSET_DECIMAL)
   }
-
   if (isThorChain(chain)) {
     return Promise.resolve(THORCHAIN_DECIMAL)
   }

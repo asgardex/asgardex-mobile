@@ -21,6 +21,5 @@
     "editor.formatOnSave": false
   },
   "javascript.updateImportsOnFileMove.enabled": "always",
-  "eslint.nodePath": "./node_modules/react-scripts/node_modules/",
   "eslint.enable": true
 }
