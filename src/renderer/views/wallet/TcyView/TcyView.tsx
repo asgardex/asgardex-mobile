@@ -1,26 +1,24 @@
 import { useCallback, useState } from 'react'
 
+import { InformationCircleIcon } from '@heroicons/react/20/solid'
 import { AssetBTC } from '@xchainjs/xchain-bitcoin'
 import { AssetDOGE } from '@xchainjs/xchain-doge'
 import { AssetETH } from '@xchainjs/xchain-ethereum'
 import { AssetTCY } from '@xchainjs/xchain-thorchain'
 import clsx from 'clsx'
 
-import { AssetData } from '../../components/uielements/assets/assetData'
-import { FlatButton, RefreshButton } from '../../components/uielements/button'
-import { InputBigNumber } from '../../components/uielements/input'
-import { AssetsNav } from '../../components/wallet/assets'
-import { useNetwork } from '../../hooks/useNetwork'
-
-enum TcyOperation {
-  Claim = 'Claim',
-  Stake = 'Stake',
-  Unstake = 'Unstake'
-}
+import { AssetData } from '../../../components/uielements/assets/assetData'
+import { FlatButton, RefreshButton } from '../../../components/uielements/button'
+import { Tooltip } from '../../../components/uielements/common/Common.styles'
+import { InputBigNumber } from '../../../components/uielements/input'
+import { AssetsNav } from '../../../components/wallet/assets'
+import { useNetwork } from '../../../hooks/useNetwork'
+import { TcyClaimModal } from './TcyClaimModal'
+import { TcyInfo, TcyOperation } from './types'
 
 const tcyTabs = [TcyOperation.Claim, TcyOperation.Stake, TcyOperation.Unstake]
 
-const mockData = [
+const mockData: TcyInfo[] = [
   {
     asset: AssetBTC,
     amount: 2593,
@@ -41,8 +39,15 @@ const mockData = [
 export const TcyView = () => {
   const { network } = useNetwork()
   const [activeTab, setActiveTab] = useState(TcyOperation.Claim)
+  const [selectedAsset, setSelectedAsset] = useState<TcyInfo>()
+  const [isClaimModalVisible, setClaimModalVisible] = useState(false)
 
   const refreshHandler = useCallback(async () => {}, [])
+
+  const handleClaim = useCallback((tcyInfo: TcyInfo) => {
+    setSelectedAsset(tcyInfo)
+    setClaimModalVisible(true)
+  }, [])
 
   return (
     <>
@@ -81,9 +86,11 @@ export const TcyView = () => {
                           <span className="text-text2 dark:text-text2d">{tcyData.amount}</span>
                         </div>
                         {!tcyData.isClaimed && (
-                          <div className="p-2 bg-turquoise text-white cursor-pointer rounded-lg text-11 uppercase">
+                          <FlatButton
+                            className="p-2 bg-turquoise text-white cursor-pointer rounded-lg text-11 uppercase"
+                            onClick={() => handleClaim(tcyData)}>
                             Claim
-                          </div>
+                          </FlatButton>
                         )}
                       </div>
                     ))}
@@ -147,20 +154,37 @@ export const TcyView = () => {
               <span className="text-16 text-text2 dark:text-text2d">TCY Status</span>
             </div>
 
-            <div className="flex flex-row space-x-4 px-4 pb-4 mb-4">
-              <span className="text-16 text-text2 dark:text-text2d">
-                You have staked <span className="text-turquoise">1000 TCY</span>.
-              </span>
+            <div className="flex flex-col space-y-2 px-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-16 text-text2 dark:text-text2d">Staked Amount</span>
+                {/* TODO: locale */}
+                <Tooltip title="Staked Amount includes your Keystore and Ledger Balances">
+                  <InformationCircleIcon className="cursor-pointer text-turquoise w-4 h-4" />
+                </Tooltip>
+              </div>
+              <span className="text-turquoise">1000 TCY</span>.
             </div>
 
-            <div className="flex flex-row space-x-4 px-4 pb-4 mb-4">
-              <span className="text-16 text-text2 dark:text-text2d">
-                You have <span className="text-turquoise">1000 TCY</span> in the wallet.
-              </span>
+            <div className="flex flex-col space-y-2 px-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-16 text-text2 dark:text-text2d">Wallet Balance</span>
+                {/* TODO: locale */}
+                <Tooltip title="Wallet balance includes your Keystore and Ledger Balances">
+                  <InformationCircleIcon className="cursor-pointer text-turquoise w-4 h-4" />
+                </Tooltip>
+              </div>
+              <span className="text-turquoise">1000 TCY</span>
             </div>
           </div>
         </div>
       </div>
+      {selectedAsset && (
+        <TcyClaimModal
+          isVisible={isClaimModalVisible}
+          tcyInfo={selectedAsset}
+          onClose={() => setClaimModalVisible(false)}
+        />
+      )}
     </>
   )
 }
