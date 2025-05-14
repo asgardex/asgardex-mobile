@@ -252,6 +252,7 @@ type WalletMessageKey =
   | 'wallet.nav.deposits'
   | 'wallet.nav.bonds'
   | 'wallet.nav.poolshares'
+  | 'wallet.nav.tcy'
   | 'wallet.nav.savers'
   | 'wallet.nav.runepool'
   | 'wallet.column.name'
