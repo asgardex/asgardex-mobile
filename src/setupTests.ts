@@ -2,17 +2,17 @@
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom'
 import { isLeft, Either } from 'fp-ts/lib/Either'
 import { Option, isNone } from 'fp-ts/lib/Option'
 import { RunHelpers } from 'rxjs/internal/testing/TestScheduler'
 import { TestScheduler } from 'rxjs/testing'
+import { vi } from 'vitest'
 
 import { ApiKeystore, ApiLang, ApiUrl, ApiHDWallet } from './shared/api/types'
 import * as mockApi from './shared/mock/api'
 
 // Mock URL.createObjectURL globally for all tests
-global.URL.createObjectURL = jest.fn()
+global.URL.createObjectURL = vi.fn()
 
 type RunObservableCallback<T> = (helpers: RunHelpers) => T
 type RunObservable = <T>(callback: RunObservableCallback<T>) => T
@@ -43,7 +43,8 @@ declare global {
 }
 
 // Wrapper around `testScheduler.run` to provide it globally
-global.runObservable = <T>(callback: RunObservableCallback<T>) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+;(global as any).runObservable = <T>(callback: RunObservableCallback<T>) => {
   const ts = new TestScheduler((actual, expected) => expect(expected).toStrictEqual(actual))
   return ts.run(callback)
 }

@@ -14,7 +14,7 @@ import { keystoreService } from '../wallet/keystore'
 import { getPhrase } from '../wallet/util'
 import { Client$, ClientState, ClientState$ } from './types'
 
-const solApiKey = envOrDefault(process.env.REACT_APP_SOL_API_KEY, '')
+const solApiKey = envOrDefault(import.meta.env.VITE_SOL_API_KEY, '')
 
 const defaultClientUrls = (): Record<Network, string[]> => {
   return {

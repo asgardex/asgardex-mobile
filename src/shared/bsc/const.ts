@@ -8,8 +8,8 @@ import { envOrDefault } from '../utils/env'
 
 const LOWER_FEE_BOUND = 1_000_000_000
 
-export const bscScanApiKey = envOrDefault(process.env.REACT_APP_BSCSCAN_API_KEY, '')
-export const ankrApiKey = envOrDefault(process.env.REACT_APP_ANKR_API_KEY, '')
+export const bscScanApiKey = envOrDefault(import.meta.env.VITE_BSCSCAN_API_KEY, '')
+export const ankrApiKey = envOrDefault(import.meta.env.VITE_ANKR_API_KEY, '')
 // =====Ethers providers=====
 const BSC_MAINNET_ETHERS_PROVIDER = new ethers.providers.JsonRpcProvider(`https://rpc.ankr.com/bsc/${ankrApiKey}`)
 const BSC_TESTNET_ETHERS_PROVIDER = new ethers.providers.JsonRpcProvider(
