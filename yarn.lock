@@ -6591,7 +6591,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^4.0.0"
     eslint-plugin-react: "npm:^7.37.5"
     eslint-plugin-react-hooks: "npm:^5.2.0"
-    eslint-plugin-security: "npm:2.1.1"
+    eslint-plugin-security: "npm:^3.0.1"
     eslint-plugin-unused-imports: "npm:^4.1.4"
     ethers: "npm:5.7.2"
     fp-ts: "npm:^2.12.1"
@@ -9534,12 +9534,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-security@npm:2.1.1":
-  version: 2.1.1
-  resolution: "eslint-plugin-security@npm:2.1.1"
+"eslint-plugin-security@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "eslint-plugin-security@npm:3.0.1"
   dependencies:
     safe-regex: "npm:^2.1.1"
-  checksum: 10/003fd5ba9cf17efc191ccf0160e30bd953e956538eddea9a4b7d5899536c17c3bc77799bf5309762d5969625776c82d11da358f45ceb49635361418944b94cbf
+  checksum: 10/5a7eb9a9d499addad93e9a650f503b2bdc23e8ab8222a0330e216726ffcc0e154405d23c8c523ff987e894cb9c8358da883c1dd22e21423e4368cd13de14930c
   languageName: node
   linkType: hard
 
