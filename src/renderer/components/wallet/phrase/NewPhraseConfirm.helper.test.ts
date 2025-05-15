@@ -1,16 +1,18 @@
+import { vi } from 'vitest'
+
 import { checkPhraseConfirmWordsFactory } from './NewPhraseConfirm.helper'
 import type { WordType } from './NewPhraseConfirm.types'
 
 describe('wallet/NewMnemonicConfirm', () => {
   let wordsMock: WordType[]
-  let setWordsList: jest.Mock
-  let setMnemonicError: jest.Mock
+  let setWordsList: ReturnType<typeof vi.fn>
+  let setMnemonicError: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
     wordsMock = [{ _id: '1' }, { _id: '2' }, { _id: '3' }, { _id: '4' }, { _id: '5' }, { _id: '6' }] as WordType[]
 
-    setWordsList = jest.fn()
-    setMnemonicError = jest.fn()
+    setWordsList = vi.fn()
+    setMnemonicError = vi.fn()
   })
 
   it('should trigger error callback if not filled yet', () => {

@@ -4,16 +4,15 @@ import { CACAO_DECIMAL } from '@xchainjs/xchain-mayachain'
 import {
   Address,
   AnyAsset,
-  Asset,
   assetAmount,
   AssetAmount,
   assetFromString,
-  assetFromStringEx,
   AssetType,
   baseAmount,
   BaseAmount,
   bn,
   Chain,
+  SecuredAsset,
   TokenAsset
 } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
@@ -73,13 +72,6 @@ export const THORCHAIN_DECIMAL = 8
  */
 export const isRuneNativeAsset = (asset: AnyAsset): boolean => eqAsset.equals(asset, AssetRuneNative)
 
-//TCY
-export const AssetTCY = assetFromStringEx('THOR.TCY') as Asset
-/**
- * Checks whether an asset is a TCY asset
- */
-export const isTCYAsset = (asset: AnyAsset): boolean => eqAsset.equals(asset, AssetTCY)
-
 /**
  * Checks whether an asset is a Rune (native or non-native) asset
  */
@@ -119,6 +111,11 @@ export const isMayaAsset = (asset: AnyAsset): boolean =>
  * Checks whether an asset is a native | synth | trade BTC asset
  */
 export const isBtcAsset = (asset: AnyAsset): boolean =>
+  asset.chain === AssetBTC.chain && asset.symbol.toUpperCase() === AssetBTC.symbol.toUpperCase()
+/**
+ * Checks whether an asset is a native | synth | trade BTC asset
+ */
+export const isBtcSecuredAsset = (asset: SecuredAsset): boolean =>
   asset.chain === AssetBTC.chain && asset.symbol.toUpperCase() === AssetBTC.symbol.toUpperCase()
 
 /**

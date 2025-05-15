@@ -846,7 +846,7 @@ export const Swap = ({
               ...sourceAsset,
               symbol: sourceAsset.symbol.toUpperCase()
             }),
-            fromAddress: sourceWalletAddress,
+            fromAddress: isSecuredAsset(sourceAsset) ? undefined : sourceWalletAddress,
             destinationAddress: quoteOnly ? undefined : destinationWalletAddress,
             streamingInterval: isStreaming ? streamingInterval : 0,
             streamingQuantity: isStreaming ? streamingQuantity : 0,

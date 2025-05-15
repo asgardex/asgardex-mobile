@@ -1,5 +1,4 @@
-import Transport from '@ledgerhq/hw-transport'
-import TransportNodeHidSingleton from '@ledgerhq/hw-transport-node-hid-singleton'
+import * as Transport from '@ledgerhq/hw-transport'
 import { ARBChain } from '@xchainjs/xchain-arbitrum'
 import { AVAXChain } from '@xchainjs/xchain-avax'
 import { BASEChain } from '@xchainjs/xchain-base'
@@ -33,9 +32,11 @@ import { getEVMAddress, verifyEVMAddress } from './evm/address'
 import { getAddress as getLTCAddress, verifyAddress as verifyLTCAddress } from './litecoin/address'
 import { getAddress as getTHORAddress, verifyAddress as verifyTHORAddress } from './thorchain/address'
 
+const TransportNodeHidSingleton = require('@ledgerhq/hw-transport-node-hid')
+
 const handleEVMChain = (
   chain: Chain,
-  transport: Transport,
+  transport: Transport.default,
   network: Network,
   walletAccount: number,
   walletIndex: number,
@@ -56,7 +57,7 @@ const handleEVMChain = (
 const chainAddressFunctions: Record<
   Chain,
   (
-    transport: Transport,
+    transport: Transport.default,
     network: Network,
     walletAccount: number,
     walletIndex: number,
@@ -95,7 +96,7 @@ export const getAddress = async ({
   hdMode
 }: IPCLedgerAdddressParams): Promise<E.Either<LedgerError, WalletAddress>> => {
   try {
-    const transport = await TransportNodeHidSingleton.create()
+    const transport = await TransportNodeHidSingleton.default.create()
 
     if (!isSupportedChain(chain) || unsupportedChains.includes(chain)) {
       return E.left({
