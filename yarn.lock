@@ -6373,7 +6373,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array-includes@npm:^3.1.4, array-includes@npm:^3.1.6, array-includes@npm:^3.1.8":
+"array-includes@npm:^3.1.6, array-includes@npm:^3.1.8":
   version: 3.1.8
   resolution: "array-includes@npm:3.1.8"
   dependencies:
@@ -6415,7 +6415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array.prototype.flat@npm:^1.2.5, array.prototype.flat@npm:^1.3.1":
+"array.prototype.flat@npm:^1.3.1":
   version: 1.3.3
   resolution: "array.prototype.flat@npm:1.3.3"
   dependencies:
@@ -6564,7 +6564,7 @@ __metadata:
     electron-window-state: "npm:^5.0.3"
     eslint: "npm:^8.57.0"
     eslint-config-prettier: "npm:^8.5.0"
-    eslint-plugin-import: "npm:2.25.3"
+    eslint-plugin-import: "npm:2.27.0"
     eslint-plugin-jsx-a11y: "npm:^6.10.2"
     eslint-plugin-prettier: "npm:^4.0.0"
     eslint-plugin-react: "npm:^7.37.5"
@@ -8369,15 +8369,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^2.6.9":
-  version: 2.6.9
-  resolution: "debug@npm:2.6.9"
-  dependencies:
-    ms: "npm:2.0.0"
-  checksum: 10/e07005f2b40e04f1bd14a3dd20520e9c4f25f60224cb006ce9d6781732c917964e9ec029fc7f1a151083cd929025ad5133814d4dc624a9aaf020effe4914ed14
-  languageName: node
-  linkType: hard
-
 "debug@npm:^3.2.7":
   version: 3.2.7
   resolution: "debug@npm:3.2.7"
@@ -9392,7 +9383,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-node@npm:^0.3.6":
+"eslint-import-resolver-node@npm:^0.3.7":
   version: 0.3.9
   resolution: "eslint-import-resolver-node@npm:0.3.9"
   dependencies:
@@ -9403,7 +9394,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-module-utils@npm:^2.7.1":
+"eslint-module-utils@npm:^2.7.4":
   version: 2.12.0
   resolution: "eslint-module-utils@npm:2.12.0"
   dependencies:
@@ -9415,26 +9406,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-import@npm:2.25.3":
-  version: 2.25.3
-  resolution: "eslint-plugin-import@npm:2.25.3"
+"eslint-plugin-import@npm:2.27.0":
+  version: 2.27.0
+  resolution: "eslint-plugin-import@npm:2.27.0"
   dependencies:
-    array-includes: "npm:^3.1.4"
-    array.prototype.flat: "npm:^1.2.5"
-    debug: "npm:^2.6.9"
+    array-includes: "npm:^3.1.6"
+    array.prototype.flat: "npm:^1.3.1"
+    debug: "npm:^3.2.7"
     doctrine: "npm:^2.1.0"
-    eslint-import-resolver-node: "npm:^0.3.6"
-    eslint-module-utils: "npm:^2.7.1"
+    eslint-import-resolver-node: "npm:^0.3.7"
+    eslint-module-utils: "npm:^2.7.4"
     has: "npm:^1.0.3"
-    is-core-module: "npm:^2.8.0"
+    is-core-module: "npm:^2.11.0"
     is-glob: "npm:^4.0.3"
-    minimatch: "npm:^3.0.4"
-    object.values: "npm:^1.1.5"
-    resolve: "npm:^1.20.0"
-    tsconfig-paths: "npm:^3.11.0"
+    minimatch: "npm:^3.1.2"
+    object.values: "npm:^1.1.6"
+    resolve: "npm:^1.22.1"
+    tsconfig-paths: "npm:^3.14.1"
   peerDependencies:
     eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8
-  checksum: 10/508cdf7d0c6a2526b8bb1bfec845fc2728a1d34ba38a1f605e3a50474b22fbe89d165ffc816cd7601d76defcb0091d745894b05ea90eaed5613bd7cd51d7228e
+  checksum: 10/1700745e49966373ca8ea6bc69c2001daa5c757afc5986198e24802632a42b41ff680f88c6bd0585fd3e4776ef940e6935c96c3ac764406339e190946fc4b1a9
   languageName: node
   linkType: hard
 
@@ -11011,7 +11002,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-core-module@npm:^2.13.0, is-core-module@npm:^2.16.0, is-core-module@npm:^2.8.0":
+"is-core-module@npm:^2.11.0, is-core-module@npm:^2.13.0, is-core-module@npm:^2.16.0":
   version: 2.16.1
   resolution: "is-core-module@npm:2.16.1"
   dependencies:
@@ -12350,13 +12341,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ms@npm:2.0.0":
-  version: 2.0.0
-  resolution: "ms@npm:2.0.0"
-  checksum: 10/0e6a22b8b746d2e0b65a430519934fefd41b6db0682e3477c10f60c76e947c4c0ad06f63ffdf1d78d335f83edee8c0aa928aa66a36c7cd95b69b26f468d527f4
-  languageName: node
-  linkType: hard
-
 "ms@npm:^2.0.0, ms@npm:^2.1.1, ms@npm:^2.1.3":
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
@@ -12728,7 +12712,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object.values@npm:^1.1.5, object.values@npm:^1.1.6, object.values@npm:^1.2.1":
+"object.values@npm:^1.1.6, object.values@npm:^1.2.1":
   version: 1.2.1
   resolution: "object.values@npm:1.2.1"
   dependencies:
@@ -14611,7 +14595,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.1.7, resolve@npm:^1.14.2, resolve@npm:^1.20.0, resolve@npm:^1.22.1, resolve@npm:^1.22.4, resolve@npm:^1.22.8":
+"resolve@npm:^1.1.7, resolve@npm:^1.14.2, resolve@npm:^1.22.1, resolve@npm:^1.22.4, resolve@npm:^1.22.8":
   version: 1.22.10
   resolution: "resolve@npm:1.22.10"
   dependencies:
@@ -14637,7 +14621,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@npm%3A^1.1.7#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.14.2#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.20.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.1#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.4#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.8#optional!builtin<compat/resolve>":
+"resolve@patch:resolve@npm%3A^1.1.7#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.14.2#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.1#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.4#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.8#optional!builtin<compat/resolve>":
   version: 1.22.10
   resolution: "resolve@patch:resolve@npm%3A1.22.10#optional!builtin<compat/resolve>::version=1.22.10&hash=c3c19d"
   dependencies:
@@ -16157,7 +16141,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsconfig-paths@npm:^3.11.0":
+"tsconfig-paths@npm:^3.14.1":
   version: 3.15.0
   resolution: "tsconfig-paths@npm:3.15.0"
   dependencies:
