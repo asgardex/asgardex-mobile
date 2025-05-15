@@ -6,11 +6,12 @@ import clsx from 'clsx'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
-import { FlatButton, BorderButton } from '.'
 import { DEFAULT_WALLET_TYPE } from '../../../const'
 import * as poolsRoutes from '../../../routes/pools'
 import * as walletRoutes from '../../../routes/wallet'
 import { InteractType } from '../../wallet/txs/interact/Interact.types'
+import { BorderButton } from './BorderButton'
+import { FlatButton } from './FlatButton'
 import type { Props as ButtonProps } from './FlatButton'
 
 type ButtonVariant = 'runePool' | 'savers' | 'manage'
