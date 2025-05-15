@@ -14,13 +14,21 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macOS-13, macOS-14]
-        os-name: [Ventura, Sonoma]
+        os: [macOS-13, macOS-14, macOS-15]
+        os-name: [Ventura, Sonoma, Sequoia]
+        os-version: [13, 14, 15]
         exclude:
-          # Ensure macOS-13 pairs with Ventura, macOS-14 pairs with Sonoma
           - os: macOS-13
+            os-name: Sonoma
+          - os: macOS-13
+            os-name: Sequoia
+          - os: macOS-14
             os-name: Ventura
           - os: macOS-14
+            os-name: Sequoia
+          - os: macOS-15
+            os-name: Ventura
+          - os: macOS-15
             os-name: Sonoma
 
     steps:
@@ -70,11 +78,12 @@ jobs:
           VITE_ANKR_API_KEY: ${{ secrets.REACT_APP_ANKR_API_KEY }}
           VITE_SOL_API_KEY: ${{ secrets.REACT_APP_SOL_API_KEY }}
           OS_NAME: ${{ matrix.os-name }}
+          OS_VERSION: ${{ matrix.os-version }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-${{ matrix.os-name }}
+          name: ${{ matrix.os }}-${{ matrix.os-version }}-${{ matrix.os-name }}
           path: release
 
       - name: List artifacts
