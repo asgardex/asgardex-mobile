@@ -108,7 +108,8 @@ export default defineConfig(async ({ mode }) => {
         $IS_DEV: JSON.stringify(process.env.NODE_ENV !== 'production')
       },
       server: {
-        port: 3000
+        port: 3000,
+        host: true
       }
     }
   }
