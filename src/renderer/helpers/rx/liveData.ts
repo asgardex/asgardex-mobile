@@ -15,13 +15,13 @@ type MonadThrow2 = monadThrow.MonadThrow2
 
 import { apply } from 'fp-ts'
 import { array as A } from 'fp-ts'
-import { pipeable } from 'fp-ts'
 import { option as O } from 'fp-ts'
+import { pipeable as P } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
 const { sequenceS, sequenceT } = apply
-const { pipeable } = pipeable
+const { pipeable } = P
 
 export type LiveData<E, A> = Rx.Observable<RD.RemoteData<E, A>>
 
