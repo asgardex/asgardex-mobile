@@ -6,18 +6,22 @@ import {
   CoproductLeft,
   coproductMapLeft
 } from '@devexperts/utils/dist/typeclasses/product-left-coproduct-left/product-left-coproduct-left.utils'
+
+import type { filterable } from 'fp-ts'
+import type { monadThrow } from 'fp-ts'
+
+type Filterable2 = filterable.Filterable2
+type MonadThrow2 = monadThrow.MonadThrow2
+
 import { apply } from 'fp-ts'
-const { sequenceS, sequenceT } = apply
 import { array as A } from 'fp-ts'
-import { filterable } from 'fp-ts'
-const { Filterable2 } = filterable
-import { monadThrow } from 'fp-ts'
-const { MonadThrow2 } = monadThrow
 import { pipeable } from 'fp-ts'
-const { pipeable } = pipeable
 import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
+
+const { sequenceS, sequenceT } = apply
+const { pipeable } = pipeable
 
 export type LiveData<E, A> = Rx.Observable<RD.RemoteData<E, A>>
 

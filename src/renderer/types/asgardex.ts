@@ -1,6 +1,7 @@
 import { BaseAmount, Address, AnyAsset } from '@xchainjs/xchain-util'
-import { option } from 'fp-ts'
-const { Option } = option
+import type { option } from 'fp-ts'
+
+type Option = option.Option
 
 import { WalletType } from '../../shared/wallet/types'
 

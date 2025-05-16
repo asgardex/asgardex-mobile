@@ -3,12 +3,15 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import { either } from 'fp-ts'
-const { isLeft, Either } = either
 import { option } from 'fp-ts'
-const { Option, isNone } = option
 import { RunHelpers } from 'rxjs/internal/testing/TestScheduler'
 import { TestScheduler } from 'rxjs/testing'
 import { vi } from 'vitest'
+
+type Either = either.Either
+type Option = option.Option
+const { isLeft } = either
+const { isNone } = option
 
 import { ApiKeystore, ApiLang, ApiUrl, ApiHDWallet } from './shared/api/types'
 import * as mockApi from './shared/mock/api'

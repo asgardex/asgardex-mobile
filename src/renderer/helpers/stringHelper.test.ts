@@ -1,4 +1,5 @@
 import { option } from 'fp-ts'
+
 const { some } = option
 
 import { Pair } from '../types/asgardex'

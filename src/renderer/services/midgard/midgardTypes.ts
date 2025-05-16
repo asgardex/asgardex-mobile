@@ -15,12 +15,13 @@ import {
 } from '@xchainjs/xchain-midgard' // Use THOR's import as base, MAYA's can be aliased if needed
 import { Address, AnyAsset, BaseAmount, Chain } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
+import type { nonEmptyArray } from 'fp-ts'
 import { function as FP } from 'fp-ts'
-import { nonEmptyArray } from 'fp-ts'
-const { NonEmptyArray } = nonEmptyArray
 import { option as O } from 'fp-ts'
 import { IntlShape } from 'react-intl'
 import * as Rx from 'rxjs'
+
+type NonEmptyArray = nonEmptyArray.NonEmptyArray
 
 import { LiveData } from '../../helpers/rx/liveData'
 import { AssetWithAmount, DepositType } from '../../types/asgardex'
