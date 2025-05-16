@@ -2,10 +2,12 @@ import * as RD from '@devexperts/remote-data-ts'
 import { Balance, Network, Tx, TxHash } from '@xchainjs/xchain-client'
 import { Keystore } from '@xchainjs/xchain-crypto'
 import { Address, AnyAsset, Chain } from '@xchainjs/xchain-util'
-import { getMonoid } from 'fp-ts/Array'
-import * as FP from 'fp-ts/lib/function'
-import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
-import * as O from 'fp-ts/lib/Option'
+import { array } from 'fp-ts'
+const { getMonoid } = array
+import { function as FP } from 'fp-ts'
+import { nonEmptyArray } from 'fp-ts'
+const { NonEmptyArray } = nonEmptyArray
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 
 import { KeystoreWallet, KeystoreWallets } from '../../../shared/api/io'

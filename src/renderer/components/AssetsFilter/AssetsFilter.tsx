@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import clsx from 'clsx'
-import * as A from 'fp-ts/Array'
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/Option'
-import * as P from 'fp-ts/Predicate'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
+import { predicate as P } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { emptyString } from '../../helpers/stringHelper'

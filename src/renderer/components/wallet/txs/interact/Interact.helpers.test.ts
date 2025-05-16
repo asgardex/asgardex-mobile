@@ -1,5 +1,5 @@
 import { baseAmount, bn } from '@xchainjs/xchain-util'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 
 import { NodeInfo, NodeStatusEnum } from '../../../../services/thorchain/types'
 import {

@@ -4,7 +4,7 @@ import * as RD from '@devexperts/remote-data-ts'
 import { AssetCacao } from '@xchainjs/xchain-mayachain'
 import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
 import { baseToAsset, Chain, formatAssetAmountCurrency } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/lib/function'
+import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { IncentivePendulumRD } from '../../hooks/useIncentivePendulum'

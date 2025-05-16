@@ -2,7 +2,7 @@ import * as RD from '@devexperts/remote-data-ts'
 import { TxHash, XChainClient } from '@xchainjs/xchain-client'
 import { TxsPage, Fees } from '@xchainjs/xchain-client'
 import { Address, AnyAsset } from '@xchainjs/xchain-util'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 
 import { WalletAddress } from '../../../shared/wallet/types'

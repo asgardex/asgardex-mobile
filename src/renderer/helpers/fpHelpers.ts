@@ -1,8 +1,10 @@
 import * as RD from '@devexperts/remote-data-ts'
-import { Lazy } from 'fp-ts/function'
-import { sequenceS, sequenceT } from 'fp-ts/lib/Apply'
-import * as A from 'fp-ts/lib/Array'
-import * as O from 'fp-ts/lib/Option'
+import { function } from 'fp-ts'
+const { Lazy } = function
+import { apply } from 'fp-ts'
+const { sequenceS, sequenceT } = apply
+import { array as A } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 /**
  * Sequence

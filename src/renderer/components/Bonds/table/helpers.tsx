@@ -7,7 +7,7 @@ import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { Address, BaseAmount, baseAmount, baseToAsset, formatAssetAmountCurrency } from '@xchainjs/xchain-util'
 import { Col } from 'antd'
-import * as O from 'fp-ts/Option'
+import { option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { AssetCacao, AssetRuneNative } from '../../../../shared/utils/asset'

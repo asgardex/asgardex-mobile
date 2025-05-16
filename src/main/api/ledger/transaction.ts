@@ -17,7 +17,7 @@ import { RadixChain } from '@xchainjs/xchain-radix'
 import { SOLChain } from '@xchainjs/xchain-solana'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { Chain } from '@xchainjs/xchain-util'
-import * as E from 'fp-ts/Either'
+import { either as E } from 'fp-ts'
 
 import { IPCLedgerDepositTxParams, IPCLedgerSendTxParams } from '../../../shared/api/io'
 import { LedgerError, LedgerErrorId } from '../../../shared/api/types'

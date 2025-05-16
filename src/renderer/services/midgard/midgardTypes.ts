@@ -15,9 +15,10 @@ import {
 } from '@xchainjs/xchain-midgard' // Use THOR's import as base, MAYA's can be aliased if needed
 import { Address, AnyAsset, BaseAmount, Chain } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
-import * as FP from 'fp-ts/lib/function'
-import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { nonEmptyArray } from 'fp-ts'
+const { NonEmptyArray } = nonEmptyArray
+import { option as O } from 'fp-ts'
 import { IntlShape } from 'react-intl'
 import * as Rx from 'rxjs'
 

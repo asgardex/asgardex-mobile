@@ -5,7 +5,7 @@ import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
 import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
 import { baseToAsset, formatAssetAmountCurrency, currencySymbolByAsset } from '@xchainjs/xchain-util'
 import { Grid, Row } from 'antd'
-import * as FP from 'fp-ts/lib/function'
+import { function as FP } from 'fp-ts'
 
 import { abbreviateNumber } from '../../../helpers/numberHelper'
 import { loadingString } from '../../../helpers/stringHelper'

@@ -2,8 +2,8 @@ import { Fragment, useMemo } from 'react'
 
 import { Tab } from '@headlessui/react'
 import clsx from 'clsx'
-import * as FP from 'fp-ts/function'
-import * as A from 'fp-ts/lib/Array'
+import { function as FP } from 'fp-ts'
+import { array as A } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import { useMatch, useNavigate } from 'react-router'
 

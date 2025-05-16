@@ -1,6 +1,6 @@
 import * as RD from '@devexperts/remote-data-ts'
 import { FeeOption } from '@xchainjs/xchain-client'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 
 import {
   SymDepositState,

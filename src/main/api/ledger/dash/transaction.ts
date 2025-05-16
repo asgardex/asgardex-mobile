@@ -10,7 +10,7 @@ import {
 } from '@xchainjs/xchain-dash'
 import { Address, BaseAmount } from '@xchainjs/xchain-util'
 import { BlockcypherNetwork, BlockcypherProvider, UtxoOnlineDataProviders } from '@xchainjs/xchain-utxo-providers'
-import * as E from 'fp-ts/lib/Either'
+import { either as E } from 'fp-ts'
 
 import { LedgerError, LedgerErrorId } from '../../../../shared/api/types'
 import { isError } from '../../../../shared/utils/guard'
