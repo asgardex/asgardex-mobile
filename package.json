@@ -149,6 +149,9 @@
   "devDependencies": {
     "@chromatic-com/storybook": "3",
     "@electron/notarize": "^2.5.0",
+    "@eslint/compat": "1.1.1",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^8.57.1",
     "@rollup/plugin-inject": "^5.0.5",
     "@storybook/addon-docs": "^8.6.12",
     "@storybook/addon-essentials": "^8.6.12",
