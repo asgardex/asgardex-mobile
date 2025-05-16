@@ -2,12 +2,10 @@
 import { BASEChain, LOWER_FEE_BOUND, UPPER_FEE_BOUND, BASE_GAS_ASSET_DECIMAL, AssetBETH } from '@xchainjs/xchain-base'
 import { ExplorerProvider, Network } from '@xchainjs/xchain-client'
 import { EVMClientParams } from '@xchainjs/xchain-evm'
-import { EtherscanProvider } from '@xchainjs/xchain-evm-providers'
+import { EtherscanProviderV2 } from '@xchainjs/xchain-evm-providers'
 import { BigNumber, ethers } from 'ethers'
 
-import { envOrDefault } from '../utils/env'
-
-export const baseScanApiKey = envOrDefault(import.meta.env.VITE_BASE_API_KEY, '')
+import { etherscanApiKey } from '../api/etherscan'
 
 // Define JSON-RPC providers for mainnet and testnet
 const BASE_MAINNET_ETHERS_PROVIDER = new ethers.providers.JsonRpcProvider('https://1rpc.io/base')
@@ -21,22 +19,24 @@ const ethersJSProviders = {
 }
 
 // Define online providers (Etherscan) for mainnet and testnet
-const BASE_ONLINE_PROVIDER_MAINNET = new EtherscanProvider(
+const BASE_ONLINE_PROVIDER_MAINNET = new EtherscanProviderV2(
   BASE_MAINNET_ETHERS_PROVIDER,
-  'https://api.basescan.org',
-  baseScanApiKey || '',
+  'https://api.etherscan.io/v2',
+  etherscanApiKey,
   BASEChain,
   AssetBETH,
-  18
+  18,
+  8453
 )
 
-const BASE_ONLINE_PROVIDER_TESTNET = new EtherscanProvider(
+const BASE_ONLINE_PROVIDER_TESTNET = new EtherscanProviderV2(
   BASE_TESTNET_ETHERS_PROVIDER,
-  'https://api-sepolia.basescan.org',
-  baseScanApiKey || '',
+  'https://api.etherscan.io/v2',
+  etherscanApiKey,
   BASEChain,
   AssetBETH,
-  18
+  18,
+  84532
 )
 
 // Define providers for different networks
