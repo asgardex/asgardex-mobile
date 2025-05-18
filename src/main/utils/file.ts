@@ -1,6 +1,6 @@
 import path from 'path'
 
-import * as TE from 'fp-ts/lib/TaskEither'
+import { taskEither as TE } from 'fp-ts'
 import * as fs from 'fs-extra'
 
 import { INVALID_PATH_SEGMENT, VALID_SEGMENT_PATTERN } from '../../shared/const'

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import * as FP from 'fp-ts/lib/function'
+import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { ApiError } from '../../../services/wallet/types'

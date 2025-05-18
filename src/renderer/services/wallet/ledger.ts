@@ -1,9 +1,9 @@
 import * as RD from '@devexperts/remote-data-ts'
 import { Chain } from '@xchainjs/xchain-util'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
-import * as N from 'fp-ts/number'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
+import { number as N } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 

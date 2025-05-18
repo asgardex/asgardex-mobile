@@ -1,7 +1,7 @@
 import React from 'react'
 
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
 
 import type { Props as ButtonProps } from './FlatButton'
 import { FlatButton } from './index'

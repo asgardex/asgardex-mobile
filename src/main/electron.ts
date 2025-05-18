@@ -6,8 +6,8 @@ import isDev from 'electron-is-dev'
 import log from 'electron-log'
 import { warn } from 'electron-log'
 import windowStateKeeper from 'electron-window-state'
-import * as E from 'fp-ts/lib/Either'
-import * as FP from 'fp-ts/lib/function'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
 
 import {
   IPCLedgerAddressesIO,

@@ -4,7 +4,7 @@ import type * as TN from '@xchainjs/xchain-mayanode'
 import { LPBondedNode } from '@xchainjs/xchain-mayanode'
 import { Address, AnyAsset, BaseAmount, Chain } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
-import * as O from 'fp-ts/Option'
+import { option as O } from 'fp-ts'
 import { IntlShape } from 'react-intl'
 import * as Rx from 'rxjs'
 

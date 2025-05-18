@@ -3,7 +3,7 @@ import * as RD from '@devexperts/remote-data-ts'
 import { Meta, StoryFn } from '@storybook/react'
 import { TxHash } from '@xchainjs/xchain-client'
 import { Row } from 'antd'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 
 import { ErrorId } from '../../../services/wallet/types'
 import { Button, ViewTxButton } from '../../uielements/button'

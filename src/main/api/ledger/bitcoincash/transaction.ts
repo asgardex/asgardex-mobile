@@ -2,7 +2,7 @@ import * as Transport from '@ledgerhq/hw-transport'
 import { AssetBCH, ClientLedger, defaultBchParams } from '@xchainjs/xchain-bitcoincash'
 import { FeeOption, FeeRate, Network, TxHash } from '@xchainjs/xchain-client'
 import { Address, BaseAmount } from '@xchainjs/xchain-util'
-import * as E from 'fp-ts/lib/Either'
+import { either as E } from 'fp-ts'
 
 import { LedgerError, LedgerErrorId } from '../../../../shared/api/types'
 import { isError } from '../../../../shared/utils/guard'

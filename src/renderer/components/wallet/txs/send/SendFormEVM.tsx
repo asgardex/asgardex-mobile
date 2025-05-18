@@ -22,9 +22,9 @@ import {
 import { Form } from 'antd'
 import { RadioChangeEvent } from 'antd/lib/radio'
 import BigNumber from 'bignumber.js'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 import { TrustedAddress, TrustedAddresses } from '../../../../../shared/api/types'

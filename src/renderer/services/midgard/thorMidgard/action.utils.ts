@@ -1,8 +1,8 @@
 import { Action as ActionAPI, Coin, Transaction } from '@xchainjs/xchain-midgard'
 import { assetFromString, baseAmount } from '@xchainjs/xchain-util'
-import * as A from 'fp-ts/Array'
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { AssetWithAmount } from '../../../types/asgardex'
 import { TxType } from '../midgardTypes'

@@ -11,8 +11,8 @@ import { PoolDetail } from '@xchainjs/xchain-midgard'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { assetAmount, assetToBase, assetToString, baseAmount, bn } from '@xchainjs/xchain-util'
 import { Chain } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { BSC_ADDRESS_TESTNET, RUNE_ADDRESS_TESTNET } from '../../../../shared/mock/address'
 import {

@@ -5,7 +5,7 @@ import { TxParams as BaseEvmTxParams } from '@xchainjs/xchain-evm'
 import ClientKeystore from '@xchainjs/xchain-evm'
 import { Address, AnyAsset, Asset, BaseAmount, TokenAsset } from '@xchainjs/xchain-util'
 import { ethers } from 'ethers'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 
 import { HDMode, WalletType } from '../../../shared/wallet/types'
 import { LiveData } from '../../helpers/rx/liveData'

@@ -1,7 +1,7 @@
 import * as RD from '@devexperts/remote-data-ts'
 import { ARBChain, Client } from '@xchainjs/xchain-arbitrum'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 

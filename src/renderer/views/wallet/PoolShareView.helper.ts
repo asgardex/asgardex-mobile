@@ -1,9 +1,9 @@
 import { CACAO_DECIMAL } from '@xchainjs/xchain-mayachain'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { BaseAmount, Chain } from '@xchainjs/xchain-util'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { PoolShareTableData } from '../../components/PoolShares/PoolShares.types'
 import { ZERO_BASE_AMOUNT } from '../../const'
