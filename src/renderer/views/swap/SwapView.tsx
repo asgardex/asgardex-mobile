@@ -54,7 +54,7 @@ import { SwapRouteParams, SwapRouteTargetWalletType } from '../../routes/pools/s
 import * as walletRoutes from '../../routes/wallet'
 import { getDecimal } from '../../services/chain/decimal'
 import { AssetWithDecimalLD, AssetWithDecimalRD } from '../../services/chain/types'
-import { cAssetToXAsset } from '../../services/chainflip/utils'
+import { cAssetToXAsset, cChainToXChain } from '../../services/chainflip/utils'
 import { DEFAULT_SLIP_TOLERANCE } from '../../services/const'
 import { TradeAccount } from '../../services/thorchain/types'
 import { INITIAL_BALANCES_STATE, DEFAULT_BALANCES_FILTER } from '../../services/wallet/const'
@@ -201,8 +201,9 @@ const SuccessRouteView: React.FC<Props> = ({
     }
     // Check if chainFlipAssets is available and contains the sourceAsset
     if (RD.isSuccess(chainFlipAssets)) {
-      const matchingAsset = chainFlipAssets.value.find((asset) => asset.asset === sourceAsset.ticker)
-
+      const matchingAsset = chainFlipAssets.value.find(
+        (asset) => cChainToXChain(asset.chain) === sourceAsset.chain && asset.asset === sourceAsset.ticker
+      )
       if (matchingAsset) {
         // If a matching asset is found, return its decimal value
         return Rx.of(
