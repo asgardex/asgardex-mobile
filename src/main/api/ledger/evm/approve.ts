@@ -1,5 +1,6 @@
+import { UPPER_FEE_BOUND as BASE_UPPER_FEE_BOUND } from '@xchainjs/xchain-base'
 import { FeeOption, Network, TxHash } from '@xchainjs/xchain-client'
-import { defaultEthParams } from '@xchainjs/xchain-ethereum'
+import { defaultEthParams, UPPER_FEE_BOUND } from '@xchainjs/xchain-ethereum'
 import { ClientLedger, LedgerSigner } from '@xchainjs/xchain-evm'
 import { ethers } from 'ethers'
 
@@ -12,6 +13,8 @@ import { getDerivationPath, getDerivationPaths } from '../../../../shared/evm/le
 import { ETH_MAINNET_ETHERS_PROVIDER, ETH_TESTNET_ETHERS_PROVIDER, createEthProviders } from '../ethereum/common'
 
 const TransportNodeHidSingleton = require('@ledgerhq/hw-transport-node-hid')
+
+const LOWER_FEE_BOUND = 1000000
 
 export const approveLedgerERC20Token = async ({
   chain,
@@ -41,7 +44,11 @@ export const approveLedgerERC20Token = async ({
           derivationPath: getDerivationPath(walletAccount, hdMode)
         }),
         rootDerivationPaths: getDerivationPaths(walletAccount, hdMode),
-        network: network
+        network: network,
+        feeBounds: {
+          lower: LOWER_FEE_BOUND,
+          upper: UPPER_FEE_BOUND
+        }
       }
       break
     case 'ARB':
@@ -53,7 +60,11 @@ export const approveLedgerERC20Token = async ({
           derivationPath: getDerivationPath(walletAccount, hdMode)
         }),
         rootDerivationPaths: getDerivationPaths(walletAccount, hdMode),
-        network: network
+        network: network,
+        feeBounds: {
+          lower: LOWER_FEE_BOUND,
+          upper: UPPER_FEE_BOUND
+        }
       }
       break
     case 'AVAX':
@@ -65,7 +76,11 @@ export const approveLedgerERC20Token = async ({
           derivationPath: getDerivationPath(walletAccount, hdMode)
         }),
         rootDerivationPaths: getDerivationPaths(walletAccount, hdMode),
-        network: network
+        network: network,
+        feeBounds: {
+          lower: LOWER_FEE_BOUND,
+          upper: UPPER_FEE_BOUND
+        }
       }
       break
     case 'BSC':
@@ -77,7 +92,11 @@ export const approveLedgerERC20Token = async ({
           derivationPath: getDerivationPath(walletAccount, hdMode)
         }),
         rootDerivationPaths: getDerivationPaths(walletAccount, hdMode),
-        network: network
+        network: network,
+        feeBounds: {
+          lower: LOWER_FEE_BOUND,
+          upper: UPPER_FEE_BOUND
+        }
       }
       break
     case 'BASE':
@@ -89,7 +108,11 @@ export const approveLedgerERC20Token = async ({
           derivationPath: getDerivationPath(walletAccount, hdMode)
         }),
         rootDerivationPaths: getDerivationPaths(walletAccount, hdMode),
-        network: network
+        network: network,
+        feeBounds: {
+          lower: LOWER_FEE_BOUND,
+          upper: BASE_UPPER_FEE_BOUND
+        }
       }
       break
     default:
