@@ -11,7 +11,7 @@ import {
 import { QuoteSwap } from '@xchainjs/xchain-aggregator'
 import { Network } from '@xchainjs/xchain-client'
 import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
-import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
+import { AssetRuneNative, isTCYAsset, THORChain } from '@xchainjs/xchain-thorchain'
 import {
   Asset,
   baseToAsset,
@@ -1130,13 +1130,13 @@ export const Swap = ({
           !isTokenAsset(sourceAsset) &&
           !isTradeAsset(sourceAsset) &&
           !isSynthAsset(sourceAsset) &&
-          !isSecuredAsset(sourceAsset)
+          !isSecuredAsset(sourceAsset) &&
+          !isTCYAsset(sourceAsset)
         ) {
           if (sourceChainAssetAmount.lt(amountToSwap.plus(swapFees.inFee.amount))) {
             amountToSwap = sourceChainAssetAmount.minus(swapFees.inFee.amount)
           }
         }
-
         return {
           poolAddress,
           asset: sourceAsset,
