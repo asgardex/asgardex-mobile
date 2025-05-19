@@ -239,7 +239,7 @@ export const TradeSwap = ({
 
   const [oTargetWalletType, setTargetWalletType] = useState<O.Option<WalletType>>(oInitialTargetWalletType)
 
-  const [isStreaming, setIsStreaming] = useState<Boolean>(true)
+  const [isStreaming, setIsStreaming] = useState<boolean>(true)
 
   // Update state needed - initial target walletAddress is loaded async and can be different at first run
   useEffect(() => {
