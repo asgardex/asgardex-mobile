@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-/* eslint-disable import/no-webpack-loader-syntax */
 import ChainflipIcon from '../../assets/png/asset-flip.png'
 import MayaIcon from '../../assets/png/asset-maya.png'
 import ThorchainIcon from '../../assets/svg/asset-rune.svg?url'
