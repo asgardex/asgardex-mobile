@@ -1,7 +1,7 @@
 import React from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 
 import { useMidgardContext } from '../../contexts/MidgardContext'

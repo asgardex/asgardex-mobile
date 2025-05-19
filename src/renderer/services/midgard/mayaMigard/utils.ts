@@ -31,11 +31,11 @@ import {
   AnyAsset
 } from '@xchainjs/xchain-util'
 import { Chain } from '@xchainjs/xchain-util'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as NEA from 'fp-ts/lib/NonEmptyArray'
-import * as O from 'fp-ts/lib/Option'
-import * as P from 'fp-ts/lib/Predicate'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { nonEmptyArray as NEA } from 'fp-ts'
+import { option as O } from 'fp-ts'
+import { predicate as P } from 'fp-ts'
 
 import { AssetBTC, AssetETH, AssetKUJI, AssetDASH, AssetAETH } from '../../../../shared/utils/asset'
 import { isSupportedChain } from '../../../../shared/utils/chain'

@@ -4,7 +4,7 @@ import { Client, CompatibleAsset, DepositParam } from '@xchainjs/xchain-thorchai
 import type * as TN from '@xchainjs/xchain-thornode'
 import { Address, AnyAsset, BaseAmount, Chain } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
-import * as O from 'fp-ts/Option'
+import { option as O } from 'fp-ts'
 import { IntlShape } from 'react-intl'
 import * as Rx from 'rxjs'
 

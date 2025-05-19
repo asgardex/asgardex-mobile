@@ -1,7 +1,9 @@
 import React, { createContext, useContext } from 'react'
 
-import * as O from 'fp-ts/lib/Option'
-import { none, Option, some } from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
+
+type Option = O.Option
+const { none, some } = O
 
 import {
   client$,

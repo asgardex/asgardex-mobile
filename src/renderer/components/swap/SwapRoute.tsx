@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { QuoteSwap, QuoteSwap as QuoteSwapProtocol } from '@xchainjs/xchain-aggregator'
 import clsx from 'clsx'
-import * as O from 'fp-ts/Option'
+import { option as O } from 'fp-ts'
 
 import Amount from '../../assets/svg/amount.svg?react'
 import StopWatch from '../../assets/svg/stopwatch.svg?react'

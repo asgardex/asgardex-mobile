@@ -2,7 +2,7 @@ import * as RD from '@devexperts/remote-data-ts'
 import { FeeOption, Fees, Network, Tx } from '@xchainjs/xchain-client'
 import { Address, AnyAsset, BaseAmount, Chain } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 
 import { WalletType, WalletAddress, HDMode } from '../../../shared/wallet/types'

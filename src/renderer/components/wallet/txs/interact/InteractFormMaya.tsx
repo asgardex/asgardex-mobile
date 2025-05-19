@@ -23,9 +23,9 @@ import {
 import { Form, RadioChangeEvent, Tooltip } from 'antd'
 import { FormInstance } from 'antd/es/form/Form'
 import BigNumber from 'bignumber.js'
-import * as E from 'fp-ts/Either'
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/lib/Option'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { debounce } from 'lodash'
 import { useIntl } from 'react-intl'
 

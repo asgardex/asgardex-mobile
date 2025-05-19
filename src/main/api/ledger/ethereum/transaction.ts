@@ -4,7 +4,7 @@ import * as ETH from '@xchainjs/xchain-evm'
 import { Address, AnyAsset, Asset, assetToString, baseAmount, BaseAmount, TokenAsset } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import * as E from 'fp-ts/Either'
+import { either as E } from 'fp-ts'
 
 import { isEthAsset } from '../../../../renderer/helpers/assetHelper'
 import { EVMZeroAddress } from '../../../../renderer/services/evm/const'

@@ -1,7 +1,6 @@
 import { dirname, join } from 'path'
-import { mergeConfig } from 'vite';
-import customViteConfig from '../vite.storybook';
-
+import { mergeConfig } from 'vite'
+import customViteConfig from '../vite.storybook'
 
 const config = {
   core: {
@@ -26,13 +25,13 @@ const config = {
     },
     '@chromatic-com/storybook'
   ],
-  viteFinal: async (config, { configType }) => {
-    return mergeConfig(config, customViteConfig);
-  },
+  viteFinal: async (config, { configType: _ }) => {
+    return mergeConfig(config, customViteConfig)
+  }
 }
 
 function getAbsolutePath(value) {
-  return dirname(require.resolve(join(value, "package.json")));
+  return dirname(require.resolve(join(value, 'package.json')))
 }
 
 export default config

@@ -1,33 +1,61 @@
+import path from 'path'
+
 import inject from '@rollup/plugin-inject'
 import react from '@vitejs/plugin-react'
-import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
 
 export default defineConfig({
-  plugins: [
-    react(),
-    svgr(),
-    inject({
-      Buffer: ['buffer', 'Buffer']
-    }),
-    visualizer({
-      open: false,
-      filename: 'stats.html',
-      gzipSize: true,
-      brotliSize: true
-    })
-  ],
+  plugins: [react(), svgr()],
   resolve: {
     alias: {
       process: 'process/browser',
       stream: 'stream-browserify',
       crypto: 'crypto-browserify',
-      assert: 'assert/'
+      assert: 'assert',
+      path: path.resolve(__dirname, 'empty.js'),
+      url: path.resolve(__dirname, 'empty.js'),
+      https: path.resolve(__dirname, 'empty.js'),
+      http: path.resolve(__dirname, 'empty.js'),
+      zlib: path.resolve(__dirname, 'empty.js'),
+      fs: path.resolve(__dirname, 'empty.js')
     }
   },
   optimizeDeps: {
-    include: ['process', 'buffer']
+    include: ['process', 'buffer'],
+    esbuildOptions: {
+      inject: ['./src/shims/buffer-shim.js']
+    }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          crypto: ['crypto-browserify', 'stream-browserify', 'readable-stream'],
+          xchain: [
+            '@xchainjs/xchain-wallet',
+            '@xchainjs/xchain-doge',
+            '@xchainjs/xchain-litecoin',
+            '@xchainjs/xchain-bitcoin',
+            '@xchainjs/xchain-ethereum',
+            '@xchainjs/xchain-cosmos',
+            '@xchainjs/xchain-thorchain',
+            '@xchainjs/xchain-client',
+            '@xchainjs/xchain-crypto',
+            '@xchainjs/xchain-util'
+          ]
+        }
+      },
+      plugins: [
+        inject({
+          Buffer: ['buffer', 'Buffer']
+        })
+      ]
+    },
+    commonjsOptions: {
+      transformMixedEsModules: false
+    }
   },
   define: {
     'process.env': {},

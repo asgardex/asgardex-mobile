@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import clsx from 'clsx'
-import * as FP from 'fp-ts/function'
+import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { CheckMayanodeNodeUrlHandler, CheckMayanodeRpcUrlHandler } from '../../services/mayachain/types'

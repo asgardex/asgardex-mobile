@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
 
 import { ItemType } from 'antd/lib/menu/hooks/useItems'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import { Link, matchPath, useLocation } from 'react-router-dom'
 

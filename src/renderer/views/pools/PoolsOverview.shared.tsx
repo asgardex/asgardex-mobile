@@ -3,7 +3,7 @@ import { Network } from '@xchainjs/xchain-client'
 import { AnyAsset, BaseAmount, baseToAsset, formatAssetAmountCurrency } from '@xchainjs/xchain-util'
 import { Row } from 'antd'
 import { ColumnType } from 'antd/lib/table'
-import * as FP from 'fp-ts/function'
+import { function as FP } from 'fp-ts'
 
 import { ErrorView } from '../../components/shared/error'
 import { AssetIcon } from '../../components/uielements/assets/assetIcon'

@@ -16,9 +16,9 @@ import {
   formatAssetAmountCurrency
 } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
-import * as FP from 'fp-ts/function'
-import * as A from 'fp-ts/lib/Array'
-import * as O from 'fp-ts/Option'
+import { function as FP } from 'fp-ts'
+import { array as A } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'

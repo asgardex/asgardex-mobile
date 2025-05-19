@@ -1,9 +1,9 @@
 import { Meta } from '@storybook/react'
 import { TxHash } from '@xchainjs/xchain-client'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
-import * as P from 'fp-ts/lib/Predicate'
-import * as S from 'fp-ts/lib/string'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
+import { predicate as P } from 'fp-ts'
+import { string as S } from 'fp-ts'
 
 import { ViewTxButton as Component } from './ViewTxButton'
 

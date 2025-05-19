@@ -1,7 +1,7 @@
-import * as AP from 'fp-ts/lib/Apply'
-import * as FP from 'fp-ts/lib/function'
-import * as TE from 'fp-ts/lib/TaskEither'
-import * as O from 'fp-ts/Option'
+import { apply as AP } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { taskEither as TE } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as IO from 'io-ts'
 import * as PR from 'io-ts/lib/PathReporter'
 

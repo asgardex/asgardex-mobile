@@ -2,7 +2,7 @@ import React from 'react'
 
 import { SyncOutlined } from '@ant-design/icons'
 import * as RD from '@devexperts/remote-data-ts'
-import * as FP from 'fp-ts/function'
+import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { BorderButton } from '../../components/uielements/button'

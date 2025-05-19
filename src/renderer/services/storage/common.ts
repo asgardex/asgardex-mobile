@@ -1,5 +1,5 @@
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { CommonStorage } from '../../../shared/api/types'
 import { observableState } from '../../helpers/stateHelper'

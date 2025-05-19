@@ -1,9 +1,9 @@
 import * as path from 'path'
 
 import { dialog, ipcRenderer } from 'electron'
-import * as E from 'fp-ts/lib/Either'
-import * as FP from 'fp-ts/lib/function'
-import * as TE from 'fp-ts/lib/TaskEither'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { taskEither as TE } from 'fp-ts'
 import * as fs from 'fs-extra'
 
 import { KeystoreWallets, ipcKeystoreWalletsIO, keystoreIO } from '../../shared/api/io'

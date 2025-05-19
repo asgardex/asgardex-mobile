@@ -1,7 +1,7 @@
 import * as RD from '@devexperts/remote-data-ts'
 import { PoolDetails } from '@xchainjs/xchain-midgard'
 import { BaseAmount, baseAmount, assetFromString } from '@xchainjs/xchain-util'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 
 import * as PoolHelpers from '../../helpers/poolHelper'
 import { PricePool } from '../../services/midgard/midgardTypes'

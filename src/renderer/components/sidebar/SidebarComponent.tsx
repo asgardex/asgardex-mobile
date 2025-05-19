@@ -13,7 +13,7 @@ import { Network } from '@xchainjs/xchain-client'
 import { AssetRuneNative } from '@xchainjs/xchain-thorchain'
 import { assetToString } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import { useMatch, useNavigate } from 'react-router-dom'
 

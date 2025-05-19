@@ -1,7 +1,7 @@
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { AnyAsset, AssetType } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { DefaultChainAttributes } from '../../shared/utils/chain'
 
