@@ -102,6 +102,12 @@ export default [
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/ban-ts-ignore': 'off',
 
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        {
+          allowTernary: true
+        }
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
