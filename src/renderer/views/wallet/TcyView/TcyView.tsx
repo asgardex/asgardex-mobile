@@ -7,11 +7,14 @@ import { AssetETH } from '@xchainjs/xchain-ethereum'
 import { AssetTCY } from '@xchainjs/xchain-thorchain'
 import clsx from 'clsx'
 
+import { WalletPasswordConfirmationModal } from '../../../components/modal/confirmation'
 import { AssetData } from '../../../components/uielements/assets/assetData'
 import { FlatButton, RefreshButton } from '../../../components/uielements/button'
 import { Tooltip } from '../../../components/uielements/common/Common.styles'
 import { InputBigNumber } from '../../../components/uielements/input'
+import { Slider } from '../../../components/uielements/slider'
 import { AssetsNav } from '../../../components/wallet/assets'
+import { useWalletContext } from '../../../contexts/WalletContext'
 import { useNetwork } from '../../../hooks/useNetwork'
 import { TcyClaimModal } from './TcyClaimModal'
 import { TcyInfo, TcyOperation } from './types'
@@ -41,6 +44,10 @@ export const TcyView = () => {
   const [activeTab, setActiveTab] = useState(TcyOperation.Claim)
   const [selectedAsset, setSelectedAsset] = useState<TcyInfo>()
   const [isClaimModalVisible, setClaimModalVisible] = useState(false)
+  const [isPasswordModalVisible, setPasswordModalVisible] = useState(false)
+  const {
+    keystoreService: { validatePassword$ }
+  } = useWalletContext()
 
   const refreshHandler = useCallback(async () => {}, [])
 
@@ -48,6 +55,13 @@ export const TcyView = () => {
     setSelectedAsset(tcyInfo)
     setClaimModalVisible(true)
   }, [])
+
+  const onSuccess = useCallback(() => {
+    if (activeTab === TcyOperation.Stake) console.log('STAKE SUCCESS')
+    else if (activeTab === TcyOperation.Unstake) console.log('Unstake Success')
+
+    setPasswordModalVisible(false)
+  }, [activeTab])
 
   return (
     <>
@@ -107,7 +121,7 @@ export const TcyView = () => {
                         ghost
                         decimal={8}
                         // override text style of input for acting as label only
-                        className={clsx('w-full px-0 leading-none text-text0 !opacity-100 dark:text-text0d')}
+                        className={clsx('w-full !px-0 leading-none text-text0 !opacity-100 dark:text-text0d')}
                       />
 
                       <p className="mb-0 font-main text-[14px] leading-none text-gray1 dark:text-gray1d">
@@ -116,7 +130,11 @@ export const TcyView = () => {
                     </div>
                     <AssetData asset={AssetTCY} network={network} />
                   </div>
-                  <FlatButton className="my-30px min-w-[200px]" size="large" color="primary">
+                  <FlatButton
+                    className="my-30px min-w-[200px]"
+                    size="large"
+                    color="primary"
+                    onClick={() => setPasswordModalVisible(true)}>
                     Stake
                   </FlatButton>
                 </div>
@@ -131,7 +149,7 @@ export const TcyView = () => {
                         ghost
                         decimal={8}
                         // override text style of input for acting as label only
-                        className={clsx('w-full px-0 leading-none text-text0 !opacity-100 dark:text-text0d')}
+                        className={clsx('w-full !px-0 leading-none text-text0 !opacity-100 dark:text-text0d')}
                       />
 
                       <p className="mb-0 font-main text-[14px] leading-none text-gray1 dark:text-gray1d">
@@ -140,7 +158,12 @@ export const TcyView = () => {
                     </div>
                     <AssetData asset={AssetTCY} network={network} />
                   </div>
-                  <FlatButton className="my-30px min-w-[200px]" size="large" color="primary">
+                  <Slider included={false} max={100} tooltipVisible tooltipPlacement={'top'} />
+                  <FlatButton
+                    className="my-30px min-w-[200px]"
+                    size="large"
+                    color="primary"
+                    onClick={() => setPasswordModalVisible(true)}>
                     Unstake
                   </FlatButton>
                 </div>
@@ -183,6 +206,15 @@ export const TcyView = () => {
           isVisible={isClaimModalVisible}
           tcyInfo={selectedAsset}
           onClose={() => setClaimModalVisible(false)}
+        />
+      )}
+      {isPasswordModalVisible && (
+        <WalletPasswordConfirmationModal
+          onSuccess={onSuccess}
+          onClose={() => {
+            setPasswordModalVisible(false)
+          }}
+          validatePassword$={validatePassword$}
         />
       )}
     </>
