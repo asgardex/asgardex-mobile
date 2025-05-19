@@ -7,7 +7,7 @@ import { BigNumber, ethers } from 'ethers'
 import { etherscanApiKey } from '../api/etherscan'
 import { envOrDefault } from '../utils/env'
 
-const LOWER_FEE_BOUND = 1_000_000_000
+const LOWER_FEE_BOUND = 1000000
 
 export const ankrApiKey = envOrDefault(import.meta.env.VITE_ANKR_API_KEY, '')
 // =====Ethers providers=====

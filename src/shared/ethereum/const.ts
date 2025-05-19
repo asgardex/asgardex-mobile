@@ -8,7 +8,7 @@ import { etherscanApiKey } from '../api/etherscan'
 
 export const DEFAULT_APPROVE_GAS_LIMIT_FALLBACK = '65000'
 
-const LOWER_FEE_BOUND = 100000000
+const LOWER_FEE_BOUND = 1000000
 
 const ETH_MAINNET_ETHERS_PROVIDER = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com', 'homestead')
 const network = ethers.providers.getNetwork('sepolia')
