@@ -42,6 +42,8 @@ export const HeaderStats: React.FC<Props> = (props): JSX.Element => {
   } = props
 
   const isSmallMobileView = Grid.useBreakpoint()?.xs ?? false
+  const isLargeMobileView = Grid.useBreakpoint()?.lg ?? false
+  const isXLargeMobileView = Grid.useBreakpoint()?.xl ?? false
 
   const { network } = useNetwork()
 
@@ -221,15 +223,16 @@ export const HeaderStats: React.FC<Props> = (props): JSX.Element => {
         )}
       </div>
 
-      {!isSmallMobileView && (
-        <div
-          className="flex cursor-pointer items-center space-x-2 rounded-xl bg-bg0 py-1 pl-1 pr-2 drop-shadow dark:bg-gray0d"
-          onClick={reloadTcyStats}>
-          <AssetIcon size="xsmall" asset={AssetTCY} network={network} />
-          <Styled.Protocol>TCY</Styled.Protocol>
-          <Styled.Label loading={RD.isPending(tcyPriceRD) ? 'true' : 'false'}>{tcyPriceLabel}</Styled.Label>
-        </div>
-      )}
+      {isSmallMobileView ||
+        (!(isLargeMobileView && !isXLargeMobileView) && (
+          <div
+            className="flex cursor-pointer items-center space-x-2 rounded-xl bg-bg0 py-1 pl-1 pr-2 drop-shadow dark:bg-gray0d"
+            onClick={reloadTcyStats}>
+            <AssetIcon size="xsmall" asset={AssetTCY} network={network} />
+            <Styled.Protocol>TCY</Styled.Protocol>
+            <Styled.Label loading={RD.isPending(tcyPriceRD) ? 'true' : 'false'}>{tcyPriceLabel}</Styled.Label>
+          </div>
+        ))}
 
       <div
         className="flex cursor-pointer items-center space-x-2 rounded-xl bg-bg0 py-1 pl-1 pr-2 drop-shadow dark:bg-gray0d"
