@@ -105,6 +105,7 @@ export default [
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
+          caughtErrorsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           argsIgnorePattern: '^_'
         }
@@ -149,6 +150,7 @@ export default [
       'unused-imports/no-unused-vars': [
         'warn',
         {
+          caughtErrorsIgnorePattern: '^_',
           vars: 'all',
           varsIgnorePattern: '^_',
           args: 'after-used',
