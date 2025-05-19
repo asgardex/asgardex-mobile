@@ -55,12 +55,6 @@ export const tcy: Route<void> = {
     return this.template
   }
 }
-export const savers: Route<void> = {
-  template: `${base.template}/savers`,
-  path() {
-    return this.template
-  }
-}
 export const runepool: Route<void> = {
   template: `${base.template}/runepool`,
   path() {

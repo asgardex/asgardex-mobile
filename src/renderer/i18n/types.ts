@@ -576,20 +576,6 @@ type DepositMessageKey =
 
 export type DepositMessages = { [key in DepositMessageKey]: string }
 
-type SaversMessageKey =
-  | 'savers.noSavings'
-  | 'savers.detail.title'
-  | 'savers.detail.current.title'
-  | 'savers.detail.redeem.title'
-  | 'savers.detail.percent'
-  | 'savers.detail.totalGrowth'
-  | 'savers.detail.priceGrowth'
-  | 'savers.detail.assetAmount'
-  | 'savers.info.max.redeem.value'
-  | 'savers.info.max.balance'
-
-export type SaversMessages = { [key in SaversMessageKey]: string }
-
 type RunePoolMessageKey =
   | 'runePool.noRuneAdded'
   | 'runePool.detail.title'

@@ -73,7 +73,6 @@ export const AssetsNav: React.FC = (): JSX.Element => {
   const tradeAssetsRoute = matchPath(walletRoutes.tradeAssets.path(), pathname)
   const poolSharesRoute = matchPath(walletRoutes.poolShares.path(), pathname)
   const tcyRoute = matchPath(walletRoutes.tcy.path(), pathname)
-  const saversRoute = matchPath(walletRoutes.savers.path(), pathname)
   const runepoolRoute = matchPath(walletRoutes.runepool.path(), pathname)
   const matchHistoryRoute = matchPath(walletRoutes.history.path(), pathname)
 
@@ -84,8 +83,6 @@ export const AssetsNav: React.FC = (): JSX.Element => {
       return MenuKey.TRADEASSETS
     } else if (poolSharesRoute) {
       return MenuKey.POOLSHARES
-    } else if (saversRoute) {
-      return MenuKey.SAVERS
     } else if (tcyRoute) {
       return MenuKey.TCY
     } else if (runepoolRoute) {
@@ -95,7 +92,7 @@ export const AssetsNav: React.FC = (): JSX.Element => {
     } else {
       return MenuKey.UNKNOWN
     }
-  }, [assetsRoute, tradeAssetsRoute, poolSharesRoute, tcyRoute, saversRoute, runepoolRoute, matchHistoryRoute])
+  }, [assetsRoute, tradeAssetsRoute, poolSharesRoute, tcyRoute, runepoolRoute, matchHistoryRoute])
 
   return (
     <>
