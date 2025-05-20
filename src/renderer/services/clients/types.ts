@@ -2,7 +2,7 @@ import * as RD from '@devexperts/remote-data-ts'
 import { TxHash, XChainClient } from '@xchainjs/xchain-client'
 import { TxsPage, Fees } from '@xchainjs/xchain-client'
 import { Address, AnyAsset } from '@xchainjs/xchain-util'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 
 import { WalletAddress } from '../../../shared/wallet/types'
@@ -71,7 +71,7 @@ export type TransactionService<T> = {
  * FeesService
  *
  * According to the XChainClient's interface
- * `Client.getFees` accept an object of `FeeParams`, which might be overriden by clients.
+ * `Client.getFees` accept an object of `FeeParams`, which might be overridden by clients.
  * @see https://github.com/xchainjs/xchainjs-lib/blob/master/packages/xchain-client/src/types.ts
  *
  * In common-client case, this parameter might be extended amd we need a generic type

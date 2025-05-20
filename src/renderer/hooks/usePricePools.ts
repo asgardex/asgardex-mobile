@@ -1,14 +1,12 @@
 import * as RD from '@devexperts/remote-data-ts'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import * as RxOp from 'rxjs/operators'
 
 import { useMidgardContext } from '../contexts/MidgardContext'
 import { liveData } from '../helpers/rx/liveData'
-import { PricePools } from '../views/pools/Pools.types'
-
-export type UsePricePoolsResult = ReturnType<typeof usePricePools>
+import { PricePools } from '../services/midgard/midgardTypes'
 
 export const usePricePools = () => {
   const {

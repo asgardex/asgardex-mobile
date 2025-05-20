@@ -2,17 +2,17 @@ import React, { useCallback } from 'react'
 
 import { Popover } from '@headlessui/react'
 import { Cog8ToothIcon } from '@heroicons/react/20/solid'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
 
 import { ChangeSlipToleranceHandler } from '../../services/app/types'
 import { SlipTolerance } from '../../types/asgardex'
 import { BaseButton } from '../uielements/button'
 
-export const SLIP_PERCENTAGES: SlipTolerance[] = [0.5, 1, 3, 5, 10, 15, 20]
+const SLIP_PERCENTAGES: SlipTolerance[] = [0.5, 1, 3, 5, 10, 15, 20]
 export const SLIP_TOLERANCE_KEY = 'asgdx-slip-tolerance'
 
-export type Props = {
+type Props = {
   value: SlipTolerance
   onChange: ChangeSlipToleranceHandler
 }

@@ -2,11 +2,11 @@ import React from 'react'
 
 import { Network } from '@xchainjs/xchain-client'
 import { AnyAsset } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/lib/function'
+import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { chainToString } from '../../../../shared/utils/chain'
-import { QRCode } from '../qrCode/QRCode'
+import { QRCode } from '../qrCode'
 import * as Styled from './QRCodeModal.styles'
 
 export type Props = {

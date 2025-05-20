@@ -1,14 +1,13 @@
 import { baseAmount, assetToString, BaseAmount, AnyAsset } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { convertBaseAmountDecimal, isRuneNativeAsset, to1e8BaseAmount } from '../../../helpers/assetHelper'
 import { eqAsset } from '../../../helpers/fp/eq'
 import { sequenceTOption } from '../../../helpers/fpHelpers'
 import { RUNE_POOL_DATA } from '../../../helpers/poolHelper'
-import { PoolData } from '../../../views/pools/Pools.types'
 import { getValueOfAsset1InAsset2 } from '../../../views/pools/Pools.utils'
-import { PoolsDataMap } from '../../midgard/types'
+import { PoolData, PoolsDataMap } from '../../midgard/midgardTypes'
 
 export const getPoolData = (poolsData: PoolsDataMap, asset: AnyAsset): O.Option<PoolData> =>
   FP.pipe(

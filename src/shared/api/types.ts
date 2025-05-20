@@ -1,11 +1,11 @@
 import * as RD from '@devexperts/remote-data-ts'
-import { FeeRate, Network, TxHash, TxParams } from '@xchainjs/xchain-client'
+import { Network, TxHash } from '@xchainjs/xchain-client'
 import { Keystore } from '@xchainjs/xchain-crypto'
 import { AssetCacao, CACAO_DECIMAL, MAYAChain } from '@xchainjs/xchain-mayachain'
 import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
 import { Address, Asset, Chain, TokenAsset } from '@xchainjs/xchain-util'
-import * as E from 'fp-ts/lib/Either'
-import * as O from 'fp-ts/Option'
+import { either as E } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { THORCHAIN_DECIMAL } from '../../renderer/helpers/assetHelper'
 import { EvmHDMode } from '../evm/types'
@@ -148,31 +148,10 @@ export type LedgerError = {
   msg: string
 }
 
-export type LedgerBNBTxParams = TxParams & {
-  sender: Address
-}
-
 export type NodeUrl = {
   node: string
   rpc: string
 }
-
-export type LedgerTHORTxParams = TxParams & {
-  sender: Address
-  nodeUrl: NodeUrl
-}
-
-export type LedgerBTCTxInfo = Pick<TxParams, 'amount' | 'recipient'> & {
-  feeRate: FeeRate
-  sender: Address
-}
-
-export type LedgerLTCTxInfo = Pick<TxParams, 'amount' | 'recipient'> & {
-  feeRate: FeeRate
-  sender: Address
-}
-
-export type LedgerTxParams = LedgerTHORTxParams | LedgerBNBTxParams
 
 export type IPCLedgerAdddressParams = {
   chain: Chain

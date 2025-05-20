@@ -3,8 +3,8 @@ import React from 'react'
 import { Network } from '@xchainjs/xchain-client'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { Chain } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { WalletAddress, WalletAddresses } from '../../../shared/wallet/types'
 import { AccountAddressSelector } from '../AccountAddressSelector'
@@ -12,7 +12,7 @@ import { PoolActionsHistoryFilter } from './PoolActionsHistoryFilter'
 import { Filter } from './types'
 import * as Styled from './WalletPoolActionsHistoryHeader.styles'
 
-export type Props = {
+type Props = {
   network: Network
   addresses: WalletAddresses
   selectedAddress: O.Option<WalletAddress>

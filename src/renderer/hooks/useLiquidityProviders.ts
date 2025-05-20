@@ -4,9 +4,9 @@ import * as RD from '@devexperts/remote-data-ts'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { Address, Chain } from '@xchainjs/xchain-util'
 import { AnyAsset } from '@xchainjs/xchain-util'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { useMayachainContext } from '../contexts/MayachainContext'
 import { useThorchainContext } from '../contexts/ThorchainContext'
@@ -145,7 +145,7 @@ export const useLiquidityProviders = ({
   )
 
   /**
-   * Looking into LP data to check a possible asset missmatch
+   * Looking into LP data to check a possible asset mismatch
    * That's RUNE or asset side has been already used with another pair
    *
    * Sym. deposits only

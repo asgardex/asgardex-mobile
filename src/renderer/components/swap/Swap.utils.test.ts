@@ -3,7 +3,7 @@ import { BSC_GAS_ASSET_DECIMAL } from '@xchainjs/xchain-bsc'
 import { ETH_GAS_ASSET_DECIMAL as ETH_DECIMAL } from '@xchainjs/xchain-ethereum'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { assetAmount, assetToBase, baseAmount, bn } from '@xchainjs/xchain-util'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 
 import { ASSETS_MAINNET } from '../../../shared/mock/assets'
 import { AssetBTC, AssetETH, AssetRuneNative, AssetBSC } from '../../../shared/utils/asset'
@@ -12,7 +12,7 @@ import { AssetUSDCBSC, AssetUSDT62E, AssetUSDTERC20Testnet } from '../../const'
 import { THORCHAIN_DECIMAL } from '../../helpers/assetHelper'
 import { eqAsset, eqBaseAmount } from '../../helpers/fp/eq'
 import { mockWalletBalance } from '../../helpers/test/testWalletHelper'
-import { PoolsDataMap } from '../../services/midgard/types'
+import { PoolsDataMap } from '../../services/midgard/midgardTypes'
 import {
   pickPoolAsset,
   calcRefundFee,

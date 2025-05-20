@@ -1,4 +1,4 @@
-import { ChevronRightIcon, EyeSlashIcon } from '@heroicons/react/20/solid'
+import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import * as A from 'antd'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
@@ -130,15 +130,6 @@ export const ExpandIcon = styled(ChevronRightIcon)`
   stroke: ${palette('primary', 2)};
   width: 16px; /* Match Ant Design size */
   height: 16px;
-`
-
-export const HideIcon = styled(EyeSlashIcon)`
-  stroke: ${palette('gray', 2)};
-  /* TODO (@Veado)
-    Change to pointer if hide asset feature is implemented
-    see https://github.com/thorchain/asgardex-electron/issues/476
-  */
-  cursor: pointer;
 `
 
 const ICON_SIZE = 16

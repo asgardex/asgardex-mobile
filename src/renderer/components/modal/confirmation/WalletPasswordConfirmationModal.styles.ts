@@ -1,17 +1,11 @@
 import styled from 'styled-components'
 
-import { ReactComponent as WalletIconSVG } from '../../../assets/svg/icon-wallet.svg'
+import WalletIconSVG from '../../../assets/svg/icon-wallet.svg?react'
 import { media } from '../../../helpers/styleHelper'
 
 export const Content = styled.div`
   display: flex;
   flex-direction: column;
-`
-
-export const WalletIconContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 `
 
 export const WalletIcon = styled(WalletIconSVG)`

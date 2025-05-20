@@ -1,29 +1,39 @@
 import React, { useMemo, useState, useCallback, useRef } from 'react'
 
+import * as RD from '@devexperts/remote-data-ts'
 import { Network } from '@xchainjs/xchain-client'
 import { Row, Col, Grid } from 'antd'
-import * as FP from 'fp-ts/function'
-import * as A from 'fp-ts/lib/Array'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { array as A } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import { useMatch, Link, useNavigate, useLocation } from 'react-router-dom'
 import { palette, size } from 'styled-theme'
 
-import { ReactComponent as CloseIcon } from '../../assets/svg/icon-close.svg'
-import { ReactComponent as MenuIcon } from '../../assets/svg/icon-menu.svg'
-import { ReactComponent as SwapIcon } from '../../assets/svg/icon-swap.svg'
-import { ReactComponent as WalletIcon } from '../../assets/svg/icon-wallet.svg'
+import CloseIcon from '../../assets/svg/icon-close.svg?react'
+import MenuIcon from '../../assets/svg/icon-menu.svg?react'
+import SwapIcon from '../../assets/svg/icon-swap.svg?react'
+import WalletIcon from '../../assets/svg/icon-wallet.svg?react'
 import { useThemeContext } from '../../contexts/ThemeContext'
 import * as appRoutes from '../../routes/app'
 import * as poolsRoutes from '../../routes/pools'
 import * as walletRoutes from '../../routes/wallet'
-import { MidgardStatusRD, MidgardUrlRD, PriceRD, SelectedPricePoolAsset } from '../../services/midgard/types'
-import { MidgardStatusRD as MidgardStatusMayaRD, MidgardUrlRD as MidgardMayaUrlRD } from '../../services/midgard/types'
+import {
+  MidgardStatusRD,
+  MidgardUrlRD,
+  PricePools,
+  PriceRD,
+  SelectedPricePoolAsset
+} from '../../services/midgard/midgardTypes'
+import {
+  MidgardStatusRD as MidgardStatusMayaRD,
+  MidgardUrlRD as MidgardMayaUrlRD
+} from '../../services/midgard/midgardTypes'
 import { MimirRD } from '../../services/thorchain/types'
 import { ChangeKeystoreWalletHandler, KeystoreState, KeystoreWalletsUI } from '../../services/wallet/types'
 import { isLocked } from '../../services/wallet/util'
-import { PricePoolAsset, PricePoolAssets, PricePools } from '../../views/pools/Pools.types'
+import { PricePoolAsset, PricePoolAssets } from '../../views/pools/Pools.types'
 import * as Styled from './HeaderComponent.styles'
 import { HeaderLock } from './lock/'
 import { HeaderLockMobile } from './lock/HeaderLockMobile'
@@ -56,6 +66,8 @@ export type Props = {
   pricePools: O.Option<PricePools>
   runePrice: PriceRD
   reloadRunePrice: FP.Lazy<void>
+  tcyPrice: RD.RemoteData<Error, string>
+  reloadTcyPrice: FP.Lazy<void>
   mayaPrice: PriceRD
   reloadMayaPrice: FP.Lazy<void>
   volume24PriceRune: PriceRD
@@ -80,11 +92,13 @@ export const HeaderComponent: React.FC<Props> = (props): JSX.Element => {
     wallets,
     pricePools: oPricePools,
     runePrice: runePriceRD,
+    tcyPrice: tcyPriceRD,
     mayaPrice: mayaPriceRD,
     midgardStatus: midgardStatusRD,
     midgardMayaStatus: midgardMayaStatusRD,
     mimir: mimirRD,
     reloadRunePrice,
+    reloadTcyPrice,
     reloadMayaPrice,
     volume24PriceRune: volume24PriceRD,
     volume24PriceMaya: volume24PriceMayaRD,
@@ -293,8 +307,10 @@ export const HeaderComponent: React.FC<Props> = (props): JSX.Element => {
                 <Row align="middle" style={{ height: headerHeight }}>
                   <HeaderStats
                     runePrice={runePriceRD}
+                    tcyPrice={tcyPriceRD}
                     mayaPrice={mayaPriceRD}
                     reloadRunePrice={reloadRunePrice}
+                    reloadTcyPrice={reloadTcyPrice}
                     reloadMayaPrice={reloadMayaPrice}
                     volume24PriceRune={volume24PriceRD}
                     volume24PriceMaya={volume24PriceMayaRD}
@@ -324,8 +340,10 @@ export const HeaderComponent: React.FC<Props> = (props): JSX.Element => {
               <Row align="middle">
                 <HeaderStats
                   runePrice={runePriceRD}
+                  tcyPrice={tcyPriceRD}
                   mayaPrice={mayaPriceRD}
                   reloadRunePrice={reloadRunePrice}
+                  reloadTcyPrice={reloadTcyPrice}
                   reloadMayaPrice={reloadMayaPrice}
                   volume24PriceRune={volume24PriceRD}
                   volume24PriceMaya={volume24PriceMayaRD}

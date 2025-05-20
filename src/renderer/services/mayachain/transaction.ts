@@ -1,9 +1,9 @@
 import * as RD from '@devexperts/remote-data-ts'
 import { Network, TxHash } from '@xchainjs/xchain-client'
 import { DepositParam, MAYAChain } from '@xchainjs/xchain-mayachain'
-import * as E from 'fp-ts/lib/Either'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/Option'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 

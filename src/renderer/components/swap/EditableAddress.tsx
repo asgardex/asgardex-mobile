@@ -4,8 +4,8 @@ import { CheckCircleIcon, PencilSquareIcon, XCircleIcon } from '@heroicons/react
 import { Network } from '@xchainjs/xchain-client'
 import { Address, AnyAsset } from '@xchainjs/xchain-util'
 import { Form, Tooltip } from 'antd'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { truncateAddress } from '../../helpers/addressHelper'
@@ -121,7 +121,7 @@ export const EditableAddress = ({
   const renderEditableAddress = useCallback(
     (editableAddress: Address) => {
       return (
-        // `items-start` is needed to postion icons on top in case of error message
+        // `items-start` is needed to position icons on top in case of error message
         <InnerForm
           className="flex w-full items-start"
           form={form}

@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 import { Meta, StoryFn } from '@storybook/react'
-import * as O from 'fp-ts/Option'
+import { option as O } from 'fp-ts'
 
-import { PoolFilter, DEFAULT_POOL_FILTERS } from '../../services/midgard/types'
+import { PoolFilter, DEFAULT_POOL_FILTERS } from '../../services/midgard/midgardTypes'
 import { AssetsFilter as Component } from './AssetsFilter'
 
 const Template: StoryFn = () => {

@@ -1,11 +1,11 @@
 import { Keystore } from '@xchainjs/xchain-crypto'
 import { Asset, assetToString, baseAmount } from '@xchainjs/xchain-util'
-import * as A from 'fp-ts/Array'
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/lib/Option'
-import * as N from 'fp-ts/number'
-import * as Ord from 'fp-ts/Ord'
-import * as S from 'fp-ts/string'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
+import { number as N } from 'fp-ts'
+import { ord as Ord } from 'fp-ts'
+import { string as S } from 'fp-ts'
 import { IntlShape } from 'react-intl'
 
 import { KeystoreWallets, KeystoreWallet, IPCLedgerAddressesIO } from '../../../shared/api/io'
@@ -97,7 +97,7 @@ export const getKeystoreWalletName: (id: KeystoreId) => (wallets: KeystoreWallet
 export const generateKeystoreId = (): KeystoreId =>
   // id for keystore is current time (ms) at the time of importing
   // Note: An user can import one keystore at time only
-  // and a keystore with same id can't be overriden. That's no duplications.
+  // and a keystore with same id can't be overridden. That's no duplications.
   new Date().getTime()
 
 export const hasImportedKeystore = (state: KeystoreState): boolean => O.isSome(state)

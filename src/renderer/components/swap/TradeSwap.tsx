@@ -23,14 +23,13 @@ import {
   CryptoAmount,
   AssetType,
   AnyAsset,
-  TradeAsset,
-  isTradeAsset
+  TradeAsset
 } from '@xchainjs/xchain-util'
 import { Row } from 'antd'
-import * as A from 'fp-ts/Array'
-import * as FP from 'fp-ts/function'
-import * as NEA from 'fp-ts/lib/NonEmptyArray'
-import * as O from 'fp-ts/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { nonEmptyArray as NEA } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import debounce from 'lodash/debounce'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
@@ -39,7 +38,8 @@ import {
   ASGARDEX_ADDRESS,
   ASGARDEX_AFFILIATE_FEE_MIN,
   getAsgardexAffiliateFee,
-  getAsgardexThorname
+  getAsgardexThorname,
+  getAsgardexTradeAffiliateFee
 } from '../../../shared/const'
 import { ONE_RUNE_BASE_AMOUNT } from '../../../shared/mock/amount'
 import { chainToString, DEFAULT_ENABLED_CHAINS, EnabledChain } from '../../../shared/utils/chain'
@@ -84,8 +84,8 @@ import {
   SwapTxState
 } from '../../services/chain/types'
 import { AddressValidationAsync, GetExplorerTxUrl, OpenExplorerTxUrl } from '../../services/clients'
-import { PoolAddress, PoolDetails, PoolsDataMap } from '../../services/midgard/types'
-import { getPoolDetail } from '../../services/midgard/utils'
+import { PoolAddress, PoolDetails, PoolsDataMap, PricePool } from '../../services/midgard/midgardTypes'
+import { getPoolDetail } from '../../services/midgard/thorMidgard/utils'
 import { userChains$ } from '../../services/storage/userChains'
 import { TradeAccount, TradeAccountRD } from '../../services/thorchain/types'
 import {
@@ -97,7 +97,6 @@ import {
 } from '../../services/wallet/types'
 import { hasImportedKeystore, isLocked } from '../../services/wallet/util'
 import { AssetWithAmount, SlipTolerance } from '../../types/asgardex'
-import { PricePool } from '../../views/pools/Pools.types'
 import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../modal/confirmation'
 import { TxModal } from '../modal/tx'
 import { SwapAssets } from '../modal/tx/extra'
@@ -123,7 +122,7 @@ const ErrorLabel: React.FC<{
   </div>
 )
 
-export type SwapProps = {
+type SwapProps = {
   thorchainQuery: ThorchainQuery
   keystore: KeystoreState
   poolAssets: AnyAsset[]
@@ -240,7 +239,7 @@ export const TradeSwap = ({
 
   const [oTargetWalletType, setTargetWalletType] = useState<O.Option<WalletType>>(oInitialTargetWalletType)
 
-  const [isStreaming, setIsStreaming] = useState<Boolean>(true)
+  const [isStreaming, setIsStreaming] = useState<boolean>(true)
 
   // Update state needed - initial target walletAddress is loaded async and can be different at first run
   useEffect(() => {
@@ -251,6 +250,7 @@ export const TradeSwap = ({
 
   const [enabledChains, setEnabledChains] = useState<Set<EnabledChain>>(new Set())
   const [disabledChains, setDisabledChains] = useState<EnabledChain[]>([])
+  const [oErrorProtocol, setErrorProtocol] = useState<O.Option<Error>>(O.none)
 
   const isTargetChainDisabled = disabledChains.includes(targetChain)
   const isSourceChainDisabled = disabledChains.includes(sourceChain)
@@ -652,7 +652,7 @@ export const TradeSwap = ({
 
   //Helper Affiliate function, swaps where tx is greater than affiliate aff is free
   const applyBps = useMemo(() => {
-    const aff = getAsgardexAffiliateFee(network)
+    const aff = getAsgardexTradeAffiliateFee(network)
     const txFeeCovered = priceAmountToSwapMax1e8.assetAmount.gt(ASGARDEX_AFFILIATE_FEE_MIN)
     const applyBps = txFeeCovered ? aff : 0
     return applyBps
@@ -698,9 +698,8 @@ export const TradeSwap = ({
           const destinationAsset = targetAsset
           const amount = new CryptoAmount(convertBaseAmountDecimal(amountToSwapMax1e8, sourceAssetDecimal), sourceAsset)
           const address = destinationAddress
-          const affiliate =
-            ASGARDEX_ADDRESS === walletAddress || isTradeAsset(sourceAsset) ? undefined : getAsgardexThorname(network)
-          const affiliateBps = ASGARDEX_ADDRESS === walletAddress || isTradeAsset(sourceAsset) ? undefined : applyBps
+          const affiliate = ASGARDEX_ADDRESS === walletAddress ? undefined : getAsgardexThorname(network)
+          const affiliateBps = ASGARDEX_ADDRESS === walletAddress ? undefined : applyBps
           const streamingInt = isStreaming ? streamingInterval : 0
           const streaminQuant = isStreaming ? streamingQuantity : 0
           const toleranceBps = isStreaming || network === Network.Stagenet ? 10000 : slipTolerance * 100 // convert to basis points
@@ -742,12 +741,15 @@ export const TradeSwap = ({
           setQuote(O.some(quote))
         })
         .catch((error) => {
+          setQuote(O.none)
           console.error('Failed to get quote:', error)
+          setErrorProtocol(O.some(error as Error))
         })
     }, 500)
   )
 
   useEffect(() => {
+    setQuote(O.none)
     const currentDebouncedEffect = debouncedEffect.current
     FP.pipe(
       sequenceTOption(oQuoteSwapData, oSourceAssetWB),
@@ -772,6 +774,7 @@ export const TradeSwap = ({
         ([quoteSwapDataThor]) => {
           const quoteSwapData = quoteSwapDataThor
           if (!quoteSwapData.amount.baseAmount.eq(baseAmount(0)) && !disableSwapAction) {
+            setErrorProtocol(O.none)
             currentDebouncedEffect(quoteSwapData)
           }
         }
@@ -816,7 +819,7 @@ export const TradeSwap = ({
     return canSwapFromTxDetails
   }, [oQuote])
 
-  // Reccommend amount in for use later
+  // Recommend amount in for use later
   const reccommendedAmountIn: CryptoAmount = useMemo(
     () =>
       FP.pipe(
@@ -905,6 +908,29 @@ export const TradeSwap = ({
 
     [oQuote]
   )
+
+  // Aggregator api Fetch Error
+  const aggregatorErrors: JSX.Element = useMemo(() => {
+    const protocolErrors: string[] = FP.pipe(
+      oErrorProtocol,
+      O.fold(
+        () => [],
+        (error) => [error.message]
+      )
+    )
+
+    if (protocolErrors.length === 0) {
+      return <></>
+    }
+
+    return (
+      <ErrorLabel>
+        {protocolErrors.map((error, index) => (
+          <div key={index}>{`${error} try adjusting amount`}</div>
+        ))}
+      </ErrorLabel>
+    )
+  }, [oErrorProtocol])
 
   /**
    * Price of swap result in max 1e8 // boolean to convert between streaming and regular swaps
@@ -1401,7 +1427,7 @@ export const TradeSwap = ({
       />
     )
   }, [swapState, sourceAsset, amountToSwapMax1e8, targetAsset, swapResultAmountMax.baseAmount, network, intl])
-  // assuming on a unsucessful tx that the swap state should remain the same
+  // assuming on a unsuccessful tx that the swap state should remain the same
   const onCloseTxModal = useCallback(() => {
     resetSwapState()
   }, [resetSwapState])
@@ -2428,6 +2454,7 @@ export const TradeSwap = ({
             </FlatButton>
             {sourceChainFeeErrorLabel}
             {quoteError}
+            {aggregatorErrors}
           </>
         ) : (
           <>

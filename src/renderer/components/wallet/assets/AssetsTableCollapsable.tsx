@@ -4,7 +4,7 @@ import * as RD from '@devexperts/remote-data-ts'
 import { ArrowPathIcon, QrCodeIcon } from '@heroicons/react/24/outline'
 import { Balance, Network } from '@xchainjs/xchain-client'
 import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
-import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
+import { AssetRuneNative, isTCYAsset, THORChain } from '@xchainjs/xchain-thorchain'
 import {
   Address,
   AnyAsset,
@@ -21,9 +21,9 @@ import {
 import { Collapse, Grid, Row } from 'antd'
 import { ScreenMap } from 'antd/lib/_util/responsiveObserve'
 import { ColumnType } from 'antd/lib/table'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 
@@ -32,7 +32,14 @@ import { isKeystoreWallet } from '../../../../shared/utils/guard'
 import { WalletType } from '../../../../shared/wallet/types'
 import { DEFAULT_WALLET_TYPE, ZERO_BASE_AMOUNT } from '../../../const'
 import { truncateAddress } from '../../../helpers/addressHelper'
-import { isBtcAsset, isCacaoAsset, isMayaAsset, isRuneNativeAsset, isUSDAsset } from '../../../helpers/assetHelper'
+import {
+  isBtcAsset,
+  isBtcSecuredAsset,
+  isCacaoAsset,
+  isMayaAsset,
+  isRuneNativeAsset,
+  isUSDAsset
+} from '../../../helpers/assetHelper'
 import { getChainAsset } from '../../../helpers/chainHelper'
 import { isEvmChain } from '../../../helpers/evmHelper'
 import { getDeepestPool, getPoolPriceValue, getSecondDeepestPool } from '../../../helpers/poolHelper'
@@ -41,8 +48,8 @@ import { hiddenString, noDataString } from '../../../helpers/stringHelper'
 import { calculateMayaValueInUSD, MayaScanPriceRD } from '../../../hooks/useMayascanPrice'
 import * as poolsRoutes from '../../../routes/pools'
 import { WalletBalancesRD } from '../../../services/clients'
-import { PoolDetails as PoolDetailsMaya } from '../../../services/mayaMigard/types'
-import { PoolDetails, PoolsDataMap } from '../../../services/midgard/types'
+import { PoolDetails as PoolDetailsMaya } from '../../../services/midgard/mayaMigard/types'
+import { PoolDetails, PoolsDataMap, PricePool } from '../../../services/midgard/midgardTypes'
 import { MimirHaltRD } from '../../../services/thorchain/types'
 import { reloadBalancesByChain } from '../../../services/wallet'
 import {
@@ -56,7 +63,6 @@ import {
 import { walletTypeToI18n } from '../../../services/wallet/util'
 import { useApp } from '../../../store/app/hooks'
 import { GECKO_MAP } from '../../../types/generated/geckoMap'
-import { PricePool } from '../../../views/pools/Pools.types'
 import { ErrorView } from '../../shared/error/'
 import { AssetIcon } from '../../uielements/assets/assetIcon'
 import { Action as ActionButtonAction, ActionButton } from '../../uielements/button/ActionButton'
@@ -69,13 +75,13 @@ const { Panel } = Collapse
 
 export type AssetAction = 'send' | 'deposit'
 
-export type GetPoolPriceValueFnThor = (params: {
+type GetPoolPriceValueFnThor = (params: {
   balance: Balance
   poolDetails: PoolDetails
   pricePool: PricePool
 }) => O.Option<BaseAmount>
 
-export type GetPoolPriceValueFnMaya = (params: {
+type GetPoolPriceValueFnMaya = (params: {
   balance: Balance
   poolDetails: PoolDetailsMaya
   pricePool: PricePool
@@ -327,21 +333,11 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
         O.chain(({ asset }) => O.fromNullable(assetFromString(asset))),
         O.toNullable
       )
+
       const secondDeepestPoolAsset = FP.pipe(
         getSecondDeepestPool(poolDetails),
         O.chain(({ asset }) => O.fromNullable(assetFromString(asset))),
         O.toNullable
-      )
-      const hasSaversAssets = FP.pipe(
-        poolDetails,
-        A.filter(({ saversDepth }) => Number(saversDepth) > 0),
-        A.filterMap(({ asset: assetString }) => O.fromNullable(assetFromString(assetString))),
-        A.exists(
-          (assetPool) =>
-            assetPool.chain.toUpperCase() === asset.chain.toUpperCase() &&
-            assetPool.symbol.toUpperCase() === asset.symbol.toUpperCase() &&
-            assetPool.ticker.toUpperCase() === asset.ticker.toUpperCase()
-        )
       )
 
       const createAction = (labelId: string, callback: () => void) => ({
@@ -417,7 +413,8 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
         deepestPoolAsset &&
         secondDeepestPoolAsset &&
         !isCacaoAsset(asset) &&
-        !isRuneNativeAsset(asset)
+        !isRuneNativeAsset(asset) &&
+        !isSecuredAsset(asset)
       ) {
         actions.push(
           createAction('common.swap', () =>
@@ -425,6 +422,22 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
               poolsRoutes.swap.path({
                 source: assetToString(asset),
                 target: assetToString(isBtcAsset(asset) ? secondDeepestPoolAsset : deepestPoolAsset),
+                sourceWalletType: walletType,
+                targetWalletType: DEFAULT_WALLET_TYPE
+              })
+            )
+          )
+        )
+      }
+      if (isSecuredAsset(asset)) {
+        actions.push(
+          createAction('common.swap', () =>
+            navigate(
+              poolsRoutes.swap.path({
+                source: assetToString(asset),
+                target: isBtcSecuredAsset(asset)
+                  ? `${secondDeepestPoolAsset?.chain}-${secondDeepestPoolAsset?.symbol}`
+                  : `${deepestPoolAsset?.chain}-${deepestPoolAsset?.symbol}`,
                 sourceWalletType: walletType,
                 targetWalletType: DEFAULT_WALLET_TYPE
               })
@@ -441,27 +454,14 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
               poolsRoutes.deposit.path({
                 asset: assetToString(asset),
                 assetWalletType: walletType,
-                runeWalletType: DEFAULT_WALLET_TYPE
+                dexWalletType: DEFAULT_WALLET_TYPE
               })
             )
           })
         )
       }
 
-      if (hasSaversAssets && !isSynthAsset(asset) && !isSecuredAsset(asset)) {
-        actions.push(
-          createAction('common.earn', () =>
-            navigate(
-              poolsRoutes.earn.path({
-                asset: assetToString(asset),
-                walletType: walletType
-              })
-            )
-          )
-        )
-      }
-
-      if (isRuneNativeAsset(asset) || isCacaoAsset(asset)) {
+      if (isRuneNativeAsset(asset) || isCacaoAsset(asset) || isTCYAsset(asset)) {
         actions.push(createAction('wallet.action.deposit', () => assetHandler(walletAsset, 'deposit')))
       }
 

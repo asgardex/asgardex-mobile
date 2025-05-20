@@ -11,10 +11,10 @@ import {
 } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
 import clsx from 'clsx'
-import * as FP from 'fp-ts/lib/function'
+import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
-import { ReactComponent as WalletIcon } from '../../../../assets/svg/icon-wallet.svg'
+import WalletIcon from '../../../../assets/svg/icon-wallet.svg?react'
 import { isUSDAsset } from '../../../../helpers/assetHelper'
 import { AssetWithAmount, FixmeType } from '../../../../types/asgardex'
 import { Button } from '../../button'
@@ -22,7 +22,7 @@ import { CheckButton } from '../../button/CheckButton'
 import { InputBigNumber } from '../../input'
 import { AssetSelect } from '../assetSelect'
 
-export const ASSET_SELECT_BUTTON_WIDTH = 'w-[190px]'
+const ASSET_SELECT_BUTTON_WIDTH = 'w-[190px]'
 
 export type Props = {
   title?: string

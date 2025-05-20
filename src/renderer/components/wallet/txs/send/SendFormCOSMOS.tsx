@@ -10,9 +10,9 @@ import { Address, AssetType, baseAmount, CryptoAmount, eqAsset } from '@xchainjs
 import { formatAssetAmountCurrency, assetAmount, bn, assetToBase, BaseAmount, baseToAsset } from '@xchainjs/xchain-util'
 import { Form } from 'antd'
 import BigNumber from 'bignumber.js'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { TrustedAddress, TrustedAddresses } from '../../../../../shared/api/types'
@@ -33,7 +33,7 @@ import { useSubscriptionState } from '../../../../hooks/useSubscriptionState'
 import { INITIAL_SEND_STATE } from '../../../../services/chain/const'
 import { FeeRD, SendTxState, SendTxStateHandler } from '../../../../services/chain/types'
 import { AddressValidation, GetExplorerTxUrl, OpenExplorerTxUrl, WalletBalances } from '../../../../services/clients'
-import { PoolAddress } from '../../../../services/midgard/types'
+import { PoolAddress } from '../../../../services/midgard/midgardTypes'
 import { SelectedWalletAsset, ValidatePasswordHandler } from '../../../../services/wallet/types'
 import { WalletBalance } from '../../../../services/wallet/types'
 import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../../../modal/confirmation'
@@ -49,13 +49,13 @@ import * as Styled from '../TxForm.styles'
 import { validateTxAmountInput } from '../TxForm.util'
 import * as Shared from './Send.shared'
 
-export type FormValues = {
+type FormValues = {
   recipient: string
   amount: BigNumber
   memo?: string
 }
 
-export type Props = {
+type Props = {
   asset: SelectedWalletAsset
   trustedAddresses: TrustedAddresses | undefined
   balances: WalletBalances

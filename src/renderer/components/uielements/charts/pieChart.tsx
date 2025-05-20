@@ -1,4 +1,3 @@
-/* eslint-disable no-template-curly-in-string */
 import { useMemo } from 'react'
 
 import ReactECharts from 'echarts-for-react'
@@ -7,7 +6,7 @@ import { hiddenString } from '../../../helpers/stringHelper'
 import { useTheme } from '../../../hooks/useTheme'
 import { ChartColors } from './utils'
 
-export type ChartProps = {
+type ChartProps = {
   chartData: {
     name: string
     value: number

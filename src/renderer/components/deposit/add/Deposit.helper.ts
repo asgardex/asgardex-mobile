@@ -1,10 +1,10 @@
 import * as RD from '@devexperts/remote-data-ts'
 import { AnyAsset, baseAmount, BaseAmount, Chain } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
-import * as E from 'fp-ts/Either'
-import * as FP from 'fp-ts/function'
-import * as A from 'fp-ts/lib/Array'
-import * as O from 'fp-ts/Option'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { array as A } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { WalletType } from '../../../../shared/wallet/types'
 import { SUPPORTED_LEDGER_APPS, ZERO_BASE_AMOUNT } from '../../../const'
@@ -20,9 +20,8 @@ import { getChainAsset } from '../../../helpers/chainHelper'
 import { eqChain } from '../../../helpers/fp/eq'
 import { priceFeeAmountForAsset } from '../../../services/chain/fees/utils'
 import { DepositAssetFees, DepositFees, SymDepositFees, SymDepositFeesRD } from '../../../services/chain/types'
-import { PoolsDataMap } from '../../../services/midgard/types'
+import { PoolData, PoolsDataMap } from '../../../services/midgard/midgardTypes'
 import { AssetWithAmount } from '../../../types/asgardex'
-import { PoolData } from '../../../views/pools/Pools.types'
 
 /**
  * Returns zero sym deposit fees
@@ -270,7 +269,7 @@ export const minRuneAmountToDeposit = ({ inFee, outFee, refundFee }: DepositFees
 /**
  * Returns min. balance to cover fees for deposit txs
  *
- * It sums fees for happy path (successfull deposit) or unhappy path (failed deposit)
+ * It sums fees for happy path (successful deposit) or unhappy path (failed deposit)
  *
  * This helper is only needed if source asset is not a chain asset,
  * In other case use `minAmountToSwapMax1e8` to get min value

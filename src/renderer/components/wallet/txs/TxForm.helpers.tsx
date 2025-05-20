@@ -1,8 +1,7 @@
 import * as RD from '@devexperts/remote-data-ts'
 import { Address, AnyAsset } from '@xchainjs/xchain-util'
-import { FormInstance } from 'antd'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { IntlShape } from 'react-intl'
 
 import { TrustedAddress } from '../../../../shared/api/types'
@@ -83,6 +82,3 @@ export const getSendTxDescription = ({
       () => intl.formatMessage({ id: 'common.tx.success' })
     )
   )
-
-export const hasFormErrors = (form: FormInstance) =>
-  !!form.getFieldsError().filter(({ errors }) => errors.length).length

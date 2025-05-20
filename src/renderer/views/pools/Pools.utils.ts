@@ -12,9 +12,9 @@ import {
   baseToAsset,
   AnyAsset
 } from '@xchainjs/xchain-util'
-import * as A from 'fp-ts/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { PoolsWatchList } from '../../../shared/api/io'
 import { ONE_RUNE_BASE_AMOUNT } from '../../../shared/mock/amount'
@@ -23,10 +23,10 @@ import { isArbChain, isAvaxChain, isBaseChain, isEthChain } from '../../helpers/
 import { eqString, eqAsset } from '../../helpers/fp/eq'
 import { sequenceTOption } from '../../helpers/fpHelpers'
 import { LastblockItem as LastblockItemMaya } from '../../services/mayachain/types'
-import { GetPoolsStatusEnum, PoolFilter } from '../../services/midgard/types'
-import { toPoolData } from '../../services/midgard/utils'
+import { GetPoolsStatusEnum, PoolData, PoolFilter } from '../../services/midgard/midgardTypes'
+import { toPoolData } from '../../services/midgard/thorMidgard/utils'
 import { LastblockItem } from '../../services/thorchain/types'
-import { PoolData, PoolTableRowData } from './Pools.types'
+import { PoolTableRowData } from './Pools.types'
 
 export const stringToGetPoolsStatus = (status: string): GetPoolsStatusEnum => {
   switch (status) {
@@ -199,7 +199,7 @@ export const getBlocksLeftForPendingPool = (
     O.map(([newPoolCycle, lastHeight]) => newPoolCycle - (lastHeight % newPoolCycle))
   )
 }
-export const getBlocksLeftForPendingMayaPool = (
+const getBlocksLeftForPendingMayaPool = (
   lastblocks: Array<Pick<LastblockItemMaya, 'chain' | 'mayachain'>>,
   asset: AnyAsset,
   oNewPoolCycle: O.Option<number>

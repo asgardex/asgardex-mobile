@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import { Switch } from '@headlessui/react'
 import clsx from 'clsx'
-import * as FP from 'fp-ts/lib/function'
+import { function as FP } from 'fp-ts'
 
-export type Props = {
+type Props = {
   disabled?: boolean
   active?: boolean
   onChange?: (active: boolean) => void

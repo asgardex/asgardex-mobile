@@ -3,15 +3,15 @@ import { BSCChain } from '@xchainjs/xchain-bsc'
 import { Network } from '@xchainjs/xchain-client'
 import { PoolDetail } from '@xchainjs/xchain-midgard'
 import { assetAmount, assetToBase } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { ASSETS_MAINNET, ERC20_TESTNET } from '../../../shared/mock/assets'
 import { AssetAVAX, AssetBCH, AssetBTC, AssetETH, AssetLTC } from '../../../shared/utils/asset'
 import { AssetUSDC, AssetUSDT62E, AssetUSDTDAC } from '../../const'
-import { GetPoolsStatusEnum } from '../../services/midgard/types'
+import { GetPoolsStatusEnum, PoolData } from '../../services/midgard/midgardTypes'
 import { LastblockItems } from '../../services/thorchain/types'
-import { PoolData, PoolTableRowData } from './Pools.types'
+import { PoolTableRowData } from './Pools.types'
 import {
   getPoolTableRowData,
   getBlocksLeftForPendingPool,

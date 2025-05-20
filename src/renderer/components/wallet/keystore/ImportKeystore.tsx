@@ -5,7 +5,7 @@ import { CheckCircleIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import { Keystore } from '@xchainjs/xchain-crypto'
 import { Form } from 'antd'
 import { Store } from 'antd/lib/form/interface'
-import * as FP from 'fp-ts/lib/function'
+import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 /* css import is needed to override antd */

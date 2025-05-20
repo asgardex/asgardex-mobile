@@ -3,7 +3,7 @@ import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Meta, StoryFn } from '@storybook/react'
 import { TxHash } from '@xchainjs/xchain-client'
 import { Row } from 'antd'
-import * as O from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 
 import { ErrorId } from '../../../services/wallet/types'
 import { Button, ViewTxButton } from '../../uielements/button'
@@ -15,7 +15,7 @@ const onFinish = () => console.log('onFinish')
 const _onViewTxClick = (txHash: TxHash) => console.log('txHash', txHash)
 
 export const StoryInitial: StoryFn = () => (
-  <TxModal title="intial" txRD={RD.initial} onClose={onClose} onFinish={onFinish} />
+  <TxModal title="initial" txRD={RD.initial} onClose={onClose} onFinish={onFinish} />
 )
 StoryInitial.storyName = 'initial'
 

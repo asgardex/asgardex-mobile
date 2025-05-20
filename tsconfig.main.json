@@ -11,6 +11,6 @@
     "outDir": "./public/",
     "pretty": true
   },
-  "include": ["./src/main", "./src/shared"],
+  "include": ["./src/main", "./src/shared", "src/vite-env.d.ts"],
   "exclude": ["src/renderer/", "./src/shared/**/*.test.ts"]
 }

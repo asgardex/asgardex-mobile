@@ -1,7 +1,7 @@
 import { Keystore } from '@xchainjs/xchain-crypto'
 import { assetToString, assetFromString, BaseAmount, baseAmount, AnyAsset } from '@xchainjs/xchain-util'
-import * as E from 'fp-ts/lib/Either'
-import * as FP from 'fp-ts/lib/function'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
 import * as t from 'io-ts'
 import * as IOD from 'io-ts/Decoder'
 import * as IOG from 'io-ts/Guard'
@@ -35,7 +35,7 @@ export const assetIO = new t.Type(
   assetToString
 )
 
-export const assetListIO = t.array(assetIO)
+const assetListIO = t.array(assetIO)
 
 export type BaseAmountEncoded = { amount: string; decimal: number }
 
@@ -159,7 +159,7 @@ export const ipcLedgerApproveERC20TokenParamsIO = t.type({
 
 export type IPCLedgerApproveERC20TokenParams = t.TypeOf<typeof ipcLedgerApproveERC20TokenParamsIO>
 
-export const poolsWatchListIO = assetListIO
+const poolsWatchListIO = assetListIO
 
 export type PoolsWatchList = t.TypeOf<typeof poolsWatchListIO>
 

@@ -20,9 +20,9 @@ import {
 import { Form, Tooltip } from 'antd'
 import { RadioChangeEvent } from 'antd/lib/radio'
 import BigNumber from 'bignumber.js'
-import * as E from 'fp-ts/Either'
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/lib/Option'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { debounce } from 'lodash'
 import { useIntl } from 'react-intl'
 
@@ -142,6 +142,7 @@ export const InteractFormThor: React.FC<Props> = (props) => {
   const intl = useIntl()
 
   const { asset } = balance
+
   const { walletAddress } = balance
   const pricePool = usePricePool()
   const mimirKeys = useMimirConstants(['RUNEPOOLDEPOSITMATURITYBLOCKS', 'RUNEPOOLENABLED'])
@@ -452,7 +453,7 @@ export const InteractFormThor: React.FC<Props> = (props) => {
           setThornameRegister(thornameDetails.name === '')
           setIsOwner(balance.walletAddress === thornameDetails.owner)
         }
-      } catch (error) {
+      } catch (_error) {
         setThornameAvailable(true)
       }
       // setThorname(O.none)
@@ -644,10 +645,11 @@ export const InteractFormThor: React.FC<Props> = (props) => {
         walletIndex,
         hdMode,
         amount: amountToSend,
-        memo: getMemo()
+        memo: getMemo(),
+        asset: asset
       })
     )
-  }, [subscribeInteractState, interact$, walletType, walletAccount, walletIndex, hdMode, amountToSend, getMemo])
+  }, [subscribeInteractState, interact$, walletType, walletAccount, walletIndex, hdMode, amountToSend, getMemo, asset])
 
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
 
@@ -898,6 +900,8 @@ export const InteractFormThor: React.FC<Props> = (props) => {
   const bondBaseAmount = userNodeInfo?.bondAmount ? userNodeInfo.bondAmount : baseAmount(0)
 
   const exampleMemos = [
+    { type: 'Stake TCY', memo: 'TCY+' },
+    { type: 'Unstake TCY', memo: 'TCY-:BASISPOINTS' },
     { type: 'Bond', memo: 'BOND:NODEADDRESS' },
     { type: 'Unbond', memo: 'UNBOND:NODEADDRESS' },
     { type: 'Leave', memo: 'LEAVE:NODEADDRESS' },

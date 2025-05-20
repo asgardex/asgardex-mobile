@@ -3,14 +3,14 @@ import { BTC_DECIMAL } from '@xchainjs/xchain-bitcoin'
 import { BSC_GAS_ASSET_DECIMAL } from '@xchainjs/xchain-bsc'
 import { ETH_GAS_ASSET_DECIMAL } from '@xchainjs/xchain-ethereum'
 import { assetAmount, assetToBase, baseAmount } from '@xchainjs/xchain-util'
-import * as O from 'fp-ts/Option'
+import { option as O } from 'fp-ts'
 
 import { AssetBTC, AssetETH, AssetBSC } from '../../../../shared/utils/asset'
 import { AssetUSDCBSC, AssetUSDTBSC, AssetUSDTERC20 } from '../../../const'
 import { THORCHAIN_DECIMAL } from '../../../helpers/assetHelper'
 import { eqBaseAmount, eqODepositAssetFees, eqODepositFees } from '../../../helpers/fp/eq'
 import { DepositAssetFees, DepositFees, SymDepositFees, SymDepositFeesRD } from '../../../services/chain/types'
-import { PoolData } from '../../../views/pools/Pools.types'
+import { PoolData } from '../../../services/midgard/midgardTypes'
 import {
   getAssetAmountToDeposit,
   getDexAmountToDeposit,

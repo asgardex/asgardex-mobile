@@ -14,10 +14,10 @@ import { LTCChain } from '@xchainjs/xchain-litecoin'
 import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
 import { RadixChain } from '@xchainjs/xchain-radix'
 import { SOLChain } from '@xchainjs/xchain-solana'
-import { THORChain } from '@xchainjs/xchain-thorchain'
-import { AnyAsset, Asset, AssetType, baseAmount, isSynthAsset } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/Option'
+import { isTCYAsset, THORChain } from '@xchainjs/xchain-thorchain'
+import { AnyAsset, Asset, AssetType, baseAmount, isSecuredAsset, isSynthAsset } from '@xchainjs/xchain-util'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
@@ -38,8 +38,8 @@ import * as ETH from '../../ethereum'
 import * as KUJI from '../../kuji'
 import * as LTC from '../../litecoin'
 import * as MAYA from '../../mayachain'
-import { service as midgardMayaService } from '../../mayaMigard/service'
-import { service as midgardService } from '../../midgard/service'
+import { service as midgardMayaService } from '../../midgard/mayaMigard/service'
+import { service as midgardService } from '../../midgard/thorMidgard/service'
 import * as XRD from '../../radix'
 import * as SOL from '../../solana'
 import * as THOR from '../../thorchain'
@@ -58,7 +58,12 @@ const {
  */
 export const poolOutboundFee$ = (asset: AnyAsset): PoolFeeLD => {
   // special case for RUNE - not provided in `inbound_addresses` endpoint
-  if (isRuneNativeAsset(asset) || asset.type === AssetType.TRADE || asset.type === AssetType.SECURED) {
+  if (
+    isRuneNativeAsset(asset) ||
+    asset.type === AssetType.TRADE ||
+    asset.type === AssetType.SECURED ||
+    isTCYAsset(asset)
+  ) {
     return FP.pipe(
       THOR.fees$(),
       liveData.map((fees) => ({ amount: fees.fast.times(3), asset: AssetRuneNative }))
@@ -82,6 +87,18 @@ export const poolInboundFee$ = (asset: AnyAsset, memo: string): PoolFeeLD => {
     return FP.pipe(
       MAYA.fees$(),
       liveData.map((fees) => ({ amount: fees.fast, asset: AssetCacao }))
+    )
+  }
+  if (isSecuredAsset(asset)) {
+    return FP.pipe(
+      THOR.fees$(),
+      liveData.map((fees) => ({ amount: fees.fast, asset: AssetRuneNative }))
+    )
+  }
+  if (isTCYAsset(asset)) {
+    return FP.pipe(
+      THOR.fees$(),
+      liveData.map((fees) => ({ amount: fees.fast, asset: AssetRuneNative }))
     )
   }
   switch (asset.chain) {

@@ -2,11 +2,14 @@ import * as RD from '@devexperts/remote-data-ts'
 import { Balance, Network, Tx, TxHash } from '@xchainjs/xchain-client'
 import { Keystore } from '@xchainjs/xchain-crypto'
 import { Address, AnyAsset, Chain } from '@xchainjs/xchain-util'
-import { getMonoid } from 'fp-ts/Array'
-import * as FP from 'fp-ts/lib/function'
-import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
-import * as O from 'fp-ts/lib/Option'
+import type { nonEmptyArray } from 'fp-ts'
+import { array } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
+
+type NonEmptyArray = nonEmptyArray.NonEmptyArray
+const { getMonoid } = array
 
 import { KeystoreWallet, KeystoreWallets } from '../../../shared/api/io'
 import { KeystoreId, LedgerError } from '../../../shared/api/types'
@@ -171,12 +174,9 @@ export enum ErrorId {
   POOL_TX = 'POOL_TX',
   GET_TX = 'GET_TX',
   VALIDATE_POOL = 'VALIDATE_POOL',
-  GET_NODE = 'GET_NODE',
   VALIDATE_NODE = 'VALIDATE_NODE',
-  VALIDATE_RESULT = 'VALIDATE_RESULT',
   GET_ACTIONS = 'GET_ACTIONS',
-  GET_TC_CONSTANT = 'GET_TC_CONSTANT',
-  USER_WAIT_ERROR = 'USER_WAIT_ERROR'
+  GET_TC_CONSTANT = 'GET_TC_CONSTANT'
 }
 
 export type ChainBalancesService = {

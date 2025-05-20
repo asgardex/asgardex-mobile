@@ -6,8 +6,8 @@ import { Network } from '@xchainjs/xchain-client'
 import { AssetCacao } from '@xchainjs/xchain-mayachain'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { AnyAsset, assetToString } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -37,8 +37,8 @@ import { usePricePool } from '../../../hooks/usePricePool'
 import { usePricePoolMaya } from '../../../hooks/usePricePoolMaya'
 import { useProtocolLimit } from '../../../hooks/useProtocolLimit'
 import * as poolsRoutes from '../../../routes/pools'
-import { PoolAddress, PoolAssetsRD } from '../../../services/midgard/types'
-import { toPoolData } from '../../../services/midgard/utils'
+import { PoolAddress, PoolAssetsRD } from '../../../services/midgard/midgardTypes'
+import { toPoolData } from '../../../services/midgard/thorMidgard/utils'
 import { DEFAULT_BALANCES_FILTER, INITIAL_BALANCES_STATE } from '../../../services/wallet/const'
 import { useApp } from '../../../store/app/hooks'
 import { Props } from './SymDepositView.types'
@@ -91,7 +91,7 @@ export const SymDepositView: React.FC<Props> = (props) => {
   const availableAssets$ = protocol === THORChain ? availableAssetsThor$ : availableAssetsMaya$
   const reloadSelectedPoolDetail = protocol === THORChain ? reloadSelectedPoolDetailThor : reloadSelectedPoolDetailMaya
 
-  const { symDepositFees$, symDeposit$, reloadSymDepositFees, saverDeposit$: asymDeposit$ } = useChainContext()
+  const { symDepositFees$, symDeposit$, reloadSymDepositFees, poolDeposit$: asymDeposit$ } = useChainContext()
 
   const poolsState = useObservableState(protocol === THORChain ? poolsState$ : poolsStateMaya$, RD.initial)
 
@@ -162,7 +162,7 @@ export const SymDepositView: React.FC<Props> = (props) => {
         poolsRoutes.deposit.path({
           asset: isRuneNativeAsset(asset) && protocol === THORChain ? assetToString(AssetBTC) : assetToString(asset),
           assetWalletType: checkedAssetWalletType,
-          runeWalletType: checkedRuneWalletType
+          dexWalletType: checkedRuneWalletType
         }),
         {
           replace: true

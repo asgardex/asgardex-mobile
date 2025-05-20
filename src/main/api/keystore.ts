@@ -1,9 +1,9 @@
 import * as path from 'path'
 
 import { dialog, ipcRenderer } from 'electron'
-import * as E from 'fp-ts/lib/Either'
-import * as FP from 'fp-ts/lib/function'
-import * as TE from 'fp-ts/lib/TaskEither'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { taskEither as TE } from 'fp-ts'
 import * as fs from 'fs-extra'
 
 import { KeystoreWallets, ipcKeystoreWalletsIO, keystoreIO } from '../../shared/api/io'
@@ -72,7 +72,7 @@ const migrateLegacyWallet = (): TE.TaskEither<Error, KeystoreWallets> =>
       FP.pipe(
         // rename keystore file to backup it
         renameFile(LEGACY_KEYSTORE_FILE, path.join(STORAGE_DIR, `keystore-legacy-${new Date().getTime()}.json`)),
-        // return wallets in case of successfull backup
+        // return wallets in case of successful backup
         TE.map(() => wallets)
       )
     )

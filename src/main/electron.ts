@@ -1,4 +1,4 @@
-import { join } from 'path'
+import path, { join } from 'path'
 
 import { BrowserWindow, app, ipcMain, nativeImage } from 'electron'
 import electronDebug from 'electron-debug'
@@ -6,8 +6,8 @@ import isDev from 'electron-is-dev'
 import log from 'electron-log'
 import { warn } from 'electron-log'
 import windowStateKeeper from 'electron-window-state'
-import * as E from 'fp-ts/lib/Either'
-import * as FP from 'fp-ts/lib/function'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
 
 import {
   IPCLedgerAddressesIO,
@@ -34,14 +34,15 @@ import { approveLedgerERC20Token } from './api/ledger/evm/approve'
 import { openExternal } from './api/url'
 import IPCMessages from './ipc/messages'
 import { setMenu } from './menu'
+import { sanitizePathSegment } from './utils/file'
 
-export const IS_DEV = isDev && process.env.NODE_ENV !== 'production'
-export const PORT = process.env.PORT || 3000
+export const IS_DEV = isDev && import.meta.env.VITE_NODE_ENV !== 'production'
+export const PORT = import.meta.env.VITE_PORT || 3000
 
 export const APP_ROOT = join(__dirname, '..', '..')
 
 const BASE_URL_DEV = `http://localhost:${PORT}`
-const BASE_URL_PROD = `file://${join(__dirname, '../build/index.html')}`
+const BASE_URL_PROD = `file://${join(__dirname, '../renderer/index.html')}`
 // use dev server for hot reload or file in production
 export const BASE_URL = IS_DEV ? BASE_URL_DEV : BASE_URL_PROD
 // Application icon
@@ -50,8 +51,8 @@ const APP_ICON = join(APP_ROOT, 'resources', process.platform.match('win32') ? '
 const initLogger = () => {
   log.transports.file.resolvePath = (variables: log.PathVariables) => {
     // Logs go into ~/.config/{appName}/logs/ dir
-    const path = join(app.getPath('userData'), 'logs', variables.fileName as string)
-    return path
+    const safeFileName = sanitizePathSegment(variables.fileName as string, 'log file name')
+    return path.join(app.getPath('userData'), 'logs', safeFileName)
   }
 }
 
@@ -85,7 +86,7 @@ const closeHandler = () => {
 }
 
 const setupDevEnv = async () => {
-  const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer')
+  const { default: installExtension, REACT_DEVELOPER_TOOLS } = await import('electron-devtools-installer')
   try {
     await installExtension(REACT_DEVELOPER_TOOLS)
   } catch (e) {
@@ -115,7 +116,7 @@ const initMainWindow = async () => {
       // From Electron 12, it will be enabled by default.
       contextIsolation: true,
       // preload script
-      preload: join(__dirname, IS_DEV ? '../../public/' : '../build/', 'preload.js'),
+      preload: join(__dirname, IS_DEV ? '../../build/preload/' : '../preload/', 'preload.js'),
       // for develop locally only to avoid CORS issues
       webSecurity: !IS_DEV,
       // `allowRunningInsecureContent` needs to set to `true`,
@@ -158,7 +159,7 @@ const getDeviceScaleFactor = () => {
 
 const langChangeHandler = (locale: Locale) => {
   setMenu(locale, IS_DEV)
-  // show menu, which is hided at start
+  // show menu, which is hidden at start
   if (mainWindow && !mainWindow.isMenuBarVisible()) {
     mainWindow.setMenuBarVisibility(true)
   }

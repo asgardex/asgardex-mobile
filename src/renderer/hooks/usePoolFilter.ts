@@ -1,10 +1,10 @@
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import * as RxOp from 'rxjs/operators'
 
 import { useMidgardContext } from '../contexts/MidgardContext'
-import { PoolFilter, PoolType } from '../services/midgard/types'
+import { PoolFilter, PoolType } from '../services/midgard/midgardTypes'
 
 export const usePoolFilter = (poolType: PoolType) => {
   const {

@@ -1,11 +1,10 @@
 import * as RD from '@devexperts/remote-data-ts'
-import { Client, DepositParam } from '@xchainjs/xchain-mayachain'
+import { Client, CompatibleAsset, DepositParam } from '@xchainjs/xchain-mayachain'
 import type * as TN from '@xchainjs/xchain-mayanode'
 import { LPBondedNode } from '@xchainjs/xchain-mayanode'
 import { Address, AnyAsset, BaseAmount, Chain } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
-import * as O from 'fp-ts/Option'
-import * as t from 'io-ts'
+import { option as O } from 'fp-ts'
 import { IntlShape } from 'react-intl'
 import * as Rx from 'rxjs'
 
@@ -96,6 +95,7 @@ export type InteractParams = {
   readonly hdMode: HDMode
   readonly amount: BaseAmount
   readonly memo: string
+  readonly asset: CompatibleAsset
 }
 
 /**
@@ -164,18 +164,18 @@ export type MimirRD = RD.RemoteData<Error, Mimir>
 
 export type MimirConstantsRD = RD.RemoteData<Error, Mimir>
 
-export type MimirHaltChain = Record<`halt${EnabledChain}Chain`, boolean>
+export type MimirHaltChain = Record<`HALT${EnabledChain}CHAIN`, boolean>
 
-export type MimirHaltTrading = Record<`halt${EnabledChain}Trading`, boolean>
+export type MimirHaltTrading = Record<`HALT${EnabledChain}TRADING`, boolean>
 
-export type MimirPauseLP = Record<`pauseLp${EnabledChain}`, boolean>
+export type MimirPauseLP = Record<`PAUSELP${EnabledChain}`, boolean>
 
 export type MimirHaltTradingGlobal = {
-  haltTrading: boolean
+  haltGlobalTrading: boolean
 }
 
 export type MimirHaltLpGlobal = {
-  pauseLp: boolean
+  pauseGlobalLp: boolean
 }
 
 export type MimirHalt = MimirHaltChain & MimirHaltTrading & MimirPauseLP & MimirHaltTradingGlobal & MimirHaltLpGlobal
@@ -262,27 +262,6 @@ export type MayanodePool = {
 export type MayanodePools = MayanodePool[]
 export type MayanodePoolsRD = RD.RemoteData<Error, MayanodePools>
 export type MayanodePoolsLD = LiveData<Error, MayanodePools>
-
-export const erc20WhitelistTokenIO = t.type({
-  chainId: t.number,
-  address: t.string,
-  symbol: t.string,
-  name: t.string,
-  logoURI: t.union([t.string, t.undefined])
-})
-
-export type ERC20WhitelistToken = t.TypeOf<typeof erc20WhitelistTokenIO>
-
-export const erc20WhitelistIO = t.type({
-  tokens: t.array(erc20WhitelistTokenIO),
-  version: t.type({
-    major: t.number,
-    minor: t.number,
-    patch: t.number
-  })
-})
-
-export type ERC20Whitelist = t.TypeOf<typeof erc20WhitelistIO>
 
 export enum NodeStatusEnum {
   Active = 'Active',

@@ -1,5 +1,7 @@
 import { BaseAmount, Address, AnyAsset } from '@xchainjs/xchain-util'
-import { Option } from 'fp-ts/lib/Option'
+import type { option } from 'fp-ts'
+
+type Option = option.Option
 
 import { WalletType } from '../../shared/wallet/types'
 
@@ -44,13 +46,8 @@ export type AssetWithDecimal = {
   asset: AnyAsset
   decimal: number
 }
-
-export type AssetsWithDecimal = AssetWithDecimal[]
-
 export type DepositType = 'sym' | 'asym'
 export type WithdrawType = 'sym' | 'asym'
-
-export const MAX_VALUE = 100
 
 export type TxStatus = {
   /**

@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react'
 
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
@@ -27,7 +27,7 @@ import {
 } from '../services/ethereum'
 import { getStorageState$, modifyStorage } from '../services/storage/common'
 
-export type EthereumContextValue = {
+type EthereumContextValue = {
   client$: typeof client$
   clientState$: typeof clientState$
   txs$: typeof txs$

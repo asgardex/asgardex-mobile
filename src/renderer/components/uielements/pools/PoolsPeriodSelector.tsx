@@ -3,18 +3,18 @@ import React, { useMemo } from 'react'
 import { Listbox } from '@headlessui/react'
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import clsx from 'clsx'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
-import { GetPoolsPeriodEnum } from '../../../services/midgard/types'
+import { GetPoolsPeriodEnum } from '../../../services/midgard/midgardTypes'
 
 type PeriodItem = { value: GetPoolsPeriodEnum; label: string }
 
 const DEFAULT_ITEM: PeriodItem = { value: GetPoolsPeriodEnum._30d, label: '30 days' }
 
-export type Props = {
+type Props = {
   selectedValue: GetPoolsPeriodEnum
   onChange: (value: GetPoolsPeriodEnum) => void
   className?: string

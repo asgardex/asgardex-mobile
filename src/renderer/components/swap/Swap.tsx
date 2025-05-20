@@ -11,7 +11,7 @@ import {
 import { QuoteSwap } from '@xchainjs/xchain-aggregator'
 import { Network } from '@xchainjs/xchain-client'
 import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
-import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
+import { AssetRuneNative, isTCYAsset, THORChain } from '@xchainjs/xchain-thorchain'
 import {
   Asset,
   baseToAsset,
@@ -29,14 +29,15 @@ import {
   SynthAsset,
   isTokenAsset,
   isTradeAsset,
-  isSecuredAsset
+  isSecuredAsset,
+  SecuredAsset
 } from '@xchainjs/xchain-util'
 import { Row } from 'antd'
 import clsx from 'clsx'
-import * as A from 'fp-ts/Array'
-import * as FP from 'fp-ts/function'
-import * as NEA from 'fp-ts/lib/NonEmptyArray'
-import * as O from 'fp-ts/Option'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { nonEmptyArray as NEA } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { debounce } from 'lodash'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
@@ -91,9 +92,9 @@ import { INITIAL_SWAP_STATE } from '../../services/chain/const'
 import { getZeroSwapFees } from '../../services/chain/fees/swap'
 import { SwapTxParams, SwapFeesRD, SwapFees, FeeRD, SwapTxState, SendTxParams } from '../../services/chain/types'
 import { ApproveParams, IsApprovedRD } from '../../services/evm/types'
-import { getPoolDetail as getPoolDetailMaya } from '../../services/mayaMigard/utils'
-import { PoolAddress } from '../../services/midgard/types'
-import { getPoolDetail } from '../../services/midgard/utils'
+import { getPoolDetail as getPoolDetailMaya } from '../../services/midgard/mayaMigard/utils'
+import { PoolAddress } from '../../services/midgard/midgardTypes'
+import { getPoolDetail } from '../../services/midgard/thorMidgard/utils'
 import { userChains$ } from '../../services/storage/userChains'
 import { addAsset } from '../../services/storage/userChainTokens'
 import { TxHashRD, WalletBalance, WalletBalances } from '../../services/wallet/types'
@@ -215,7 +216,7 @@ export const Swap = ({
 
   const [oTargetWalletType, setTargetWalletType] = useState<O.Option<WalletType>>(oInitialTargetWalletType)
 
-  const [isStreaming, setIsStreaming] = useState<Boolean>(true)
+  const [isStreaming, setIsStreaming] = useState<boolean>(true)
   const openExplorer = useOpenExplorerTxUrl(
     FP.pipe(
       oQuoteProtocol,
@@ -845,7 +846,7 @@ export const Swap = ({
               ...sourceAsset,
               symbol: sourceAsset.symbol.toUpperCase()
             }),
-            fromAddress: sourceWalletAddress,
+            fromAddress: isSecuredAsset(sourceAsset) ? undefined : sourceWalletAddress,
             destinationAddress: quoteOnly ? undefined : destinationWalletAddress,
             streamingInterval: isStreaming ? streamingInterval : 0,
             streamingQuantity: isStreaming ? streamingQuantity : 0,
@@ -1129,13 +1130,13 @@ export const Swap = ({
           !isTokenAsset(sourceAsset) &&
           !isTradeAsset(sourceAsset) &&
           !isSynthAsset(sourceAsset) &&
-          !isSecuredAsset(sourceAsset)
+          !isSecuredAsset(sourceAsset) &&
+          !isTCYAsset(sourceAsset)
         ) {
           if (sourceChainAssetAmount.lt(amountToSwap.plus(swapFees.inFee.amount))) {
             amountToSwap = sourceChainAssetAmount.minus(swapFees.inFee.amount)
           }
         }
-
         return {
           poolAddress,
           asset: sourceAsset,
@@ -1453,7 +1454,7 @@ export const Swap = ({
       )
     )
 
-    const minAmountErrorMessage = errors.find((error) => error.includes('is less than reccommended Min Amount:'))
+    const minAmountErrorMessage = errors.find((error) => error.includes('is less than recommended Min Amount:'))
 
     if (!minAmountErrorMessage) {
       return false
@@ -1575,16 +1576,16 @@ export const Swap = ({
               } as SynthAsset
             ]
           }
-          // if (isTCSupportedAsset(asset, poolDetailsThor) && isTCSupportedAsset(sourceAsset, poolDetailsThor)) {
-          //   // Create secured assets for ThorChain
-          //   return [
-          //     asset,
-          //     {
-          //       ...asset,
-          //       type: AssetType.SECURED
-          //     } as SecuredAsset
-          //   ]
-          // }
+          if (isTCSupportedAsset(asset, poolDetailsThor) && isTCSupportedAsset(sourceAsset, poolDetailsThor)) {
+            // Create secured assets for ThorChain
+            return [
+              asset,
+              {
+                ...asset,
+                type: AssetType.SECURED
+              } as SecuredAsset
+            ]
+          }
           return [asset]
         }),
         A.filter((asset) => !eqAsset.equals(asset, sourceAsset)),
@@ -1796,7 +1797,7 @@ export const Swap = ({
       />
     )
   }, [swapState, sourceAsset, amountToSwapMax1e8, targetAsset, swapResultAmountMax.baseAmount, network, intl])
-  // assuming on a unsucessful tx that the swap state should remain the same
+  // assuming on a unsuccessful tx that the swap state should remain the same
   const onCloseTxModal = useCallback(() => {
     resetSwapState()
   }, [resetSwapState])
@@ -1932,8 +1933,8 @@ export const Swap = ({
       <ErrorLabel>
         {swapErrors.map((error, index) => {
           // Check for specific error patterns
-          if (error.includes('is less than reccommended Min Amount')) {
-            const matches = error.match(/amount in: (\d+) is less than reccommended Min Amount: (\d+)/)
+          if (error.includes('is less than recommended Min Amount')) {
+            const matches = error.match(/amount in: (\d+) is less than recommended Min Amount: (\d+)/)
             if (matches) {
               const [_, amountIn, minAmount] = matches
               const formattedAmountIn = new CryptoAmount(baseAmount(amountIn), sourceAsset).formatedAssetString()

@@ -1,12 +1,12 @@
 import { AnyAsset, BaseAmount, baseAmount, bn } from '@xchainjs/xchain-util'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/lib/Option'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 
 import { ZERO_BASE_AMOUNT, ZERO_BN } from '../../../const'
 import { isChainAsset, max1e8BaseAmount } from '../../../helpers/assetHelper'
 import { priceFeeAmountForAsset } from '../../../services/chain/fees/utils'
 import { WithdrawFees } from '../../../services/chain/types'
-import { PoolsDataMap } from '../../../services/midgard/types'
+import { PoolsDataMap } from '../../../services/midgard/midgardTypes'
 import { AssetWithAmount } from '../../../types/asgardex'
 
 export const getWithdrawAmounts = (

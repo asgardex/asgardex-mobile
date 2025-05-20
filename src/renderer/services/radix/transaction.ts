@@ -9,9 +9,9 @@ import {
   generateStringParam,
   CompatibleAsset
 } from '@xchainjs/xchain-radix'
-import * as E from 'fp-ts/lib/Either'
-import * as FP from 'fp-ts/lib/function'
-import * as O from 'fp-ts/Option'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 

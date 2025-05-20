@@ -23,9 +23,9 @@ import {
 import { Form, RadioChangeEvent, Tooltip } from 'antd'
 import { FormInstance } from 'antd/es/form/Form'
 import BigNumber from 'bignumber.js'
-import * as E from 'fp-ts/Either'
-import * as FP from 'fp-ts/function'
-import * as O from 'fp-ts/lib/Option'
+import { either as E } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import { debounce } from 'lodash'
 import { useIntl } from 'react-intl'
 
@@ -56,7 +56,7 @@ import {
   NodeInfos,
   NodeInfosRD
 } from '../../../../services/mayachain/types'
-import { PoolShare, PoolSharesRD } from '../../../../services/mayaMigard/types'
+import { PoolShare, PoolSharesRD } from '../../../../services/midgard/midgardTypes'
 import { ValidatePasswordHandler, WalletBalance } from '../../../../services/wallet/types'
 import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../../../modal/confirmation'
 import { TxModal } from '../../../modal/tx'
@@ -76,7 +76,7 @@ import * as H from './Interact.helpers'
 import * as Styled from './Interact.styles'
 import { InteractType } from './Interact.types'
 
-export type FormValues = {
+type FormValues = {
   memo: string
   mayaAddress: string
   providerAddress: string

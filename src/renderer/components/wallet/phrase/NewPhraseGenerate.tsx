@@ -2,10 +2,10 @@ import React, { useState, useCallback, useMemo } from 'react'
 
 import { generatePhrase } from '@xchainjs/xchain-crypto'
 import Form, { Rule } from 'antd/lib/form'
-import * as A from 'fp-ts/lib/Array'
-import * as FP from 'fp-ts/lib/function'
-import * as NEA from 'fp-ts/lib/NonEmptyArray'
-import * as S from 'fp-ts/lib/string'
+import { array as A } from 'fp-ts'
+import { function as FP } from 'fp-ts'
+import { nonEmptyArray as NEA } from 'fp-ts'
+import { string as S } from 'fp-ts'
 import { useObservableCallback, useSubscription } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import * as RxOp from 'rxjs/operators'
@@ -26,7 +26,7 @@ type Props = {
   onSubmit: (info: PhraseInfo) => void
 }
 
-export type FormValues = {
+type FormValues = {
   password: string
   name: string
 }
@@ -66,7 +66,7 @@ export const NewPhraseGenerate: React.FC<Props> = ({ onSubmit, walletId, walletN
         try {
           setLoading(true)
           onSubmit({ phrase, password, name: name || initialWalletName })
-        } catch (err) {
+        } catch (_err) {
           setLoading(false)
         }
       }
