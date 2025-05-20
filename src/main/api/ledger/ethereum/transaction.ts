@@ -55,14 +55,14 @@ export const send = async ({
     const ledgerClient = new ETH.ClientLedger({
       ...defaultEthParams,
       providers: {
-        mainnet: new ethers.providers.EtherscanProvider('homestead', apiKey),
+        mainnet: new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com', 'homestead'),
         testnet: ETH_TESTNET_ETHERS_PROVIDER,
         stagenet: ETH_MAINNET_ETHERS_PROVIDER
       },
       dataProviders: [ethProviders],
       signer: new ETH.LedgerSigner({
         transport,
-        provider: new ethers.providers.EtherscanProvider('homestead', apiKey),
+        provider: new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com', 'homestead'),
         derivationPath: getDerivationPath(walletAccount, evmHDMode)
       }),
       rootDerivationPaths: getDerivationPaths(walletAccount, evmHDMode),

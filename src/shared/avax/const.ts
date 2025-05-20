@@ -1,22 +1,28 @@
 import { AVAXChain, AVAX_DECIMAL, AVAX_GAS_ASSET_DECIMAL, AssetAVAX, UPPER_FEE_BOUND } from '@xchainjs/xchain-avax'
 import { ExplorerProvider, Network } from '@xchainjs/xchain-client'
 import { EVMClientParams } from '@xchainjs/xchain-evm'
-import { EtherscanProvider, RoutescanProvider } from '@xchainjs/xchain-evm-providers'
+import { EtherscanProviderV2, RoutescanProvider } from '@xchainjs/xchain-evm-providers'
 import { BigNumber, ethers } from 'ethers'
 
+import { etherscanApiKey } from '../api/etherscan'
 import { envOrDefault } from '../utils/env'
 
 const LOWER_FEE_BOUND = 100000000
 
-export const avaxscanApiKey = envOrDefault(import.meta.env.VITE_SNOWTRACE_API_KEY, '')
 export const ankrApiKey = envOrDefault(import.meta.env.VITE_ANKR_API_KEY, '')
 
 // =====Ethers providers=====
+// Define JSON-RPC providers for mainnet and testnet
 const AVALANCHE_MAINNET_ETHERS_PROVIDER = new ethers.providers.JsonRpcProvider(
-  `https://rpc.ankr.com/avalanche/${ankrApiKey}`
+  `https://rpc.ankr.com/avalanche/${ankrApiKey}`,
+  { name: 'avalanche', chainId: 43114 }
 )
 const AVALANCHE_TESTNET_ETHERS_PROVIDER = new ethers.providers.JsonRpcProvider(
-  `https://rpc.ankr.com/avalanche_fuji/${ankrApiKey}`
+  `https://rpc.ankr.com/avalanche_fuji/${ankrApiKey}`,
+  {
+    name: 'fuji',
+    chainId: 43113
+  }
 )
 
 const ethersJSProviders = {
@@ -27,21 +33,23 @@ const ethersJSProviders = {
 // =====Ethers providers=====
 // =====ONLINE providers=====
 
-const AVAX_ONLINE_PROVIDER_TESTNET = new EtherscanProvider(
+const AVAX_ONLINE_PROVIDER_TESTNET = new EtherscanProviderV2(
   AVALANCHE_TESTNET_ETHERS_PROVIDER,
-  'https://api-testnet.snowtrace.dev',
-  avaxscanApiKey,
+  'https://api.etherscan.io/v2',
+  etherscanApiKey,
   AVAXChain,
   AssetAVAX,
-  AVAX_DECIMAL
+  AVAX_DECIMAL,
+  43113
 )
-const AVAX_ONLINE_PROVIDER_MAINNET = new EtherscanProvider(
+const AVAX_ONLINE_PROVIDER_MAINNET = new EtherscanProviderV2(
   AVALANCHE_MAINNET_ETHERS_PROVIDER,
-  'https://api.snowtrace.dev',
-  avaxscanApiKey,
+  'https://api.etherscan.io/v2',
+  etherscanApiKey,
   AVAXChain,
   AssetAVAX,
-  AVAX_DECIMAL
+  AVAX_DECIMAL,
+  43114
 )
 const avaxProviders = {
   [Network.Mainnet]: AVAX_ONLINE_PROVIDER_MAINNET,

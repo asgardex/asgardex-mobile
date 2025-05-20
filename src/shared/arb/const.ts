@@ -1,14 +1,12 @@
 import { ARBChain, ARB_DECIMAL, ARB_GAS_ASSET_DECIMAL, AssetAETH, LOWER_FEE_BOUND } from '@xchainjs/xchain-arbitrum'
 import { ExplorerProvider, Network } from '@xchainjs/xchain-client'
 import { EVMClientParams } from '@xchainjs/xchain-evm'
-import { EtherscanProvider, RoutescanProvider } from '@xchainjs/xchain-evm-providers'
+import { EtherscanProviderV2, RoutescanProvider } from '@xchainjs/xchain-evm-providers'
 import { BigNumber, ethers } from 'ethers'
 
-import { envOrDefault } from '../utils/env'
+import { etherscanApiKey } from '../api/etherscan'
 
 export const UPPER_FEE_BOUND = 2000000000
-
-export const arbscanApiKey = envOrDefault(import.meta.env.VITE_ARBISCAN_API_KEY, '')
 
 // =====Ethers providers=====
 // Define JSON-RPC providers for mainnet and testnet
@@ -23,21 +21,23 @@ const ethersJSProviders = {
 // =====Ethers providers=====
 // =====ONLINE providers=====
 
-const ARB_ONLINE_PROVIDER_TESTNET = new EtherscanProvider(
+const ARB_ONLINE_PROVIDER_TESTNET = new EtherscanProviderV2(
   ARBITRUM_TESTNET_ETHERS_PROVIDER,
-  'https://api-goerli.arbiscan.io',
-  arbscanApiKey,
+  'https://api.etherscan.io/v2',
+  etherscanApiKey,
   ARBChain,
   AssetAETH,
-  ARB_DECIMAL
+  ARB_DECIMAL,
+  421614
 )
-const ARB_ONLINE_PROVIDER_MAINNET = new EtherscanProvider(
+const ARB_ONLINE_PROVIDER_MAINNET = new EtherscanProviderV2(
   ARBITRUM_MAINNET_ETHERS_PROVIDER,
-  'https://api.arbiscan.io',
-  arbscanApiKey,
+  'https://api.etherscan.io/v2',
+  etherscanApiKey,
   ARBChain,
   AssetAETH,
-  ARB_DECIMAL
+  ARB_DECIMAL,
+  42161
 )
 const arbProviders = {
   [Network.Mainnet]: ARB_ONLINE_PROVIDER_MAINNET,

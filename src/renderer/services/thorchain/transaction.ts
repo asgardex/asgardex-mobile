@@ -131,7 +131,6 @@ export const createTransactionService = (
             clientUrl,
             params: { walletAccount, walletIndex, hdMode, asset, amount, memo }
           })
-        console.log(asset)
         return depositTx({ walletIndex, asset, amount, memo })
       })
     )
