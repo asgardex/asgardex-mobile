@@ -102,9 +102,16 @@ export default [
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/ban-ts-ignore': 'off',
 
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        {
+          allowTernary: true
+        }
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
+          caughtErrorsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           argsIgnorePattern: '^_'
         }
@@ -149,6 +156,7 @@ export default [
       'unused-imports/no-unused-vars': [
         'warn',
         {
+          caughtErrorsIgnorePattern: '^_',
           vars: 'all',
           varsIgnorePattern: '^_',
           args: 'after-used',

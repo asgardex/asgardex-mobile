@@ -216,7 +216,7 @@ export const Swap = ({
 
   const [oTargetWalletType, setTargetWalletType] = useState<O.Option<WalletType>>(oInitialTargetWalletType)
 
-  const [isStreaming, setIsStreaming] = useState<Boolean>(true)
+  const [isStreaming, setIsStreaming] = useState<boolean>(true)
   const openExplorer = useOpenExplorerTxUrl(
     FP.pipe(
       oQuoteProtocol,

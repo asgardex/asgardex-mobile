@@ -24,7 +24,7 @@ type RunObservable = <T>(callback: RunObservableCallback<T>) => T
 
 declare global {
   const runObservable: RunObservable
-  // eslint-disable-next-line no-redeclare, @typescript-eslint/no-namespace
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace NodeJS {
     interface Global {
       runObservable: RunObservable
@@ -38,7 +38,7 @@ declare global {
     apiUrl: ApiUrl
   }
 
-  // eslint-disable-next-line no-redeclare, @typescript-eslint/no-namespace
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
     interface Matchers<R> {
       toBeNone(): R
