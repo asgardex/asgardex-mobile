@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useCallback, useRef } from 'react'
 
+import * as RD from '@devexperts/remote-data-ts'
 import { Network } from '@xchainjs/xchain-client'
 import { Row, Col, Grid } from 'antd'
 import { function as FP } from 'fp-ts'
@@ -65,6 +66,8 @@ export type Props = {
   pricePools: O.Option<PricePools>
   runePrice: PriceRD
   reloadRunePrice: FP.Lazy<void>
+  tcyPrice: RD.RemoteData<Error, string>
+  reloadTcyPrice: FP.Lazy<void>
   mayaPrice: PriceRD
   reloadMayaPrice: FP.Lazy<void>
   volume24PriceRune: PriceRD
@@ -89,11 +92,13 @@ export const HeaderComponent: React.FC<Props> = (props): JSX.Element => {
     wallets,
     pricePools: oPricePools,
     runePrice: runePriceRD,
+    tcyPrice: tcyPriceRD,
     mayaPrice: mayaPriceRD,
     midgardStatus: midgardStatusRD,
     midgardMayaStatus: midgardMayaStatusRD,
     mimir: mimirRD,
     reloadRunePrice,
+    reloadTcyPrice,
     reloadMayaPrice,
     volume24PriceRune: volume24PriceRD,
     volume24PriceMaya: volume24PriceMayaRD,
@@ -302,8 +307,10 @@ export const HeaderComponent: React.FC<Props> = (props): JSX.Element => {
                 <Row align="middle" style={{ height: headerHeight }}>
                   <HeaderStats
                     runePrice={runePriceRD}
+                    tcyPrice={tcyPriceRD}
                     mayaPrice={mayaPriceRD}
                     reloadRunePrice={reloadRunePrice}
+                    reloadTcyPrice={reloadTcyPrice}
                     reloadMayaPrice={reloadMayaPrice}
                     volume24PriceRune={volume24PriceRD}
                     volume24PriceMaya={volume24PriceMayaRD}
@@ -333,8 +340,10 @@ export const HeaderComponent: React.FC<Props> = (props): JSX.Element => {
               <Row align="middle">
                 <HeaderStats
                   runePrice={runePriceRD}
+                  tcyPrice={tcyPriceRD}
                   mayaPrice={mayaPriceRD}
                   reloadRunePrice={reloadRunePrice}
+                  reloadTcyPrice={reloadTcyPrice}
                   reloadMayaPrice={reloadMayaPrice}
                   volume24PriceRune={volume24PriceRD}
                   volume24PriceMaya={volume24PriceMayaRD}

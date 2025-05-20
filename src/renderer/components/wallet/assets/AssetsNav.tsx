@@ -13,7 +13,7 @@ enum MenuKey {
   ASSETS = 'assets',
   TRADEASSETS = 'tradeAssets',
   POOLSHARES = 'poolshares',
-  SAVERS = 'savers',
+  TCY = 'tcy',
   RUNEPOOL = 'runepool',
   HISTORY = 'history',
   WALLETSETTINGS = 'walletsettings',
@@ -50,9 +50,9 @@ export const AssetsNav: React.FC = (): JSX.Element => {
           path: walletRoutes.poolShares.path()
         },
         {
-          key: MenuKey.SAVERS,
-          label: intl.formatMessage({ id: 'wallet.nav.savers' }),
-          path: walletRoutes.savers.path()
+          key: MenuKey.TCY,
+          label: intl.formatMessage({ id: 'wallet.nav.tcy' }),
+          path: walletRoutes.tcy.path()
         },
         {
           key: MenuKey.RUNEPOOL,
@@ -71,7 +71,7 @@ export const AssetsNav: React.FC = (): JSX.Element => {
   const assetsRoute = matchPath(walletRoutes.assets.path(), pathname)
   const tradeAssetsRoute = matchPath(walletRoutes.tradeAssets.path(), pathname)
   const poolSharesRoute = matchPath(walletRoutes.poolShares.path(), pathname)
-  const saversRoute = matchPath(walletRoutes.savers.path(), pathname)
+  const tcyRoute = matchPath(walletRoutes.tcy.path(), pathname)
   const runepoolRoute = matchPath(walletRoutes.runepool.path(), pathname)
   const matchHistoryRoute = matchPath(walletRoutes.history.path(), pathname)
 
@@ -82,8 +82,8 @@ export const AssetsNav: React.FC = (): JSX.Element => {
       return MenuKey.TRADEASSETS
     } else if (poolSharesRoute) {
       return MenuKey.POOLSHARES
-    } else if (saversRoute) {
-      return MenuKey.SAVERS
+    } else if (tcyRoute) {
+      return MenuKey.TCY
     } else if (runepoolRoute) {
       return MenuKey.RUNEPOOL
     } else if (matchHistoryRoute) {
@@ -91,7 +91,7 @@ export const AssetsNav: React.FC = (): JSX.Element => {
     } else {
       return MenuKey.UNKNOWN
     }
-  }, [assetsRoute, tradeAssetsRoute, poolSharesRoute, saversRoute, runepoolRoute, matchHistoryRoute])
+  }, [assetsRoute, tradeAssetsRoute, poolSharesRoute, tcyRoute, runepoolRoute, matchHistoryRoute])
 
   return (
     <>
