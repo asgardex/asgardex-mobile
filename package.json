@@ -17,7 +17,7 @@
     "postinstall": "git config blame.ignoreRevsFile .git-blame-ignore-revs && yarn force-rebuild-native-deps && electron-builder install-app-deps",
     "lint": "trunk check --filter=eslint --filter=prettier",
     "check:trunk": "cross-env-shell ./scripts/trunk-check.sh",
-    "check:yarn-lock": "cross-env-shell ./scripts/yarn-lock-check.sh",
+    "check:yarn-lock": "cross-env-shell ./scripts/check-lockfile.sh",
     "generate:erc20whitelist": "./node_modules/.bin/ts-node --project tsconfig.scripts.json ./scripts/generateERC20Whitelist.ts",
     "generate:avaxerc20whitelist": "./node_modules/.bin/ts-node --project tsconfig.scripts.json ./scripts/generateAVAXtokenlist.ts",
     "generate:bscerc20whitelist": "./node_modules/.bin/ts-node --project tsconfig.scripts.json ./scripts/generateBSCtokenlist.ts",
