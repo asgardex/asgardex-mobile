@@ -1,4 +1,6 @@
-import { default as t } from '@asgardex/asgardex-theme'
+import theme from '@asgardex/asgardex-theme'
+
+const { default: t } = theme
 
 /** @type {import('tailwindcss').Config} */
 export default {
