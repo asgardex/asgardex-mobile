@@ -14,7 +14,6 @@ enum MenuKey {
   TRADEASSETS = 'tradeAssets',
   POOLSHARES = 'poolshares',
   TCY = 'tcy',
-  SAVERS = 'savers',
   RUNEPOOL = 'runepool',
   HISTORY = 'history',
   WALLETSETTINGS = 'walletsettings',

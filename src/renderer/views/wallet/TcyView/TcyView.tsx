@@ -6,6 +6,7 @@ import { AssetDOGE } from '@xchainjs/xchain-doge'
 import { AssetETH } from '@xchainjs/xchain-ethereum'
 import { AssetTCY } from '@xchainjs/xchain-thorchain'
 import clsx from 'clsx'
+import { useIntl } from 'react-intl'
 
 import { WalletPasswordConfirmationModal } from '../../../components/modal/confirmation'
 import { AssetData } from '../../../components/uielements/assets/assetData'
@@ -20,6 +21,12 @@ import { TcyClaimModal } from './TcyClaimModal'
 import { TcyInfo, TcyOperation } from './types'
 
 const tcyTabs = [TcyOperation.Claim, TcyOperation.Stake, TcyOperation.Unstake]
+
+const tabTitle = {
+  [TcyOperation.Claim]: 'tcy.claim',
+  [TcyOperation.Stake]: 'tcy.stake',
+  [TcyOperation.Unstake]: 'tcy.unstake'
+}
 
 const mockData: TcyInfo[] = [
   {
@@ -45,6 +52,7 @@ export const TcyView = () => {
   const [selectedAsset, setSelectedAsset] = useState<TcyInfo>()
   const [isClaimModalVisible, setClaimModalVisible] = useState(false)
   const [isPasswordModalVisible, setPasswordModalVisible] = useState(false)
+  const intl = useIntl()
   const {
     keystoreService: { validatePassword$ }
   } = useWalletContext()
@@ -79,7 +87,7 @@ export const TcyView = () => {
                 <div key={tab} className="cursor-pointer" onClick={() => setActiveTab(tab)}>
                   <span
                     className={clsx('text-16', activeTab === tab ? 'text-turquoise' : 'text-text2 dark:text-text2d')}>
-                    {tab}
+                    {intl.formatMessage({ id: tabTitle[tab] })}
                   </span>
                 </div>
               ))}
@@ -88,7 +96,7 @@ export const TcyView = () => {
               {activeTab === TcyOperation.Claim && (
                 <div>
                   <span className="text-text2 dark:text-text2d text-16">
-                    You have these TCY tokens available to claim in your wallet.
+                    {intl.formatMessage({ id: 'tcy.claimNotice' })}
                   </span>
                   <div className="mt-4 border border-solid border-gray0 dark:border-gray0d rounded-lg">
                     {mockData.map((tcyData, index) => (
@@ -103,7 +111,7 @@ export const TcyView = () => {
                           <FlatButton
                             className="p-2 bg-turquoise text-white cursor-pointer rounded-lg text-11 uppercase"
                             onClick={() => handleClaim(tcyData)}>
-                            Claim
+                            {intl.formatMessage({ id: 'tcy.claim' })}
                           </FlatButton>
                         )}
                       </div>
@@ -113,7 +121,9 @@ export const TcyView = () => {
               )}
               {activeTab === TcyOperation.Stake && (
                 <div className="flex flex-col space-y-2">
-                  <span className="text-text2 dark:text-text2d text-16">You can stake them to earn RUNE.</span>
+                  <span className="text-text2 dark:text-text2d text-16">
+                    {intl.formatMessage({ id: 'tcy.stakeNotice' })}
+                  </span>
                   <div className="flex items-center justify-between rounded-lg py-2 px-4 border border-gray0 dark:border-gray0d">
                     <div className="flex flex-col">
                       <InputBigNumber
@@ -135,13 +145,15 @@ export const TcyView = () => {
                     size="large"
                     color="primary"
                     onClick={() => setPasswordModalVisible(true)}>
-                    Stake
+                    {intl.formatMessage({ id: 'tcy.stake' })}
                   </FlatButton>
                 </div>
               )}
               {activeTab === TcyOperation.Unstake && (
                 <div className="flex flex-col space-y-2">
-                  <span className="text-text2 dark:text-text2d text-16">Unstake to move your TCY to your wallet.</span>
+                  <span className="text-text2 dark:text-text2d text-16">
+                    {intl.formatMessage({ id: 'tcy.unstakeNotice' })}
+                  </span>
                   <div className="flex items-center justify-between rounded-lg py-2 px-4 border border-gray0 dark:border-gray0d">
                     <div className="flex flex-col">
                       <InputBigNumber
@@ -164,7 +176,7 @@ export const TcyView = () => {
                     size="large"
                     color="primary"
                     onClick={() => setPasswordModalVisible(true)}>
-                    Unstake
+                    {intl.formatMessage({ id: 'tcy.unstake' })}
                   </FlatButton>
                 </div>
               )}
@@ -174,14 +186,15 @@ export const TcyView = () => {
         <div className="col-span-8 md:col-span-3">
           <div className="flex flex-col py-4 w-full border border-solid border-gray0 dark:border-gray0d rounded-lg">
             <div className="flex flex-row space-x-2 px-4 pb-4 mb-4 border-b border-solid border-gray0 dark:border-gray0d">
-              <span className="text-16 text-text2 dark:text-text2d">TCY Status</span>
+              <span className="text-16 text-text2 dark:text-text2d">{intl.formatMessage({ id: 'tcy.status' })}</span>
             </div>
 
             <div className="flex flex-col space-y-2 px-4">
               <div className="flex items-center space-x-2">
-                <span className="text-16 text-text2 dark:text-text2d">Staked Amount</span>
-                {/* TODO: locale */}
-                <Tooltip title="Staked Amount includes your Keystore and Ledger Balances">
+                <span className="text-16 text-text2 dark:text-text2d">
+                  {intl.formatMessage({ id: 'tcy.stakedAmount' })}
+                </span>
+                <Tooltip title={intl.formatMessage({ id: 'tcy.stakedAmountTooltip' })}>
                   <InformationCircleIcon className="cursor-pointer text-turquoise w-4 h-4" />
                 </Tooltip>
               </div>
@@ -191,8 +204,7 @@ export const TcyView = () => {
             <div className="flex flex-col space-y-2 px-4">
               <div className="flex items-center space-x-2">
                 <span className="text-16 text-text2 dark:text-text2d">Wallet Balance</span>
-                {/* TODO: locale */}
-                <Tooltip title="Wallet balance includes your Keystore and Ledger Balances">
+                <Tooltip title={intl.formatMessage({ id: 'tcy.walletBalanceTooltip' })}>
                   <InformationCircleIcon className="cursor-pointer text-turquoise w-4 h-4" />
                 </Tooltip>
               </div>

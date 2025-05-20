@@ -1,18 +1,18 @@
-// import { SaversMessages } from '../types'
+import { TcyMessages } from '../types'
 
-// const savers: SaversMessages = {
-//   'savers.noSavings': "You don't have savings",
-//   'savers.detail.title': 'Your savings',
-//   'savers.detail.current.title': 'Deposit value',
-//   'savers.detail.redeem.title': 'Redeem value',
-//   'savers.detail.percent': 'Growth',
-//   'savers.detail.totalGrowth': 'Growth Usd',
-//   'savers.detail.priceGrowth': 'Price growth',
-//   'savers.detail.assetAmount': 'Asset Amount',
-//   'savers.info.max.redeem.value': 'Max value to redeem',
-//   'savers.info.max.balance': 'Max balance'
-// }
+const tcy: TcyMessages = {
+  'tcy.claim': 'Claim',
+  'tcy.stake': 'Stake',
+  'tcy.unstake': 'Unstake',
+  'tcy.status': 'TCY Status',
+  'tcy.stakedAmount': 'Staked Amount',
+  'tcy.stakedAmountTooltip': 'Staked Amount includes your Keystore and Ledger Balances',
+  'tcy.walletBalance': 'Wallet Balance',
+  'tcy.walletBalanceTooltip': 'Wallet balance includes your Keystore and Ledger Balances',
+  'tcy.claimableAmount': 'Claimable Amount',
+  'tcy.claimNotice': 'You have these TCY tokens available to claim in your wallet.',
+  'tcy.stakeNotice': 'You can stake them to earn RUNE.',
+  'tcy.unstakeNotice': 'Unstake to move your TCY to your wallet.'
+}
 
-// export default savers
-
-export default {}
+export default tcy

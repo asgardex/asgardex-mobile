@@ -576,6 +576,22 @@ type DepositMessageKey =
 
 export type DepositMessages = { [key in DepositMessageKey]: string }
 
+type TcyMessageKey =
+  | 'tcy.claim'
+  | 'tcy.stake'
+  | 'tcy.unstake'
+  | 'tcy.status'
+  | 'tcy.stakedAmount'
+  | 'tcy.stakedAmountTooltip'
+  | 'tcy.walletBalance'
+  | 'tcy.walletBalanceTooltip'
+  | 'tcy.claimableAmount'
+  | 'tcy.claimNotice'
+  | 'tcy.stakeNotice'
+  | 'tcy.unstakeNotice'
+
+export type TcyMessages = { [key in TcyMessageKey]: string }
+
 type RunePoolMessageKey =
   | 'runePool.noRuneAdded'
   | 'runePool.detail.title'
@@ -626,7 +642,7 @@ export type Messages = CommonMessages &
   SettingMessages &
   SwapMessages &
   DepositMessages &
-  SaversMessages &
+  TcyMessages &
   RunePoolMessages &
   LedgerMessages &
   BondsMessages &
