@@ -152,7 +152,7 @@ export type NodeUrl = {
   rpc: string
 }
 
-export type IPCLedgerAdddressParams = {
+export type IPCLedgerAddressParams = {
   chain: Chain
   network: Network
   walletAccount: number
@@ -161,8 +161,8 @@ export type IPCLedgerAdddressParams = {
 }
 
 export type ApiHDWallet = {
-  getLedgerAddress: (params: IPCLedgerAdddressParams) => Promise<E.Either<LedgerError, WalletAddress>>
-  verifyLedgerAddress: (params: IPCLedgerAdddressParams) => Promise<boolean>
+  getLedgerAddress: (params: IPCLedgerAddressParams) => Promise<E.Either<LedgerError, WalletAddress>>
+  verifyLedgerAddress: (params: IPCLedgerAddressParams) => Promise<boolean>
   sendLedgerTx: (
     params: unknown /* will be de-/serialized by ipcLedgerSendTxParamsIO */
   ) => Promise<E.Either<LedgerError, TxHash>>

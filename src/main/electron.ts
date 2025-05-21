@@ -14,7 +14,7 @@ import {
   ipcLedgerDepositTxParamsIO,
   ipcLedgerSendTxParamsIO
 } from '../shared/api/io'
-import type { IPCExportKeystoreParams, IPCLedgerAdddressParams, StoreFileName } from '../shared/api/types'
+import type { IPCExportKeystoreParams, IPCLedgerAddressParams, StoreFileName } from '../shared/api/types'
 import { DEFAULT_STORAGES } from '../shared/const'
 import type { Locale } from '../shared/i18n/types'
 import { registerAppCheckUpdatedHandler } from './api/appUpdate'
@@ -183,8 +183,8 @@ const initIPC = () => {
   // Url
   ipcMain.handle(IPCMessages.OPEN_EXTERNAL_URL, async (_, url) => openExternal(url))
   // Ledger
-  ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESS, async (_, params: IPCLedgerAdddressParams) => getLedgerAddress(params))
-  ipcMain.handle(IPCMessages.VERIFY_LEDGER_ADDRESS, async (_, params: IPCLedgerAdddressParams) =>
+  ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESS, async (_, params: IPCLedgerAddressParams) => getLedgerAddress(params))
+  ipcMain.handle(IPCMessages.VERIFY_LEDGER_ADDRESS, async (_, params: IPCLedgerAddressParams) =>
     verifyLedgerAddress(params)
   )
   ipcMain.handle(IPCMessages.SEND_LEDGER_TX, async (_, params: unknown) => {
