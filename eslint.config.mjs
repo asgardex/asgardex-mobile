@@ -72,6 +72,9 @@ export default [
     },
 
     settings: {
+      'import/resolver': {
+        typescript: {}
+      },
       react: {
         version: 'detect'
       }
