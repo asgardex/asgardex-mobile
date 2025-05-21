@@ -262,7 +262,7 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
       <div className="mt-10px w-full">
         <Styled.WalletTypeLabel>{walletTypeToI18n(WalletType.Ledger, intl)}</Styled.WalletTypeLabel>
         <div className="ml-40px flex items-center pt-5px text-[12px] uppercase text-text2 dark:text-text2d">
-          <ExclamationTriangleIcon />
+          <ExclamationTriangleIcon className="mr-2" width={24} height={24} />
           {intl.formatMessage({ id: 'common.notsupported.fornetwork' }, { network })}
         </div>
       </div>
@@ -925,22 +925,22 @@ export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
         {renderRenameWalletError}
         <div className="mt-10 flex flex-row items-center justify-center space-x-2">
           <ActionButton
-            icon={<ArrowUpTrayIcon className="text-[24px]" />}
+            icon={<ArrowUpTrayIcon width={24} height={24} />}
             text={intl.formatMessage({ id: 'setting.export' })}
             onClick={exportKeystoreHandler}
           />
           <ActionButton
-            icon={<LockClosedIcon className="text-[24px]" />}
+            icon={<LockClosedIcon width={24} height={24} />}
             text={intl.formatMessage({ id: 'setting.lock' })}
             onClick={lockWallet}
           />
           <ActionButton
-            icon={<EyeIcon className="text-[24px]" />}
+            icon={<EyeIcon width={24} height={24} />}
             text={intl.formatMessage({ id: 'setting.view.phrase' })}
             onClick={() => setShowPasswordModal(true)}
           />
           <ActionButton
-            icon={<TrashIcon className="text-[24px]" />}
+            icon={<TrashIcon width={24} height={24} />}
             text={intl.formatMessage({ id: 'wallet.remove.label' })}
             onClick={() => setShowRemoveWalletModal(true)}
           />
