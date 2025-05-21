@@ -59,7 +59,7 @@ export const WalletPoolActionsHistoryHeader: React.FC<Props> = (props) => {
       <Styled.LinkContainer>
         <Styled.Headline className="flex items-center" onClick={onClickAddressIcon}>
           {protocol === THORChain ? `RuneScan` : 'MayaScan'}
-          <Styled.ExplorerLinkIcon />
+          <Styled.ExplorerLinkIcon width={18} height={18} />
         </Styled.Headline>
       </Styled.LinkContainer>
     </>

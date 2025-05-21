@@ -74,7 +74,7 @@ export const PoolActionsHistoryFilter: React.FC<Props> = ({
     <Dropdown overlay={menu} trigger={['click']} disabled={disabled}>
       <Styled.FilterButton className={className}>
         {currentFilter === 'ALL' ? intl.formatMessage({ id: 'common.all' }) : getTxTypeI18n(currentFilter, intl)}
-        <ChevronRightIcon />
+        <ChevronRightIcon width={16} height={16} />
       </Styled.FilterButton>
     </Dropdown>
   )
