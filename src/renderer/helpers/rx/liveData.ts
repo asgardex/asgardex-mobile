@@ -7,12 +7,8 @@ import {
   coproductMapLeft
 } from '@devexperts/utils/dist/typeclasses/product-left-coproduct-left/product-left-coproduct-left.utils'
 
-import type { filterable as Fi } from 'fp-ts'
-import type { monadThrow as MT } from 'fp-ts'
-import { apply } from 'fp-ts'
-import { array as A } from 'fp-ts'
-import { option as O } from 'fp-ts'
-import { pipeable as P } from 'fp-ts'
+import type { filterable as Fi, monadThrow as MT } from 'fp-ts'
+import { apply, array as A, option as O, pipeable as P } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 

@@ -3,8 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { SwapOutlined } from '@ant-design/icons'
 import * as RD from '@devexperts/remote-data-ts'
 import { Network } from '@xchainjs/xchain-client'
-import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
-import { Client as MayachainClient } from '@xchainjs/xchain-mayachain'
+import { AssetCacao, MAYAChain, Client as MayachainClient } from '@xchainjs/xchain-mayachain'
 import { Client as ThorchainClient, THORChain, AssetRuneNative } from '@xchainjs/xchain-thorchain'
 import {
   Address,
@@ -14,8 +13,7 @@ import {
   baseToAsset,
   formatAssetAmountCurrency
 } from '@xchainjs/xchain-util'
-import { function as FP } from 'fp-ts'
-import { option as O } from 'fp-ts'
+import { function as FP, option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'

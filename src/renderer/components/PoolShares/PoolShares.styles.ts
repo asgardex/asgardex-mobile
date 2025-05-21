@@ -3,8 +3,7 @@ import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
 import { AssetIcon as AssetIconUI } from '../uielements/assets/assetIcon'
-import { ManageButton as ManageButtonUI } from '../uielements/button'
-import { Button as UIButton } from '../uielements/button'
+import { ManageButton as ManageButtonUI, Button as UIButton } from '../uielements/button'
 import { Label as UILabel } from '../uielements/label'
 import { Table as UITable } from '../uielements/table'
 

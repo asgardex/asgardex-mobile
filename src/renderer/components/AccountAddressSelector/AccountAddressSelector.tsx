@@ -2,9 +2,7 @@ import React, { useMemo } from 'react'
 
 import { Network } from '@xchainjs/xchain-client'
 import { Dropdown } from 'antd'
-import { array as A } from 'fp-ts'
-import { function as FP } from 'fp-ts'
-import { option as O } from 'fp-ts'
+import { array as A, function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { isLedgerWallet } from '../../../shared/utils/guard'

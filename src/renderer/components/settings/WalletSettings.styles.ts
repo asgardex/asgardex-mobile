@@ -1,5 +1,4 @@
-import AIcon, { QrcodeOutlined, PlusCircleOutlined } from '@ant-design/icons'
-import { EyeOutlined as EyeOutlinedUI } from '@ant-design/icons'
+import AIcon, { QrcodeOutlined, PlusCircleOutlined, EyeOutlined as EyeOutlinedUI } from '@ant-design/icons'
 import * as A from 'antd'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'

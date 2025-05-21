@@ -1,8 +1,7 @@
 import { ipcRenderer } from 'electron'
 
 import { IPCLedgerAddressesIO } from '../../shared/api/io'
-import { IPCLedgerAdddressParams } from '../../shared/api/types'
-import { ApiHDWallet } from '../../shared/api/types'
+import { IPCLedgerAdddressParams, ApiHDWallet } from '../../shared/api/types'
 import IPCMessages from '../ipc/messages'
 
 export const apiHDWallet: ApiHDWallet = {

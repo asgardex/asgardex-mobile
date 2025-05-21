@@ -3,11 +3,9 @@ import path, { join } from 'path'
 import { BrowserWindow, app, ipcMain, nativeImage } from 'electron'
 import electronDebug from 'electron-debug'
 import isDev from 'electron-is-dev'
-import log from 'electron-log'
-import { warn } from 'electron-log'
+import log, { warn } from 'electron-log'
 import windowStateKeeper from 'electron-window-state'
-import { either as E } from 'fp-ts'
-import { function as FP } from 'fp-ts'
+import { either as E, function as FP } from 'fp-ts'
 
 import {
   IPCLedgerAddressesIO,
