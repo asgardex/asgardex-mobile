@@ -39,14 +39,14 @@ const getIcon = (type: MidgardTxType) => {
     case 'RUNEPOOLWITHDRAW':
       return <RunePoolIcon className="rotate-180" />
     case 'BOND':
-      return <PlusCircleIcon className='!stroke-turquoise' width={18} height={18} />
+      return <PlusCircleIcon className="!stroke-turquoise" width={18} height={18} />
     case 'UNBOND':
     case 'LEAVE':
       return <MinusCircleIcon className="!text-turquoise" width={18} height={18} />
     case 'TRADE':
       return <BeakerIcon className="!text-turquoise" width={18} height={18} />
     case 'FAILED':
-      return <XMarkIcon className='!stroke-red' width={18} height={18} />
+      return <XMarkIcon className="!stroke-red" width={18} height={18} />
     default:
       return <></>
   }

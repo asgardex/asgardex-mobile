@@ -10,5 +10,12 @@ export type Props = Omit<AlertProps, 'showIcon' | 'icon'>
 export const Alert: React.FC<Props> = (props): JSX.Element => {
   const { description, ...rest } = props
 
-  return <Styled.Alert showIcon icon={<InformationCircleIcon width={24} height={24} />} description={description} {...rest} />
+  return (
+    <Styled.Alert
+      showIcon
+      icon={<InformationCircleIcon width={24} height={24} />}
+      description={description}
+      {...rest}
+    />
+  )
 }
