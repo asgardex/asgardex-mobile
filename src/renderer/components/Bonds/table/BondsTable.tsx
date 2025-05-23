@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import { ComputerDesktopIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { TvIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { AssetRuneNative, THORChain } from '@xchainjs/xchain-thorchain'
@@ -444,7 +444,7 @@ export const BondsTable: React.FC<Props> = ({
                             </Tooltip>
                           ) : (
                             <Tooltip title="Add this bond provider to the watch list">
-                              <ComputerDesktopIcon
+                              <TvIcon
                                 className="cursor-pointer text-turquoise"
                                 width={16}
                                 height={16}

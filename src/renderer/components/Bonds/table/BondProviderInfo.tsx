@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import { ComputerDesktopIcon } from '@heroicons/react/24/outline'
+import { TvIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
 import { Address, BaseAmount, assetToString, baseToAsset, formatAssetAmountCurrency } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
@@ -122,7 +122,7 @@ export const BondProviderInfo: React.FC<Props> = ({
           </Tooltip>
         ) : (
           <Tooltip title="Add this bond provider to the watch list">
-            <ComputerDesktopIcon
+            <TvIcon
               className="cursor-pointer text-turquoise"
               width={16}
               height={16}

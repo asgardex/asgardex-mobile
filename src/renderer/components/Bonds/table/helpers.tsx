@@ -1,7 +1,7 @@
 import React from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import { ComputerDesktopIcon } from '@heroicons/react/24/outline'
+import { TvIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { THORChain } from '@xchainjs/xchain-thorchain'
@@ -103,7 +103,7 @@ export const Status: React.FC<{ data: NodeInfo | NodeInfoMaya }> = ({ data }) =>
 }
 
 export const Watchlist: React.FC<{ addWatchlist: () => void }> = ({ addWatchlist }) => (
-  <ComputerDesktopIcon className="cursor-pointer text-turquoise w-5 h-5" onClick={addWatchlist} />
+  <TvIcon className="cursor-pointer text-turquoise w-5 h-5" onClick={addWatchlist} />
 )
 
 export const Delete: React.FC<{ deleteNode: () => void }> = ({ deleteNode }) => (

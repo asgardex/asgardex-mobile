@@ -21,7 +21,8 @@ const RowContainer = styled.div`
 `
 
 const SyncIcon = styled(ArrowPathIcon)<{ icononly: boolean }>`
-  font-size: 16px; /* Ant Design icons scale with font-size */
+  width: 16px;
+  height: 16px;
   margin-right: ${({ icononly }) => (icononly ? '0' : '8px')};
 `
 const renderWatchColumn = ({
