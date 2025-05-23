@@ -24,6 +24,7 @@ export default defineConfig(async ({ mode }) => {
         extensions: ['.ts', '.js']
       },
       plugins: [
+        typescript({ tsconfig: './tsconfig.main.json' }),
         externalizeDepsPlugin({
           include: ['@ledgerhq/hw-transport-node-hid', '@ledgerhq/hw-transport', 'node-hid', 'usb']
         })

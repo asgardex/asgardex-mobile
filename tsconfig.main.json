@@ -6,9 +6,10 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "module": "nodenext",
-    "moduleResolution": "node16",
+    "module": "es2022",
+    "moduleResolution": "bundler",
     "noEmit": true,
+    "noEmitOnError": true,
     "pretty": true
   },
   "include": ["./src/main", "./src/shared", "src/vite-env.d.ts"],
