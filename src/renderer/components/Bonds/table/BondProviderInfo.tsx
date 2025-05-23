@@ -78,7 +78,7 @@ export const BondProviderInfo: React.FC<Props> = ({
         { 'bg-transparent': isMonitoring && !isMyAddress },
         { 'bg-turquoise/10': isMyAddress }
       )}>
-      <div className="flex justify-between">
+      <div className="flex items-start justify-between">
         <div className="flex flex-col">
           {Object.entries(provider.pools).map(([pool, assetWithLpUnits]) => {
             const assetPool = assetToString(assetWithLpUnits.asset)
@@ -114,20 +114,21 @@ export const BondProviderInfo: React.FC<Props> = ({
           )}
         </div>
         {isMonitoring ? (
-          <Styled.DeleteButton>
-            <Tooltip title="Remove this bond provider from the watch list">
-              <RemoveIcon
-                className="w-4 h-4 cursor-pointer"
-                onClick={() => removeWatchlist(provider.bondAddress, network)}
-              />
-            </Tooltip>
-          </Styled.DeleteButton>
+          <Tooltip title="Remove this bond provider from the watch list">
+            <RemoveIcon
+              className="w-4 h-4 cursor-pointer"
+              onClick={() => removeWatchlist(provider.bondAddress, network)}
+            />
+          </Tooltip>
         ) : (
-          <Styled.WatchlistButton>
-            <Tooltip title="Add this bond provider to the watch list">
-              <ComputerDesktopIcon onClick={() => addWatchlist(provider.bondAddress, network)} />
-            </Tooltip>
-          </Styled.WatchlistButton>
+          <Tooltip title="Add this bond provider to the watch list">
+            <ComputerDesktopIcon
+              className="cursor-pointer text-turquoise"
+              width={16}
+              height={16}
+              onClick={() => addWatchlist(provider.bondAddress, network)}
+            />
+          </Tooltip>
         )}
       </div>
       {renderSubActions({
