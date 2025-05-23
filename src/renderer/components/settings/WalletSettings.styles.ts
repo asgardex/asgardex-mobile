@@ -1,18 +1,12 @@
-import { QrCodeIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
-import { EyeIcon } from '@heroicons/react/24/outline'
 import * as A from 'antd'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
-import RemoveIcon from '../../assets/svg/icon-remove.svg?react'
 import { media } from '../../helpers/styleHelper'
 import * as StyledR from '../shared/form/Radio.styles'
 import { AddressEllipsis as AddressEllipsisUI } from '../uielements/addressEllipsis'
 import { Button as UIButton } from '../uielements/button'
-import {
-  ExternalLinkIcon as ExternalLinkIconUI,
-  WalletTypeLabel as WalletTypeLabelUI
-} from '../uielements/common/Common.styles'
+import { WalletTypeLabel as WalletTypeLabelUI } from '../uielements/common/Common.styles'
 import { Label as UILabel } from '../uielements/label'
 
 export const AutoComplete = styled(A.AutoComplete)`
@@ -79,8 +73,6 @@ export const AccountTitle = styled(UILabel)`
   letter-spacing: 2px;
 `
 
-const ICON_SIZE = 16
-
 export const AddressEllipsis = styled(AddressEllipsisUI)`
   font-size: 16px;
   font-family: 'MainFontRegular';
@@ -91,40 +83,8 @@ export const AddressEllipsis = styled(AddressEllipsisUI)`
     margin: auto;
   }
   & svg {
-    height: ${ICON_SIZE}px;
-    width: ${ICON_SIZE}px;
-  }
-`
-
-export const AddressLinkIcon = styled(ExternalLinkIconUI)`
-  margin-left: 10px;
-  height: ${ICON_SIZE}px;
-  width: ${ICON_SIZE}px;
-  color: ${palette('primary', 2)};
-  svg {
-    color: inherit;
-    height: ${ICON_SIZE}px;
-    width: ${ICON_SIZE}px;
-  }
-`
-
-export const QRCodeIcon = styled(QrCodeIcon)`
-  margin-left: 5px;
-  cursor: pointer;
-  color: ${palette('primary', 2)};
-  height: ${ICON_SIZE}px;
-  width: ${ICON_SIZE}px;
-`
-
-export const EyeOutlined = styled(EyeIcon)`
-  cursor: pointer;
-  color: ${palette('primary', 2)};
-  height: ${ICON_SIZE}px;
-  width: ${ICON_SIZE}px;
-
-  & svg {
-    height: ${ICON_SIZE}px;
-    width: ${ICON_SIZE}px;
+    height: 16px;
+    width: 16px;
   }
 `
 
@@ -134,17 +94,6 @@ export const AddLedgerButton = styled(UIButton).attrs({
   padding-left: 0;
   font-size: 17px;
   cursor: pointer;
-`
-
-export const AddLedgerIcon = styled(PlusCircleIcon)`
-  color: ${palette('primary', 2)};
-`
-
-export const RemoveAddressIcon = styled(RemoveIcon)`
-  margin-left: 5px;
-  cursor: pointer;
-  width: ${ICON_SIZE}px;
-  height: ${ICON_SIZE}px;
 `
 
 export const EthDerivationModeRadioLabel = styled(StyledR.RadioLabel)`

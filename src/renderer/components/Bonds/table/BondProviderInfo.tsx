@@ -6,11 +6,11 @@ import { Network } from '@xchainjs/xchain-client'
 import { Address, BaseAmount, assetToString, baseToAsset, formatAssetAmountCurrency } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
 
+import RemoveIcon from '../../../assets/svg/icon-remove.svg?react'
 import { getLiquidityProvider } from '../../../services/mayachain'
 import { Providers as MayaProviders, LiquidityProviderForPoolRD } from '../../../services/mayachain/types'
 import { PoolDetailsRD } from '../../../services/midgard/mayaMigard/types'
 import { PricePool } from '../../../services/midgard/midgardTypes'
-import { RemoveAddressIcon } from '../../settings/WalletSettings.styles'
 import { Tooltip } from '../../uielements/common/Common.styles'
 import * as Styled from './BondsTable.styles'
 import * as H from './helpers'
@@ -116,7 +116,10 @@ export const BondProviderInfo: React.FC<Props> = ({
         {isMonitoring ? (
           <Styled.DeleteButton>
             <Tooltip title="Remove this bond provider from the watch list">
-              <RemoveAddressIcon onClick={() => removeWatchlist(provider.bondAddress, network)} />
+              <RemoveIcon
+                className="w-4 h-4 cursor-pointer"
+                onClick={() => removeWatchlist(provider.bondAddress, network)}
+              />
             </Tooltip>
           </Styled.DeleteButton>
         ) : (

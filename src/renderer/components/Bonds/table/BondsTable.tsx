@@ -13,6 +13,7 @@ import { option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { FormattedMessage, useIntl } from 'react-intl'
 
+import RemoveIcon from '../../../assets/svg/icon-remove.svg?react'
 import { useMidgardMayaContext } from '../../../contexts/MidgardMayaContext'
 import { truncateAddress } from '../../../helpers/addressHelper'
 import { getChainAsset } from '../../../helpers/chainHelper'
@@ -26,7 +27,6 @@ import {
 import { NodeInfo as ThorNodeInfo, NodeInfos as ThorNodeInfos, Providers } from '../../../services/thorchain/types'
 import { WalletAddressInfo } from '../../../views/bonds/types'
 import { ConfirmationModal } from '../../modal/confirmation'
-import { RemoveAddressIcon } from '../../settings/WalletSettings.styles'
 import { AssetIcon } from '../../uielements/assets/assetIcon'
 import { BaseButton, TextButton } from '../../uielements/button'
 import { ExternalLinkIcon, Tooltip } from '../../uielements/common/Common.styles'
@@ -436,7 +436,10 @@ export const BondsTable: React.FC<Props> = ({
                           {isMonitoring ? (
                             <Styled.DeleteButton>
                               <Tooltip title="Remove this bond provider from the watch list">
-                                <RemoveAddressIcon onClick={() => removeWatchlist(provider.bondAddress, network)} />
+                                <RemoveIcon
+                                  className="w-4 h-4 cursor-pointer"
+                                  onClick={() => removeWatchlist(provider.bondAddress, network)}
+                                />
                               </Tooltip>
                             </Styled.DeleteButton>
                           ) : (

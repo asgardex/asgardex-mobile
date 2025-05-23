@@ -13,8 +13,16 @@ export const ReloadFeeButton = styled(UIButton).attrs({
 })`
   &.ant-btn {
     /* overridden */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     min-width: auto;
     margin-right: 10px;
+
+    svg {
+      min-width: 24px;
+      min-height: 24px;
+    }
   }
   width: 30px;
   height: 30px;
