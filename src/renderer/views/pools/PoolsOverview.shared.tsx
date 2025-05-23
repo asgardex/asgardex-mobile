@@ -20,10 +20,10 @@ const RowContainer = styled.div`
   width: 100%;
 `
 
-const SyncIcon = styled(ArrowPathIcon)<{ icononly: boolean }>`
+const SyncIcon = styled(ArrowPathIcon)<{ icononly: 'true' | 'false' }>`
   width: 16px;
   height: 16px;
-  margin-right: ${({ icononly }) => (icononly ? '0' : '8px')};
+  margin-right: ${({ icononly }) => (icononly === 'true' ? '0' : '8px')};
 `
 const renderWatchColumn = ({
   data: { watched },
@@ -175,7 +175,7 @@ export const renderRefreshBtnColTitle = ({
   <div className="flex items-center justify-center">
     <TextButton size={icononly ? 'large' : 'normal'} onClick={clickHandler} className="">
       <div className="flex items-center">
-        <SyncIcon icononly={icononly} /> {!icononly && title}
+        <SyncIcon icononly={icononly ? 'true' : 'false'} /> {!icononly && title}
       </div>
     </TextButton>
   </div>
