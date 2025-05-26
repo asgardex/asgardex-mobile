@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useEffect, useState } from 'react'
 
-import { SyncOutlined } from '@ant-design/icons'
 import * as RD from '@devexperts/remote-data-ts'
+import { ArrowPathIcon as SyncOutlined } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { Address, AnyAsset, baseAmount, BaseAmount, Chain } from '@xchainjs/xchain-util'
@@ -154,7 +154,7 @@ export const PoolShareView: React.FC = (): JSX.Element => {
   const renderRefreshBtn = useMemo(
     () => (
       <Button onClick={clickRefreshHandler} typevalue="outline">
-        <SyncOutlined />
+        <SyncOutlined className="h-5 w-5" />
         {intl.formatMessage({ id: 'common.refresh' })}
       </Button>
     ),

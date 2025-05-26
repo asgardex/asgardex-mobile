@@ -131,7 +131,7 @@ export const PendingPools = (): JSX.Element => {
       title: Shared.renderRefreshBtnColTitle({
         title: intl.formatMessage({ id: 'common.refresh' }),
         clickHandler: refreshHandler,
-        iconOnly: !isDesktopView
+        icononly: !isDesktopView
       }),
       width: 200,
       render: renderBtnPoolsColumn

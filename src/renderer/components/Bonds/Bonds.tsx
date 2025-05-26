@@ -293,7 +293,7 @@ export const Bonds: React.FC<Props> = ({
                 disabled={disableForm}
               />
             </Form.Item>
-            <Styled.SubmitButton htmlType="submit" disabled={disableForm}>
+            <Styled.SubmitButton className="space-x-2" htmlType="submit" disabled={disableForm}>
               <Styled.AddIcon /> {intl.formatMessage({ id: 'bonds.node.add' })}
             </Styled.SubmitButton>
           </div>

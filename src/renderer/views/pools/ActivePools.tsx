@@ -198,7 +198,7 @@ export const ActivePools = (): JSX.Element => {
       title: Shared.renderRefreshBtnColTitle({
         title: intl.formatMessage({ id: 'common.refresh' }),
         clickHandler: refreshHandler,
-        iconOnly: !isDesktopView
+        icononly: !isDesktopView
       }),
       width: 280,
       render: renderBtnPoolsColumn

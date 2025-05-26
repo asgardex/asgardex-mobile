@@ -70,7 +70,14 @@ export const PoolActionsHistoryTable: React.FC<Props> = ({
       FP.pipe(
         action,
         H.getTxId,
-        O.map((txID) => <CommonStyled.ExternalLinkIcon key="external link" onClick={() => openExplorerTxUrl(txID)} />),
+        O.map((txID) => (
+          <CommonStyled.ExternalLinkIcon
+            key="external link"
+            width={16}
+            height={16}
+            onClick={() => openExplorerTxUrl(txID)}
+          />
+        )),
         O.getOrElse(() => <></>)
       ),
     [openExplorerTxUrl]
