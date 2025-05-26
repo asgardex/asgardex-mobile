@@ -16,8 +16,7 @@ import {
 } from '@xchainjs/xchain-util'
 import { Col } from 'antd'
 import BigNumber from 'bignumber.js'
-import { function as FP } from 'fp-ts'
-import { option as O } from 'fp-ts'
+import { function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import * as RxOp from 'rxjs/operators'
 

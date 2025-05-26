@@ -2,8 +2,7 @@
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
-import { either } from 'fp-ts'
-import { option } from 'fp-ts'
+import { either, option } from 'fp-ts'
 import { RunHelpers } from 'rxjs/internal/testing/TestScheduler'
 import { TestScheduler } from 'rxjs/testing'
 import { vi } from 'vitest'

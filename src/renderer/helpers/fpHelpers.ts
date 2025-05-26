@@ -1,8 +1,6 @@
 import * as RD from '@devexperts/remote-data-ts'
 import type { function as F } from 'fp-ts'
-import { apply } from 'fp-ts'
-import { array as A } from 'fp-ts'
-import { option as O } from 'fp-ts'
+import { apply, array as A, option as O } from 'fp-ts'
 
 const { sequenceS, sequenceT } = apply
 

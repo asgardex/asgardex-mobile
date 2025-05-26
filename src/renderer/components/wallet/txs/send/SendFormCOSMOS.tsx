@@ -6,13 +6,22 @@ import { Network } from '@xchainjs/xchain-client'
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { PoolDetails } from '@xchainjs/xchain-mayamidgard'
 import { THORChain } from '@xchainjs/xchain-thorchain'
-import { Address, AssetType, baseAmount, CryptoAmount, eqAsset } from '@xchainjs/xchain-util'
-import { formatAssetAmountCurrency, assetAmount, bn, assetToBase, BaseAmount, baseToAsset } from '@xchainjs/xchain-util'
+import {
+  Address,
+  AssetType,
+  baseAmount,
+  CryptoAmount,
+  eqAsset,
+  formatAssetAmountCurrency,
+  assetAmount,
+  bn,
+  assetToBase,
+  BaseAmount,
+  baseToAsset
+} from '@xchainjs/xchain-util'
 import { Form } from 'antd'
 import BigNumber from 'bignumber.js'
-import { array as A } from 'fp-ts'
-import { function as FP } from 'fp-ts'
-import { option as O } from 'fp-ts'
+import { array as A, function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { TrustedAddress, TrustedAddresses } from '../../../../../shared/api/types'
@@ -34,8 +43,7 @@ import { INITIAL_SEND_STATE } from '../../../../services/chain/const'
 import { FeeRD, SendTxState, SendTxStateHandler } from '../../../../services/chain/types'
 import { AddressValidation, GetExplorerTxUrl, OpenExplorerTxUrl, WalletBalances } from '../../../../services/clients'
 import { PoolAddress } from '../../../../services/midgard/midgardTypes'
-import { SelectedWalletAsset, ValidatePasswordHandler } from '../../../../services/wallet/types'
-import { WalletBalance } from '../../../../services/wallet/types'
+import { SelectedWalletAsset, ValidatePasswordHandler, WalletBalance } from '../../../../services/wallet/types'
 import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../../../modal/confirmation'
 import { BaseButton, FlatButton } from '../../../uielements/button'
 import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'

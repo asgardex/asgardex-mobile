@@ -16,8 +16,7 @@ import {
 import { Address, AnyAsset, BaseAmount, Chain } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
 import type { nonEmptyArray } from 'fp-ts'
-import { function as FP } from 'fp-ts'
-import { option as O } from 'fp-ts'
+import { function as FP, option as O } from 'fp-ts'
 import { IntlShape } from 'react-intl'
 import * as Rx from 'rxjs'
 

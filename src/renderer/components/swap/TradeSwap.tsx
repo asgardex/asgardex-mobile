@@ -26,10 +26,7 @@ import {
   TradeAsset
 } from '@xchainjs/xchain-util'
 import { Row } from 'antd'
-import { array as A } from 'fp-ts'
-import { function as FP } from 'fp-ts'
-import { nonEmptyArray as NEA } from 'fp-ts'
-import { option as O } from 'fp-ts'
+import { array as A, function as FP, nonEmptyArray as NEA, option as O } from 'fp-ts'
 import debounce from 'lodash/debounce'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
