@@ -599,7 +599,9 @@ export const Withdraw: React.FC<Props> = ({
           {intl.formatMessage({ id: 'common.withdraw' })}
         </FlatButton>
       </div>
-      <div className="w-full pt-10px font-mainBold text-[14px]">{intl.formatMessage({ id: 'common.memos' })}</div>
+      <div className="w-full pt-10px font-mainBold text-[14px] text-text2 dark:text-text2d">
+        {intl.formatMessage({ id: 'common.memos' })}
+      </div>
       <div className="flex w-full items-center justify-between pl-10px text-[12px]">
         <div className="">
           <CopyLabel
@@ -610,7 +612,7 @@ export const Withdraw: React.FC<Props> = ({
           />
         </div>
 
-        <div className="truncate pl-10px font-main text-[12px]">
+        <div className="truncate pl-10px font-main text-[12px] text-gray2 dark:text-gray2d">
           <Tooltip
             title={`Alternate position withdraw use custom deposit with this memo ${memo}`}
             key={`tooltip-${protocolAsset.chain}-memo`}>

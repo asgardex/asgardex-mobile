@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { SwapOutlined } from '@ant-design/icons'
 import * as RD from '@devexperts/remote-data-ts'
+import { ArrowsRightLeftIcon as SwapOutlined } from '@heroicons/react/20/solid'
 import { Network } from '@xchainjs/xchain-client'
 import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
 import { Client as MayachainClient } from '@xchainjs/xchain-mayachain'
@@ -364,7 +364,7 @@ export const BondsView = (): JSX.Element => {
               onClick={() =>
                 setActiveLabel((prev) => (prev === LabelView.Connected ? LabelView.Monitored : LabelView.Connected))
               }>
-              <SwapOutlined className="rounded-full border border-solid border-turquoise p-1" />
+              <SwapOutlined className="rounded-full border border-solid border-turquoise p-[2px] w-5 h-5" />
             </BaseButton>
           </Styled.TitleContainer>
           <div className="absolute right-0 flex items-center">
