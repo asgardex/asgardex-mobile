@@ -1,17 +1,17 @@
 import React from 'react'
 
 import { BackLinkButton } from '../uielements/button'
-import * as Styled from './PageTitle.styles'
+import { Headline } from '../uielements/headline'
 
 export const PageTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <Styled.Container>
-      <Styled.Title>
-        <Styled.BackLinkContainer>
+    <div className="relative w-full mb-5">
+      <Headline className="w-full">
+        <div className="absolute left-0">
           <BackLinkButton />
-        </Styled.BackLinkContainer>
+        </div>
         {children}
-      </Styled.Title>
-    </Styled.Container>
+      </Headline>
+    </div>
   )
 }
