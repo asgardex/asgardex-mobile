@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 
 import { KeyIcon } from '@heroicons/react/24/outline'
 import clsx from 'clsx'
@@ -19,8 +19,12 @@ export const NoWalletView = () => {
     navigate(walletRoutes.create.phrase.path())
   }, [navigate])
 
-  const importWalletHandler = useCallback(() => {
-    navigate(walletRoutes.imports.base.path())
+  const importKeystoreHandler = useCallback(() => {
+    navigate(walletRoutes.imports.keystore.path())
+  }, [navigate])
+
+  const importPhraseHandler = useCallback(() => {
+    navigate(walletRoutes.imports.phrase.path())
   }, [navigate])
 
   return (
@@ -30,7 +34,7 @@ export const NoWalletView = () => {
       </div>
       <div className="flex flex-col items-center justify-center">
         <AsgardexLogo className="[&>*]:fill-text1 [&>*]:dark:fill-text1d" />
-        <span className="text-gray2 dark:text-gray2d text-xs">Welcome to ASGARDEX</span>
+        <span className="text-gray2 dark:text-gray2d text-xs">Welcome</span>
       </div>
       <div className="flex flex-col gap-4">
         <div
@@ -55,7 +59,7 @@ export const NoWalletView = () => {
             'bg-bg2/50 dark:bg-bg2d/20 hover:bg-bg2 hover:dark:bg-bg2d/40',
             'cursor-pointer rounded-lg p-6 text-center transition duration-300 ease-in-out'
           )}
-          onClick={importWalletHandler}>
+          onClick={importKeystoreHandler}>
           <FolderKeyIcon className="text-gray-500" width={40} height={40} />
           <div className="flex flex-col items-start">
             <span className="text-text1 dark:text-text1d text-lg">
@@ -71,7 +75,7 @@ export const NoWalletView = () => {
             'bg-bg2/50 dark:bg-bg2d/20 hover:bg-bg2 hover:dark:bg-bg2d/40',
             'cursor-pointer rounded-lg p-6 text-center transition duration-300 ease-in-out'
           )}
-          onClick={importWalletHandler}>
+          onClick={importPhraseHandler}>
           <SproutIcon className="text-gray-500" width={40} height={40} />
           <div className="flex flex-col items-start">
             <span className="text-text1 dark:text-text1d text-lg">
