@@ -9,6 +9,7 @@ import FolderKeyIcon from '../../../assets/svg/folder-key.svg?react'
 import AsgardexLogo from '../../../assets/svg/logo-asgardex.svg?react'
 import SproutIcon from '../../../assets/svg/sprout.svg?react'
 import { HeaderTheme } from '../../../components/header/theme'
+import { LocaleDropdown } from '../../../components/LayoutlessWrapper/LocaleDropdown'
 import * as walletRoutes from '../../../routes/wallet'
 
 export const NoWalletView = () => {
@@ -29,12 +30,13 @@ export const NoWalletView = () => {
 
   return (
     <div className="relative flex flex-col h-full w-full items-center justify-center bg-bg1 dark:bg-bg1d gap-8">
-      <div className="absolute top-4 right-4">
+      <div className="flex items-center gap-2 absolute top-4 right-4 z-10">
+        <LocaleDropdown />
         <HeaderTheme isDesktopView />
       </div>
       <div className="flex flex-col items-center justify-center">
         <AsgardexLogo className="[&>*]:fill-text1 [&>*]:dark:fill-text1d" />
-        <span className="text-gray2 dark:text-gray2d text-xs">Welcome</span>
+        <span className="text-gray2 dark:text-gray2d text-xs">{intl.formatMessage({ id: 'common.welcome' })}</span>
       </div>
       <div className="flex flex-col gap-4">
         <div
@@ -65,7 +67,7 @@ export const NoWalletView = () => {
             <span className="text-text1 dark:text-text1d text-lg">
               {intl.formatMessage({ id: 'wallet.action.import' })} {intl.formatMessage({ id: 'common.keystore' })}
             </span>
-            <span className="text-gray-500">Import an existing keystore wallet</span>
+            <span className="text-gray-500">{intl.formatMessage({ id: 'wallet.imports.keystore.description' })}</span>
           </div>
         </div>
 
@@ -81,7 +83,7 @@ export const NoWalletView = () => {
             <span className="text-text1 dark:text-text1d text-lg">
               {intl.formatMessage({ id: 'wallet.action.import' })} {intl.formatMessage({ id: 'common.phrase' })}
             </span>
-            <span className="text-gray-500">Import an existing wallet with seed phrase</span>
+            <span className="text-gray-500">{intl.formatMessage({ id: 'wallet.imports.phrase.description' })}</span>
           </div>
         </div>
       </div>
