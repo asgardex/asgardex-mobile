@@ -26,7 +26,7 @@ type FormValues = {
   name: string
 }
 
-export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props): JSX.Element => {
+export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) => {
   const [loading, setLoading] = useState(false)
   const intl = useIntl()
 
@@ -108,7 +108,7 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props): J
           {phraseWords.map((word, index) => (
             <span
               key={word._id}
-              className="text-sm bg-turquoise/10 text-text0 dark:text-text0d font-bold px-4 py-1 rounded-full">
+              className="text-sm bg-turquoise/10 text-text0 dark:text-text0d font-bold px-2 py-1 rounded-full">
               {index + 1}. {word.text}
             </span>
           ))}

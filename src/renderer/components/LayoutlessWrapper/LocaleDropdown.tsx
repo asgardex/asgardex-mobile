@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react'
+
 import { Dropdown } from 'antd'
 import { MenuProps } from 'antd/lib/menu'
-
 import { ItemType } from 'antd/lib/menu/hooks/useItems'
 import clsx from 'clsx'
 import { function as FP, array as A } from 'fp-ts'
-
 import { useObservableState } from 'observable-hooks'
+
 import { DEFAULT_LOCALE } from '../../../shared/i18n/const'
 import { Locale } from '../../../shared/i18n/types'
 import { useI18nContext } from '../../contexts/I18nContext'
@@ -35,8 +35,8 @@ export const LocaleDropdown = () => {
             label: (
               <div
                 className={clsx(
-                  'dark:text-1 flex items-center px-10px py-[8px] font-main text-16 uppercase text-text1 dark:text-text1d',
-                  l === currentLocale ? 'font-mainSemiBold' : 'font-main'
+                  'flex items-center p-2 text-sm uppercase rounded-xl',
+                  l === currentLocale ? 'text-turquoise' : 'text-text1 dark:text-text1d'
                 )}>
                 {l}
               </div>
@@ -51,7 +51,7 @@ export const LocaleDropdown = () => {
 
   return (
     <Dropdown overlay={langMenu} trigger={['click']} placement="bottom">
-      <div className="flex cursor-pointer items-center justify-between rounded-lg border border-solid border-gray0 p-2 dark:border-gray0d">
+      <div className="flex cursor-pointer items-center justify-between rounded-lg border border-solid border-gray0 px-2 py-1 dark:border-gray0d gap-x-2">
         <h3 className="m-0 font-main text-[16px] uppercase leading-5 text-text1 dark:text-text1d">{currentLocale}</h3>
         <DownIcon />
       </div>
