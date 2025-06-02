@@ -41,11 +41,11 @@ export const AppView = (): JSX.Element => {
   const { isLight } = useTheme()
 
   const shouldHideLayout = useMemo(() => {
-    const isNowWalletView = location.pathname === noWallet.path()
+    const isNoWalletView = location.pathname === noWallet.path()
     const isCreateWalletView = location.pathname.includes(createWalletBase.path())
     const isImportWalletView = location.pathname.includes(importWalletBase.path())
 
-    return isNowWalletView || isCreateWalletView || isImportWalletView
+    return isNoWalletView || isCreateWalletView || isImportWalletView
   }, [location.pathname])
 
   const isDesktopView = Grid.useBreakpoint()?.lg ?? false
