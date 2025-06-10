@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { GAIAChain } from '@xchainjs/xchain-cosmos'
@@ -45,7 +45,7 @@ type Props = {
   oPoolAddress: O.Option<PoolAddress>
 }
 
-export const SendViewCOSMOS: React.FC<Props> = (props): JSX.Element => {
+export const SendViewCOSMOS = (props: Props): JSX.Element => {
   const { asset, trustedAddresses, emptyBalance, poolDetails, oPoolAddress } = props
 
   const { chain } =

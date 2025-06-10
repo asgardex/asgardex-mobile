@@ -145,7 +145,7 @@ type Props = {
 
 type AddressToVerify = O.Option<{ address: Address; chain: Chain }>
 
-export const WalletSettings: React.FC<Props> = (props): JSX.Element => {
+export const WalletSettings = (props: Props): JSX.Element => {
   const {
     network,
     walletAccounts: oWalletAccounts,

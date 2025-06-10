@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { baseAmount } from '@xchainjs/xchain-util'
@@ -32,7 +32,7 @@ type Props = {
   oPoolAddressMaya: O.Option<PoolAddress>
 }
 
-export const SendViewEVM: React.FC<Props> = (props): JSX.Element => {
+export const SendViewEVM = (props: Props): JSX.Element => {
   const { asset, trustedAddresses, emptyBalance, poolDetails, oPoolAddress, oPoolAddressMaya } = props
 
   const { network } = useNetwork()

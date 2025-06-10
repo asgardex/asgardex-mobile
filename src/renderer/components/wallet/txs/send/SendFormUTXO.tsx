@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline'
@@ -83,7 +83,7 @@ type Props = {
   mayaScanPrice: MayaScanPriceRD
 }
 
-export const SendFormUTXO: React.FC<Props> = (props): JSX.Element => {
+export const SendFormUTXO = (props: Props): JSX.Element => {
   const {
     asset: { walletType, walletAccount, walletIndex, hdMode, walletAddress },
     trustedAddresses,

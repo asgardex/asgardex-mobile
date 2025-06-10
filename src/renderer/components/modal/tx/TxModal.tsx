@@ -21,7 +21,7 @@ type Props = {
   extraResult?: React.ReactNode
 }
 
-export const TxModal: React.FC<Props> = (props): JSX.Element => {
+export const TxModal = (props: Props): JSX.Element => {
   const { title, txRD, startTime, onClose, onFinish, extra = <></>, extraResult, timerValue = NaN } = props
 
   const intl = useIntl()

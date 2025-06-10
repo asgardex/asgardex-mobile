@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { TvIcon } from '@heroicons/react/24/outline'
@@ -37,7 +37,7 @@ type Props = {
   pricePoolData: PricePool
 }
 
-export const BondProviderInfo: React.FC<Props> = ({
+export const BondProviderInfo = ({
   provider,
   nodeAddress,
   network,
@@ -51,7 +51,7 @@ export const BondProviderInfo: React.FC<Props> = ({
   recordBond,
   poolDetails,
   pricePoolData
-}) => {
+}: Props) => {
   const [lpDataMap, setLpDataMap] = useState<Record<string, LiquidityProviderForPoolRD>>({})
 
   // Fetch LP data for this provider’s pools

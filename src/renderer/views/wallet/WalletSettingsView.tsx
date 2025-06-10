@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { ARBChain } from '@xchainjs/xchain-arbitrum'
@@ -78,7 +78,7 @@ type Props = {
   keystoreUnlocked: KeystoreUnlocked
 }
 
-export const WalletSettingsView: React.FC<Props> = ({ keystoreUnlocked }): JSX.Element => {
+export const WalletSettingsView = ({ keystoreUnlocked }: Props): JSX.Element => {
   const { id: keystoreId } = keystoreUnlocked
 
   const { walletsUI } = useKeystoreWallets()

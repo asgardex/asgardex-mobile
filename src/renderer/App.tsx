@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Provider } from 'react-redux'
 import { HashRouter as Router } from 'react-router-dom'
 
@@ -34,7 +32,7 @@ import { XrdProvider } from './contexts/XrdContext'
 import { store } from './store/store'
 import { AppView } from './views/app/AppView'
 
-export const App: React.FC = (): JSX.Element => {
+export const App = (): JSX.Element => {
   return (
     <Provider store={store}>
       <AppProvider>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { Network } from '@xchainjs/xchain-client'
@@ -93,7 +93,7 @@ export type Props = {
  * Note: It supports sym. withdraw only
  *
  * */
-export const Withdraw: React.FC<Props> = ({
+export const Withdraw = ({
   asset: assetWD,
   assetWalletAddress,
   dexPrice,
@@ -114,7 +114,7 @@ export const Withdraw: React.FC<Props> = ({
   poolsData,
   haltedChains,
   mimirHalt
-}) => {
+}: Props) => {
   const intl = useIntl()
 
   const { asset, decimal: assetDecimal } = assetWD
