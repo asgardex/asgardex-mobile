@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
-import { Label as UILabel } from '../../uielements/label'
 import { Table as UITable } from '../../uielements/table'
 
 export const Table = styled(UITable)`
@@ -41,11 +40,4 @@ export const Table = styled(UITable)`
       }
     }
   }
-`
-
-export const TextLabel = styled(UILabel).attrs({ textTransform: 'uppercase' })`
-  color: inherit;
-  font-size: 16px;
-  font-family: 'MainFontRegular';
-  padding: 0;
 `

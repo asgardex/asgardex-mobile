@@ -12,7 +12,7 @@ import { Providers as MayaProviders, LiquidityProviderForPoolRD } from '../../..
 import { PoolDetailsRD } from '../../../services/midgard/mayaMigard/types'
 import { PricePool } from '../../../services/midgard/midgardTypes'
 import { Tooltip } from '../../uielements/common/Common.styles'
-import * as Styled from './BondsTable.styles'
+import { Label } from '../../uielements/label'
 import * as H from './helpers'
 
 type Props = {
@@ -92,25 +92,27 @@ export const BondProviderInfo: React.FC<Props> = ({
             })
 
             return (
-              <Styled.TextLabel key={pool} className="!text-14">
+              <Label key={pool} size="big" textTransform="uppercase">
                 {formatAssetAmountCurrency({
                   asset: assetWithLpUnits.asset,
                   amount: baseToAsset(bondedAmount.bondedAmount),
                   trimZeros: true,
                   decimal: 2
                 })}
-                {`~`}
+                ~
                 {formatAssetAmountCurrency({
                   asset: pricePoolData.asset,
                   amount: baseToAsset(bondedAmount.bondedAmountValue),
                   trimZeros: true,
                   decimal: 2
                 })}
-              </Styled.TextLabel>
+              </Label>
             )
           })}
           {Object.entries(provider.pools).length === 0 && (
-            <Styled.TextLabel className="!text-14">No Pools</Styled.TextLabel>
+            <Label size="big" textTransform="uppercase">
+              No Pools
+            </Label>
           )}
         </div>
         {isMonitoring ? (

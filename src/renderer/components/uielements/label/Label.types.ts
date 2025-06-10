@@ -29,9 +29,9 @@ export type LabelProps = {
 
 export const sizeMap: Record<Size, string> = {
   tiny: 'text-[8px] tracking-[0.36px]',
-  small: 'text-[10px] tracking-[0.42px]',
+  small: 'text-[11px] tracking-[0.42px]',
   normal: 'text-[12px] tracking-[1px]',
-  big: 'text-[15px] tracking-[1px]',
+  big: 'text-[14px] tracking-[1px]',
   large: 'text-[18px] tracking-[1px]'
 }
 

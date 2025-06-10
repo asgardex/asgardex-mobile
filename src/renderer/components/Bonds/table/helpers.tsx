@@ -20,7 +20,7 @@ import { PoolDetails, PoolDetailsRD } from '../../../services/midgard/mayaMigard
 import { PricePool } from '../../../services/midgard/midgardTypes'
 import { NodeInfo, NodeStatusEnum } from '../../../services/thorchain/types'
 import { AddressEllipsis } from '../../uielements/addressEllipsis'
-import * as Styled from './BondsTable.styles'
+import { Label } from '../../uielements/label'
 
 export const NodeAddress = ({ address, network }: { address: Address; network: Network }) => (
   <Col xs={18} lg={20} xl={24}>
@@ -35,39 +35,39 @@ export const NodeAddress = ({ address, network }: { address: Address; network: N
 
 export const BondValue = ({ data }: { data: NodeInfo | NodeInfoMaya }) => (
   <Col>
-    <Styled.TextLabel align="right" nowrap>
+    <Label align="right" nowrap size="big" textTransform="uppercase">
       {formatAssetAmountCurrency({
         asset: AssetRuneNative,
         amount: baseToAsset(data.bond),
         trimZeros: true,
         decimal: 0
       })}
-    </Styled.TextLabel>
+    </Label>
   </Col>
 )
 export const BondValueMaya = ({ data }: { data: NodeInfo | NodeInfoMaya }) => (
   <Col>
-    <Styled.TextLabel align="right" nowrap>
+    <Label align="right" nowrap size="big" textTransform="uppercase">
       {formatAssetAmountCurrency({
         asset: AssetCacao,
         amount: baseToAsset(data.bond),
         trimZeros: true,
         decimal: 0
       })}
-    </Styled.TextLabel>
+    </Label>
   </Col>
 )
 
 export const AwardValue = ({ data }: { data: NodeInfo | NodeInfoMaya }) => (
   <Col>
-    <Styled.TextLabel align="right" nowrap>
+    <Label align="right" nowrap size="big" textTransform="uppercase">
       {formatAssetAmountCurrency({
         asset: data.address.startsWith('thor') ? AssetRuneNative : AssetCacao,
         amount: baseToAsset(data.award),
         trimZeros: true,
         decimal: 0
       })}
-    </Styled.TextLabel>
+    </Label>
   </Col>
 )
 
@@ -98,7 +98,9 @@ export const Status = ({ data }: { data: NodeInfo | NodeInfoMaya }) => {
   }
 
   return (
-    <Styled.TextLabel align="center">{intl.formatMessage({ id: getStatusMessageId(data.status) })}</Styled.TextLabel>
+    <Label align="center" size="big" textTransform="uppercase">
+      {intl.formatMessage({ id: getStatusMessageId(data.status) })}
+    </Label>
   )
 }
 
