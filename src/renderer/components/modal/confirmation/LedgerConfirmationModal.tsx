@@ -104,11 +104,11 @@ export const LedgerConfirmationModal = ({
       title={intl.formatMessage({ id: 'ledger.title.sign' })}
       okText={intl.formatMessage({ id: 'common.next' })}
       content={
-        <Styled.Content>
-          <Styled.LedgerContainer>
+        <div className="flex flex-col">
+          <div className="relative flex flex-col items-center mb-5">
             <Styled.LedgerConnect />
             <Styled.AssetIcon asset={asset} network={network} size="small" />
-          </Styled.LedgerContainer>
+          </div>
           <Styled.Description>
             {description1 || intl.formatMessage({ id: 'ledger.needsconnected' }, { chain: chainToString(chain) })}
           </Styled.Description>
@@ -143,7 +143,7 @@ export const LedgerConfirmationModal = ({
                 )
               )
             )}
-        </Styled.Content>
+        </div>
       }
     />
   )

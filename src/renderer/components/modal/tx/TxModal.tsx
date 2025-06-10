@@ -76,10 +76,10 @@ export const TxModal: React.FC<Props> = (props): JSX.Element => {
     )
 
     return (
-      <Styled.ResultContainer>
+      <div className="flex flex-col items-center justify-center pb-7">
         <Styled.ResultButton {...buttonProps} />
         {renderExtraResult}
-      </Styled.ResultContainer>
+      </div>
     )
   }, [intl, onClose, onFinish, renderExtraResult, txRD])
 
