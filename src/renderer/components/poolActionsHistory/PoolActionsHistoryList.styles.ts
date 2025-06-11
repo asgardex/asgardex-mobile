@@ -1,5 +1,6 @@
 import { ArrowUpIcon } from '@heroicons/react/24/outline'
 import * as A from 'antd'
+import { ListProps } from 'antd/lib/list'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
@@ -7,10 +8,10 @@ import { Action } from '../../services/midgard/thorMidgard/types'
 import { Button as UIButton } from '../uielements/button'
 import { TxType as TxTypeUI } from '../uielements/txType'
 
-export const List = styled(A.List<Action>)`
+export const List = styled(A.List)`
   background: ${palette('background', 0)};
   color: ${palette('text', 0)};
-`
+` as React.FC<ListProps<Action>>
 
 export const ListItem = styled(A.List.Item)`
   &:last-item {
