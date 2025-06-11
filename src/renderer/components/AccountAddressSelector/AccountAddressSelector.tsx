@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
@@ -27,7 +27,7 @@ type Props = {
   disabled?: boolean
 }
 
-export const AccountAddressSelector: React.FC<Props> = (props) => {
+export const AccountAddressSelector = (props: Props) => {
   const {
     selectedAddress: oSelectedAddress,
     addresses,

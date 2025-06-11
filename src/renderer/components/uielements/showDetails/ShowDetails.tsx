@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { BTCChain } from '@xchainjs/xchain-bitcoin'
 import { BCHChain } from '@xchainjs/xchain-bitcoincash'
 import { ADAChain } from '@xchainjs/xchain-cardano'
@@ -11,7 +9,7 @@ import { useIntl } from 'react-intl'
 
 import { TooltipAddress } from '../common/Common.styles'
 
-type CustomProps = {
+type Props = {
   amountLabel: string
   recipient: string
   priceFeeLabel: string
@@ -22,9 +20,7 @@ type CustomProps = {
   asset: AnyAsset
 }
 
-type Props = CustomProps
-
-export const ShowDetails: React.FC<Props> = ({
+export const ShowDetails = ({
   recipient,
   amountLabel,
   priceFeeLabel,
@@ -33,7 +29,7 @@ export const ShowDetails: React.FC<Props> = ({
   expectedTxMined,
   currentMemo,
   asset
-}): JSX.Element => {
+}: Props): JSX.Element => {
   const intl = useIntl()
   const denom: string = (() => {
     switch (asset.chain) {

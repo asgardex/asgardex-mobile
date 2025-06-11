@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { ARBChain } from '@xchainjs/xchain-arbitrum'
@@ -36,9 +36,7 @@ import { reloadBalancesByChain } from '../../../services/wallet'
 import { SelectedWalletAsset } from '../../../services/wallet/types'
 import { SendViewCOSMOS, SendViewEVM, SendViewUTXO } from './index'
 
-type Props = {}
-
-export const SendView: React.FC<Props> = (): JSX.Element => {
+export const SendView = (): JSX.Element => {
   const intl = useIntl()
 
   const { selectedAsset$ } = useWalletContext()
