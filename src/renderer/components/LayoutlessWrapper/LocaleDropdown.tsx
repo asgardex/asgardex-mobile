@@ -23,7 +23,7 @@ export const LocaleDropdown = () => {
           <div
             key={l}
             className={clsx(
-              'flex items-center text-sm uppercase px-2 py-1 hover:bg-bg2 dark:hover:bg-bg2d rounded-lg cursor-pointer',
+              'flex items-center text-sm uppercase px-2 py-1',
               l === currentLocale ? 'text-turquoise' : 'text-text1 dark:text-text1d'
             )}
             onClick={() => changeLocale(l)}>

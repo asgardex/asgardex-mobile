@@ -55,7 +55,7 @@ export const AccountAddressSelector = (props: Props) => {
         return (
           <div
             key={`${chain}-${walletAddress}`}
-            className="flex items-center justify-between cursor-pointer text-14 p-1 hover:bg-bg2 dark:hover:bg-bg2d rounded-lg"
+            className="flex items-center justify-between text-14 p-1"
             onClick={() => onChangeAddress(walletAddress)}>
             <div className="flex items-center">
               <AssetIcon className="m-0.5" asset={getChainAsset(chain)} size={size} network={network} />

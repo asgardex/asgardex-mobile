@@ -27,7 +27,9 @@ export const Dropdown = ({
           className
         )}>
         {options.map((option, index) => (
-          <MenuItem key={index}>{option}</MenuItem>
+          <MenuItem key={index}>
+            <div className="cursor-pointer hover:bg-bg2 dark:hover:bg-bg2d rounded-lg">{option}</div>
+          </MenuItem>
         ))}
       </MenuItems>
     </Menu>

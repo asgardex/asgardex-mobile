@@ -25,10 +25,7 @@ export const HeaderPriceSelector = (props: Props): JSX.Element => {
       FP.pipe(
         assets,
         A.map((asset) => (
-          <div
-            key={asset.symbol}
-            className="px-2 py-1 hover:bg-bg2 dark:hover:bg-bg2d rounded-lg cursor-pointer"
-            onClick={() => changeHandler(asset)}>
+          <div key={asset.symbol} className="px-2 py-1" onClick={() => changeHandler(asset)}>
             <Label size="big" color="dark" textTransform="uppercase" weight="bold">
               {toHeaderCurrencyLabel(asset)}
             </Label>

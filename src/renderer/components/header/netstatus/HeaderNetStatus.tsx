@@ -260,7 +260,7 @@ export const HeaderNetStatus = (props: Props) => {
         return (
           <div
             key={key}
-            className="flex items-center space-x-4 px-2 py-1 hover:bg-bg2 dark:hover:bg-bg2d rounded-lg cursor-pointer"
+            className="flex items-center space-x-4 px-2 py-1"
             onClick={() => window.apiUrl.openExternal(url)}>
             <ConnectionStatus color={color} />
             <div className="flex flex-col">
