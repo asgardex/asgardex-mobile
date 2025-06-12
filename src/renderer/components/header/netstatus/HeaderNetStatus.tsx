@@ -1,8 +1,7 @@
 import { useMemo, useRef } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import { Dropdown, Row, Col } from 'antd'
-import { ItemType } from 'antd/lib/menu/hooks/useItems'
+import { Row, Col } from 'antd'
 import { function as FP, array as A, option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
@@ -18,7 +17,7 @@ import {
 import { MimirRD } from '../../../services/thorchain/types'
 import { DownIcon } from '../../icons'
 import { ConnectionStatus } from '../../shared/icons'
-import { Menu } from '../../shared/menu/Menu'
+import { Dropdown } from '../../uielements/dropdown'
 import { Label } from '../../uielements/label'
 import { headerNetStatusSubheadline, headerNetStatusColor, HeaderNetStatusColor } from '../Header.util'
 import { HeaderDrawerItem } from '../HeaderComponent.styles'
@@ -257,39 +256,36 @@ export const HeaderNetStatus = (props: Props) => {
   ])
 
   const desktopMenu = useMemo(() => {
-    return (
-      <Menu
-        items={FP.pipe(
-          menuItems,
-          A.map<MenuItem, ItemType>((item) => {
-            const { headline, key, subheadline, color, url } = item
-            return {
-              label: (
-                <Row align="middle" onClick={() => window.apiUrl.openExternal(url)}>
-                  <Col span={4}>
-                    <ConnectionStatus color={color} />
-                  </Col>
-                  <Col span={20}>
-                    <Label
-                      className="pr-5 tracking-tight"
-                      color="normal"
-                      size="big"
-                      weight="bold"
-                      textTransform="uppercase"
-                      nowrap>
-                      {headline}
-                    </Label>
-                    <Label className="pr-5" size="small" textTransform="lowercase" nowrap>
-                      {subheadline}
-                    </Label>
-                  </Col>
-                </Row>
-              ),
-              key
-            }
-          })
-        )}
-      />
+    return FP.pipe(
+      menuItems,
+      A.map((item) => {
+        const { headline, key, subheadline, color, url } = item
+        return (
+          <Row
+            key={key}
+            className="px-2 py-1 hover:bg-bg2 dark:hover:bg-bg2d rounded-lg cursor-pointer"
+            align="middle"
+            onClick={() => window.apiUrl.openExternal(url)}>
+            <Col span={4}>
+              <ConnectionStatus color={color} />
+            </Col>
+            <Col span={20}>
+              <Label
+                className="pr-5 tracking-tight"
+                color="normal"
+                size="big"
+                weight="bold"
+                textTransform="uppercase"
+                nowrap>
+                {headline}
+              </Label>
+              <Label className="pr-5" size="small" textTransform="lowercase" nowrap>
+                {subheadline}
+              </Label>
+            </Col>
+          </Row>
+        )
+      })
     )
   }, [menuItems])
 
@@ -320,15 +316,18 @@ export const HeaderNetStatus = (props: Props) => {
     <Styled.Wrapper>
       {isDesktopView && (
         <Col span={24}>
-          <Dropdown overlay={desktopMenu} trigger={['click']} placement="bottom">
-            {}
-            <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-              <Row justify="space-between" align="middle">
-                <ConnectionStatus color={appOnlineStatusColor} />
-                <DownIcon />
-              </Row>
-            </a>
-          </Dropdown>
+          <Dropdown
+            anchor={{ to: 'bottom', gap: 4, padding: 8 }}
+            trigger={
+              <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                <Row justify="space-between" align="middle">
+                  <ConnectionStatus color={appOnlineStatusColor} />
+                  <DownIcon />
+                </Row>
+              </a>
+            }
+            options={desktopMenu}
+          />
         </Col>
       )}
       {!isDesktopView && <Col span={24}>{menuMobile}</Col>}
