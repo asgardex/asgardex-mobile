@@ -1,7 +1,6 @@
 import { useMemo, useRef } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import { Row, Col } from 'antd'
 import { function as FP, array as A, option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
@@ -261,15 +260,12 @@ export const HeaderNetStatus = (props: Props) => {
       A.map((item) => {
         const { headline, key, subheadline, color, url } = item
         return (
-          <Row
+          <div
             key={key}
-            className="px-2 py-1 hover:bg-bg2 dark:hover:bg-bg2d rounded-lg cursor-pointer"
-            align="middle"
+            className="flex items-center space-x-4 px-2 py-1 hover:bg-bg2 dark:hover:bg-bg2d rounded-lg cursor-pointer"
             onClick={() => window.apiUrl.openExternal(url)}>
-            <Col span={4}>
-              <ConnectionStatus color={color} />
-            </Col>
-            <Col span={20}>
+            <ConnectionStatus color={color} />
+            <div className="flex flex-col">
               <Label
                 className="pr-5 tracking-tight"
                 color="normal"
@@ -282,8 +278,8 @@ export const HeaderNetStatus = (props: Props) => {
               <Label className="pr-5" size="small" textTransform="lowercase" nowrap>
                 {subheadline}
               </Label>
-            </Col>
-          </Row>
+            </div>
+          </div>
         )
       })
     )
@@ -294,19 +290,17 @@ export const HeaderNetStatus = (props: Props) => {
       const { headline, key, subheadline, color } = item
       return (
         <HeaderDrawerItem key={key} className={i === menuItems.length - 1 ? 'last' : 'headerdraweritem'}>
-          <Row align="middle" style={{ marginLeft: '15px', marginRight: '15px' }}>
+          <div className="flex items-center space-x-4 px-4">
             <ConnectionStatus color={color} />
-          </Row>
-          <Row>
-            <Col>
+            <div className="flex flex-col">
               <Label className="pr-5" color="normal" size="big" weight="bold" textTransform="uppercase" nowrap>
                 {headline}
               </Label>
               <Label className="pr-5" size="small" textTransform="lowercase" nowrap>
                 {subheadline}
               </Label>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </HeaderDrawerItem>
       )
     })
@@ -315,22 +309,20 @@ export const HeaderNetStatus = (props: Props) => {
   return (
     <Styled.Wrapper>
       {isDesktopView && (
-        <Col span={24}>
-          <Dropdown
-            anchor={{ to: 'bottom', gap: 4, padding: 8 }}
-            trigger={
-              <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                <Row justify="space-between" align="middle">
-                  <ConnectionStatus color={appOnlineStatusColor} />
-                  <DownIcon />
-                </Row>
-              </a>
-            }
-            options={desktopMenu}
-          />
-        </Col>
+        <Dropdown
+          anchor={{ to: 'bottom', gap: 4, padding: 8 }}
+          trigger={
+            <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+              <div className="flex items-center">
+                <ConnectionStatus color={appOnlineStatusColor} />
+                <DownIcon />
+              </div>
+            </a>
+          }
+          options={desktopMenu}
+        />
       )}
-      {!isDesktopView && <Col span={24}>{menuMobile}</Col>}
+      {!isDesktopView && <div className="w-full">{menuMobile}</div>}
     </Styled.Wrapper>
   )
 }
