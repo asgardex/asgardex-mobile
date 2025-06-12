@@ -20,7 +20,6 @@ import { Dropdown } from '../../uielements/dropdown'
 import { Label } from '../../uielements/label'
 import { headerNetStatusSubheadline, headerNetStatusColor, HeaderNetStatusColor } from '../Header.util'
 import { HeaderDrawerItem } from '../HeaderComponent.styles'
-import * as Styled from './HeaderNetStatus.styles'
 
 type MenuItem = {
   key: string
@@ -307,7 +306,7 @@ export const HeaderNetStatus = (props: Props) => {
   }, [menuItems])
 
   return (
-    <Styled.Wrapper>
+    <div className="flex flex-wrap">
       {isDesktopView && (
         <Dropdown
           anchor={{ to: 'bottom', gap: 4, padding: 8 }}
@@ -323,6 +322,6 @@ export const HeaderNetStatus = (props: Props) => {
         />
       )}
       {!isDesktopView && <div className="w-full">{menuMobile}</div>}
-    </Styled.Wrapper>
+    </div>
   )
 }
