@@ -19,7 +19,6 @@ import { ConnectionStatus } from '../../shared/icons'
 import { Dropdown } from '../../uielements/dropdown'
 import { Label } from '../../uielements/label'
 import { headerNetStatusSubheadline, headerNetStatusColor, HeaderNetStatusColor } from '../Header.util'
-import { HeaderDrawerItem } from '../HeaderComponent.styles'
 
 type MenuItem = {
   key: string
@@ -285,22 +284,23 @@ export const HeaderNetStatus = (props: Props) => {
   }, [menuItems])
 
   const menuMobile = useMemo(() => {
-    return menuItems.map((item, i) => {
+    return menuItems.map((item) => {
       const { headline, key, subheadline, color } = item
+
       return (
-        <HeaderDrawerItem key={key} className={i === menuItems.length - 1 ? 'last' : 'headerdraweritem'}>
-          <div className="flex items-center space-x-4 px-4">
-            <ConnectionStatus color={color} />
-            <div className="flex flex-col">
-              <Label className="pr-5" color="normal" size="big" weight="bold" textTransform="uppercase" nowrap>
-                {headline}
-              </Label>
-              <Label className="pr-5" size="small" textTransform="lowercase" nowrap>
-                {subheadline}
-              </Label>
-            </div>
+        <div
+          key={key}
+          className="flex items-center space-x-4 px-4 h-[60px] border-b border-solid border-bg2 dark:border-bg2d last:border-none">
+          <ConnectionStatus color={color} />
+          <div className="flex flex-col">
+            <Label className="pr-5" color="normal" size="big" weight="bold" textTransform="uppercase" nowrap>
+              {headline}
+            </Label>
+            <Label className="pr-5" size="small" textTransform="lowercase" nowrap>
+              {subheadline}
+            </Label>
           </div>
-        </HeaderDrawerItem>
+        </div>
       )
     })
   }, [menuItems])
@@ -311,7 +311,7 @@ export const HeaderNetStatus = (props: Props) => {
         <Dropdown
           anchor={{ to: 'bottom', gap: 4, padding: 8 }}
           trigger={
-            <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+            <a onClick={(e) => e.preventDefault()}>
               <div className="flex items-center">
                 <ConnectionStatus color={appOnlineStatusColor} />
                 <DownIcon />
