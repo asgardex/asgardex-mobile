@@ -90,5 +90,5 @@ export const AccountAddressSelector = (props: Props) => {
     )
   )
 
-  return <Dropdown anchor={{ to: 'bottom start', gap: 4, padding: 8 }} trigger={renderSelectedAddress} options={menu} />
+  return <Dropdown trigger={renderSelectedAddress} options={menu} />
 }

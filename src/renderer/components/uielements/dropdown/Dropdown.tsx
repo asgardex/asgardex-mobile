@@ -9,7 +9,12 @@ type Props = {
   anchor?: AnchorProps
 }
 
-export const Dropdown = ({ className, trigger, options, anchor = 'bottom start' }: Props) => {
+export const Dropdown = ({
+  className,
+  trigger,
+  options,
+  anchor = { to: 'bottom start', gap: 4, padding: 8 }
+}: Props) => {
   return (
     <Menu>
       <MenuButton>{trigger}</MenuButton>
