@@ -2463,7 +2463,7 @@ export const Swap = ({
             useLedgerHandler={onClickUseTargetAssetLedger}
             hasLedger={hasTargetAssetLedger}
           />
-          <div className="absolute -top-[32px] left-[calc(50%-30px)] flex w-full flex-col justify-center">
+          <div className="absolute -top-[32px] left-[calc(50%-30px)] flex flex-col justify-center">
             <div className="w-60px h-60px">
               <BaseButton
                 size="small"
