@@ -3,6 +3,7 @@ import { useMemo, useState, useCallback, useRef } from 'react'
 import * as RD from '@devexperts/remote-data-ts'
 import { Network } from '@xchainjs/xchain-client'
 import { Row, Col, Grid } from 'antd'
+import clsx from 'clsx'
 import { function as FP, array as A, option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
@@ -31,6 +32,7 @@ import { MimirRD } from '../../services/thorchain/types'
 import { ChangeKeystoreWalletHandler, KeystoreState, KeystoreWalletsUI } from '../../services/wallet/types'
 import { isLocked } from '../../services/wallet/util'
 import { PricePoolAsset, PricePoolAssets } from '../../views/pools/Pools.types'
+import { Label } from '../uielements/label'
 import * as Styled from './HeaderComponent.styles'
 import { HeaderLock } from './lock/'
 import { HeaderLockMobile } from './lock/HeaderLockMobile'
@@ -189,10 +191,16 @@ export const HeaderComponent = (props: Props): JSX.Element => {
     () =>
       items.map(({ label, key, path, icon: Icon }) => (
         <Link key={key} to={path} onClick={closeMenu}>
-          <Styled.HeaderDrawerItem selected={activeKey === key}>
-            <Icon style={{ marginLeft: '12px', marginRight: '12px' }} />
-            {label}
-          </Styled.HeaderDrawerItem>
+          <div
+            className={clsx(
+              'flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d',
+              activeKey === key ? 'text-turquoise' : 'text-text1 dark:text-text1d'
+            )}>
+            <Icon className="mx-3" />
+            <Label color="dark" size="large" textTransform="uppercase" weight="bold">
+              {label}
+            </Label>
+          </div>
         </Link>
       )),
     [closeMenu, items, activeKey]
@@ -376,14 +384,18 @@ export const HeaderComponent = (props: Props): JSX.Element => {
             visible={menuVisible}
             key="top">
             {links}
-            <Styled.HeaderDrawerItem>{renderHeaderCurrency}</Styled.HeaderDrawerItem>
-            <Styled.HeaderDrawerItem>
+            <div className="flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d">
+              {renderHeaderCurrency}
+            </div>
+            <div className="flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d">
               <HeaderTheme isDesktopView={isDesktopView} />
-            </Styled.HeaderDrawerItem>
-            <Styled.HeaderDrawerItem>
+            </div>
+            <div className="flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d">
               <HeaderLockMobile keystoreState={keystore} onPress={clickLockHandler} />
-            </Styled.HeaderDrawerItem>
-            <Styled.HeaderDrawerItem>{renderHeaderSettings}</Styled.HeaderDrawerItem>
+            </div>
+            <div className="flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d">
+              {renderHeaderSettings}
+            </div>
             {renderHeaderNetStatus}
           </Styled.HeaderDrawer>
         )}
