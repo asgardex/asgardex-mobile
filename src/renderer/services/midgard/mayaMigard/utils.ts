@@ -30,9 +30,10 @@ import {
   AnyAsset,
   Chain
 } from '@xchainjs/xchain-util'
+import { ZEC_DECIMAL, ZECChain } from '@xchainjs/xchain-zcash'
 import { array as A, function as FP, nonEmptyArray as NEA, option as O, predicate as P } from 'fp-ts'
 
-import { AssetBTC, AssetETH, AssetKUJI, AssetDASH, AssetAETH } from '../../../../shared/utils/asset'
+import { AssetBTC, AssetETH, AssetKUJI, AssetDASH, AssetAETH, AssetZEC } from '../../../../shared/utils/asset'
 import { isSupportedChain } from '../../../../shared/utils/chain'
 import { optionFromNullableString } from '../../../../shared/utils/fp'
 import { convertBaseAmountDecimal, isUSDAsset, THORCHAIN_DECIMAL } from '../../../helpers/assetHelper'
@@ -290,6 +291,11 @@ export const getOutboundAssetFeeByChain = (
             asset: AssetAETH
           })
         }
+        case ZECChain:
+          return O.some({
+            amount: baseAmount(value, ZEC_DECIMAL),
+            asset: AssetZEC
+          })
         // 'MAYAChain can be ignored - fees for asset side only
         case MAYAChain:
           return O.none
