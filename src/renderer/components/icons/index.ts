@@ -3,6 +3,7 @@ import dogeIcon from '../../assets/png/asset-doge.png'
 import kujiIcon from '../../assets/png/asset-kuji.png'
 import mayaIconT from '../../assets/png/asset-maya-T.png'
 import mayaIcon from '../../assets/png/asset-maya.png'
+import rujiIcon from '../../assets/png/asset-ruji.png'
 import tgtIcon from '../../assets/png/asset-tgt.png'
 import usdpIcon from '../../assets/png/asset-usdp.png'
 import uskIcon from '../../assets/png/asset-usk.png'
@@ -39,6 +40,7 @@ export {
   dogeIcon,
   ethIcon,
   runeIcon,
+  rujiIcon,
   tcyIcon,
   tgtIcon,
   CurrencyIcon,
