@@ -41,7 +41,8 @@ import {
   isSolAsset,
   isBaseAsset,
   iconUrlInBASEERC20Whitelist,
-  isAdaAsset
+  isAdaAsset,
+  isXrpAsset
 } from '../../../../helpers/assetHelper'
 import {
   isArbChain,
@@ -75,6 +76,7 @@ import {
   solIcon,
   baseIcon,
   tcyIcon,
+  xrpIcon,
   rujiIcon
 } from '../../../icons'
 import * as Styled from './AssetIcon.styles'
@@ -152,6 +154,10 @@ export const AssetIcon = ({ asset, size = 'small', className = '', network }: Pr
     // Dash
     if (isDashAsset(asset)) {
       return dashIcon
+    }
+    // XRP
+    if (isXrpAsset(asset)) {
+      return xrpIcon
     }
     // ZEC
     if (isZecAsset(asset)) {
