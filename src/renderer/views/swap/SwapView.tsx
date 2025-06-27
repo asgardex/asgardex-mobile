@@ -427,7 +427,7 @@ const SuccessRouteView = ({
 
   return (
     <>
-      <div className="relative mb-20px flex items-center justify-between">
+      <div className="relative mb-4 flex items-center justify-between">
         <BackLinkButton className="absolute !m-0" />
         <h2 className="m-0 w-full text-center font-mainSemiBold text-16 uppercase text-turquoise">
           {intl.formatMessage({ id: 'common.swap' })}
@@ -898,7 +898,7 @@ const SuccessTradeRouteView = ({
   const { validateSwapAddress } = useValidateAddress(targetChain)
   return (
     <>
-      <div className="relative mb-20px flex items-center justify-between">
+      <div className="relative mb-4 flex items-center justify-between">
         <BackLinkButton className="absolute !m-0" />
         <h2 className="m-0 w-full text-center font-mainSemiBold text-16 uppercase text-turquoise">
           {intl.formatMessage({ id: 'common.swap' })}

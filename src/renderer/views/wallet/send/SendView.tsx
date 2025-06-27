@@ -180,7 +180,7 @@ export const SendView = (): JSX.Element => {
       () => <></>,
       (selectedAsset) => (
         <div>
-          <div className="flex items-start justify-between">
+          <div className="flex items-center justify-between mb-4">
             <BackLinkButton />
             <RefreshButton
               onClick={reloadBalancesByChain(
