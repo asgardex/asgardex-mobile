@@ -716,10 +716,10 @@ export const WalletSettings = (props: Props): JSX.Element => {
 
   const renderAddAddressForm = useCallback(
     () => (
-      <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div className="flex items-center gap-3 mb-4">
         <Styled.AutoComplete
+          className="w-40 mr-2"
           key={newAddress.chain || 'autocomplete'}
-          style={{ width: 150, marginRight: 8 }}
           placeholder={intl.formatMessage({ id: 'common.chain' })}
           options={enabledChains.map((chain) => ({ value: chain }))}
           value={newAddress.chain}

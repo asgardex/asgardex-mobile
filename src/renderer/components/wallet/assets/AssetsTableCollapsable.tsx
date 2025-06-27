@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { ArrowPathIcon, QrCodeIcon } from '@heroicons/react/24/outline'
@@ -599,7 +599,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
             <Styled.HeaderLabel
               className="flex items-center space-x-2"
               color={RD.isFailure(balancesRD) ? 'error' : 'gray'}>
-              <span style={{ marginLeft: isEvmChain(chain) ? '5px' : '0' }}>{assetsTxt}</span>
+              <span>{assetsTxt}</span>
               {isEvmChain(chain) && (
                 <InfoIcon tooltip={intl.formatMessage({ id: 'wallet.evmToken.tooltip' })} color="primary" />
               )}

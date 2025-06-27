@@ -2477,7 +2477,7 @@ export const Swap = ({
         <div className="mt-1 space-y-1">
           {isFetchingEstimate ? (
             <Spin spinning={isFetchingEstimate} tip="Loading...">
-              <div style={{ minHeight: '100px' }} />
+              <div className="min-h-24" />
             </Spin>
           ) : O.isNone(oQuoteProcotols) ? (
             <></>
