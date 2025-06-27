@@ -2,6 +2,7 @@ import { useMemo, useCallback, useRef } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid'
 import { Network, Tx, TxsPage } from '@xchainjs/xchain-client'
 import { Address, baseToAsset, Chain, formatAssetAmount } from '@xchainjs/xchain-util'
 import { Grid, Col, Row } from 'antd'
@@ -17,6 +18,7 @@ import { CustomFormattedDate } from '../../../poolActionsHistory/PoolActionsHist
 import { ErrorView } from '../../../shared/error'
 import { AddressEllipsis } from '../../../uielements/addressEllipsis'
 import { ReloadButton } from '../../../uielements/button'
+import { Label } from '../../../uielements/label'
 import { Pagination } from '../../../uielements/pagination'
 import * as Styled from './TxsTable.styles'
 
@@ -43,10 +45,10 @@ export const TxsTable = (props: Props): JSX.Element => {
   // and still an option to render ellipsis if a text do not fit in a cell
   const renderTextWithBreak = useCallback(
     (text: string, key: string) => (
-      <Styled.Text key={key}>
+      <Label key={key} color="dark" size="big" textTransform="lowercase">
         {text}
         <br key={`${key}-br`} />
-      </Styled.Text>
+      </Label>
     ),
     []
   )
@@ -54,11 +56,13 @@ export const TxsTable = (props: Props): JSX.Element => {
   const renderAddressWithBreak = useCallback(
     (address: Address, key: string) =>
       walletAddress === address ? (
-        <Styled.OwnText key={key}>{intl.formatMessage({ id: 'common.address.self' })}</Styled.OwnText>
+        <div key={key} className="uppercase">
+          {intl.formatMessage({ id: 'common.address.self' })}
+        </div>
       ) : (
-        <Styled.Text key={key}>
+        <Label key={key} color="dark" size="big" textTransform="lowercase">
           <AddressEllipsis address={address} chain={chain} network={network} />
-        </Styled.Text>
+        </Label>
       ),
     [chain, network, walletAddress, intl]
   )
@@ -66,7 +70,7 @@ export const TxsTable = (props: Props): JSX.Element => {
   const renderTypeColumn = useCallback((_: unknown, { type }: Tx) => {
     switch (type) {
       case 'transfer':
-        return <Styled.TransferIcon />
+        return <ArrowsRightLeftIcon className="w-5 h-5 stroke-text1 dark:stroke-text1d" />
       default:
         return <></>
     }
@@ -111,7 +115,11 @@ export const TxsTable = (props: Props): JSX.Element => {
         const key = `${to}-${index}`
         // tag address as FEE in case of sending a tx to reserve module
         if (to === RESERVE_MODULE_ADDRESS)
-          return <Styled.OwnText key={key}>{intl.formatMessage({ id: 'common.fee' })}</Styled.OwnText>
+          return (
+            <div key={key} className="uppercase">
+              {intl.formatMessage({ id: 'common.fee' })}
+            </div>
+          )
 
         return renderAddressWithBreak(to, key)
       }),
@@ -135,14 +143,14 @@ export const TxsTable = (props: Props): JSX.Element => {
     (_: unknown, { date }: Tx) => (
       <Row gutter={[8, 0]}>
         <Col>
-          <Styled.Text>
+          <Label color="dark" size="big" textTransform="lowercase">
             <CustomFormattedDate date={date} />
-          </Styled.Text>
+          </Label>
         </Col>
         <Col>
-          <Styled.Text>
+          <Label color="dark" size="big" textTransform="lowercase">
             <FormattedTime hour="2-digit" minute="2-digit" second="2-digit" hour12={false} value={date} />
-          </Styled.Text>
+          </Label>
         </Col>
       </Row>
     ),
