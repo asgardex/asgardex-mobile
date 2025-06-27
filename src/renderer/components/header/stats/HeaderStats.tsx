@@ -46,8 +46,6 @@ export const HeaderStats = (props: Props): JSX.Element => {
   const isLargeMobileView = useBreakpoint()?.lg ?? false
   const isXLargeMobileView = useBreakpoint()?.xl ?? false
 
-  console.log('DESK - ', isSmallMobileView, isLargeMobileView, isXLargeMobileView)
-
   const { network } = useNetwork()
 
   const prevRunePriceLabel = useRef<string>(loadingString)
