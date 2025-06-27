@@ -22,8 +22,8 @@ import { useIntl } from 'react-intl'
 import { WalletType } from '../../../shared/wallet/types'
 import { RunePoolTable } from '../../components/runePool/runePoolTable'
 import { RefreshButton } from '../../components/uielements/button'
+import { Label } from '../../components/uielements/label'
 import { AssetsNav } from '../../components/wallet/assets'
-import * as Styled from '../../components/wallet/assets/TotalValue.styles'
 import { DEFAULT_WALLET_TYPE } from '../../const'
 import { useChainContext } from '../../contexts/ChainContext'
 import { useMidgardContext } from '../../contexts/MidgardContext'
@@ -184,14 +184,14 @@ export const RunepoolView = (): JSX.Element => {
 
   const renderRunePoolTotal = useMemo(() => {
     return (
-      <Styled.Container>
-        <Styled.TitleContainer>
-          <Styled.BalanceTitle>{intl.formatMessage({ id: 'wallet.shares.total' })}</Styled.BalanceTitle>
-        </Styled.TitleContainer>
-        <Styled.BalanceLabel className="!font-mainSemiBold">
+      <div className="flex flex-col items-center justify-center bg-bg1 dark:bg-bg1d px-4 pt-4 pb-8">
+        <Label className="!w-auto" align="center" color="input" textTransform="uppercase">
+          {intl.formatMessage({ id: 'wallet.shares.total' })}
+        </Label>
+        <Label className="mt-4 mx-10px text-[28px]" align="center" color="gray">
           {isPrivate ? hiddenString : totalRedeemPrice}
-        </Styled.BalanceLabel>
-      </Styled.Container>
+        </Label>
+      </div>
     )
   }, [intl, isPrivate, totalRedeemPrice])
 
