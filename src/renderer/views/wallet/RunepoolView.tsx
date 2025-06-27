@@ -13,7 +13,6 @@ import {
   assetAmount,
   bnOrZero
 } from '@xchainjs/xchain-util'
-import { Row } from 'antd'
 import BigNumber from 'bignumber.js'
 import { function as FP, nonEmptyArray as NEA, option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
@@ -201,9 +200,9 @@ export const RunepoolView = (): JSX.Element => {
   }, [reloadAllPools, reloadRunePoolProvider])
   return (
     <div>
-      <Row justify="end" style={{ marginBottom: '20px' }}>
+      <div className="flex justify-end mb-5">
         <RefreshButton onClick={refreshHandler} disabled={false} />
-      </Row>
+      </div>
       <AssetsNav />
       {renderRunePoolTotal}
       <RunePoolTable assetDetails={assetDetailsArray} />

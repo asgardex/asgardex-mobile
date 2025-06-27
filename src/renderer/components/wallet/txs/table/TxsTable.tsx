@@ -5,11 +5,12 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid'
 import { Network, Tx, TxsPage } from '@xchainjs/xchain-client'
 import { Address, baseToAsset, Chain, formatAssetAmount } from '@xchainjs/xchain-util'
-import { Grid, Col, Row } from 'antd'
+import { Col, Row } from 'antd'
 import { ColumnsType, ColumnType } from 'antd/lib/table'
 import { function as FP, option as O } from 'fp-ts'
 import { useIntl, FormattedTime } from 'react-intl'
 
+import { useBreakpoint } from '../../../../hooks/useBreakpoint'
 import { TxsPageRD } from '../../../../services/clients'
 import { MAX_ITEMS_PER_PAGE } from '../../../../services/const'
 import { RESERVE_MODULE_ADDRESS } from '../../../../services/thorchain/const'
@@ -35,7 +36,7 @@ type Props = {
 export const TxsTable = (props: Props): JSX.Element => {
   const { txsPageRD, clickTxLinkHandler, changePaginationHandler, network, chain, walletAddress, reloadHandler } = props
   const intl = useIntl()
-  const isDesktopView = Grid.useBreakpoint()?.lg ?? false
+  const isDesktopView = useBreakpoint()?.lg ?? false
 
   // store previous data of Txs to render these while reloading
   const previousTxs = useRef<O.Option<TxsPage>>(O.none)
