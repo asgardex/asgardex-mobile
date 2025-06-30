@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { ArrowPathIcon, QrCodeIcon } from '@heroicons/react/24/outline'
@@ -18,8 +18,7 @@ import {
   isSecuredAsset,
   isSynthAsset
 } from '@xchainjs/xchain-util'
-import { Collapse, Grid, Row } from 'antd'
-import { ScreenMap } from 'antd/lib/_util/responsiveObserve'
+import { Collapse, Row } from 'antd'
 import { ColumnType } from 'antd/lib/table'
 import { array as A, function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
@@ -43,6 +42,7 @@ import { isEvmChain } from '../../../helpers/evmHelper'
 import { getDeepestPool, getPoolPriceValue, getSecondDeepestPool } from '../../../helpers/poolHelper'
 import { getPoolPriceValue as getPoolPriceValueM } from '../../../helpers/poolHelperMaya'
 import { hiddenString, noDataString } from '../../../helpers/stringHelper'
+import { useBreakpoint } from '../../../hooks/useBreakpoint'
 import { calculateMayaValueInUSD, MayaScanPriceRD } from '../../../hooks/useMayascanPrice'
 import * as poolsRoutes from '../../../routes/pools'
 import { WalletBalancesRD } from '../../../services/clients'
@@ -130,7 +130,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
   const { setProtocol } = useApp()
   const intl = useIntl()
   const navigate = useNavigate()
-  const screenMap: ScreenMap = Grid.useBreakpoint()
+  const screenMap = useBreakpoint()
 
   const [showQRModal, setShowQRModal] = useState<O.Option<{ asset: Asset; address: Address }>>(O.none)
 
@@ -599,7 +599,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
             <Styled.HeaderLabel
               className="flex items-center space-x-2"
               color={RD.isFailure(balancesRD) ? 'error' : 'gray'}>
-              <span style={{ marginLeft: isEvmChain(chain) ? '5px' : '0' }}>{assetsTxt}</span>
+              <span>{assetsTxt}</span>
               {isEvmChain(chain) && (
                 <InfoIcon tooltip={intl.formatMessage({ id: 'wallet.evmToken.tooltip' })} color="primary" />
               )}

@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback, useRef } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { Network } from '@xchainjs/xchain-client'
-import { Row, Col, Grid } from 'antd'
+import { Row, Col } from 'antd'
 import clsx from 'clsx'
 import { function as FP, array as A, option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
@@ -15,6 +15,7 @@ import MenuIcon from '../../assets/svg/icon-menu.svg?react'
 import SwapIcon from '../../assets/svg/icon-swap.svg?react'
 import WalletIcon from '../../assets/svg/icon-wallet.svg?react'
 import { useThemeContext } from '../../contexts/ThemeContext'
+import { useBreakpoint } from '../../hooks/useBreakpoint'
 import * as appRoutes from '../../routes/app'
 import * as poolsRoutes from '../../routes/pools'
 import * as walletRoutes from '../../routes/wallet'
@@ -142,7 +143,7 @@ export const HeaderComponent = (props: Props): JSX.Element => {
 
   const [menuVisible, setMenuVisible] = useState(false)
 
-  const isDesktopView = Grid.useBreakpoint()?.lg ?? false
+  const isDesktopView = useBreakpoint()?.lg ?? false
 
   const toggleMenu = useCallback(() => {
     setMenuVisible(!menuVisible)
