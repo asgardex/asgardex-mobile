@@ -475,7 +475,7 @@ export const TradeSwap = ({
     return O.fold(
       () => '',
       (recipientAddress: string) => {
-        const toleranceBps = undefined
+        const toleranceBps = slipTolerance * 100
         const affiliateName = getAsgardexThorname(network)
         const affiliateBps = getAsgardexAffiliateFee(network)
 
@@ -490,7 +490,7 @@ export const TradeSwap = ({
         })
       }
     )(oRecipientAddress)
-  }, [oRecipientAddress, targetAsset, streamingInterval, streamingQuantity, network])
+  }, [oRecipientAddress, slipTolerance, network, targetAsset, streamingInterval, streamingQuantity])
 
   const [swapFeesRD] = useObservableState<SwapFeesRD>(() => {
     return FP.pipe(
@@ -699,7 +699,7 @@ export const TradeSwap = ({
           const affiliateBps = ASGARDEX_ADDRESS === walletAddress ? undefined : applyBps
           const streamingInt = isStreaming ? streamingInterval : 0
           const streaminQuant = isStreaming ? streamingQuantity : 0
-          const toleranceBps = isStreaming || network === Network.Stagenet ? 1000 : slipTolerance * 100 // convert to basis points
+          const toleranceBps = slipTolerance * 100 // convert to basis points
           return {
             fromAsset: fromAsset,
             destinationAsset: destinationAsset,
@@ -2058,121 +2058,74 @@ export const TradeSwap = ({
                     </>
                   )}
                   {/* Slippage */}
-                  {!isStreaming ? (
-                    <>
-                      <div
-                        className={`flex w-full justify-between ${
-                          showDetails ? 'pt-10px' : ''
-                        } font-mainBold text-[14px] ${isCausedSlippage ? 'text-error0 dark:text-error0d' : ''}`}>
-                        <div className="text-text2 dark:text-text2d">
-                          {intl.formatMessage({ id: 'swap.slip.title' })}
-                        </div>
-                        <div className="text-text2 dark:text-text2d">
-                          {formatAssetAmountCurrency({
-                            amount: priceAmountToSwapMax1e8.assetAmount.times(
-                              (swapSlippage > 0 ? swapSlippage : slipTolerance) / 100
-                            ), // Find the value of swap slippage
-                            asset: priceAmountToSwapMax1e8.asset,
-                            decimal: isUSDAsset(priceAmountToSwapMax1e8.asset) ? 2 : 6,
-                            trimZeros: !isUSDAsset(priceAmountToSwapMax1e8.asset)
-                          }) + ` (${swapSlippage.toFixed(2)}%)`}
-                        </div>
+                  <>
+                    <div
+                      className={`flex w-full justify-between ${
+                        showDetails ? 'pt-10px' : ''
+                      } font-mainBold text-[14px] ${isCausedSlippage ? 'text-error0 dark:text-error0d' : ''}`}>
+                      <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'swap.slip.title' })}</div>
+                      <div className="text-text2 dark:text-text2d">
+                        {formatAssetAmountCurrency({
+                          amount: priceAmountToSwapMax1e8.assetAmount.times(
+                            (swapSlippage > 0 ? swapSlippage : slipTolerance) / 100
+                          ), // Find the value of swap slippage
+                          asset: priceAmountToSwapMax1e8.asset,
+                          decimal: isUSDAsset(priceAmountToSwapMax1e8.asset) ? 2 : 6,
+                          trimZeros: !isUSDAsset(priceAmountToSwapMax1e8.asset)
+                        }) + ` (${swapSlippage.toFixed(2)}%)`}
                       </div>
+                    </div>
 
-                      {showDetails && (
-                        <>
-                          <div className="flex w-full justify-between pl-10px text-[12px]">
-                            <div
-                              className={`flex items-center ${
-                                disableSlippage ? 'text-warning0 dark:text-warning0d' : ''
-                              }`}>
-                              {intl.formatMessage({ id: 'swap.slip.tolerance' })}
-                              {disableSlippage ? (
-                                <InfoIcon
-                                  className="ml-[3px] h-[15px] w-[15px] text-inherit"
-                                  tooltip={intl.formatMessage({ id: 'swap.slip.tolerance.ledger-disabled.info' })}
-                                  color="warning"
-                                />
-                              ) : (
-                                <InfoIcon
-                                  className="ml-[3px] h-[15px] w-[15px] text-inherit"
-                                  tooltip={intl.formatMessage({ id: 'swap.slip.tolerance.info' })}
-                                />
-                              )}
-                            </div>
-                            <div>
-                              {/* we don't show slippage tolerance whenever slippage is disabled (e.g. due memo restriction for Ledger BTC) */}
-                              {disableSlippage ? (
-                                <>{noDataString}</>
-                              ) : (
-                                <SelectableSlipTolerance value={slipTolerance} onChange={changeSlipTolerance} />
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex w-full justify-between pl-10px text-[12px]">
-                            <div
-                              className={`flex items-center ${
-                                disableSlippage ? 'text-warning0 dark:text-warning0d' : ''
-                              }`}>
-                              {intl.formatMessage({ id: 'swap.min.result.protected' })}
+                    {showDetails && (
+                      <>
+                        <div className="flex w-full justify-between pl-10px text-[12px]">
+                          <div
+                            className={`flex items-center ${
+                              disableSlippage ? 'text-warning0 dark:text-warning0d' : ''
+                            }`}>
+                            {intl.formatMessage({ id: 'swap.slip.tolerance' })}
+                            {disableSlippage ? (
                               <InfoIcon
                                 className="ml-[3px] h-[15px] w-[15px] text-inherit"
-                                tooltip={
-                                  disableSlippage
-                                    ? intl.formatMessage({ id: 'swap.slip.tolerance.ledger-disabled.info' })
-                                    : intl.formatMessage({ id: 'swap.min.result.info' }, { tolerance: slipTolerance })
-                                }
+                                tooltip={intl.formatMessage({ id: 'swap.slip.tolerance.ledger-disabled.info' })}
+                                color="warning"
                               />
-                            </div>
-                            <div>{swapMinResultLabel}</div>
+                            ) : (
+                              <InfoIcon
+                                className="ml-[3px] h-[15px] w-[15px] text-inherit"
+                                tooltip={intl.formatMessage({ id: 'swap.slip.tolerance.info' })}
+                              />
+                            )}
                           </div>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        className={`flex w-full justify-between ${
-                          showDetails ? 'pt-10px' : ''
-                        } font-mainBold text-[14px] ${isCausedSlippage ? 'text-error0 dark:text-error0d' : ''}`}>
-                        <div className="text-text2 dark:text-text2d">
-                          {intl.formatMessage({ id: 'swap.slip.title' })}
+                          <div>
+                            {/* we don't show slippage tolerance whenever slippage is disabled (e.g. due memo restriction for Ledger BTC) */}
+                            {disableSlippage ? (
+                              <>{noDataString}</>
+                            ) : (
+                              <SelectableSlipTolerance value={slipTolerance} onChange={changeSlipTolerance} />
+                            )}
+                          </div>
                         </div>
-                        <div className="text-text2 dark:text-text2d">
-                          {formatAssetAmountCurrency({
-                            amount: priceAmountToSwapMax1e8.assetAmount.times(swapStreamingSlippage / 100), // Find the value of swap slippage
-                            asset: priceAmountToSwapMax1e8.asset,
-                            decimal: isUSDAsset(priceAmountToSwapMax1e8.asset) ? 2 : 6,
-                            trimZeros: !isUSDAsset(priceAmountToSwapMax1e8.asset)
-                          }) + ` (${swapStreamingSlippage.toFixed(2)}%)`}
+                        <div className="flex w-full justify-between pl-10px text-[12px]">
+                          <div
+                            className={`flex items-center ${
+                              disableSlippage ? 'text-warning0 dark:text-warning0d' : ''
+                            }`}>
+                            {intl.formatMessage({ id: 'swap.min.result.protected' })}
+                            <InfoIcon
+                              className="ml-[3px] h-[15px] w-[15px] text-inherit"
+                              tooltip={
+                                disableSlippage
+                                  ? intl.formatMessage({ id: 'swap.slip.tolerance.ledger-disabled.info' })
+                                  : intl.formatMessage({ id: 'swap.min.result.info' }, { tolerance: slipTolerance })
+                              }
+                            />
+                          </div>
+                          <div>{swapMinResultLabel}</div>
                         </div>
-                      </div>
-                      {showDetails && (
-                        <>
-                          <div className="flex w-full justify-between pl-10px text-[12px]">
-                            <div className="flex items-center text-text2 dark:text-text2d">
-                              {intl.formatMessage({ id: 'swap.streaming.interval' })}
-                              <InfoIcon
-                                className="ml-[3px] h-[15px] w-[15px] text-inherit"
-                                tooltip={intl.formatMessage({ id: 'swap.streaming.interval.info' })}
-                              />
-                            </div>
-                            <div className="text-text2 dark:text-text2d">{streamingInterval}</div>
-                          </div>
-                          <div className="flex w-full justify-between pl-10px text-[12px]">
-                            <div className="flex items-center text-text2 dark:text-text2d">
-                              {intl.formatMessage({ id: 'swap.streaming.quantity' })}
-                              <InfoIcon
-                                className="ml-[3px] h-[15px] w-[15px] text-inherit"
-                                tooltip={intl.formatMessage({ id: 'swap.streaming.quantity.info' })}
-                              />
-                            </div>
-                            <div className="text-text2 dark:text-text2d">{streamingQuantity}</div>
-                          </div>
-                        </>
-                      )}
-                    </>
-                  )}
+                      </>
+                    )}
+                  </>
                   {/* Swap Time Inbound / swap / Outbound */}
                   <>
                     <div
