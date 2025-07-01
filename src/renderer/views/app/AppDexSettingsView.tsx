@@ -64,8 +64,8 @@ export const AppDexSettingsView = (): JSX.Element => {
     getStoredSlipTolerance(`${SLIP_TOLERANCE_KEY}_TRADE`)
   )
 
-  const slipMenu = useCallback((onClick: (slip: SlipTolerance) => void) => {
-    const slipToleranceOptions: SlipTolerance[] = [0.5, 1, 3, 5, 10, 15, 20]
+  const slipMenu = useCallback((onClick: (slip: SlipTolerance) => void, isStreaming: boolean) => {
+    const slipToleranceOptions: SlipTolerance[] = isStreaming ? [1, 3, 5, 10, 15, 20] : [0.5, 1, 3, 5, 10, 15, 20]
     return slipToleranceOptions.map((slip) => (
       <div key={slip} className="flex items-center space-x-4 px-2 py-1 min-w-[102px]" onClick={() => onClick(slip)}>
         <div className="flex flex-col">
@@ -129,7 +129,7 @@ export const AppDexSettingsView = (): JSX.Element => {
               options={slipMenu((slip) => {
                 changeStreamingSlipTolerance(slip)
                 localStorage.setItem(`${SLIP_TOLERANCE_KEY}_STREAMING`, slip.toString())
-              })}
+              }, true)}
             />
           </div>
           <div className="flex items-center justify-between">
@@ -145,7 +145,7 @@ export const AppDexSettingsView = (): JSX.Element => {
               options={slipMenu((slip) => {
                 changeTradeSlipTolerance(slip)
                 localStorage.setItem(`${SLIP_TOLERANCE_KEY}_TRADE`, slip.toString())
-              })}
+              }, false)}
             />
           </div>
         </div>
