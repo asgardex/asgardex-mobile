@@ -82,6 +82,7 @@
     "@ledgerhq/hw-transport-node-hid-singleton": "^6.31.6",
     "@mayaprotocol/zcash-js": "^1.0.7",
     "@reduxjs/toolkit": "^2.3.0",
+    "@tanstack/react-table": "^8.21.3",
     "@xchainjs/xchain-aggregator": "2.0.14",
     "@xchainjs/xchain-arbitrum": "2.0.6",
     "@xchainjs/xchain-avax": "2.0.6",

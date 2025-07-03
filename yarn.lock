@@ -4713,6 +4713,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/react-table@npm:^8.21.3":
+  version: 8.21.3
+  resolution: "@tanstack/react-table@npm:8.21.3"
+  dependencies:
+    "@tanstack/table-core": "npm:8.21.3"
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 10/a32217ebe64d24e71dea6a6742bc288dcabf389657b16805a1ab3f347d3dca8262759c45c604a1f65bd97925d5cbdfb66d1be7637100a12eb5b279bdd420962d
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-virtual@npm:^3.13.9":
   version: 3.13.10
   resolution: "@tanstack/react-virtual@npm:3.13.10"
@@ -4722,6 +4734,13 @@ __metadata:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 10/3585a8ae112669b88268f47e8c78d17ac37c5a1eebccec98691d8254c53d32ee0ed3fc7baabeca7daf6a777e45898c9ca327295cb9c7f8408547d54de9e9e5ce
+  languageName: node
+  linkType: hard
+
+"@tanstack/table-core@npm:8.21.3":
+  version: 8.21.3
+  resolution: "@tanstack/table-core@npm:8.21.3"
+  checksum: 10/aa05e5f80110f0f56d66161e950668ea6ef3e2ea4f3a2ccd5d5980b39b4feea987245b20531aee2c6743e6edd12c0361503413b63090c807f88a61b19bfd04f3
   languageName: node
   linkType: hard
 
@@ -6880,6 +6899,7 @@ __metadata:
     "@storybook/react": "npm:^8.6.12"
     "@storybook/react-vite": "npm:^8.6.12"
     "@storybook/test": "npm:^8.6.12"
+    "@tanstack/react-table": "npm:^8.21.3"
     "@tsconfig/node16": "npm:^16.1.3"
     "@types/electron-devtools-installer": "npm:^2.2.2"
     "@types/eslint-plugin-jsx-a11y": "npm:^6"
