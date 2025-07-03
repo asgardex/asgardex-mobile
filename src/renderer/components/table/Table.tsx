@@ -1,0 +1,114 @@
+import { useState } from 'react'
+import { SignalIcon } from '@heroicons/react/24/outline'
+import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable
+} from '@tanstack/react-table'
+import clsx from 'clsx'
+import { useIntl } from 'react-intl'
+
+import { FixmeType } from '../../types/asgardex'
+import { Label } from '../uielements/label'
+
+type TableProps<T extends object> = {
+  loading?: boolean
+  data: T[]
+  columns: ColumnDef<T, FixmeType>[]
+}
+
+export const Table = <T extends object>({ data, columns, loading = false }: TableProps<T>) => {
+  const [sorting, setSorting] = useState<SortingState>([])
+  const intl = useIntl()
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      sorting
+    }
+  })
+
+  return (
+    <table className="w-full table-auto">
+      <thead>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <th
+                key={header.id}
+                className="h-16 bg-bg1 dark:bg-bg1d border border-solid border-gray0/40 dark:border-gray0d/40"
+                style={{ width: header.getSize(), maxWidth: header.getSize() }}
+                onClick={header.column.getToggleSortingHandler()}>
+                {header.isPlaceholder ? null : (
+                  <div
+                    className={clsx(
+                      'flex items-center justify-center cursor-pointer px-2 lg:px-4 space-x-2',
+                      header.column.columnDef.meta
+                    )}>
+                    {header.column.columnDef.header && (
+                      <Label color="gray" textTransform="uppercase">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </Label>
+                    )}
+                    {header.column.getCanSort() && (
+                      <div className="flex flex-col">
+                        <ChevronUpIcon
+                          className={clsx(
+                            'w-3 h-3',
+                            header.column.getIsSorted() === 'asc' ? 'text-turquoise' : 'text-gray1 dark:text-gray1d'
+                          )}
+                        />
+                        <ChevronDownIcon
+                          className={clsx(
+                            'w-3 h-3',
+                            header.column.getIsSorted() === 'desc' ? 'text-turquoise' : 'text-gray1 dark:text-gray1d'
+                          )}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {loading && (
+          <tr>
+            <td
+              className="border border-solid border-gray0/40 dark:border-gray0d/40"
+              colSpan={table.getAllLeafColumns().length}>
+              <div className="bg-bg1 dark:bg-bg1d min-h-28 w-full flex items-center justify-center space-x-2">
+                <SignalIcon className="w-6 h-6 animate-spin text-turquoise" />
+                <Label className="!w-auto" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.loading' })}
+                </Label>
+              </div>
+            </td>
+          </tr>
+        )}
+        {!loading &&
+          table.getRowModel().rows.map((row) => (
+            <tr key={row.id} className="hover:bg-[#ededed] dark:hover:bg-[#252c33]">
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  key={cell.id}
+                  className="px-2 lg:px-4 bg-bg1 dark:bg-bg1d h-16 border border-solid border-gray0/40 dark:border-gray0d/40 text-center uppercase">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  )
+}
