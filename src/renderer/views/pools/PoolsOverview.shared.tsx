@@ -14,7 +14,7 @@ import { Label } from '../../components/uielements/label'
 import { ordBaseAmount } from '../../helpers/fp/ord'
 import { sortByDepth } from '../../helpers/poolHelper'
 
-const renderWatchColumn = ({
+export const renderWatchColumn = ({
   data: { watched },
   add,
   remove
