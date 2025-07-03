@@ -201,12 +201,14 @@ export const ActivePools = (): JSX.Element => {
         sortingFn: 'basic'
       },
       {
+        accessorKey: 'asset',
         header: intl.formatMessage({ id: 'common.pool' }),
         cell: ({ row }) => (
           <div className="flex items-center w-full">
             <AssetData asset={row.original.asset} network={network} />
           </div>
-        )
+        ),
+        sortingFn: (rowA, rowB) => rowA.original.asset.symbol.localeCompare(rowB.original.asset.symbol)
       },
       {
         accessorKey: 'poolPrice',
@@ -301,8 +303,7 @@ export const ActivePools = (): JSX.Element => {
                     {formatBN(bn(apy), 2)}%
                   </Label>
                 )
-              },
-              size: 120
+              }
             }
           ] as ColumnDef<PoolTableRowData, FixmeType>[])
         : []),
