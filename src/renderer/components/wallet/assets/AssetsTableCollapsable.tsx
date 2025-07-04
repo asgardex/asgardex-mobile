@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import { ArrowPathIcon, QrCodeIcon } from '@heroicons/react/24/outline'
+import { ArrowPathIcon, ChevronRightIcon, QrCodeIcon } from '@heroicons/react/24/outline'
 import { ColumnDef } from '@tanstack/react-table'
 import { Balance, Network } from '@xchainjs/xchain-client'
 import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
@@ -20,6 +20,7 @@ import {
   isSynthAsset
 } from '@xchainjs/xchain-util'
 import { Collapse, Row } from 'antd'
+import clsx from 'clsx'
 import { array as A, function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
@@ -67,7 +68,9 @@ import { Table } from '../../table'
 import { AssetIcon } from '../../uielements/assets/assetIcon'
 import { Action as ActionButtonAction, ActionButton } from '../../uielements/button/ActionButton'
 import { IconButton } from '../../uielements/button/IconButton'
+import { WalletTypeLabel } from '../../uielements/common/Common.styles'
 import { InfoIcon } from '../../uielements/info'
+import { Label } from '../../uielements/label'
 import { QRCodeModal } from '../../uielements/qrCodeModal/QRCodeModal'
 import * as Styled from './AssetsTableCollapsable.styles'
 
@@ -276,7 +279,6 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
 
   const onRowHandler = useCallback(
     (walletBalance: WalletBalance) => {
-      console.log('ROW - ', walletBalance)
       const { price } = getBalance(walletBalance)
       const { asset, walletAccount, walletAddress, walletIndex, walletType, hdMode } = walletBalance
 
@@ -451,17 +453,17 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
           return (
             <div className="flex items-center space-x-4 pl-4">
               <AssetIcon asset={asset} size="normal" network={network} />
-              <div className="flex flex-row items-center">
-                <Styled.Label nowrap>
-                  <Styled.TickerLabel>{asset.ticker}</Styled.TickerLabel>
-                  <Styled.ChainLabelWrapper>
-                    {!isSynthAsset(asset) && !isSecuredAsset(asset) && (
-                      <Styled.ChainLabel>{asset.chain}</Styled.ChainLabel>
-                    )}
-                    {isSynthAsset(asset) && <Styled.AssetSynthLabel>synth</Styled.AssetSynthLabel>}
-                    {isSecuredAsset(asset) && <Styled.AssetSecuredLabel>secured</Styled.AssetSecuredLabel>}
-                  </Styled.ChainLabelWrapper>
-                </Styled.Label>
+              <div className="flex flex-col">
+                <Label className="!text-16 !leading-[18px]" textTransform="uppercase" weight="bold">
+                  {asset.ticker}
+                </Label>
+                {!isSynthAsset(asset) && !isSecuredAsset(asset) && (
+                  <Label color="input" textTransform="uppercase" weight="bold">
+                    {asset.chain}
+                  </Label>
+                )}
+                {isSynthAsset(asset) && <Styled.AssetSynthLabel>synth</Styled.AssetSynthLabel>}
+                {isSecuredAsset(asset) && <Styled.AssetSecuredLabel>secured</Styled.AssetSecuredLabel>}
               </div>
             </div>
           )
@@ -580,26 +582,31 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
       )
 
       const header = (
-        <Styled.HeaderRow className="flex w-full justify-between space-x-4 bg-bg0 py-1 dark:bg-bg0d">
+        <div className="flex w-full justify-between space-x-4 bg-bg0 py-1 dark:bg-bg0d">
           <div className="flex flex-row items-center space-x-2">
-            <Styled.HeaderLabel>{chainToString(chain)}</Styled.HeaderLabel>
+            <Label className="!w-auto" textTransform="uppercase">
+              {chainToString(chain)}
+            </Label>
             {!isKeystoreWallet(walletType) && (
-              <Styled.WalletTypeLabel>{walletTypeToI18n(walletType, intl)}</Styled.WalletTypeLabel>
+              <WalletTypeLabel className="bg-bg2 dark:bg-bg2d border border-solid border-gray0 dark:border-gray0d">
+                {walletTypeToI18n(walletType, intl)}
+              </WalletTypeLabel>
             )}
-            <Styled.HeaderLabel
-              className="flex items-center space-x-2"
-              color={RD.isFailure(balancesRD) ? 'error' : 'gray'}>
+            <Label
+              className="!w-auto flex items-center space-x-2"
+              color={RD.isFailure(balancesRD) ? 'error' : 'gray'}
+              textTransform="uppercase">
               <span>{assetsTxt}</span>
               {isEvmChain(chain) && (
                 <InfoIcon tooltip={intl.formatMessage({ id: 'wallet.evmToken.tooltip' })} color="primary" />
               )}
-            </Styled.HeaderLabel>
+            </Label>
           </div>
           <div className="flex items-center justify-end space-x-2">
-            <Styled.HeaderAddress className="flex items-center text-text0 dark:text-text0d">
+            <Label className="flex items-center text-text0 dark:text-text0d" color="gray" textTransform="none">
               {hidePrivateData ? hiddenString : truncateAddress(walletAddress, chain, network)}
               <Styled.CopyLabel copyable={{ text: walletAddress }} />
-            </Styled.HeaderAddress>
+            </Label>
             <div className="flex items-center justify-end space-x-2 pr-4">
               <IconButton
                 disabled={disableRefresh}
@@ -618,7 +625,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
               </IconButton>
             </div>
           </div>
-        </Styled.HeaderRow>
+        </div>
       )
 
       return (
@@ -707,7 +714,9 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
 
       <Styled.Collapse
         className="space-y-2"
-        expandIcon={({ isActive }) => <Styled.ExpandIcon rotate={isActive ? 90 : 0} />}
+        expandIcon={({ isActive }) => (
+          <ChevronRightIcon className={clsx('w-4 h-4 stroke-turquoise', isActive ? 'rotate-90' : 'rotate-0')} />
+        )}
         defaultActiveKey={openPanelKeys}
         activeKey={openPanelKeys}
         expandIconPosition="end"
