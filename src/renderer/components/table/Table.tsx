@@ -17,11 +17,21 @@ import { Label } from '../uielements/label'
 
 type TableProps<T extends object> = {
   loading?: boolean
+  hideHeader?: boolean
+  hideVerticalBorder?: boolean
   data: T[]
   columns: ColumnDef<T, FixmeType>[]
+  onClickRow?: (row: T) => void
 }
 
-export const Table = <T extends object>({ data, columns, loading = false }: TableProps<T>) => {
+export const Table = <T extends object>({
+  data,
+  columns,
+  loading = false,
+  hideHeader = false,
+  hideVerticalBorder = false,
+  onClickRow
+}: TableProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const intl = useIntl()
 
@@ -37,50 +47,52 @@ export const Table = <T extends object>({ data, columns, loading = false }: Tabl
   })
 
   return (
-    <table className="w-full table-auto">
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th
-                key={header.id}
-                className="h-16 bg-bg1 dark:bg-bg1d border border-solid border-gray0/40 dark:border-gray0d/40"
-                style={{ width: header.getSize(), maxWidth: header.getSize() }}
-                onClick={header.column.getToggleSortingHandler()}>
-                {header.isPlaceholder ? null : (
-                  <div
-                    className={clsx(
-                      'flex items-center justify-center cursor-pointer px-2 lg:px-4 space-x-2',
-                      header.column.columnDef.meta
-                    )}>
-                    {header.column.columnDef.header && (
-                      <Label color="gray" textTransform="uppercase">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </Label>
-                    )}
-                    {header.column.getCanSort() && (
-                      <div className="flex flex-col">
-                        <ChevronUpIcon
-                          className={clsx(
-                            'w-3 h-3',
-                            header.column.getIsSorted() === 'asc' ? 'text-turquoise' : 'text-gray1 dark:text-gray1d'
-                          )}
-                        />
-                        <ChevronDownIcon
-                          className={clsx(
-                            'w-3 h-3',
-                            header.column.getIsSorted() === 'desc' ? 'text-turquoise' : 'text-gray1 dark:text-gray1d'
-                          )}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
+    <table className="w-full table-fixed">
+      {!hideHeader && (
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  className="h-16 bg-bg1 dark:bg-bg1d border border-solid border-gray0/40 dark:border-gray0d/40"
+                  style={header.getSize() ? { width: header.getSize(), maxWidth: header.getSize() } : undefined}
+                  onClick={header.column.getToggleSortingHandler()}>
+                  {header.isPlaceholder ? null : (
+                    <div
+                      className={clsx(
+                        'flex items-center justify-center cursor-pointer px-2 lg:px-4 space-x-2',
+                        header.column.columnDef.meta
+                      )}>
+                      {header.column.columnDef.header && (
+                        <Label color="gray" textTransform="uppercase">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </Label>
+                      )}
+                      {header.column.getCanSort() && (
+                        <div className="flex flex-col">
+                          <ChevronUpIcon
+                            className={clsx(
+                              'w-3 h-3',
+                              header.column.getIsSorted() === 'asc' ? 'text-turquoise' : 'text-gray1 dark:text-gray1d'
+                            )}
+                          />
+                          <ChevronDownIcon
+                            className={clsx(
+                              'w-3 h-3',
+                              header.column.getIsSorted() === 'desc' ? 'text-turquoise' : 'text-gray1 dark:text-gray1d'
+                            )}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+      )}
       <tbody>
         {loading && (
           <tr>
@@ -98,11 +110,21 @@ export const Table = <T extends object>({ data, columns, loading = false }: Tabl
         )}
         {!loading &&
           table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="hover:bg-[#ededed] dark:hover:bg-[#252c33]">
+            <tr
+              key={row.id}
+              className="cursor-pointer hover:bg-[#ededed] dark:hover:bg-[#252c33]"
+              onClick={(e) => {
+                e.stopPropagation()
+                if (onClickRow) onClickRow(row.original)
+              }}>
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className="px-2 lg:px-4 bg-bg1 dark:bg-bg1d h-16 border border-solid border-gray0/40 dark:border-gray0d/40 text-center uppercase">
+                  className={clsx(
+                    hideVerticalBorder ? 'border-x-0 border-y' : 'border',
+                    'px-2 lg:px-4 bg-bg1 dark:bg-bg1d h-16 border border-solid border-gray0/40 dark:border-gray0d/40 text-center uppercase'
+                  )}
+                  style={cell.column.getSize() ? { width: cell.column.getSize() } : undefined}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
