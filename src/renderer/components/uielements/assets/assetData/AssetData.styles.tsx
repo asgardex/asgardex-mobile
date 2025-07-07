@@ -27,7 +27,7 @@ export const TickerLabel = styled(UILabel).attrs({
   weight: 'bold'
 })`
   height: 18px;
-  padding: 0px 16px 0px 11px;
+  padding: 0px 16px 0px 8px;
   font-size: 16px;
   line-height: 18px;
 `
