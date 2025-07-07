@@ -205,7 +205,9 @@ export const RunepoolView = (): JSX.Element => {
       </div>
       <AssetsNav />
       {renderRunePoolTotal}
-      <RunePoolTable assetDetails={assetDetailsArray} />
+      <div className="bg-bg1 dark:bg-bg1d p-2">
+        <RunePoolTable assetDetails={assetDetailsArray} />
+      </div>
     </div>
   )
 }
