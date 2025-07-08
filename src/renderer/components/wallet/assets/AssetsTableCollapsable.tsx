@@ -487,7 +487,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
         accessorKey: 'action',
         header: '',
         cell: ({ row }) => renderActionColumn(row.original),
-        size: isXLargeView ? 120 : 250
+        size: isXLargeView ? 150 : 250
       }
     ],
     [getBalance, hidePrivateData, intl, isXLargeView, network, renderActionColumn]
