@@ -1,11 +1,14 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { SignalIcon } from '@heroicons/react/24/outline'
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
 import {
   ColumnDef,
+  ExpandedState,
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getSortedRowModel,
+  OnChangeFn,
   SortingState,
   useReactTable
 } from '@tanstack/react-table'
@@ -19,6 +22,11 @@ type TableProps<T extends object> = {
   loading?: boolean
   hideHeader?: boolean
   hideVerticalBorder?: boolean
+  expandable?: boolean
+  expanded?: ExpandedState
+  setExpanded?: OnChangeFn<ExpandedState>
+  getRowId?: (row: T, index: number) => string
+  renderSubRow?: (row: T) => React.ReactNode
   data: T[]
   columns: ColumnDef<T, FixmeType>[]
   onClickRow?: (row: T) => void
@@ -27,9 +35,15 @@ type TableProps<T extends object> = {
 export const Table = <T extends object>({
   data,
   columns,
+  expandable = false,
+  expanded,
+  setExpanded,
+  getRowId,
+  renderSubRow,
   loading = false,
   hideHeader = false,
   hideVerticalBorder = false,
+
   onClickRow
 }: TableProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -41,9 +55,21 @@ export const Table = <T extends object>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    state: {
-      sorting
-    }
+    ...(expandable
+      ? {
+          state: {
+            expanded,
+            sorting
+          },
+          onExpandedChange: setExpanded,
+          getRowId,
+          getExpandedRowModel: getExpandedRowModel()
+        }
+      : {
+          state: {
+            sorting
+          }
+        })
   })
 
   return (
@@ -61,7 +87,7 @@ export const Table = <T extends object>({
                   {header.isPlaceholder ? null : (
                     <div
                       className={clsx(
-                        'flex items-center justify-center cursor-pointer px-2 lg:px-4 space-x-2',
+                        'flex items-center justify-center cursor-pointer px-2 space-x-2',
                         header.column.columnDef.meta
                       )}>
                       {header.column.columnDef.header && (
@@ -110,25 +136,33 @@ export const Table = <T extends object>({
         )}
         {!loading &&
           table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              className="cursor-pointer hover:bg-[#ededed] dark:hover:bg-[#252c33]"
-              onClick={(e) => {
-                e.stopPropagation()
-                if (onClickRow) onClickRow(row.original)
-              }}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className={clsx(
-                    hideVerticalBorder ? 'border-x-0 border-y' : 'border',
-                    'px-2 lg:px-4 bg-bg1 dark:bg-bg1d h-16 border border-solid border-gray0/40 dark:border-gray0d/40 text-center uppercase'
-                  )}
-                  style={cell.column.getSize() ? { width: cell.column.getSize() } : undefined}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
+            <Fragment key={row.id}>
+              <tr
+                className="cursor-pointer hover:bg-[#ededed] dark:hover:bg-[#252c33]"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (onClickRow) onClickRow(row.original)
+                }}>
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className={clsx(
+                      hideVerticalBorder ? 'border-x-0 border-y' : 'border',
+                      'px-2 bg-bg1 dark:bg-bg1d h-16 border border-solid border-gray0/40 dark:border-gray0d/40 text-center uppercase'
+                    )}
+                    style={cell.column.getSize() ? { width: cell.column.getSize() } : undefined}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+              {row.getIsExpanded() && renderSubRow && (
+                <tr>
+                  <td className="border border-solid border-gray0/40 dark:border-gray0d/40" colSpan={columns.length}>
+                    {renderSubRow(row.original)}
+                  </td>
+                </tr>
+              )}
+            </Fragment>
           ))}
       </tbody>
     </table>
