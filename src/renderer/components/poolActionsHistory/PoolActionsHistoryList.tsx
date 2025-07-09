@@ -46,7 +46,7 @@ export const PoolActionsHistoryList = ({
       const date = H.renderDate(action.date)
 
       const titleExtra = (
-        <>
+        <div className="flex items-center">
           {date}
           {FP.pipe(
             action,
@@ -58,7 +58,7 @@ export const PoolActionsHistoryList = ({
             )),
             O.getOrElse(() => <></>)
           )}
-        </>
+        </div>
       )
 
       return (
@@ -70,7 +70,7 @@ export const PoolActionsHistoryList = ({
               incomes={H.getValues(action.in)}
               outgos={H.getValues(action.out)}
               network={network}
-              isDesktopView={isDesktopView}
+              isDesktopView
             />
           </Styled.Card>
         </Styled.ListItem>
