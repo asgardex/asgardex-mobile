@@ -1,4 +1,4 @@
-import * as Transport from '@ledgerhq/hw-transport'
+import type Transport from '@ledgerhq/hw-transport'
 import { ARBChain } from '@xchainjs/xchain-arbitrum'
 import { AVAXChain } from '@xchainjs/xchain-avax'
 import { BASEChain } from '@xchainjs/xchain-base'
@@ -37,7 +37,7 @@ const TransportNodeHidSingleton = require('@ledgerhq/hw-transport-node-hid-singl
 
 const handleEVMChain = (
   chain: Chain,
-  transport: Transport.default,
+  transport: Transport,
   network: Network,
   walletAccount: number,
   walletIndex: number,
@@ -58,7 +58,7 @@ const handleEVMChain = (
 const chainAddressFunctions: Record<
   Chain,
   (
-    transport: Transport.default,
+    transport: Transport,
     network: Network,
     walletAccount: number,
     walletIndex: number,
