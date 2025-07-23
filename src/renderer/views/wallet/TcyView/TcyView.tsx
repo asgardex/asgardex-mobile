@@ -36,7 +36,7 @@ import { Slider } from '../../../components/uielements/slider'
 import { AssetsNav } from '../../../components/wallet/assets'
 import { getInteractiveDescription } from '../../../components/wallet/txs/interact/Interact.helpers'
 import { validateTxAmountInput } from '../../../components/wallet/txs/TxForm.util'
-import { ZERO_BASE_AMOUNT } from '../../../const'
+import { DEFAULT_WALLET_TYPE, ZERO_BASE_AMOUNT } from '../../../const'
 import { useChainContext } from '../../../contexts/ChainContext'
 import { useMidgardContext } from '../../../contexts/MidgardContext'
 import { useThorchainContext } from '../../../contexts/ThorchainContext'
@@ -872,13 +872,20 @@ export const TcyView = () => {
                     <AssetData
                       asset={AssetTCY}
                       network={network}
-                      walletType={useLedger ? tcyBalance[ledgerIndex].walletType : tcyBalance[keystoreIndex].walletType}
+                      walletType={
+                        useLedger
+                          ? tcyBalance[ledgerIndex].walletType
+                          : tcyBalance.length > 0
+                          ? tcyBalance[keystoreIndex].walletType
+                          : DEFAULT_WALLET_TYPE
+                      }
                     />
                   </div>
                   <FlatButton
                     className="my-30px min-w-[200px]"
                     size="large"
                     color="primary"
+                    disabled={isLoading || tcyBalance.length === 0}
                     onClick={() => (useLedger ? setShowLedgerModal(true) : setPasswordModalVisible(true))}>
                     {intl.formatMessage({ id: 'tcy.stake' })}
                   </FlatButton>
@@ -930,7 +937,13 @@ export const TcyView = () => {
                     <AssetData
                       asset={AssetTCY}
                       network={network}
-                      walletType={useLedger ? tcyBalance[ledgerIndex].walletType : tcyBalance[keystoreIndex].walletType}
+                      walletType={
+                        useLedger
+                          ? tcyBalance[ledgerIndex].walletType
+                          : tcyBalance.length > 0
+                          ? tcyBalance[keystoreIndex].walletType
+                          : DEFAULT_WALLET_TYPE
+                      }
                     />
                   </div>
                   {renderSlider}
@@ -938,6 +951,7 @@ export const TcyView = () => {
                     className="my-30px min-w-[200px]"
                     size="large"
                     color="primary"
+                    disabled={isLoading || !RD.isSuccess(tcyStakePosRD)}
                     onClick={() => (useLedger ? setShowLedgerModal(true) : setPasswordModalVisible(true))}>
                     {intl.formatMessage({ id: 'tcy.unstake' })}
                   </FlatButton>
@@ -980,6 +994,14 @@ export const TcyView = () => {
                   <InformationCircleIcon className="cursor-pointer text-turquoise w-4 h-4" />
                 </Tooltip>
               </div>
+
+              {/* Warning Message */}
+              {!hasTcyOnLedger && !hasTcyOnKeystore ? (
+                <div className="text-gray1 dark:text-gray1d p-2 rounded">
+                  {intl.formatMessage({ id: 'deposit.add.error.nobalances' })}
+                </div>
+              ) : null}
+
               <span className="text-turquoise">
                 <div className="mb-0 font-main text-[14px] leading-none text-gray1 dark:text-gray1d">
                   {hasTcyOnLedger && (
