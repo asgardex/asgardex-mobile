@@ -1082,14 +1082,12 @@ export const Swap = ({
     return FP.pipe(
       oQuoteProtocol,
       O.chain((txDetails) => {
-        return swapResultAmountMax.baseAmount.gt(zeroTargetBaseAmountMax1e8) &&
-          txDetails.protocol !== 'Chainflip' &&
-          !quoteOnly
+        return swapResultAmountMax.baseAmount.gt(zeroTargetBaseAmountMax1e8)
           ? O.some(Utils.getSwapLimit1e8(txDetails.memo))
           : O.none
       })
     )
-  }, [oQuoteProtocol, swapResultAmountMax.baseAmount, zeroTargetBaseAmountMax1e8, quoteOnly])
+  }, [oQuoteProtocol, swapResultAmountMax.baseAmount, zeroTargetBaseAmountMax1e8])
 
   const oSwapParams: O.Option<SwapTxParams> = useMemo(() => {
     const oPoolAddress: O.Option<PoolAddress> = FP.pipe(
@@ -1361,8 +1359,8 @@ export const Swap = ({
         (quoteSwap) => quoteSwap.errors
       )
     )
-    return errors.some((error) => error.includes('router has not been approved to spend this amount'))
-  }, [oQuoteProtocol])
+    return !quoteOnly && errors.some((error) => error.includes('router has not been approved to spend this amount'))
+  }, [oQuoteProtocol, quoteOnly])
 
   const reloadApproveFeesHandler = useCallback(() => {
     FP.pipe(oApproveParams, O.map(reloadApproveFee))
@@ -1604,6 +1602,7 @@ export const Swap = ({
   const quoteOnlyButton = () => {
     setQuoteOnly(!quoteOnly)
     setAmountToSwapMax1e8(initialAmountToSwapMax1e8)
+    setQuoteProtocol(O.none)
   }
 
   const labelMin = useMemo(
