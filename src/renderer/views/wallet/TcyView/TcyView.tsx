@@ -900,7 +900,7 @@ export const TcyView = () => {
                       <CheckButton
                         size="medium"
                         color="neutral"
-                        className={clsx('rounded-lg bg-gray0 !px-2 py-1 dark:bg-gray0d')}
+                        className="rounded-lg bg-gray0 !px-2 py-1 dark:bg-gray0d"
                         checked={useLedger}
                         clickHandler={() => setUseLedger(!useLedger)}>
                         {intl.formatMessage({ id: 'ledger.title' })}
@@ -944,18 +944,6 @@ export const TcyView = () => {
                             })
                           : 0}
                       </p>
-                      {hasTcyOnLedger && (
-                        <div className="flex w-full justify-end">
-                          <CheckButton
-                            size="medium"
-                            color="neutral"
-                            className={clsx('rounded-b-lg bg-gray0 py-5px dark:bg-gray0d')}
-                            checked={useLedger}
-                            clickHandler={() => setUseLedger(!useLedger)}>
-                            {intl.formatMessage({ id: 'ledger.title' })}
-                          </CheckButton>
-                        </div>
-                      )}
                     </div>
                     <div className="flex items-center space-x-2">
                       <AssetIcon asset={AssetTCY} network={network} />
@@ -976,6 +964,18 @@ export const TcyView = () => {
                       </div>
                     </div>
                   </div>
+                  {hasTcyOnLedger && (
+                    <div className="flex w-full justify-end">
+                      <CheckButton
+                        size="medium"
+                        color="neutral"
+                        className="rounded-lg bg-gray0 !px-2 py-1 dark:bg-gray0d"
+                        checked={useLedger}
+                        clickHandler={() => setUseLedger(!useLedger)}>
+                        {intl.formatMessage({ id: 'ledger.title' })}
+                      </CheckButton>
+                    </div>
+                  )}
                   {renderSlider}
                   <FlatButton
                     className="my-30px min-w-[200px]"
