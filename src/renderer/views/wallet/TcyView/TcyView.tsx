@@ -1013,8 +1013,7 @@ export const TcyView = () => {
                       trimZeros: true,
                       decimal: 2
                     })
-                  : 0}{' '}
-                TCY
+                  : '0 TCY'}
               </Label>
             </div>
 
@@ -1044,8 +1043,7 @@ export const TcyView = () => {
                             trimZeros: true,
                             decimal: 2
                           })
-                        : 0}{' '}
-                      TCY
+                        : '0 TCY'}
                     </Label>
                     <WalletTypeLabel>{walletTypeToI18n(tcyBalance[ledgerIndex].walletType, intl)}</WalletTypeLabel>
                   </div>
@@ -1060,8 +1058,7 @@ export const TcyView = () => {
                             trimZeros: true,
                             decimal: 2
                           })
-                        : 0}{' '}
-                      TCY
+                        : '0 TCY'}
                     </Label>
                     <WalletTypeLabel>{walletTypeToI18n(tcyBalance[keystoreIndex].walletType, intl)}</WalletTypeLabel>
                   </div>
