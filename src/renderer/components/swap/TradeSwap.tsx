@@ -1242,22 +1242,13 @@ export const TradeSwap = ({
       setIsStreaming(streamingIntervalValue !== 0)
     }
 
-    const streamingIntervalValue = calculateStreamingInterval(slider)
-    const tipFormatter =
-      slider === 0 ? 'Caution tx could be refunded' : `${streamingIntervalValue} Block interval between swaps`
-
     return (
       <div>
         <Slider
           key={'Streamer Interval slider'}
           value={slider}
           onChange={(value) => setInterval(value)} // Correctly handle value
-          included={false}
           max={100}
-          tooltipVisible
-          tipFormatter={() => `${tipFormatter} `}
-          // Ensure labels are valid or remove them if unsupported by the slider library
-          tooltipPlacement={'top'}
         />
       </div>
     )
@@ -1270,18 +1261,10 @@ export const TradeSwap = ({
       setStreamingQuantity(quantity)
     }
     let quantityLabel: string[]
-    let toolTip: string
     if (streamingInterval === 0) {
       quantityLabel = [`Limit swap`]
-      toolTip = `No Streaming interval set`
     } else {
       quantityLabel = quantity === 0 ? [`Auto swap count`] : [`Sub swaps`, `${quantity}`]
-      toolTip =
-        quantity === 0
-          ? `Thornode decides the swap count`
-          : quantity === maxStreamingQuantity
-          ? `Max sub swaps ${maxStreamingQuantity}`
-          : ''
     }
     return (
       <div>
@@ -1290,11 +1273,7 @@ export const TradeSwap = ({
           value={quantity}
           onChange={setQuantity}
           max={maxStreamingQuantity}
-          tooltipVisible
-          tipFormatter={() => `${toolTip}`}
-          included={false}
           labels={quantityLabel}
-          tooltipPlacement={'top'}
         />
       </div>
     )
