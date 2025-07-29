@@ -1625,8 +1625,6 @@ export const Swap = ({
       setStreamingQuantity(0)
       setIsStreaming(streamingIntervalValue !== 0)
     }
-    const tipFormatter =
-      slider === 0 ? 'Caution tx could be refunded' : `${streamingIntervalValue} Block interval between swaps`
 
     return (
       <div>
@@ -1634,12 +1632,8 @@ export const Swap = ({
           key={'Streamer Interval slider'}
           value={slider}
           onChange={setInterval}
-          included={false}
           max={100}
-          tooltipVisible
-          tipFormatter={() => `${tipFormatter} `}
           labels={[`${labelMin}`, `${streamingInterval}`]}
-          tooltipPlacement={'top'}
         />
       </div>
     )
@@ -1652,26 +1646,14 @@ export const Swap = ({
       setStreamingQuantity(quantity)
     }
     let quantityLabel: string[]
-    let toolTip: string
     if (streamingInterval === 0) {
       quantityLabel = [`Limit swap`]
-      toolTip = `No Streaming interval set`
     } else {
       quantityLabel = quantity === 0 ? [`Auto swap count`] : [`Sub swaps`, `${quantity}`]
-      toolTip = `Protocol decides the swap count`
     }
     return (
       <div>
-        <Slider
-          key={'Streamer Quantity slider'}
-          value={quantity}
-          onChange={setQuantity}
-          tooltipVisible
-          tipFormatter={() => `${toolTip}`}
-          included={false}
-          labels={quantityLabel}
-          tooltipPlacement={'top'}
-        />
+        <Slider key={'Streamer Quantity slider'} value={quantity} onChange={setQuantity} labels={quantityLabel} />
       </div>
     )
   }, [streamingQuantity, streamingInterval])
