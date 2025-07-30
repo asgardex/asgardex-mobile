@@ -26,6 +26,7 @@ import {
   TradeAsset
 } from '@xchainjs/xchain-util'
 import { Row } from 'antd'
+import clsx from 'clsx'
 import { array as A, function as FP, nonEmptyArray as NEA, option as O } from 'fp-ts'
 import debounce from 'lodash/debounce'
 import { useObservableState } from 'observable-hooks'
@@ -114,7 +115,8 @@ const ErrorLabel: React.FC<{
   children: React.ReactNode
   className?: string
 }> = ({ children, className }): JSX.Element => (
-  <div className={`mb-[14px] text-center font-main uppercase text-error0 dark:text-error0d ${className} text-[12px]`}>
+  <div
+    className={clsx('mb-[14px] text-center font-main uppercase text-error0 dark:text-error0d text-[12px]', className)}>
     {children}
   </div>
 )
@@ -1971,7 +1973,7 @@ export const TradeSwap = ({
               </div>
             }>
             {!isLocked(keystore) ? (
-              <div className={`w-full px-4 pb-4 font-main text-[12px] uppercase dark:border-gray1d`}>
+              <div className="w-full px-4 pb-4 font-main text-[12px] uppercase dark:border-gray1d">
                 <BaseButton
                   className="group flex w-full justify-between !p-0 font-mainSemiBold text-[16px] text-text2 hover:text-turquoise dark:text-text2d dark:hover:text-turquoise"
                   onClick={() => setShowDetails((current) => !current)}>
@@ -2028,9 +2030,11 @@ export const TradeSwap = ({
                   {/* Slippage */}
                   <>
                     <div
-                      className={`flex w-full justify-between ${
-                        showDetails ? 'pt-10px' : ''
-                      } font-mainBold text-[14px] ${isCausedSlippage ? 'text-error0 dark:text-error0d' : ''}`}>
+                      className={clsx(
+                        'flex w-full justify-between font-mainBold text-[14px]',
+                        showDetails ? 'pt-10px' : '',
+                        isCausedSlippage ? 'text-error0 dark:text-error0d' : ''
+                      )}>
                       <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'swap.slip.title' })}</div>
                       <div className="text-text2 dark:text-text2d">
                         {formatAssetAmountCurrency({
@@ -2047,7 +2051,7 @@ export const TradeSwap = ({
                     {showDetails && (
                       <>
                         <div className="flex w-full justify-between pl-10px text-[12px]">
-                          <div className={`flex items-center`}>
+                          <div className="flex items-center">
                             {intl.formatMessage({ id: 'swap.slip.tolerance' })}
                             <InfoIcon
                               className="ml-[3px] h-[15px] w-[15px] text-inherit"
@@ -2059,7 +2063,7 @@ export const TradeSwap = ({
                           </div>
                         </div>
                         <div className="flex w-full justify-between pl-10px text-[12px]">
-                          <div className={`flex items-center`}>
+                          <div className="flex items-center">
                             {intl.formatMessage({ id: 'swap.min.result.protected' })}
                             <InfoIcon
                               className="ml-[3px] h-[15px] w-[15px] text-inherit"
@@ -2074,9 +2078,10 @@ export const TradeSwap = ({
                   {/* Swap Time Inbound / swap / Outbound */}
                   <>
                     <div
-                      className={`flex w-full justify-between ${
+                      className={clsx(
+                        'flex w-full justify-between font-mainBold text-[14px]',
                         showDetails ? 'pt-10px' : ''
-                      } font-mainBold text-[14px]`}>
+                      )}>
                       <div className="text-text2 dark:text-text2d">
                         {intl.formatMessage({ id: 'common.time.title' })}
                       </div>
@@ -2202,7 +2207,7 @@ export const TradeSwap = ({
                 <div className="w-full px-4 pb-4 font-main text-[12px] uppercase dark:border-gray1d">
                   <div className="font-main text-[14px] text-gray2 dark:text-gray2d">
                     {/* Rate */}
-                    <div className={`flex w-full justify-between font-mainBold text-[14px]`}>
+                    <div className="flex w-full justify-between font-mainBold text-[14px]">
                       <BaseButton
                         className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d"
                         onClick={() =>
@@ -2254,9 +2259,10 @@ export const TradeSwap = ({
                     {/* Transaction time */}
                     <>
                       <div
-                        className={`flex w-full justify-between ${
+                        className={clsx(
+                          'flex w-full justify-between font-mainBold text-[14px]',
                           showDetails ? 'pt-10px' : ''
-                        } font-mainBold text-[14px]`}>
+                        )}>
                         <div className="text-text2 dark:text-text2d">
                           {intl.formatMessage({ id: 'common.time.title' })}
                         </div>
@@ -2265,7 +2271,7 @@ export const TradeSwap = ({
                         </div>
                       </div>
                       <div className="flex w-full justify-between pl-10px text-[12px]">
-                        <div className={`flex items-center text-text2 dark:text-text2d`}>
+                        <div className="flex items-center text-text2 dark:text-text2d">
                           {intl.formatMessage({ id: 'common.inbound.time' })}
                         </div>
                         <div className="text-text2 dark:text-text2d">
@@ -2273,7 +2279,7 @@ export const TradeSwap = ({
                         </div>
                       </div>
                       <div className="flex w-full justify-between pl-10px text-[12px]">
-                        <div className={`flex items-center text-text2 dark:text-text2d`}>
+                        <div className="flex items-center text-text2 dark:text-text2d">
                           {intl.formatMessage({ id: 'common.streaming.time' })}
                         </div>
                         <div className="text-text2 dark:text-text2d">
@@ -2281,7 +2287,7 @@ export const TradeSwap = ({
                         </div>
                       </div>
                       <div className="flex w-full justify-between pl-10px text-[12px]">
-                        <div className={`flex items-center text-text2 dark:text-text2d`}>
+                        <div className="flex items-center text-text2 dark:text-text2d">
                           {intl.formatMessage({ id: 'common.outbound.time' })}
                         </div>
                         <div className="text-text2 dark:text-text2d">
@@ -2289,7 +2295,7 @@ export const TradeSwap = ({
                         </div>
                       </div>
                       <div className="flex w-full justify-between pl-10px text-[12px]">
-                        <div className={`flex items-center text-text2 dark:text-text2d`}>
+                        <div className="flex items-center text-text2 dark:text-text2d">
                           {intl.formatMessage(
                             { id: 'common.confirmation.time' },
                             { chain: targetAsset.type === AssetType.SYNTH ? THORChain : targetAsset.chain }

@@ -2325,7 +2325,7 @@ export const Swap = ({
 
     return (
       <>
-        <div className={`flex w-full justify-between ${showDetails ? 'pt-10px' : ''} font-mainBold text-[14px]`}>
+        <div className={clsx('flex w-full justify-between font-mainBold text-[14px]', { 'pt-10px': showDetails })}>
           <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'common.time.title' })}</div>
           <div className="text-text2 dark:text-text2d">{formatSwapTime(transactionTime)}</div>
         </div>
@@ -2550,9 +2550,11 @@ export const Swap = ({
                   {/* Slippage */}
                   <>
                     <div
-                      className={`flex w-full justify-between ${
-                        showDetails ? 'pt-10px' : ''
-                      } font-mainBold text-[14px] ${isCausedSlippage ? 'text-error0 dark:text-error0d' : ''}`}>
+                      className={clsx(
+                        'flex w-full justify-between font-mainBold text-[14px]',
+                        { 'pt-10px': showDetails },
+                        { 'text-error0 dark:text-error0d': isCausedSlippage }
+                      )}>
                       <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'swap.slip.title' })}</div>
                       <div className="text-text2 dark:text-text2d">
                         {formatAssetAmountCurrency({
@@ -2569,7 +2571,7 @@ export const Swap = ({
                     {showDetails && (
                       <>
                         <div className="flex w-full justify-between pl-10px text-[12px]">
-                          <div className={`flex items-center `}>
+                          <div className="flex items-center">
                             {intl.formatMessage({ id: 'swap.slip.tolerance' })}
 
                             <InfoIcon
@@ -2582,7 +2584,7 @@ export const Swap = ({
                           </div>
                         </div>
                         <div className="flex w-full justify-between pl-10px text-[12px]">
-                          <div className={`flex items-center `}>
+                          <div className="flex items-center">
                             {intl.formatMessage({ id: 'swap.min.result.protected' })}
                             <InfoIcon
                               className="ml-[3px] h-[15px] w-[15px] text-inherit"
@@ -2677,7 +2679,7 @@ export const Swap = ({
                   {/* balances */}
                   {showDetails && (
                     <>
-                      <div className={`w-full pt-10px text-[14px]`}>
+                      <div className="w-full pt-10px text-[14px]">
                         <BaseButton
                           disabled={walletBalancesLoading}
                           className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d"
@@ -2721,7 +2723,7 @@ export const Swap = ({
               <div className="w-full px-4 pb-4 font-main text-[12px] uppercase dark:border-gray1d">
                 <div className="font-main text-[14px] text-gray2 dark:text-gray2d">
                   {/* Rate */}
-                  <div className={`flex w-full justify-between font-mainBold text-[14px]`}>
+                  <div className="flex w-full justify-between font-mainBold text-[14px]">
                     <BaseButton
                       className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d"
                       onClick={() =>
