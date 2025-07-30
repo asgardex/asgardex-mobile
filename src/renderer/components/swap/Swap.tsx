@@ -2325,7 +2325,7 @@ export const Swap = ({
 
     return (
       <>
-        <div className={clsx('flex w-full justify-between font-mainBold text-[14px]', showDetails ? 'pt-10px' : '')}>
+        <div className={clsx('flex w-full justify-between font-mainBold text-[14px]', { 'pt-10px': showDetails })}>
           <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'common.time.title' })}</div>
           <div className="text-text2 dark:text-text2d">{formatSwapTime(transactionTime)}</div>
         </div>
@@ -2552,8 +2552,8 @@ export const Swap = ({
                     <div
                       className={clsx(
                         'flex w-full justify-between font-mainBold text-[14px]',
-                        showDetails ? 'pt-10px' : '',
-                        isCausedSlippage ? 'text-error0 dark:text-error0d' : ''
+                        { 'pt-10px': showDetails },
+                        { 'text-error0 dark:text-error0d': isCausedSlippage }
                       )}>
                       <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'swap.slip.title' })}</div>
                       <div className="text-text2 dark:text-text2d">

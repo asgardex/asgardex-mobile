@@ -37,7 +37,7 @@ export const BorderButton = (props: Props): JSX.Element => {
         textColor[color],
         borderColor[color],
         !disabled ? `hover:${dropShadow[size]}` : '',
-        { 'bg-tranparent': transparent },
+        { 'bg-transparent': transparent },
         { 'hover:border-opacity-85': !disabled },
         { 'hover:scale-105': !disabled },
         className
