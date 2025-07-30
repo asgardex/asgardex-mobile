@@ -21,7 +21,7 @@ export const HeaderSettings = (props: Props): JSX.Element => {
         </Label>
       )}
       <Tooltip title={intl.formatMessage({ id: 'common.settings' })}>
-        <Cog8ToothIcon className="ease h-[24px] w-[24px] text-text2 group-hover:rotate-180 dark:text-text2d" />
+        <Cog8ToothIcon className="cursor-pointer ease h-[24px] w-[24px] text-text2 group-hover:rotate-180 dark:text-text2d" />
       </Tooltip>
     </div>
   )
