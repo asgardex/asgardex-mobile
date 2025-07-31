@@ -85,7 +85,11 @@ export const HeaderLock = (props: Props): JSX.Element => {
               <div
                 className="ease rounded-full border-4 border-bg0 bg-bg0 dark:border-gray0d dark:bg-gray0d"
                 onClick={() => onPress()}>
-                {isLocked ? <LockIcon className="h-[28px] w-[28px]" /> : <UnlockIcon className="h-[28px] w-[28px]" />}
+                {isLocked ? (
+                  <LockIcon className="cursor-pointer h-[28px] w-[28px]" />
+                ) : (
+                  <UnlockIcon className="cursor-pointer h-[28px] w-[28px]" />
+                )}
               </div>
               <Listbox value={selectedWallet} onChange={changeWalletHandler}>
                 <div className="relative">

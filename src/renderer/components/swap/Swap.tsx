@@ -32,7 +32,6 @@ import {
   isSecuredAsset,
   SecuredAsset
 } from '@xchainjs/xchain-util'
-import { Row } from 'antd'
 import clsx from 'clsx'
 import { array as A, function as FP, nonEmptyArray as NEA, option as O } from 'fp-ts'
 import { debounce } from 'lodash'
@@ -2369,7 +2368,7 @@ export const Swap = ({
     <div className="my-20px flex w-full max-w-[500px] flex-col justify-between">
       <div>
         {/* Note: Input value is shown as AssetAmount */}
-        <Row>
+        <div className="flex flex-wrap">
           <div className="mb-3 w-full flex items-center justify-between">
             <FlatButton
               className="rounded-full hover:shadow-full group-hover:rotate-180 dark:hover:shadow-fulld"
@@ -2398,7 +2397,7 @@ export const Swap = ({
           ) : (
             <></>
           )}
-        </Row>
+        </div>
         <AssetInput
           className="w-full"
           title={intl.formatMessage({ id: 'swap.input' })}
