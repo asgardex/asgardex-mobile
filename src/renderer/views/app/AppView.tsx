@@ -24,7 +24,6 @@ import { useTheme } from '../../hooks/useTheme'
 import { noWallet } from '../../routes/wallet'
 import { base as createWalletBase } from '../../routes/wallet/create'
 import { base as importWalletBase } from '../../routes/wallet/imports'
-import { View } from '../View'
 import { ViewRoutes } from '../ViewRoutes'
 import HaltedChainsWarning from './AppHaltedChains'
 import MidgardErrorAlert from './AppMidgardError'
@@ -164,7 +163,7 @@ export const AppView = (): JSX.Element => {
             {isDesktopView && (
               <Sidebar commitHash={envOrDefault($COMMIT_HASH, '')} isDev={$IS_DEV} publicIP={publicIP} />
             )}
-            <View>
+            <div className="flex flex-col w-full overflow-auto p-4 lg:w-[calc(100vw-240px)] lg:py-8 lg:px-12">
               <AppUpdateView />
               <Header />
               <MidgardErrorAlert apiEndpoint={apiEndpointThor} reloadHandler={reloadApiEndpoint} />
@@ -184,7 +183,7 @@ export const AppView = (): JSX.Element => {
                 />
               </div>
               <ViewRoutes />
-            </View>
+            </div>
           </Styled.AppLayout>
         </div>
       )}
