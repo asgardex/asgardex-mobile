@@ -7,10 +7,7 @@ import { Label } from '../uielements/label'
 
 type Props = {
   className?: string
-  defaultTabIndex?: number
   tabs: { label: React.ReactNode; key: string; content: React.ReactNode; disabled?: boolean }[]
-  centerContent?: boolean
-  activeTabKey?: string
   hasPadding?: boolean
   defaultIndex?: number
   onChange?: (tabKey: number) => void
