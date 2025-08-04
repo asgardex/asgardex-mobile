@@ -59,9 +59,7 @@ export const ManageButton = ({
 
   return (
     <ButtonComponent onClick={onClick} {...otherProps}>
-      <BanknotesIcon
-        className={clsx('h-[16px] w-[16px] text-inherit lg:h-20px lg:w-20px', { 'mr-[8px]': isTextView })}
-      />
+      <BanknotesIcon className={clsx('h-4 w-4 text-inherit lg:h-5 lg:w-5', { 'mr-2': isTextView })} />
       <span className={isTextView ? 'mr-10px' : 'hidden'}>{intl.formatMessage({ id: 'common.manage' })}</span>
     </ButtonComponent>
   )
