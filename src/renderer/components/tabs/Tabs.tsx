@@ -24,7 +24,7 @@ export const Tabs = ({
     <TabGroup defaultIndex={defaultIndex} onChange={onChange}>
       <TabList className={clsx('flex gap-4 border-b border-solid border-gray0 dark:border-gray0d', className)}>
         {tabs.map(({ key, label, disabled }) => (
-          <Tab key={key} as={Fragment}>
+          <Tab key={key} as={Fragment} disabled={disabled}>
             {({ hover, selected }) => (
               <div className={clsx('flex flex-col outline-none', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}>
                 <Label
