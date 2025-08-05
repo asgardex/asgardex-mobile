@@ -18,8 +18,8 @@ import { AssetWithDecimal } from '../../types/asgardex'
 import { Props as SymDepositContentProps } from '../../views/deposit/add/SymDepositView.types'
 import { ShareViewProps } from '../../views/deposit/share/ShareView'
 import { Props as WidthdrawContentProps } from '../../views/deposit/withdraw/WithdrawDepositView.types'
+import { Tabs } from '../tabs'
 import { AddWallet } from '../wallet/add'
-import * as Styled from './Deposit.styles'
 
 type TabKey = 'deposit-sym' | 'deposit-saver' | 'withdraw-sym' | 'withdraw-saver-asset'
 
@@ -164,8 +164,8 @@ export const Deposit = (props: Props) => {
       <div className="flex flex-wrap w-full min-h-full">
         {walletIsImported && !walletIsLocked ? (
           <div className="w-full grid grid-cols-8 gap-4">
-            <div className="col-span-8 xl:col-span-5">
-              <Styled.Tabs destroyInactiveTabPane tabs={tabs} centered defaultActiveKey="deposit-sym" />
+            <div className="col-span-8 xl:col-span-5 bg-bg1 dark:bg-bg1d">
+              <Tabs className="flex items-center justify-center" tabs={tabs} hasPadding defaultIndex={0} />
             </div>
             <div className="col-span-8 xl:col-span-3">
               <div className="flex justify-center bg-bg0 dark:bg-bg0d min-h-[300px] xl:min-h-full">
