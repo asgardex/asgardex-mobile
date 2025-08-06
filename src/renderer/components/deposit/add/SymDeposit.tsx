@@ -15,7 +15,6 @@ import {
   formatAssetAmountCurrency,
   TokenAsset
 } from '@xchainjs/xchain-util'
-import { Spin } from 'antd'
 import BigNumber from 'bignumber.js'
 import { array as A, function as FP, nonEmptyArray as NEA, option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
@@ -27,6 +26,7 @@ import { AssetBTC, AssetCacao, AssetRuneNative } from '../../../../shared/utils/
 import { chainToString, isChainOfMaya, isChainOfThor } from '../../../../shared/utils/chain'
 import { isLedgerWallet } from '../../../../shared/utils/guard'
 import { WalletType } from '../../../../shared/wallet/types'
+import { Spin } from '../../../components/uielements/spin'
 import { ZERO_ASSET_AMOUNT, ZERO_BASE_AMOUNT } from '../../../const'
 import {
   convertBaseAmountDecimal,
@@ -1783,11 +1783,7 @@ export const SymDeposit = (props: Props) => {
       RD.fold(
         () => <></>,
         () => render(prevPendingAssets.current, prevPendingAssets.current, true),
-        () => (
-          <>
-            <Spin />
-          </>
-        ),
+        () => <Spin />,
         (pendingAssets) => {
           prevPendingAssets.current = pendingAssets
           const missingAssets: AssetsWithAmount1e8 = pendingAssets.map((assetWB): AssetWithAmount1e8 => {

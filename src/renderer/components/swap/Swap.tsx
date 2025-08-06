@@ -101,7 +101,7 @@ import { AssetWithAmount } from '../../types/asgardex'
 import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../modal/confirmation'
 import { ProviderModal } from '../modal/provider'
 import { SwapAssets } from '../modal/tx/extra'
-import { LoadingView, Spin } from '../shared/loading'
+import { LoadingView } from '../shared/loading'
 import { AssetInput } from '../uielements/assets/assetInput'
 import { BaseButton, FlatButton } from '../uielements/button'
 import { Collapse } from '../uielements/collapse'
@@ -110,6 +110,7 @@ import { Fees, UIFeesRD } from '../uielements/fees'
 import { InfoIcon } from '../uielements/info'
 import { CopyLabel } from '../uielements/label'
 import { Slider } from '../uielements/slider'
+import { Spin } from '../uielements/spin'
 import { EditableAddress } from './EditableAddress'
 import { SelectableSlipTolerance } from './SelectableSlipTolerance'
 import { ModalState, RateDirection, SwapProps } from './Swap.types'
@@ -2449,14 +2450,16 @@ export const Swap = ({
         </div>
         <div className="mt-1 space-y-1">
           {isFetchingEstimate ? (
-            <Spin spinning={isFetchingEstimate} tip="Loading...">
+            <Spin
+              className="border border-gray0 dark:border-gray0d rounded-lg"
+              spinning={isFetchingEstimate}
+              tip="Loading...">
               <div className="min-h-24" />
             </Spin>
           ) : O.isNone(oQuoteProcotols) ? (
             <></>
           ) : (
             <SwapRoute
-              isLoading={isFetchingEstimate}
               targetAsset={targetAsset.ticker}
               quote={oQuoteProtocol}
               quotes={oQuoteProcotols}
@@ -2821,7 +2824,7 @@ export const Swap = ({
         </div>
       </div>
 
-      {(walletBalancesLoading || isFetchingEstimate) && (
+      {(!walletBalancesLoading || isFetchingEstimate) && (
         <LoadingView
           className="w-full pt-10px"
           label={

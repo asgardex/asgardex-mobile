@@ -20,12 +20,12 @@ import { isChainOfMaya, isChainOfThor } from '../../../shared/utils/chain'
 import { isLedgerWallet, isWalletType } from '../../../shared/utils/guard'
 import { WalletType } from '../../../shared/wallet/types'
 import { ErrorView } from '../../components/shared/error/'
-import { Spin } from '../../components/shared/loading'
 import { Swap, TradeSwap } from '../../components/swap'
 import { SLIP_TOLERANCE_KEY } from '../../components/swap/SelectableSlipTolerance'
 import { SwapAsset } from '../../components/swap/Swap.types'
 import * as Utils from '../../components/swap/Swap.utils'
 import { BackLinkButton, Button, RefreshButton } from '../../components/uielements/button'
+import { Spin } from '../../components/uielements/spin'
 import { DEFAULT_WALLET_TYPE } from '../../const'
 import { useAppContext } from '../../contexts/AppContext'
 import { useChainContext } from '../../contexts/ChainContext'
@@ -506,11 +506,9 @@ const SuccessRouteView = ({
             RD.fold(
               () => <></>,
               () => (
-                <>
-                  <Spin tip="Loading...">
-                    <div className="min-h-24" />
-                  </Spin>
-                </>
+                <Spin tip="Loading...">
+                  <div className="min-h-24" />
+                </Spin>
               ),
               renderError,
               ([
@@ -620,11 +618,9 @@ const SuccessRouteView = ({
             RD.fold(
               () => <></>,
               () => (
-                <>
-                  <Spin tip="Loading...">
-                    <div className="min-h-24" />
-                  </Spin>
-                </>
+                <Spin tip="Loading...">
+                  <div className="min-h-24" />
+                </Spin>
               ),
               renderError,
               ([
