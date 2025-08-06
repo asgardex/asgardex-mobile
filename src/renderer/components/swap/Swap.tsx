@@ -101,7 +101,6 @@ import { AssetWithAmount } from '../../types/asgardex'
 import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../modal/confirmation'
 import { ProviderModal } from '../modal/provider'
 import { SwapAssets } from '../modal/tx/extra'
-import { LoadingView } from '../shared/loading'
 import { AssetInput } from '../uielements/assets/assetInput'
 import { BaseButton, FlatButton } from '../uielements/button'
 import { Collapse } from '../uielements/collapse'
@@ -210,7 +209,7 @@ export const Swap = ({
   // Default Streaming quantity set to 0, network computes the optimum
   const [streamingQuantity, setStreamingQuantity] = useState<number>(0)
   // Slide use state
-  const [slider, setSlider] = useState<number>(26)
+  const [slider, setSlider] = useState(26)
 
   const [oTargetWalletType, setTargetWalletType] = useState<O.Option<WalletType>>(oInitialTargetWalletType)
 
@@ -2824,10 +2823,10 @@ export const Swap = ({
         </div>
       </div>
 
-      {(!walletBalancesLoading || isFetchingEstimate) && (
-        <LoadingView
+      {(walletBalancesLoading || isFetchingEstimate) && (
+        <Spin
           className="w-full pt-10px"
-          label={
+          tip={
             isFetchingEstimate
               ? intl.formatMessage({ id: 'common.loading' })
               : walletBalancesLoading

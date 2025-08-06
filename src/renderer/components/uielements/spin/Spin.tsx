@@ -14,7 +14,7 @@ export const Spin = ({ className, spinning = true, tip, children }: SpinProps) =
         {spinning && (
           <>
             <div className="animate-spin rounded-full border-t-2 border-b-2 border-turquoise h-6 w-6" />
-            {tip && <p className="text-sm text-gray-600">{tip}</p>}
+            {tip && <p className="text-sm text-text0 dark:text-text0d">{tip}</p>}
           </>
         )}
       </div>
