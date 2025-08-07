@@ -505,11 +505,7 @@ const SuccessRouteView = ({
             ),
             RD.fold(
               () => <></>,
-              () => (
-                <Spin tip="Loading...">
-                  <div className="min-h-24" />
-                </Spin>
-              ),
+              () => <Spin className="min-h-24" tip={intl.formatMessage({ id: 'common.loading' })} />,
               renderError,
               ([
                 { assetDetails: thorAssetDetails, poolsData: thorPoolsData, poolDetails: thorPoolDetails },
@@ -617,11 +613,7 @@ const SuccessRouteView = ({
             sequenceTRD(poolsStateThorRD, sourceAssetRD, targetAssetRD, pendingPoolsStateRD, chainFlipAssets),
             RD.fold(
               () => <></>,
-              () => (
-                <Spin tip="Loading...">
-                  <div className="min-h-24" />
-                </Spin>
-              ),
+              () => <Spin className="min-h-24" tip={intl.formatMessage({ id: 'common.loading' })} />,
               renderError,
               ([
                 { assetDetails: thorAssetDetails, poolsData: thorPoolsData, poolDetails: thorPoolDetails },

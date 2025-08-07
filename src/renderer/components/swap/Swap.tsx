@@ -2450,11 +2450,10 @@ export const Swap = ({
         <div className="mt-1 space-y-1">
           {isFetchingEstimate ? (
             <Spin
-              className="border border-gray0 dark:border-gray0d rounded-lg"
+              className="min-h-24 border border-gray0 dark:border-gray0d rounded-lg"
               spinning={isFetchingEstimate}
-              tip="Loading...">
-              <div className="min-h-24" />
-            </Spin>
+              tip={intl.formatMessage({ id: 'common.loading' })}
+            />
           ) : O.isNone(oQuoteProcotols) ? (
             <></>
           ) : (
