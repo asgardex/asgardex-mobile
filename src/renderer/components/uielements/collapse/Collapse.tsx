@@ -14,7 +14,7 @@ export const Collapse = ({ className, header, children, isOpen, onToggle }: Prop
   return (
     <Disclosure
       as="div"
-      defaultOpen={isOpen}
+      {...(isOpen !== undefined ? { defaultOpen: isOpen } : {})}
       className={clsx('flex flex-col rounded-lg border border-solid border-gray0 dark:border-gray0d', className)}>
       {({ open }) => (
         <>
