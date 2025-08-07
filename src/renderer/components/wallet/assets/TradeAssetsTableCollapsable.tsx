@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import { ArrowPathIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { ColumnDef } from '@tanstack/react-table'
 import { Network } from '@xchainjs/xchain-client'
 import { PoolDetails } from '@xchainjs/xchain-midgard'
@@ -15,7 +15,6 @@ import {
   Chain,
   formatAssetAmountCurrency
 } from '@xchainjs/xchain-util'
-import clsx from 'clsx'
 import { function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -47,18 +46,16 @@ import { FixmeType } from '../../../types/asgardex'
 import { ConfirmationModal, LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../../modal/confirmation'
 import { TxModal } from '../../modal/tx'
 import { DepositAsset } from '../../modal/tx/extra/DepositAsset'
-import { Collapse as StyledCollapse } from '../../settings/Common.styles'
 import { Table } from '../../table'
 import { AssetIcon } from '../../uielements/assets/assetIcon'
 import { AssetLabel } from '../../uielements/assets/assetLabel'
 import { ViewTxButton } from '../../uielements/button'
 import { Action as ActionButtonAction, ActionButton } from '../../uielements/button/ActionButton'
 import { IconButton } from '../../uielements/button/IconButton'
+import { Collapse } from '../../uielements/collapse'
 import { WalletTypeLabel } from '../../uielements/common/Common.styles'
 import { Label } from '../../uielements/label'
 import * as Styled from './AssetsTableCollapsable.styles'
-
-const { Panel } = StyledCollapse
 
 type Props = {
   chainBalances: Rx.Observable<ChainBalances>
@@ -605,17 +602,18 @@ export const TradeAssetsTableCollapsable = ({
     [renderAssetsTable]
   )
 
-  const renderPanel = useCallback(() => {
-    // If tradeAccountBalances is empty, don't render anything
-    if (!tradeAccountBalances || tradeAccountBalances.length === 0) {
-      return null
-    }
+  // Group the balances by wallet type
+  const keystoreBalances = useMemo(
+    () => tradeAccountBalances.filter((account) => account.walletType === WalletType.Keystore),
+    [tradeAccountBalances]
+  )
+  const ledgerBalances = useMemo(
+    () => tradeAccountBalances.filter((account) => account.walletType === WalletType.Ledger),
+    [tradeAccountBalances]
+  )
 
-    // Group the balances by wallet type
-    const keystoreBalances = tradeAccountBalances.filter((account) => account.walletType === WalletType.Keystore)
-    const ledgerBalances = tradeAccountBalances.filter((account) => account.walletType === WalletType.Ledger)
-
-    const renderHeader = (walletType: WalletType, firstAccount: O.Option<TradeAccount>) => {
+  const renderHeader = useCallback(
+    (walletType: WalletType, firstAccount: O.Option<TradeAccount>) => {
       const walletAddress = FP.pipe(
         firstAccount,
         O.map((account) => truncateAddress(account.owner, THORChain, network)),
@@ -655,40 +653,47 @@ export const TradeAssetsTableCollapsable = ({
           </div>
         </div>
       )
-    }
+    },
+    [disableRefresh, handleRefreshClick, hidePrivateData, intl, keystoreBalances.length, ledgerBalances.length, network]
+  )
 
-    return (
-      <>
-        {keystoreBalances.length > 0 && (
-          <Panel header={renderHeader(WalletType.Keystore, O.fromNullable(keystoreBalances[0]))} key="keystore">
-            {renderGroupedBalances({ balances: keystoreBalances })}
-          </Panel>
-        )}
+  const renderPanel = useCallback(
+    (type: WalletType) => {
+      // If tradeAccountBalances is empty, don't render anything
+      if (!tradeAccountBalances || tradeAccountBalances.length === 0) {
+        return null
+      }
 
-        {ledgerBalances.length > 0 && (
-          <Panel header={renderHeader(WalletType.Ledger, O.fromNullable(ledgerBalances[0]))} key="ledger">
-            {renderGroupedBalances({ balances: ledgerBalances })}
-          </Panel>
-        )}
-      </>
-    )
-  }, [tradeAccountBalances, renderGroupedBalances, intl, hidePrivateData, disableRefresh, network, handleRefreshClick])
+      if (type === WalletType.Keystore) return renderGroupedBalances({ balances: keystoreBalances })
+      if (type === WalletType.Ledger) return renderGroupedBalances({ balances: ledgerBalances })
+
+      return null
+    },
+    [tradeAccountBalances, renderGroupedBalances, keystoreBalances, ledgerBalances]
+  )
 
   return (
     <div className="mt-2">
-      <Styled.Collapse
-        expandIcon={({ isActive }) => (
-          <ChevronRightIcon className={clsx('w-4 h-4 stroke-turquoise', isActive ? 'rotate-90' : 'rotate-0')} />
-        )}
-        defaultActiveKey={['keystore']}
-        expandIconPosition="end"
-        ghost>
-        {renderPanel()}
-        {renderWithdrawConfirm}
-        {renderPasswordConfirmationModal}
-        {renderWithdrawTxModal}
-        {renderLedgerConfirmationModal}
-      </Styled.Collapse>
+      {keystoreBalances.length > 0 && (
+        <Collapse
+          className="bg-bg0 dark:bg-bg0d"
+          isOpen
+          header={renderHeader(WalletType.Keystore, O.fromNullable(keystoreBalances[0]))}>
+          {renderPanel(WalletType.Keystore)}
+        </Collapse>
+      )}
+      {ledgerBalances.length > 0 && (
+        <Collapse
+          className="bg-bg0 dark:bg-bg0d"
+          isOpen
+          header={renderHeader(WalletType.Ledger, O.fromNullable(ledgerBalances[0]))}>
+          {renderPanel(WalletType.Ledger)}
+        </Collapse>
+      )}
+      {renderWithdrawConfirm}
+      {renderPasswordConfirmationModal}
+      {renderWithdrawTxModal}
+      {renderLedgerConfirmationModal}
     </div>
   )
 }
