@@ -138,7 +138,12 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
 
   const [openPanelKeys, setOpenPanelKeys] = useState<number[]>(() => {
     const cachedKeys = localStorage.getItem('openPanelKeys')
-    return cachedKeys ? JSON.parse(cachedKeys).map((item: string) => parseInt(item)) : []
+    try {
+      return cachedKeys ? JSON.parse(cachedKeys).map((item: string) => parseInt(item)) : []
+    } catch (error) {
+      console.error('Failed to parse openPanelKeys from localStorage:', error)
+      return []
+    }
   })
 
   const [collapseAll, setCollapseAll] = useState<boolean>(false)
@@ -670,7 +675,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
         <div
           className="my-2 cursor-pointer rounded-md border border-solid border-turquoise bg-bg0 py-1 px-2 text-14 text-text2 dark:border-gray1d dark:bg-bg0d dark:text-text2d"
           onClick={handleCollapseAll}>
-          {collapseAll
+          {openPanelKeys.length === 0
             ? intl.formatMessage({ id: 'common.expandAll' })
             : intl.formatMessage({ id: 'common.collapseAll' })}
         </div>

@@ -685,7 +685,6 @@ export const TradeAssetsTableCollapsable = ({
       {ledgerBalances.length > 0 && (
         <Collapse
           className="bg-bg0 dark:bg-bg0d"
-          isOpen
           header={renderHeader(WalletType.Ledger, O.fromNullable(ledgerBalances[0]))}>
           {renderPanel(WalletType.Ledger)}
         </Collapse>
