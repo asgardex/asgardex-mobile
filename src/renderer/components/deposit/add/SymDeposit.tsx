@@ -2343,12 +2343,11 @@ export const SymDeposit = (props: Props) => {
                       O.getOrElse(() => emptyString),
                       (memo) => (
                         <CopyLabel
-                          className="whitespace-nowrap pl-0 uppercase text-gray2 dark:text-gray2d"
+                          className="whitespace-nowrap text-gray2 dark:text-gray2d"
                           label={intl.formatMessage(
                             { id: 'common.transaction.short.rune' },
                             { dex: protocolAsset.chain }
                           )}
-                          key="memo-copy"
                           textToCopy={memo}
                         />
                       )
@@ -2376,9 +2375,8 @@ export const SymDeposit = (props: Props) => {
                       O.getOrElse(() => emptyString),
                       (memo) => (
                         <CopyLabel
-                          className="whitespace-nowrap pl-0 uppercase text-gray2 dark:text-gray2d"
+                          className="whitespace-nowrap text-gray2 dark:text-gray2d"
                           label={intl.formatMessage({ id: 'common.transaction.short.asset' })}
-                          key="memo-copy"
                           textToCopy={memo}
                         />
                       )
