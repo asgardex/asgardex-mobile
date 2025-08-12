@@ -14,7 +14,6 @@ import {
   formatAssetAmount,
   formatAssetAmountCurrency
 } from '@xchainjs/xchain-util'
-import { Col } from 'antd'
 import BigNumber from 'bignumber.js'
 import { function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
@@ -592,18 +591,12 @@ export const Withdraw = ({
         </div>
       </Styled.AssetOutputContainer>
 
-      <Styled.FeesRow gutter={{ lg: 32 }}>
-        <Col>
-          <Styled.FeeRow>
-            <Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} />
-          </Styled.FeeRow>
-          <Styled.FeeErrorRow>
-            <Col>
-              <>{renderInboundChainFeeError}</>
-            </Col>
-          </Styled.FeeErrorRow>
-        </Col>
-      </Styled.FeesRow>
+      <div className="flex flex-col space-y-4 pb-4 xl:pb-0">
+        <div className="flex items-center">
+          <Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} />
+        </div>
+        <div className="flex items-center">{renderInboundChainFeeError}</div>
+      </div>
       <div className="flex flex-col items-center justify-center py-20px">
         <FlatButton className="mb-30px min-w-[200px] px-20px" size="large" onClick={onSubmit} disabled={disabledSubmit}>
           {intl.formatMessage({ id: 'common.withdraw' })}
