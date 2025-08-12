@@ -15,7 +15,7 @@ export const Alert = ({ className, type, title, description, action }: Props): J
   const activeCount = [title, description, action].filter(Boolean).length
 
   return (
-    <div className={clsx('bg-bg0 dark:bg-bg0d', className)}>
+    <div className={clsx('bg-bg0 dark:bg-bg0d rounded-lg', className)}>
       <div
         className={clsx(
           'flex space-x-2 border border-solid p-2 rounded-lg',
