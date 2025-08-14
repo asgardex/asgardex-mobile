@@ -5,7 +5,7 @@ import { ArrowPathIcon, QrCodeIcon } from '@heroicons/react/24/outline'
 import { ColumnDef } from '@tanstack/react-table'
 import { Balance, Network } from '@xchainjs/xchain-client'
 import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
-import { AssetRuneNative, isTCYAsset, THORChain } from '@xchainjs/xchain-thorchain'
+import { isTCYAsset, THORChain } from '@xchainjs/xchain-thorchain'
 import {
   Address,
   AnyAsset,
@@ -342,7 +342,8 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
       }
       if (isRuneNativeAsset(asset) && deepestPoolAsset) {
         actions.push(
-          createAction('common.trade', () =>
+          createAction('common.trade', () => {
+            setProtocol(THORChain)
             navigate(
               poolsRoutes.swap.path({
                 source: assetToString(asset),
@@ -351,7 +352,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
                 targetWalletType: DEFAULT_WALLET_TYPE
               })
             )
-          )
+          })
         )
       }
 
@@ -369,6 +370,21 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
           )
         )
       }
+      if (isCacaoAsset(asset) && deepestPoolAsset) {
+        actions.push(
+          createAction('common.trade', () => {
+            setProtocol(MAYAChain)
+            navigate(
+              poolsRoutes.swap.path({
+                source: assetToString(asset),
+                target: `${deepestPoolAsset.chain}~${deepestPoolAsset.symbol}`,
+                sourceWalletType: walletType,
+                targetWalletType: DEFAULT_WALLET_TYPE
+              })
+            )
+          })
+        )
+      }
 
       if (isSynthAsset(asset) && deepestPoolAsset) {
         actions.push(
@@ -376,7 +392,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
             navigate(
               poolsRoutes.swap.path({
                 source: `${asset.chain}/${asset.symbol}`,
-                target: assetToString(isChainOfMaya(asset.chain) ? AssetCacao : AssetRuneNative),
+                target: assetToString(AssetCacao),
                 sourceWalletType: walletType,
                 targetWalletType: DEFAULT_WALLET_TYPE
               })
