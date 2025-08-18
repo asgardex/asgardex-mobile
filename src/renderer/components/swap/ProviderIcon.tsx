@@ -12,9 +12,11 @@ type Props = {
 
 export const ProviderIcon = ({ className, protocol }: Props) => {
   const providerIcon = useMemo(() => {
-    if (protocol === 'Thorchain') return ThorchainIcon
-    if (protocol === 'Mayachain') return MayaIcon
-    if (protocol === 'Chainflip') return ChainflipIcon
+    const uppercasedProtocol = protocol.toUpperCase()
+
+    if (uppercasedProtocol === 'THORCHAIN' || uppercasedProtocol === 'THOR') return ThorchainIcon
+    if (uppercasedProtocol === 'MAYACHAIN' || uppercasedProtocol === 'MAYA') return MayaIcon
+    if (uppercasedProtocol === 'CHAINFLIP') return ChainflipIcon
 
     return null
   }, [protocol])

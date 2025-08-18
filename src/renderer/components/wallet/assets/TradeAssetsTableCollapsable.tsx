@@ -531,7 +531,7 @@ export const TradeAssetsTableCollapsable = ({
         cell: ({ row }) => {
           const { asset, protocol } = row.original
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 mx-2">
               <AssetIcon asset={asset} size="normal" network={network} />
               <div className="flex flex-col">
                 <Label className="!text-16 !leading-[18px]" textTransform="uppercase" weight="bold">
@@ -760,7 +760,7 @@ export const TradeAssetsTableCollapsable = ({
   }, [tradeAccountBalances, renderGroupedBalances, intl, hidePrivateData, disableRefresh, network, refreshHandler])
 
   return (
-    <div className="mt-2">
+    <div className="mt-2 space-y-2">
       {renderContent()}
       {renderWithdrawConfirm}
       {renderPasswordConfirmationModal}
