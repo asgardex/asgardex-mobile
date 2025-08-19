@@ -148,8 +148,8 @@ export const Table = <T extends object>({
                     key={cell.id}
                     className={clsx(
                       hideVerticalBorder ? 'border-x-0 border-y' : 'border',
-                      'px-2 bg-bg1 dark:bg-bg1d h-16 border border-solid border-gray0/40 dark:border-gray0d/40 text-center uppercase',
-                      'group-last:first:rounded-bl-lg group-last:last:rounded-br-lg group-last:border-b-none'
+                      'px-2 bg-bg1 dark:bg-bg1d h-16 border-solid border-gray0/40 dark:border-gray0d/40 text-center uppercase',
+                      'group-last:first:rounded-bl-lg group-last:last:rounded-br-lg group-last:border-b-0'
                     )}
                     style={cell.column.getSize() ? { width: cell.column.getSize() } : undefined}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
