@@ -22,7 +22,7 @@ export const ProviderIcon = ({ className, protocol }: Props) => {
   }, [protocol])
 
   return providerIcon ? (
-    <img className={clsx('h-6 w-6 rounded-full', className)} src={providerIcon} alt="provider" />
+    <img className={clsx('h-6 w-6 rounded-full', className)} src={providerIcon} alt={`${protocol} provider`} />
   ) : (
     <></>
   )
