@@ -62,8 +62,7 @@ import { Action as ActionButtonAction, ActionButton } from '../../uielements/but
 import { IconButton } from '../../uielements/button/IconButton'
 import { Collapse } from '../../uielements/collapse'
 import { WalletTypeLabel } from '../../uielements/common/Common.styles'
-import { Label } from '../../uielements/label'
-import * as Styled from './AssetsTableCollapsable.styles'
+import { CopyLabel, Label } from '../../uielements/label'
 
 export type TradeWalletBalance = Balance & {
   walletAddress: Address
@@ -735,9 +734,14 @@ export const TradeAssetsTableCollapsable = ({
           <div className="flex items-center justify-end space-x-2">
             <Label className="flex items-center text-text0 dark:text-text0d" color="gray" textTransform="none">
               {hidePrivateData ? hiddenString : truncatedWalletAddress}
-              <Styled.CopyLabel copyable={{ text: fullWalletAddress }} />
             </Label>
             <div className="flex items-center justify-end space-x-2 pr-4">
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}>
+                <CopyLabel iconClassName="!text-text2 dark:!text-text2d" textToCopy={fullWalletAddress} />
+              </IconButton>
               <IconButton
                 disabled={disableRefresh}
                 onClick={(e) => {
