@@ -96,10 +96,6 @@ export const Input = styled(A.Input)<InputProps>`
   ${inputStyle}
 `
 
-export const InputTextArea = styled(A.Input.TextArea)<InputProps>`
-  ${inputStyle}
-`
-
 export const InputBigNumber = styled(A.Input)<InputProps>`
   ${inputStyle}
 `

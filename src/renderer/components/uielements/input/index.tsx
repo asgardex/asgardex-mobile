@@ -1,4 +1,4 @@
-export { Input, InputTextArea } from './Input.styles'
+export { Input } from './Input.styles'
 export { InputBigNumber } from './InputBigNumber'
 export { InputPassword } from './InputPassword'
 export { InputSearch } from './InputSearch'
