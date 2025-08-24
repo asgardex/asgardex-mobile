@@ -152,10 +152,7 @@ export const ImportPhrase = (props: Props): JSX.Element => {
               validateTrigger={['onSubmit', 'onBlur']}
               rules={passwordRules}
               label={intl.formatMessage({ id: 'common.password' })}>
-              <InputPassword
-                className="!text-14 border border-solid border-gray0 dark:border-gray0d !rounded-lg"
-                size="large"
-              />
+              <InputPassword size="large" />
             </Form.Item>
 
             {/* repeat password */}
@@ -166,10 +163,7 @@ export const ImportPhrase = (props: Props): JSX.Element => {
               validateTrigger={['onSubmit', 'onBlur']}
               rules={passwordRules}
               label={intl.formatMessage({ id: 'wallet.password.repeat' })}>
-              <InputPassword
-                className="!text-14 border border-solid border-gray0 dark:border-gray0d !rounded-lg"
-                size="large"
-              />
+              <InputPassword size="large" />
             </Form.Item>
 
             {/* name */}

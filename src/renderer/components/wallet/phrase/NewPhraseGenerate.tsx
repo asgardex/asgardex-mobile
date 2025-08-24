@@ -122,7 +122,7 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
             validateTrigger={['onSubmit', 'onBlur']}
             rules={passwordRules}
             label={intl.formatMessage({ id: 'common.password' })}>
-            <InputPassword className="!text-lg" size="large" />
+            <InputPassword size="large" />
           </Form.Item>
           {/* repeat password */}
           <Form.Item
@@ -132,7 +132,7 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
             validateTrigger={['onSubmit', 'onBlur']}
             rules={passwordRules}
             label={intl.formatMessage({ id: 'wallet.password.repeat' })}>
-            <InputPassword className="!text-lg" size="large" />
+            <InputPassword size="large" />
           </Form.Item>
           {/* name */}
           <Form.Item
