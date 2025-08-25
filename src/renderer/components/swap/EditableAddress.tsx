@@ -12,7 +12,7 @@ import { hiddenString } from '../../helpers/stringHelper'
 import { AddressValidationAsync } from '../../services/clients'
 import { InnerForm } from '../shared/form'
 import { BaseButton } from '../uielements/button'
-import { Input } from '../uielements/input/Input'
+import { Input } from '../uielements/input'
 import { CopyLabel } from '../uielements/label'
 import { Tooltip } from '../uielements/tooltip'
 

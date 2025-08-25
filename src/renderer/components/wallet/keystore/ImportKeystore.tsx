@@ -18,8 +18,7 @@ import { MAX_WALLET_NAME_CHARS } from '../../../services/wallet/const'
 import { ImportingKeystoreStateRD, ImportKeystoreParams, LoadKeystoreLD } from '../../../services/wallet/types'
 import { InnerForm } from '../../shared/form/Form.styles'
 import { BorderButton, FlatButton } from '../../uielements/button'
-import { InputPassword } from '../../uielements/input'
-import { Input } from '../../uielements/input/Input'
+import { InputPassword, Input } from '../../uielements/input'
 import { Label } from '../../uielements/label'
 
 export type Props = {

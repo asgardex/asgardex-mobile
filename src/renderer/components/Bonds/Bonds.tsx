@@ -21,7 +21,7 @@ import { WalletAddressInfo } from '../../views/bonds/types'
 import { ErrorView } from '../shared/error'
 import { InnerForm } from '../shared/form'
 import { Button, FilterButton, ReloadButton } from '../uielements/button'
-import { Input } from '../uielements/input/Input'
+import { Input } from '../uielements/input'
 import { BondsTable } from './table'
 
 type Props = {
