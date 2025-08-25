@@ -18,7 +18,8 @@ import { MAX_WALLET_NAME_CHARS } from '../../../services/wallet/const'
 import { ImportingKeystoreStateRD, ImportKeystoreParams, LoadKeystoreLD } from '../../../services/wallet/types'
 import { InnerForm } from '../../shared/form/Form.styles'
 import { BorderButton, FlatButton } from '../../uielements/button'
-import { InputPassword, Input } from '../../uielements/input'
+import { InputPassword } from '../../uielements/input'
+import { Input } from '../../uielements/input/Input'
 import { Label } from '../../uielements/label'
 
 export type Props = {
@@ -154,8 +155,7 @@ export const ImportKeystore = (props: Props): JSX.Element => {
               </div>
             }>
             <Input
-              className="!text-14 border border-solid border-gray0 dark:border-gray0d !rounded-lg"
-              size="large"
+              className="border border-solid border-gray0 dark:border-gray0d"
               maxLength={MAX_WALLET_NAME_CHARS}
               placeholder={defaultWalletName(walletId)}
             />

@@ -10,7 +10,8 @@ import * as RxOp from 'rxjs/operators'
 import { defaultWalletName } from '../../../../shared/utils/wallet'
 import { MAX_WALLET_NAME_CHARS } from '../../../services/wallet/const'
 import { FlatButton, RefreshButton } from '../../uielements/button'
-import { Input, InputPassword } from '../../uielements/input'
+import { InputPassword } from '../../uielements/input'
+import { Input } from '../../uielements/input/Input'
 import { CopyLabel } from '../../uielements/label'
 import type { WordType } from './NewPhraseConfirm.types'
 import { PhraseInfo } from './Phrase.types'
@@ -148,8 +149,7 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
               </div>
             }>
             <Input
-              className="!text-lg"
-              size="large"
+              className="border border-solid border-gray0 dark:border-gray0d"
               maxLength={MAX_WALLET_NAME_CHARS}
               placeholder={initialWalletName}
             />

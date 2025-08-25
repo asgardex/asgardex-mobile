@@ -16,7 +16,8 @@ import { KeystoreClientStates } from '../../../hooks/useKeystoreClientStates'
 import { MAX_WALLET_NAME_CHARS } from '../../../services/wallet/const'
 import { AddKeystoreParams } from '../../../services/wallet/types'
 import { FlatButton } from '../../uielements/button'
-import { InputPassword, Input } from '../../uielements/input'
+import { InputPassword } from '../../uielements/input'
+import { Input } from '../../uielements/input/Input'
 import { Spin } from '../../uielements/spin'
 
 /* css import is needed to override antd */
@@ -185,8 +186,7 @@ export const ImportPhrase = (props: Props): JSX.Element => {
               </div>
             }>
             <Input
-              className="!text-14 border border-solid border-gray0 dark:border-gray0d !rounded-lg"
-              size="large"
+              className="border border-solid border-gray0 dark:border-gray0d"
               maxLength={MAX_WALLET_NAME_CHARS}
               placeholder={defaultWalletName(walletId)}
             />

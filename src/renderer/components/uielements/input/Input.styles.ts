@@ -88,14 +88,6 @@ const inputStyle = css<InputProps>`
   }
 `
 
-/**
- * Input (Legacy)
- * @deprecated Use Input.txs instead
- */
-export const Input = styled(A.Input)<InputProps>`
-  ${inputStyle}
-`
-
 export const InputBigNumber = styled(A.Input)<InputProps>`
   ${inputStyle}
 `
