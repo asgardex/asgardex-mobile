@@ -153,11 +153,7 @@ export const ImportKeystore = (props: Props): JSX.Element => {
                 </span>
               </div>
             }>
-            <Input
-              className="border border-solid border-gray0 dark:border-gray0d"
-              maxLength={MAX_WALLET_NAME_CHARS}
-              placeholder={defaultWalletName(walletId)}
-            />
+            <Input size="large" maxLength={MAX_WALLET_NAME_CHARS} placeholder={defaultWalletName(walletId)} />
           </Form.Item>
           {/* submit button */}
           <FlatButton

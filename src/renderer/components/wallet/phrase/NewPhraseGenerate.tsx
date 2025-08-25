@@ -147,11 +147,7 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
                 </span>
               </div>
             }>
-            <Input
-              className="border border-solid border-gray0 dark:border-gray0d"
-              maxLength={MAX_WALLET_NAME_CHARS}
-              placeholder={initialWalletName}
-            />
+            <Input size="large" maxLength={MAX_WALLET_NAME_CHARS} placeholder={initialWalletName} />
           </Form.Item>
           <FlatButton
             className="mt-20px"

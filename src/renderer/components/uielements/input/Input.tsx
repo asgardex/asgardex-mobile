@@ -6,10 +6,10 @@ import { function as FP } from 'fp-ts'
 import type { Size } from './Input.types'
 
 const sizeClasses: Record<Size, string> = {
-  small: 'px-[3px] py-[1px] text-[11px]',
-  normal: 'px-[6px] py-[3px] text-[14px]',
-  large: 'px-[10px] py-[4px] text-[21px]',
-  xlarge: 'px-[15px] py-[5px] text-[27px]'
+  small: 'px-2 py-1 text-11',
+  normal: 'px-3 py-1.5 text-14',
+  large: 'px-4 py-2 text-16',
+  xlarge: 'px-6 py-3 text-18'
 }
 
 export type InputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> & {
