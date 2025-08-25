@@ -226,13 +226,39 @@ export const SendFormEVM = (props: Props): JSX.Element => {
   )
 
   const oAssetAmount: O.Option<BaseAmount> = useMemo(() => {
+    console.log('🔧 SendFormEVM Balance Debug: Calculating asset amount', {
+      isChainAsset,
+      asset: asset.symbol,
+      chain: asset.chain,
+      balanceAmount: balance.amount.amount().toString(),
+      balanceAsset: balance.asset.symbol,
+      balanceWalletType: balance.walletType,
+      balanceWalletAddress: balance.walletAddress
+    })
+
     // return balance of current asset
     if (isChainAsset) {
+      console.log('🔧 SendFormEVM Balance Debug: Using chain asset balance')
       return O.some(balance.amount)
     }
     // or check list of other assets to get eth balance
-    return FP.pipe(getEVMAmountFromBalances(balances, getChainAsset(asset.chain)), O.map(assetToBase))
-  }, [asset.chain, balance.amount, balances, isChainAsset])
+    console.log('🔧 SendFormEVM Balance Debug: Looking for balance in balances array')
+    const result = FP.pipe(getEVMAmountFromBalances(balances, getChainAsset(asset.chain)), O.map(assetToBase))
+    console.log('🔧 SendFormEVM Balance Debug: Balances array lookup result', {
+      found: O.isSome(result),
+      amount: O.isSome(result) ? result.value.amount().toString() : 'none'
+    })
+    return result
+  }, [
+    asset.chain,
+    asset.symbol,
+    balance.amount,
+    balance.asset.symbol,
+    balance.walletAddress,
+    balance.walletType,
+    balances,
+    isChainAsset
+  ])
 
   const isFeeError = useMemo(() => {
     return FP.pipe(
@@ -549,13 +575,16 @@ export const SendFormEVM = (props: Props): JSX.Element => {
 
   const renderSlider = useMemo(() => {
     const amountValue = O.getOrElse(() => ZERO_BASE_AMOUNT)(amountToSend)
-    const percentage = amountValue
-      .amount()
-      .dividedBy(maxAmount.amount())
-      .multipliedBy(100)
-      // Remove decimal of `BigNumber`s used within `BaseAmount` and always round down for currencies
-      .decimalPlaces(0, BigNumber.ROUND_DOWN)
-      .toNumber()
+    const maxAmountValue = maxAmount.amount()
+    const percentage = maxAmountValue.isZero()
+      ? 0
+      : amountValue
+          .amount()
+          .dividedBy(maxAmountValue)
+          .multipliedBy(100)
+          // Remove decimal of `BigNumber`s used within `BaseAmount` and always round down for currencies
+          .decimalPlaces(0, BigNumber.ROUND_DOWN)
+          .toNumber()
 
     const setAmountToSendFromPercentValue = (percents: number) => {
       const amountFromPercentage = maxAmount.amount().multipliedBy(percents / 100)
