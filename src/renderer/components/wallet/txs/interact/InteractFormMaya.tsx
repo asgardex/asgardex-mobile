@@ -66,7 +66,7 @@ import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'
 import { SwitchButton } from '../../../uielements/button/SwitchButton'
 import { UIFees, UIFeesRD } from '../../../uielements/fees'
 import { InfoIcon } from '../../../uielements/info'
-import { InputBigNumber } from '../../../uielements/input'
+import { Input, InputBigNumber } from '../../../uielements/input'
 import { Label } from '../../../uielements/label'
 import { RadioGroup, Radio } from '../../../uielements/radio'
 import { Tooltip } from '../../../uielements/tooltip'
@@ -808,7 +808,7 @@ export const InteractFormMaya = (props: Props) => {
                   message: intl.formatMessage({ id: 'wallet.validations.shouldNotBeEmpty' })
                 }
               ]}>
-              <Styled.Input disabled={isLoading} onChange={handleMemo} size="large" />
+              <Input disabled={isLoading} onChange={handleMemo} size="large" />
             </Form.Item>
             {/* Display example memos */}
             <div className="mt-4">
@@ -856,7 +856,7 @@ export const InteractFormMaya = (props: Props) => {
                   validator: addressValidator
                 }
               ]}>
-              <Styled.Input disabled={isLoading} onChange={() => getMemo()} size="large" />
+              <Input disabled={isLoading} onChange={() => getMemo()} size="large" />
             </Form.Item>
           </Styled.InputContainer>
         )}
@@ -876,7 +876,7 @@ export const InteractFormMaya = (props: Props) => {
                         validator: addressValidator
                       }
                     ]}>
-                    <Styled.Input disabled={isLoading} onChange={() => getMemo()} size="large" />
+                    <Input disabled={isLoading} onChange={() => getMemo()} size="large" />
                   </Form.Item>
                 </>
               }
@@ -890,7 +890,7 @@ export const InteractFormMaya = (props: Props) => {
                     required: false
                   }
                 ]}>
-                <Styled.Input
+                <Input
                   placeholder="Enter a % value, memo will populate with Basis Points automatically"
                   disabled={isLoading}
                   size="large"
@@ -981,15 +981,12 @@ export const InteractFormMaya = (props: Props) => {
                 </div>
               </div>
             ) : (
-              <>
-                {' '}
-                <div className="ml-[-2px] mb-2 flex w-full justify-between font-mainBold text-[14px] text-gray2 dark:text-gray2d">
-                  {intl.formatMessage({ id: 'deposit.share.units' })}
-                  <div className="truncate pl-10px font-main text-[12px]">
-                    {intl.formatMessage({ id: 'common.noResult' })}
-                  </div>
+              <div className="ml-[-2px] mb-2 flex w-full justify-between font-mainBold text-[14px] text-gray2 dark:text-gray2d">
+                {intl.formatMessage({ id: 'deposit.share.units' })}
+                <div className="truncate pl-10px font-main text-[12px]">
+                  {intl.formatMessage({ id: 'common.noResult' })}
                 </div>
-              </>
+              </div>
             )}
           </>
         )}
@@ -1019,7 +1016,7 @@ export const InteractFormMaya = (props: Props) => {
                   required: true
                 }
               ]}>
-              <Styled.Input disabled={isLoading} size="large" onChange={() => mayanameHandler()} />
+              <Input disabled={isLoading} size="large" onChange={() => mayanameHandler()} />
             </Styled.FormItem>
             {O.isSome(oMayaname) && !mayanameAvailable && !isOwner && renderMayanameError}
           </Styled.InputContainer>
@@ -1073,7 +1070,7 @@ export const InteractFormMaya = (props: Props) => {
                       message: 'Please provide an alias address.'
                     }
                   ]}>
-                  <Styled.Input disabled={isLoading} size="middle" />
+                  <Input disabled={isLoading} size="large" />
                 </Styled.FormItem>
                 <Styled.InputLabel>{intl.formatMessage({ id: 'common.expiry' })}</Styled.InputLabel>
                 <Styled.FormItem
@@ -1113,7 +1110,7 @@ export const InteractFormMaya = (props: Props) => {
                       message: 'Please provide an alias address.'
                     }
                   ]}>
-                  <Styled.Input disabled={isLoading} size="middle" />
+                  <Input disabled={isLoading} size="large" />
                 </Styled.FormItem>
                 <Styled.InputLabel>{intl.formatMessage({ id: 'common.expiry' })}</Styled.InputLabel>
                 <Styled.FormItem
@@ -1338,13 +1335,12 @@ const PoolShareItem = ({
                   : Promise.resolve()
             }
           ]}>
-          <Styled.Input
-            className="mt-2 [&>input]:!bg-bg0 [&>input]:!p-1 [&>input]:!text-text2 dark:[&>input]:!bg-bg0d dark:[&>input]:!text-text2d"
+          <Input
+            className="mt-2"
             size="small"
             disabled={isLoading || bondableAssets.length === 0 || !isBondable}
             value={customPercentage}
             onChange={handleCustomPercentageChange}
-            suffix="%"
             placeholder="Enter percentage (0-100)"
           />
         </Form.Item>

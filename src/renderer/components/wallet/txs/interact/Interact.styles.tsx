@@ -23,11 +23,6 @@ export const Container = styled('div')`
   `}
 `
 
-export const Input = styled(A.Input)`
-  background: inherit !important;
-  color: ${palette('text', 0)};
-`
-
 export const WalletTypeLabel = styled(WalletTypeLabelUI)`
   margin-left: 10px;
 `

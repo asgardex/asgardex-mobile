@@ -25,7 +25,7 @@ import {
 import { isLocked, getWalletName } from '../../../services/wallet/util'
 import { RemoveWalletConfirmationModal } from '../../modal/confirmation/RemoveWalletConfirmationModal'
 import { BackLinkButton, BorderButton, FlatButton } from '../../uielements/button'
-import { InputPasswordTW } from '../../uielements/input'
+import { InputPassword } from '../../uielements/input'
 import { WalletSelector } from '../../uielements/wallet'
 
 type FormData = {
@@ -204,12 +204,12 @@ export const UnlockForm = ({ keystore, unlock, removeKeystore, changeKeystore$, 
               wallets={wallets}
               onChange={changeWalletHandler}
               disabled={RD.isPending(changeWalletState)}
-              className="mb-2 min-w-[200px] rounded-lg border border-solid border-gray1 dark:border-gray0d"
-              buttonClassName="rounded-lg !shadow-none !dark:shadow-none !hover:shadow-none !hover:dark:shadow-none"
+              className="mb-2 min-w-[200px] rounded-lg"
+              buttonClassName="!shadow-none !dark:shadow-none !hover:shadow-none !hover:dark:shadow-none"
             />
-            <InputPasswordTW
+            <InputPassword
               id="password"
-              className="mx-auto mb-20px flex h-10 w-full items-center justify-between rounded-lg border border-solid !border-gray1 pl-2 dark:!border-gray0d"
+              className="mx-auto mb-20px flex h-10 w-full items-center justify-between rounded-lg border border-solid !border-gray0 dark:!border-gray0d"
               inputClassName="!ring-0 w-full"
               {...register('password', { required: true })}
               placeholder={intl.formatMessage({ id: 'common.password' }).toUpperCase()}

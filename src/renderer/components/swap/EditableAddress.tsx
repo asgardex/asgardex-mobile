@@ -12,7 +12,7 @@ import { hiddenString } from '../../helpers/stringHelper'
 import { AddressValidationAsync } from '../../services/clients'
 import { InnerForm } from '../shared/form'
 import { BaseButton } from '../uielements/button'
-import { Input } from '../uielements/input/Input'
+import { Input } from '../uielements/input'
 import { CopyLabel } from '../uielements/label'
 import { Tooltip } from '../uielements/tooltip'
 
@@ -145,7 +145,7 @@ export const EditableAddress = ({
             className="!mb-0 w-full"
             rules={[{ required: true, validator: validateAddress }]}
             name={RECIPIENT_FIELD}>
-            <Input className="!text-[16px] normal-case" color="primary" onKeyUp={inputOnKeyUpHandler} />
+            <Input size="large" onKeyUp={inputOnKeyUpHandler} />
           </Form.Item>
 
           <CheckCircleIcon

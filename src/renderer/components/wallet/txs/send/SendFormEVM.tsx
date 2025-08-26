@@ -53,7 +53,7 @@ import { BaseButton, FlatButton } from '../../../uielements/button'
 import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'
 import { SwitchButton } from '../../../uielements/button/SwitchButton'
 import { UIFeesRD } from '../../../uielements/fees'
-import { InputBigNumber } from '../../../uielements/input'
+import { Input, InputBigNumber } from '../../../uielements/input'
 import { Label } from '../../../uielements/label'
 import { RadioGroup, Radio } from '../../../uielements/radio'
 import { ShowDetails } from '../../../uielements/showDetails'
@@ -674,7 +674,7 @@ export const SendFormEVM = (props: Props): JSX.Element => {
       <>
         <Styled.CustomLabel size="big">{intl.formatMessage({ id: 'common.memo' })}</Styled.CustomLabel>
         <Form.Item name="memo">
-          <Styled.Input size="large" disabled={isLoading} onBlur={reloadFees} onChange={handleMemo} />
+          <Input size="large" disabled={isLoading} onBlur={reloadFees} onChange={handleMemo} />
         </Form.Item>
       </>
     )
@@ -978,13 +978,7 @@ export const SendFormEVM = (props: Props): JSX.Element => {
               {renderWalletType}
             </Styled.CustomLabel>
             <Form.Item rules={[{ required: true, validator: addressValidator }]} name="recipient">
-              <Styled.Input
-                color="primary"
-                size="large"
-                disabled={isLoading}
-                onChange={onChangeAddress}
-                onKeyUp={handleOnKeyUp}
-              />
+              <Input size="large" disabled={isLoading} onChange={onChangeAddress} onKeyUp={handleOnKeyUp} />
             </Form.Item>
             {warningMessage && <div className="pb-20px text-warning0 dark:text-warning0d ">{warningMessage}</div>}
             <Styled.CustomLabel size="big">{intl.formatMessage({ id: 'common.amount' })}</Styled.CustomLabel>
@@ -1005,7 +999,7 @@ export const SendFormEVM = (props: Props): JSX.Element => {
               onClick={addMaxAmountHandler}
               disabled={isLoading}
             />
-            <div className="w-full px-20px pb-10px">{renderSlider}</div>
+            <div className="w-full py-2">{renderSlider}</div>
             <Styled.Fees fees={uiFeesRD} reloadFees={reloadFees} disabled={isLoading} />
             {renderFeeError}
             <Form.Item name="fee">{renderFeeOptions}</Form.Item>
