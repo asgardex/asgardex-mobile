@@ -67,7 +67,7 @@ import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'
 import { SwitchButton } from '../../../uielements/button/SwitchButton'
 import { UIFees, UIFeesRD } from '../../../uielements/fees'
 import { InfoIcon } from '../../../uielements/info'
-import { InputBigNumber } from '../../../uielements/input'
+import { Input, InputBigNumber } from '../../../uielements/input'
 import { Label } from '../../../uielements/label'
 import { RadioGroup, Radio } from '../../../uielements/radio'
 import { Tooltip } from '../../../uielements/tooltip'
@@ -938,7 +938,7 @@ export const InteractFormThor = ({
                   message: intl.formatMessage({ id: 'wallet.validations.shouldNotBeEmpty' })
                 }
               ]}>
-              <Styled.Input disabled={isLoading} onChange={handleMemo} size="large" />
+              <Input disabled={isLoading} onChange={handleMemo} size="large" />
             </Form.Item>
             {/* Display example memos */}
             <div className="mt-4">
@@ -1006,7 +1006,7 @@ export const InteractFormThor = ({
                   validator: addressValidator
                 }
               ]}>
-              <Styled.Input disabled={isLoading} onChange={() => getMemo()} size="large" />
+              <Input disabled={isLoading} onChange={() => getMemo()} size="large" />
             </Form.Item>
           </Styled.InputContainer>
         )}
@@ -1024,7 +1024,7 @@ export const InteractFormThor = ({
                       validator: addressValidator
                     }
                   ]}>
-                  <Styled.Input disabled={isLoading} onChange={() => getMemo()} size="large" />
+                  <Input disabled={isLoading} onChange={() => getMemo()} size="large" />
                 </Form.Item>
               </>
             }
@@ -1040,7 +1040,7 @@ export const InteractFormThor = ({
                   required: false
                 }
               ]}>
-              <Styled.Input
+              <Input
                 placeholder="Enter a % value, memo will populate with Basis Points automatically"
                 disabled={isLoading}
                 size="large"
@@ -1131,7 +1131,7 @@ export const InteractFormThor = ({
                       required: false
                     }
                   ]}>
-                  <Styled.Input
+                  <Input
                     placeholder="Enter a % value, memo will populate with Basis Points automatically"
                     disabled={isLoading}
                     size="large"
@@ -1162,7 +1162,7 @@ export const InteractFormThor = ({
                     required: true
                   }
                 ]}>
-                <Styled.Input disabled={isLoading} size="large" onChange={() => thornameHandler()} />
+                <Input disabled={isLoading} size="large" onChange={() => thornameHandler()} />
               </Styled.FormItem>
               {O.isSome(oThorname) && !thornameAvailable && !isOwner && renderThornameError}
             </Styled.InputContainer>
@@ -1238,7 +1238,7 @@ export const InteractFormThor = ({
                         message: 'Please provide an alias address.'
                       }
                     ]}>
-                    <Styled.Input disabled={isLoading} size="middle" />
+                    <Input disabled={isLoading} size="large" />
                   </Styled.FormItem>
                   <Styled.InputLabel>{intl.formatMessage({ id: 'common.expiry' })}</Styled.InputLabel>
                   <Styled.FormItem
@@ -1278,7 +1278,7 @@ export const InteractFormThor = ({
                         message: 'Please provide an alias address.'
                       }
                     ]}>
-                    <Styled.Input disabled={isLoading} size="middle" />
+                    <Input disabled={isLoading} size="large" />
                   </Styled.FormItem>
                   <Styled.InputLabel>{intl.formatMessage({ id: 'common.expiry' })}</Styled.InputLabel>
                   <Styled.FormItem

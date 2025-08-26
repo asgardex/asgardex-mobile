@@ -31,7 +31,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref): JSX.
     ghost = false,
     disabled = false,
     autoFocus = false,
-    uppercase = true,
+    uppercase = false,
     error = '',
     onEnter = FP.constVoid,
     onCancel = FP.constVoid,
@@ -64,9 +64,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref): JSX.
         ghost ? 'ring-0' : 'ring-1',
         error ? 'ring-error0 dark:ring-error0d' : 'ring-gray1 dark:ring-gray1d',
         error ? 'text-error0 dark:text-error0d' : 'text-text0 dark:text-text0d',
-        uppercase ? 'uppercase' : 'normal-case',
+        uppercase ? 'uppercase placeholder:uppercase' : 'normal-case',
         disabled ? 'opacity-50' : 'opacity-100',
-        { 'placeholder:uppercase': uppercase },
         sizeClasses[size],
         className
       )}

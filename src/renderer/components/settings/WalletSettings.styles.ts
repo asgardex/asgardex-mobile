@@ -16,21 +16,6 @@ export const AutoComplete = styled(A.AutoComplete)`
   }
 `
 
-export const Input = styled(A.Input)`
-  border-color: ${palette('gray', 1)};
-  max-width: 300px;
-
-  .ant-input {
-    background-color: ${palette('background', 0)} !important;
-    color: ${palette('text', 0)};
-  }
-
-  .ant-input-prefix svg,
-  .anticon-close-circle svg {
-    color: ${palette('gray', 1)};
-  }
-`
-
 export const Subtitle = styled(UILabel)`
   text-align: center;
   padding: 20px 0 0 20px;

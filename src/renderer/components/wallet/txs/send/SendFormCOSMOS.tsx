@@ -48,7 +48,7 @@ import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../../
 import { BaseButton, FlatButton } from '../../../uielements/button'
 import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'
 import { UIFeesRD } from '../../../uielements/fees'
-import { InputBigNumber } from '../../../uielements/input'
+import { Input, InputBigNumber } from '../../../uielements/input'
 import { ShowDetails } from '../../../uielements/showDetails'
 import { Slider } from '../../../uielements/slider'
 import { AccountSelector } from '../../account'
@@ -628,7 +628,7 @@ export const SendFormCOSMOS = (props: Props): JSX.Element => {
             </Styled.CustomLabel>
 
             <Form.Item rules={[{ required: true, validator: addressValidator }]} name="recipient">
-              <Styled.Input color="primary" size="large" disabled={isLoading} onChange={handleAddressInput} />
+              <Input color="primary" size="large" disabled={isLoading} onChange={handleAddressInput} />
             </Form.Item>
             {warningMessage && <div className="pb-20px text-warning0 dark:text-warning0d ">{warningMessage}</div>}
             <Styled.CustomLabel size="big">{intl.formatMessage({ id: 'common.amount' })}</Styled.CustomLabel>
@@ -655,12 +655,12 @@ export const SendFormCOSMOS = (props: Props): JSX.Element => {
               onClick={addMaxAmountHandler}
               disabled={isLoading}
             />
-            <div className="w-full px-20px pb-10px">{renderSlider}</div>
+            <div className="w-full py-2">{renderSlider}</div>
             <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
             {renderFeeError}
             <Styled.CustomLabel size="big">{intl.formatMessage({ id: 'common.memo' })}</Styled.CustomLabel>
             <Form.Item name="memo">
-              <Styled.Input size="large" disabled={isLoading} onChange={handleMemo} />
+              <Input size="large" disabled={isLoading} onChange={handleMemo} />
             </Form.Item>
           </Styled.SubForm>
           <FlatButton
@@ -685,15 +685,13 @@ export const SendFormCOSMOS = (props: Props): JSX.Element => {
               </BaseButton>
 
               {showDetails && (
-                <>
-                  <ShowDetails
-                    recipient={recipientAddress}
-                    amountLabel={amountLabel}
-                    priceFeeLabel={priceFeeLabel}
-                    currentMemo={currentMemo}
-                    asset={asset}
-                  />
-                </>
+                <ShowDetails
+                  recipient={recipientAddress}
+                  amountLabel={amountLabel}
+                  priceFeeLabel={priceFeeLabel}
+                  currentMemo={currentMemo}
+                  asset={asset}
+                />
               )}
             </div>
           </div>

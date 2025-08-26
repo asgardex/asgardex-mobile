@@ -7,7 +7,6 @@ import {
   EyeIcon,
   ExclamationTriangleIcon,
   LockClosedIcon,
-  MagnifyingGlassIcon,
   QrCodeIcon,
   ArrowUpRightIcon,
   PlusCircleIcon
@@ -83,6 +82,7 @@ import { FlatButton } from '../uielements/button'
 import { SwitchButton } from '../uielements/button/SwitchButton'
 import { WalletTypeLabel } from '../uielements/common/Common.styles'
 import { InfoIcon } from '../uielements/info'
+import { Input, InputSearch } from '../uielements/input'
 import { Label } from '../uielements/label'
 import { Modal } from '../uielements/modal'
 import { Tooltip } from '../uielements/tooltip'
@@ -736,14 +736,16 @@ export const WalletSettings = (props: Props): JSX.Element => {
             option ? option.value.toLowerCase().includes(inputValue.toLowerCase()) : false
           }
         />
-        <Styled.Input
-          className="rounded-lg border border-solid border-bg2 bg-bg0 text-text0d dark:border-bg2d dark:bg-bg0d dark:text-text0d"
+        <Input
+          className="border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"
+          uppercase={false}
           placeholder={intl.formatMessage({ id: 'common.address' })}
           value={newAddress.address}
           onChange={(e) => setNewAddress((prev) => ({ ...prev, address: e.target.value }))}
         />
-        <Styled.Input
-          className="rounded-lg border border-solid border-bg2 bg-bg0 text-text0d dark:border-bg2d dark:bg-bg0d dark:text-text0d"
+        <Input
+          className="border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"
+          uppercase={false}
           placeholder={intl.formatMessage({ id: 'wallet.column.name' })}
           value={newAddress.name}
           onChange={(e) => setNewAddress((prev) => ({ ...prev, name: e.target.value }))}
@@ -1001,13 +1003,10 @@ export const WalletSettings = (props: Props): JSX.Element => {
       <div key="accounts" className="mt-4 w-full border-t border-solid border-bg2 dark:border-bg2d">
         <Styled.Subtitle>{intl.formatMessage({ id: 'setting.accounts' })}</Styled.Subtitle>
         <div className="mt-30px flex justify-center md:ml-4 md:justify-start">
-          <Styled.Input
-            className="rounded-lg border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"
-            prefix={<MagnifyingGlassIcon />}
-            onChange={filterAccounts}
-            allowClear
+          <InputSearch
             placeholder={intl.formatMessage({ id: 'common.search' }).toUpperCase()}
             size="large"
+            onChange={filterAccounts}
           />
         </div>
         <div className="mt-10px border-b border-solid border-bg2 px-4 dark:border-bg2d">{renderAddAddressForm()}</div>
