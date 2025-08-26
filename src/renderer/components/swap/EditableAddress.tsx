@@ -134,7 +134,7 @@ export const EditableAddress = ({
             className="!mb-0 w-full"
             rules={[{ required: true, validator: validateAddress }]}
             name={RECIPIENT_FIELD}>
-            <Input className="!text-[16px] normal-case" color="primary" onKeyUp={inputOnKeyUpHandler} />
+            <Input size="large" onKeyUp={inputOnKeyUpHandler} />
           </Form.Item>
 
           <CheckCircleIcon

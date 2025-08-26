@@ -628,7 +628,7 @@ export const SendFormCOSMOS = (props: Props): JSX.Element => {
             </Styled.CustomLabel>
 
             <Form.Item rules={[{ required: true, validator: addressValidator }]} name="recipient">
-              <Input color="primary" size="large" disabled={isLoading} onChange={handleAddressInput} />
+              <Input size="large" disabled={isLoading} onChange={handleAddressInput} />
             </Form.Item>
             {warningMessage && <div className="pb-20px text-warning0 dark:text-warning0d ">{warningMessage}</div>}
             <Styled.CustomLabel size="big">{intl.formatMessage({ id: 'common.amount' })}</Styled.CustomLabel>

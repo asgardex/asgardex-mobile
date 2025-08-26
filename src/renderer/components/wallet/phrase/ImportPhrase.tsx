@@ -147,6 +147,10 @@ export const ImportPhrase = (props: Props): JSX.Element => {
               )}
               placeholder={intl.formatMessage({ id: 'wallet.imports.enterphrase' })}
               rows={5}
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              inputMode="text"
             />
           </Form.Item>
           {renderImportError}
