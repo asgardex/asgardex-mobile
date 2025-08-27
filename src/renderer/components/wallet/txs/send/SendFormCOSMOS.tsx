@@ -5,6 +5,7 @@ import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/re
 import { Network } from '@xchainjs/xchain-client'
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
 import { PoolDetails } from '@xchainjs/xchain-mayamidgard'
+import { XRPChain } from '@xchainjs/xchain-ripple'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import {
   Address,
@@ -151,21 +152,18 @@ export const SendFormCOSMOS = (props: Props): JSX.Element => {
 
   const oFee: O.Option<BaseAmount> = useMemo(() => FP.pipe(feeRD, RD.toOption), [feeRD])
 
+  // Balance of the asset being sent (e.g., USDC, ATOM, etc.)
   const oAssetAmount: O.Option<BaseAmount> = useMemo(() => {
-    // return balance of current asset
-    if (isChainAsset) {
-      return O.some(balance.amount)
-    }
-    // or check list of other assets to get balance
-    return FP.pipe(getAmountFromBalances(balances, balance.walletType, getChainAsset(asset.chain)), O.map(assetToBase))
-  }, [asset.chain, balance.amount, balance.walletType, balances, isChainAsset])
+    return O.some(balance.amount)
+  }, [balance.amount])
 
+  // Balance of the chain's native asset (used for paying transaction fees)
   const oChainAssetAmount: O.Option<BaseAmount> = useMemo(() => {
-    // return balance of current asset
     if (isChainAsset) {
+      // If sending the chain asset itself, use the same balance
       return O.some(balance.amount)
     }
-    // or check list of other assets to get balance
+    // Otherwise, get the chain asset balance from balances list
     return FP.pipe(getAmountFromBalances(balances, balance.walletType, chainAsset), O.map(assetToBase))
   }, [balance.amount, balance.walletType, balances, chainAsset, isChainAsset])
 
@@ -250,24 +248,22 @@ export const SendFormCOSMOS = (props: Props): JSX.Element => {
 
   const [matchedAddresses, setMatchedAddresses] = useState<O.Option<TrustedAddress[]>>(O.none)
 
+  const updateMatchedAddresses = useCallback(
+    (value: string) => {
+      const matched = Shared.filterMatchedAddresses(oSavedAddresses, value)
+      setMatchedAddresses(matched)
+    },
+    [oSavedAddresses]
+  )
+
   const handleSavedAddressSelect = useCallback(
     (value: string) => {
       form.setFieldsValue({ recipient: value })
-
       setRecipientAddress(value)
-
-      if (value) {
-        const matched = FP.pipe(
-          oSavedAddresses,
-          O.map((addresses) => addresses.filter((address) => address.address.includes(value))),
-          O.chain(O.fromPredicate((filteredAddresses) => filteredAddresses.length > 0))
-        )
-        setMatchedAddresses(matched)
-      }
-
+      updateMatchedAddresses(value)
       addressValidator(undefined, value).catch(() => {})
     },
-    [form, addressValidator, oSavedAddresses]
+    [form, addressValidator, updateMatchedAddresses]
   )
 
   const renderSavedAddressesDropdown = useMemo(
@@ -298,31 +294,42 @@ export const SendFormCOSMOS = (props: Props): JSX.Element => {
   const handleAddressInput = useCallback(async () => {
     const recipient = form.getFieldValue('recipient')
     setRecipientAddress(recipient)
-
-    if (recipient) {
-      const matched = FP.pipe(
-        oSavedAddresses,
-        O.map((addresses) => addresses.filter((address) => address.address.includes(recipient))),
-        O.chain(O.fromPredicate((filteredAddresses) => filteredAddresses.length > 0)) // Use O.none for empty arrays
-      )
-      setMatchedAddresses(matched)
-    }
-  }, [form, oSavedAddresses])
+    updateMatchedAddresses(recipient)
+  }, [form, updateMatchedAddresses])
   // max amount for asset
   const maxAmount: BaseAmount = useMemo(() => {
-    const maxAmount = FP.pipe(
+    // Some chains require minimum account reserves that cannot be spent
+    const getMinimumAccountReserve = (): BaseAmount => {
+      switch (asset.chain) {
+        case XRPChain:
+          // XRP requires 1 minimum reserve - use correct decimal precision
+          return assetToBase(assetAmount(1, balance.amount.decimal))
+        default:
+          return baseAmount(0, balance.amount.decimal)
+      }
+    }
+
+    const accountReserve = getMinimumAccountReserve()
+
+    // If we have both fee and asset amount, calculate precise max
+    return FP.pipe(
       sequenceTOption(oFee, oAssetAmount),
       O.fold(
-        () => ZERO_BASE_AMOUNT,
+        () => {
+          // Fallback: if fee is unavailable, only subtract account reserve for chain assets
+          // Don't subtract arbitrary fee estimates to avoid mixing units
+          const fallbackMax = isChainAsset ? balance.amount.minus(accountReserve) : balance.amount
+          const zero = baseAmount(0, balance.amount.decimal)
+          return fallbackMax.gt(zero) ? fallbackMax : zero
+        },
         ([fee, assetAmount]) => {
-          const max = isChainAsset ? assetAmount.minus(fee) : balance.amount
+          const max = isChainAsset ? assetAmount.minus(fee).minus(accountReserve) : balance.amount
           const zero = baseAmount(0, max.decimal)
           return max.gt(zero) ? max : zero
         }
       )
     )
-    return maxAmount
-  }, [oFee, oAssetAmount, isChainAsset, balance.amount])
+  }, [oFee, oAssetAmount, isChainAsset, balance.amount, asset.chain])
 
   // store maxAmountValue wrong CryptoAmount
   const [maxAmountPriceValue, setMaxAmountPriceValue] = useState<CryptoAmount>(
@@ -649,11 +656,7 @@ export const SendFormCOSMOS = (props: Props): JSX.Element => {
               color="neutral"
               balance={{ amount: maxAmount, asset: asset }}
               maxDollarValue={
-                isMayaAsset(asset)
-                  ? RD.isSuccess(mayascanPriceInUsd)
-                    ? mayascanPriceInUsd.value
-                    : maxAmountPriceValue
-                  : maxAmountPriceValue
+                isMayaAsset(asset) && RD.isSuccess(mayascanPriceInUsd) ? mayascanPriceInUsd.value : maxAmountPriceValue
               }
               onClick={addMaxAmountHandler}
               disabled={isLoading}

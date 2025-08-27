@@ -126,6 +126,8 @@ export const minAmountToSwapMax1e8 = ({
  * Calculates max. balance available to swap
  * In some cases fees needs to be deducted from given amount
  *
+ * Removes arbitrary 1000-unit rounding that was causing precision loss
+ *
  * assetAmountMax1e8 => balances of source asset (max 1e8)
  * feeAmount => fee of inbound tx
  */
@@ -142,10 +144,10 @@ export const maxAmountToSwapMax1e8 = ({
   if (!isChainAsset(asset)) return balanceAmountMax1e8
 
   const estimatedFee = max1e8BaseAmount(feeAmount)
-  const maxAmountToSwap = balanceAmountMax1e8.minus(estimatedFee)
-  const maxAmountRounded = Math.floor(maxAmountToSwap.amount().toNumber() / 1000) * 1000
-  const maxAmountRoundedBase = baseAmount(maxAmountRounded, maxAmountToSwap.decimal)
-  return maxAmountRoundedBase.gt(baseAmount(0)) ? maxAmountRoundedBase : baseAmount(0)
+
+  const utxoSafetyBuffer = isUtxoAssetChain(asset) ? baseAmount(10000) : ZERO_BASE_AMOUNT // 0.0001 BTC in 1e8 units
+  const maxAmountToSwap = balanceAmountMax1e8.minus(estimatedFee).minus(utxoSafetyBuffer)
+  return maxAmountToSwap.gt(ZERO_BASE_AMOUNT) ? maxAmountToSwap : ZERO_BASE_AMOUNT
 }
 
 export const assetsInWallet: (_: WalletBalances) => AnyAsset[] = FP.flow(A.map(({ asset }) => asset))

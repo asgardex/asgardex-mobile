@@ -8,10 +8,12 @@ import { function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { truncateAddress } from '../../helpers/addressHelper'
+import { isEvmChain } from '../../helpers/evmHelper'
 import { hiddenString } from '../../helpers/stringHelper'
 import { AddressValidationAsync } from '../../services/clients'
 import { InnerForm } from '../shared/form'
 import { BaseButton } from '../uielements/button'
+import { InfoIcon } from '../uielements/info'
 import { Input } from '../uielements/input'
 import { CopyLabel } from '../uielements/label'
 import { Tooltip } from '../uielements/tooltip'
@@ -134,32 +136,48 @@ export const EditableAddress = ({
   const renderEditableAddress = useCallback(
     (editableAddress: Address) => {
       return (
-        // `items-start` is needed to position icons on top in case of error message
-        <InnerForm
-          className="flex w-full items-start"
-          form={form}
-          initialValues={{
-            recipient: editableAddress
-          }}>
-          <Form.Item
-            className="!mb-0 w-full"
-            rules={[{ required: true, validator: validateAddress }]}
-            name={RECIPIENT_FIELD}>
-            <Input size="large" onKeyUp={inputOnKeyUpHandler} />
-          </Form.Item>
+        <div className="w-full">
+          {/* `items-start` is needed to position icons on top in case of error message */}
+          <InnerForm
+            className="flex w-full items-start"
+            form={form}
+            initialValues={{
+              recipient: editableAddress
+            }}>
+            <Form.Item
+              className="!mb-0 w-full"
+              rules={[{ required: true, validator: validateAddress }]}
+              name={RECIPIENT_FIELD}>
+              <Input className="!text-[16px] normal-case" color="primary" onKeyUp={inputOnKeyUpHandler} />
+            </Form.Item>
 
-          <CheckCircleIcon
-            className="ml-5px h-[30px] w-[30px] cursor-pointer text-turquoise"
-            onClick={confirmEditHandler}
-          />
-          <XCircleIcon
-            className="ml-5px h-[30px] w-[30px] cursor-pointer text-gray2 dark:text-gray2d"
-            onClick={cancelEditHandler}
-          />
-        </InnerForm>
+            <CheckCircleIcon
+              className="ml-5px h-[30px] w-[30px] cursor-pointer text-turquoise"
+              onClick={confirmEditHandler}
+            />
+            <XCircleIcon
+              className="ml-5px h-[30px] w-[30px] cursor-pointer text-gray2 dark:text-gray2d"
+              onClick={cancelEditHandler}
+            />
+          </InnerForm>
+
+          {/* EVM Smart Contract Warning */}
+          {isEvmChain(asset.chain) && (
+            <div
+              className="mt-2 flex items-center text-[12px] text-warning0 dark:text-warning0d"
+              role="alert"
+              aria-live="polite">
+              <InfoIcon
+                tooltip={intl.formatMessage({ id: 'swap.address.evm.warning' })}
+                className="mr-1 h-[14px] w-[14px]"
+              />
+              {intl.formatMessage({ id: 'swap.address.evm.warning' })}
+            </div>
+          )}
+        </div>
       )
     },
-    [cancelEditHandler, confirmEditHandler, form, inputOnKeyUpHandler, validateAddress]
+    [asset.chain, cancelEditHandler, confirmEditHandler, form, inputOnKeyUpHandler, intl, validateAddress]
   )
 
   const renderCustomAddressInput = useCallback(
