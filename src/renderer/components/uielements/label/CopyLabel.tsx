@@ -27,11 +27,7 @@ export const CopyLabel = ({ label, textToCopy, className = '', iconClassName = '
   }, [textToCopy])
 
   return (
-    <button
-      className={clsx('flex items-center text-turquoise group transition-colors', className)}
-      type="button"
-      aria-label={label ?? 'Copy to clipboard'}
-      onClick={handleCopy}>
+    <div className={clsx('flex items-center text-turquoise group transition-colors', className)} onClick={handleCopy}>
       {label && <span className={clsx('mr-1 font-main uppercase text-inherit', className)}>{label}</span>}
       {copied ? (
         <CheckIcon className={clsx('h-5 w-5 text-turquoise', iconClassName)} />
@@ -40,6 +36,6 @@ export const CopyLabel = ({ label, textToCopy, className = '', iconClassName = '
           className={clsx('h-5 w-5 text-text2 dark:text-text2d group-hover:text-inherit', iconClassName)}
         />
       )}
-    </button>
+    </div>
   )
 }
