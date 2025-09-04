@@ -43,6 +43,7 @@ import { getDerivationPath as getEvmDerivationPath } from '../../../shared/evm/l
 import { EvmHDMode } from '../../../shared/evm/types'
 import { chainToString, EnabledChain, isSupportedChain } from '../../../shared/utils/chain'
 import { isError } from '../../../shared/utils/guard'
+import { UtxoHDMode } from '../../../shared/utxo/types'
 import { HDMode, WalletAddress, WalletType } from '../../../shared/wallet/types'
 import RemoveIcon from '../../assets/svg/icon-remove.svg?react'
 import { WalletPasswordConfirmationModal } from '../../components/modal/confirmation'
@@ -81,6 +82,7 @@ import { useApp } from '../../store/app/hooks'
 import { FlatButton } from '../uielements/button'
 import { SwitchButton } from '../uielements/button/SwitchButton'
 import { WalletTypeLabel } from '../uielements/common/Common.styles'
+import { Dropdown } from '../uielements/dropdown'
 import { InfoIcon } from '../uielements/info'
 import { Input, InputSearch } from '../uielements/input'
 import { Label } from '../uielements/label'
@@ -90,6 +92,24 @@ import { WalletSelector } from '../uielements/wallet'
 import { EditableWalletName } from '../uielements/wallet/EditableWalletName'
 import * as Styled from './WalletSettings.styles'
 import { WhitelistModal } from './WhitelistModal'
+
+// Bitcoin derivation path templates - will be filled with actual account/index values
+const getBitcoinDerivationPaths = (account: number, index: number) => [
+  `Native Segwit P2WPKH (m/84'/0'/${account}'/${index})`,
+  `Taproot P2TR (m/86'/0'/${account}'/${index})`
+]
+
+// Convert derivation path index to UtxoHDMode for Bitcoin
+const derivationIndexToHDMode = (index: number): UtxoHDMode => {
+  switch (index) {
+    case 0:
+      return 'p2wpkh'
+    case 1:
+      return 'p2tr'
+    default:
+      return 'p2wpkh'
+  }
+}
 
 const ActionButton = ({
   className,
@@ -149,6 +169,28 @@ type Props = {
 }
 
 type AddressToVerify = O.Option<{ address: Address; chain: Chain }>
+
+const initialMap = {
+  [BTCChain]: 0,
+  [BCHChain]: 0,
+  [LTCChain]: 0,
+  [THORChain]: 0,
+  [ETHChain]: 0,
+  [GAIAChain]: 0,
+  [DOGEChain]: 0,
+  [AVAXChain]: 0,
+  [BASEChain]: 0,
+  [BSCChain]: 0,
+  [MAYAChain]: 0,
+  [DASHChain]: 0,
+  [KUJIChain]: 0,
+  [ARBChain]: 0,
+  [RadixChain]: 0,
+  [SOLChain]: 0,
+  [ADAChain]: 0,
+  [ZECChain]: 0,
+  [XRPChain]: 0
+}
 
 export const WalletSettings = (props: Props): JSX.Element => {
   const {
@@ -214,48 +256,9 @@ export const WalletSettings = (props: Props): JSX.Element => {
     )
   }, [showQRModal, network, closeQrModal])
 
-  const [walletIndexMap, setWalletIndexMap] = useState<Record<EnabledChain, number>>({
-    [BTCChain]: 0,
-    [BCHChain]: 0,
-    [LTCChain]: 0,
-    [THORChain]: 0,
-    [ETHChain]: 0,
-    [GAIAChain]: 0,
-    [DOGEChain]: 0,
-    [AVAXChain]: 0,
-    [BASEChain]: 0,
-    [BSCChain]: 0,
-    [MAYAChain]: 0,
-    [DASHChain]: 0,
-    [KUJIChain]: 0,
-    [ARBChain]: 0,
-    [RadixChain]: 0,
-    [SOLChain]: 0,
-    [ADAChain]: 0,
-    [ZECChain]: 0,
-    [XRPChain]: 0
-  })
-  const [walletAccountMap, setWalletAccountMap] = useState<Record<EnabledChain, number>>({
-    [BTCChain]: 0,
-    [BCHChain]: 0,
-    [LTCChain]: 0,
-    [THORChain]: 0,
-    [ETHChain]: 0,
-    [GAIAChain]: 0,
-    [DOGEChain]: 0,
-    [AVAXChain]: 0,
-    [BASEChain]: 0,
-    [BSCChain]: 0,
-    [MAYAChain]: 0,
-    [DASHChain]: 0,
-    [KUJIChain]: 0,
-    [ARBChain]: 0,
-    [RadixChain]: 0,
-    [SOLChain]: 0,
-    [ADAChain]: 0,
-    [ZECChain]: 0,
-    [XRPChain]: 0
-  })
+  const [walletIndexMap, setWalletIndexMap] = useState<Record<EnabledChain, number>>(initialMap)
+  const [derivationPathIndex, setDerivationPathIndex] = useState<Record<EnabledChain, number>>(initialMap)
+  const [walletAccountMap, setWalletAccountMap] = useState<Record<EnabledChain, number>>(initialMap)
 
   const {
     state: verifyLedgerAddressRD,
@@ -297,16 +300,25 @@ export const WalletSettings = (props: Props): JSX.Element => {
     (chain: Chain, walletAccount: number, walletIndex: number) => {
       resetAddLedgerAddressRD()
       setLedgerChainToAdd(O.some(chain))
+
+      let hdMode: HDMode = 'default'
+      if (isEvmChain(chain)) {
+        hdMode = evmHDMode
+      } else if (chain === BTCChain) {
+        // Only Bitcoin supports multiple derivation path options
+        hdMode = derivationIndexToHDMode(derivationPathIndex[chain])
+      }
+
       subscribeAddLedgerAddressRD(
         addLedgerAddress$({
           chain,
           walletAccount,
           walletIndex,
-          hdMode: isEvmChain(chain) ? evmHDMode : 'default' // other Ledgers uses `default` path
+          hdMode
         })
       )
     },
-    [resetAddLedgerAddressRD, subscribeAddLedgerAddressRD, addLedgerAddress$, evmHDMode]
+    [resetAddLedgerAddressRD, subscribeAddLedgerAddressRD, addLedgerAddress$, evmHDMode, derivationPathIndex]
   )
 
   const verifyLedgerAddressHandler = useCallback(
@@ -382,22 +394,48 @@ export const WalletSettings = (props: Props): JSX.Element => {
                   <InfoIcon tooltip={intl.formatMessage({ id: 'setting.wallet.account.info' })} />
                 </>
 
-                <>
-                  <div className="ml-2 text-[12px] uppercase text-text2 dark:text-text2d">
-                    {intl.formatMessage({ id: 'setting.wallet.index' })}
+                <div className="ml-2 text-[12px] uppercase text-text2 dark:text-text2d">
+                  {intl.formatMessage({ id: 'setting.wallet.index' })}
+                </div>
+                <Styled.WalletIndexInput
+                  className="border border-solid border-bg2 dark:border-bg2d"
+                  value={selectedWalletIndex.toString()}
+                  pattern="[0-9]+"
+                  onChange={(value) =>
+                    value !== null && +value >= 0 && setWalletIndexMap({ ...walletIndexMap, [chain]: +value })
+                  }
+                  style={{ width: 60 }}
+                  disabled={loading}
+                  onPressEnter={addLedgerAddressHandler}
+                />
+                <InfoIcon tooltip={intl.formatMessage({ id: 'setting.wallet.index.info' })} />
+
+                {chain === BTCChain && (
+                  <div className="ml-2">
+                    <Dropdown
+                      trigger={
+                        <Label className="rounded-lg p-2 border border-solid border-bg2 dark:border-bg2d">
+                          {
+                            getBitcoinDerivationPaths(selectedAccountIndex, selectedWalletIndex)[
+                              derivationPathIndex[chain]
+                            ]
+                          }
+                        </Label>
+                      }
+                      options={getBitcoinDerivationPaths(selectedAccountIndex, selectedWalletIndex).map(
+                        (item: string, index: number) => (
+                          <Label
+                            key={item}
+                            className="px-1"
+                            size="normal"
+                            onClick={() => setDerivationPathIndex({ ...derivationPathIndex, [chain]: index })}>
+                            {item}
+                          </Label>
+                        )
+                      )}
+                    />
                   </div>
-                  <Styled.WalletIndexInput
-                    value={selectedWalletIndex.toString()}
-                    pattern="[0-9]+"
-                    onChange={(value) =>
-                      value !== null && +value >= 0 && setWalletIndexMap({ ...walletIndexMap, [chain]: +value })
-                    }
-                    style={{ width: 60 }}
-                    disabled={loading}
-                    onPressEnter={addLedgerAddressHandler}
-                  />
-                  <InfoIcon tooltip={intl.formatMessage({ id: 'setting.wallet.index.info' })} />
-                </>
+                )}
               </div>
               {isEvmChain(chain) && (
                 <RadioGroup
@@ -541,10 +579,11 @@ export const WalletSettings = (props: Props): JSX.Element => {
     },
     [
       intl,
-      walletIndexMap,
       walletAccountMap,
+      walletIndexMap,
       ledgerChainToAdd,
       addLedgerAddressRD,
+      derivationPathIndex,
       evmHDMode,
       updateEvmHDMode,
       addLedgerAddress,
