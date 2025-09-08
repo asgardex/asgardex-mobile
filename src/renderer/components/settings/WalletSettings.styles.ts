@@ -29,24 +29,6 @@ export const Subtitle = styled(UILabel)`
   `}
 `
 
-export const List = styled(A.List)`
-  li {
-    border-bottom: 1px solid ${palette('gray', 0)};
-  }
-`
-
-export const ListItem = styled(A.List.Item)`
-  padding: 20px;
-  flex-direction: column;
-  align-items: start;
-
-  border-bottom: none;
-  border-bottom: 1px solid ${palette('gray', 0)} !important;
-  .ant-list-item {
-    border-bottom: 1px solid ${palette('gray', 0)};
-  }
-`
-
 export const AccountTitle = styled(UILabel)`
   padding: 0px;
   padding-left: 10px;

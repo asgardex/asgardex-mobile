@@ -32,7 +32,6 @@ import { SOLChain } from '@xchainjs/xchain-solana'
 import { THORChain } from '@xchainjs/xchain-thorchain'
 import { Asset, Address, Chain } from '@xchainjs/xchain-util'
 import { ZECChain } from '@xchainjs/xchain-zcash'
-import { List, message } from 'antd'
 import clsx from 'clsx'
 import { function as FP, array as A, option as O } from 'fp-ts'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -747,19 +746,18 @@ export const WalletSettings = (props: Props): JSX.Element => {
     if (newAddress.name && newAddress.address && newAddress.chain) {
       addAddress({ name: newAddress.name, address: newAddress.address, chain: newAddress.chain })
       setNewAddress({ chain: '', name: '', address: '' })
-      message.success(intl.formatMessage({ id: 'common.addAddress' }))
+      // TODO: notification
+      // message.success(intl.formatMessage({ id: 'common.addAddress' }))
     } else {
-      message.error(intl.formatMessage({ id: 'common.error' }))
+      // message.error(intl.formatMessage({ id: 'common.error' }))
     }
-  }, [newAddress, intl])
+  }, [newAddress])
 
-  const handleRemoveAddress = useCallback(
-    (address: TrustedAddress) => {
-      removeAddress(address)
-      message.success(intl.formatMessage({ id: 'common.removeAddress' }))
-    },
-    [intl]
-  )
+  const handleRemoveAddress = useCallback((address: TrustedAddress) => {
+    removeAddress(address)
+    // TODO: notification
+    // message.success(intl.formatMessage({ id: 'common.removeAddress' }))
+  }, [])
 
   const renderAddAddressForm = useCallback(
     () => (
@@ -803,27 +801,17 @@ export const WalletSettings = (props: Props): JSX.Element => {
   )
 
   const renderTrustedAddresses = useCallback(
-    (chain: Chain) => (
-      <List
-        dataSource={trustedAddresses?.addresses.filter((addr) => addr.chain === chain) || []}
-        renderItem={(item) => (
-          <List.Item>
-            <div className="flex w-full items-center justify-between">
-              <List.Item.Meta
-                title={<div className="text-text0 dark:text-text0d">{item.name}</div>}
-                description={
-                  <div className="flex w-full items-center ">
-                    {' '}
-                    <Styled.AddressEllipsis address={item.address} chain={chain} network={network} enableCopy={true} />
-                    <RemoveIcon className="w-4 h-4" onClick={() => handleRemoveAddress(item)} />
-                  </div>
-                }
-              />
-            </div>
-          </List.Item>
-        )}
-      />
-    ),
+    (chain: Chain) => {
+      return (trustedAddresses?.addresses.filter((addr) => addr.chain === chain) || []).map((item) => (
+        <div key={item.address} className="flex flex-col w-full">
+          <Label size="big">{item.name}</Label>
+          <div className="flex w-full items-center space-x-2">
+            <Styled.AddressEllipsis address={item.address} chain={chain} network={network} enableCopy={true} />
+            <RemoveIcon className="w-4 h-4" onClick={() => handleRemoveAddress(item)} />
+          </div>
+        </div>
+      ))
+    },
     [trustedAddresses?.addresses, network, handleRemoveAddress]
   )
   const renderAccounts = useMemo(
@@ -831,11 +819,9 @@ export const WalletSettings = (props: Props): JSX.Element => {
       FP.pipe(
         oFilteredWalletAccounts,
         O.map((walletAccounts) => (
-          <List
-            key="accounts"
-            dataSource={walletAccounts}
-            renderItem={({ chain, accounts: { keystore, ledger: oLedger } }, i: number) => (
-              <Styled.ListItem key={i}>
+          <div className="flex flex-col" key="wallet-accounts">
+            {walletAccounts.map(({ chain, accounts: { keystore, ledger: oLedger } }, i: number) => (
+              <div key={i} className="flex flex-col p-4 border-b border-solid border-b-gray0 dark:border-b-gray0d">
                 <div className="flex w-full items-center justify-start">
                   <AssetIcon asset={getChainAsset(chain)} size="small" network={Network.Mainnet} />
                   <Styled.AccountTitle>{chain}</Styled.AccountTitle>
@@ -868,9 +854,9 @@ export const WalletSettings = (props: Props): JSX.Element => {
                     </div>
                   )}
                 </div>
-              </Styled.ListItem>
-            )}
-          />
+              </div>
+            ))}
+          </div>
         )),
         O.getOrElse(() => <></>)
       ),

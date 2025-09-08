@@ -50,15 +50,6 @@ export const BackLabel = styled(UILabel)`
   font-family: 'MainFontRegular';
 `
 
-export const Result = styled(A.Result)`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: ${palette('background', 1)};
-`
-
 export const Button = styled(UIButton).attrs({
   type: 'primary',
   round: 'true',

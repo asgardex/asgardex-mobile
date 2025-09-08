@@ -1,4 +1,4 @@
-import { Button, Row } from 'antd'
+import { Row } from 'antd'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
@@ -56,18 +56,4 @@ export const ErrorView = styled(UIErrorView)`
   font-size: 14px;
   line-height: 1.5;
   padding: 10px; /* Padding for spacing */
-`
-
-// Style for the close button at the bottom of the modal
-export const CloseButton = styled(Button)`
-  margin-top: 20px; // Space above the button
-  width: 100%; // Full width button
-  height: 40px; // Height of the button
-  background-color: ${palette('primary', 2)}; // Primary color for the button
-  color: ${palette('contrast', 0)}; // Text color for the button
-
-  &:hover,
-  &:focus {
-    background-color: ${palette('primary', 1)}; // Slightly different color on hover/focus
-  }
 `
