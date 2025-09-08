@@ -28,7 +28,7 @@ export const TxModal = (props: Props): JSX.Element => {
 
   const renderTimer = useMemo(
     () => (
-      <Styled.SubContentRow>
+      <div className="w-full flex items-center justify-center">
         {FP.pipe(
           txRD,
           RD.fold(
@@ -44,14 +44,14 @@ export const TxModal = (props: Props): JSX.Element => {
             () => <TxTimer status={false} />
           )
         )}
-      </Styled.SubContentRow>
+      </div>
     ),
     [intl, startTime, txRD, timerValue]
   )
 
-  const renderExtra = useMemo(() => <Styled.SubContentRow>{extra}</Styled.SubContentRow>, [extra])
+  const renderExtra = useMemo(() => <div className="w-full flex items-center justify-center">{extra}</div>, [extra])
   const renderExtraResult = useMemo(
-    () => (extraResult ? <Styled.ExtraResultContainer>{extraResult}</Styled.ExtraResultContainer> : <></>),
+    () => (extraResult ? <div className="flex items-center justify-center pt-6">{extraResult}</div> : <></>),
     [extraResult]
   )
 
@@ -85,10 +85,10 @@ export const TxModal = (props: Props): JSX.Element => {
 
   return (
     <Styled.Modal visible title={title} footer={null} onCancel={onClose}>
-      <Styled.ContentRow>
+      <div className="flex items-center justify-center w-full py-8 border-b border-gray0 dark:border-gray0d">
         {renderTimer}
         {renderExtra}
-      </Styled.ContentRow>
+      </div>
       {renderResult}
     </Styled.Modal>
   )

@@ -47,9 +47,9 @@ export const HeadlessModal = ({
         <DialogPanel
           className={clsx(
             'mx-auto flex flex-col items-center py-5',
-            'h-3/4 max-h-[600px] min-h-[350px] w-full max-w-[360px] md:max-w-[480px]',
+            'w-full max-w-[360px] md:max-w-[480px]',
             'bg-bg0 dark:bg-bg0d',
-            'rounded-lg border border-solid border-turquoise/80',
+            'rounded-lg border border-solid border-gray1 dark:border-gray0d',
             className
           )}>
           <div className="flex w-full items-center justify-between rounded-t-lg px-4">
