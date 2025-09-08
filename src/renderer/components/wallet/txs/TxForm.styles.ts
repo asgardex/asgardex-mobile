@@ -51,7 +51,6 @@ export const BackLabel = styled(UILabel)`
 `
 
 export const Button = styled(UIButton).attrs({
-  type: 'primary',
   round: 'true',
   sizevalue: 'xnormal'
 })``

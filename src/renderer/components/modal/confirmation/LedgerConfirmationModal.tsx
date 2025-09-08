@@ -134,7 +134,6 @@ export const LedgerConfirmationModal = ({
                       <Button
                         className="shadow-none"
                         typevalue="transparent"
-                        type="text"
                         onClick={() => setShowAddresses((current) => !current)}>
                         {intl.formatMessage({
                           id: showAddresses ? 'ledger.legacyformat.hide' : 'ledger.legacyformat.show'

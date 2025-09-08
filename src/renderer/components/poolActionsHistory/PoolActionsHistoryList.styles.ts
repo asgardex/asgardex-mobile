@@ -12,9 +12,7 @@ export const InfoArrow = styled(ArrowUpIcon)`
 `
 
 export const GoToButton = styled(UIButton).attrs({ typevalue: 'transparent' })`
-  &.ant-btn {
-    display: inline-block;
-    min-width: 0;
-    padding: 0;
-  }
+  display: inline-block;
+  min-width: 0;
+  padding: 0;
 `
