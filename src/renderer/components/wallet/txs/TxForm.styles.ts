@@ -1,5 +1,4 @@
 import { CursorArrowRaysIcon as SelectOutlined } from '@heroicons/react/24/outline'
-import * as A from 'antd'
 import styled from 'styled-components'
 import { palette } from 'styled-theme'
 
@@ -132,25 +131,4 @@ export const Alert = styled('div')`
 
 export const MemoWrapper = styled('div')`
   margin-top: 16px;
-`
-
-export const CustomSelect = styled(A.Select)`
-  background: inherit !important;
-  color: ${palette('text', 0)};
-
-  .ant-select-selector {
-    background: inherit !important;
-    border-radius: 8px !important;
-    border: none;
-  }
-  .ant-select-arrow {
-    color: ${palette('text', 0)};
-  }
-  .ant-select-dropdown {
-    background: inherit !important;
-    color: ${palette('text', 0)};
-  }
-  &:hover {
-    border-color: ${palette('primary', 2)};
-  }
 `
