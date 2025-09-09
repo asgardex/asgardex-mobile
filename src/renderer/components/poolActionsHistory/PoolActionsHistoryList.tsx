@@ -99,7 +99,6 @@ export const PoolActionsHistoryList = ({
               current={currentPage}
               total={total}
               defaultPageSize={DEFAULT_PAGE_SIZE}
-              showSizeChanger={false}
               onChange={changePaginationHandler}
             />
           )}
