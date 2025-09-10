@@ -89,6 +89,8 @@ import { Modal } from '../uielements/modal'
 import { Tooltip } from '../uielements/tooltip'
 import { WalletSelector } from '../uielements/wallet'
 import { EditableWalletName } from '../uielements/wallet/EditableWalletName'
+import { AutoComplete } from './AutoComplete'
+import { WalletIndexInput } from './WalletIndexInput'
 import * as Styled from './WalletSettings.styles'
 import { WhitelistModal } from './WhitelistModal'
 
@@ -371,43 +373,44 @@ export const WalletSettings = (props: Props): JSX.Element => {
           <>
             <div className="flex w-full flex-col md:w-auto lg:flex-row">
               <div className="mr-30px flex items-center md:mr-0">
-                <Styled.AddLedgerButton className="gap-x-1" loading={loading} onClick={addLedgerAddressHandler}>
+                <Styled.AddLedgerButton
+                  className="gap-x-1"
+                  sizevalue="small"
+                  loading={loading}
+                  onClick={addLedgerAddressHandler}>
                   <PlusCircleIcon className="text-turquoise" width={20} height={20} />
                   {intl.formatMessage({ id: 'ledger.add.device' })}
                 </Styled.AddLedgerButton>
 
                 <>
-                  <div className="text-[12px] uppercase text-text2 dark:text-text2d">
+                  <div className="ml-2 text-[12px] uppercase text-text2 dark:text-text2d">
                     {intl.formatMessage({ id: 'settings.wallet.account' })}
                   </div>
-                  <Styled.WalletIndexInput
+                  <WalletIndexInput
+                    className="ml-2 mr-1 w-16"
                     value={selectedAccountIndex.toString()}
-                    pattern="[0-9]+"
-                    onChange={(value) =>
-                      value !== null && +value >= 0 && setWalletAccountMap({ ...walletAccountMap, [chain]: +value })
-                    }
-                    style={{ width: 60 }}
                     disabled={loading || (isEvmChain(chain) && evmHDMode !== 'ledgerlive')}
+                    onChange={(value) => {
+                      if (value !== null && +value >= 0) setWalletAccountMap({ ...walletAccountMap, [chain]: +value })
+                    }}
                     onPressEnter={addLedgerAddressHandler}
                   />
                   <InfoIcon tooltip={intl.formatMessage({ id: 'settings.wallet.account.info' })} />
-                </>
 
-                <div className="ml-2 text-[12px] uppercase text-text2 dark:text-text2d">
-                  {intl.formatMessage({ id: 'settings.wallet.index' })}
-                </div>
-                <Styled.WalletIndexInput
-                  className="border border-solid border-bg2 dark:border-bg2d"
-                  value={selectedWalletIndex.toString()}
-                  pattern="[0-9]+"
-                  onChange={(value) =>
-                    value !== null && +value >= 0 && setWalletIndexMap({ ...walletIndexMap, [chain]: +value })
-                  }
-                  style={{ width: 60 }}
-                  disabled={loading}
-                  onPressEnter={addLedgerAddressHandler}
-                />
-                <InfoIcon tooltip={intl.formatMessage({ id: 'settings.wallet.index.info' })} />
+                  <div className="ml-2 text-[12px] uppercase text-text2 dark:text-text2d">
+                    {intl.formatMessage({ id: 'settings.wallet.index' })}
+                  </div>
+                  <WalletIndexInput
+                    className="ml-2 mr-1 w-16"
+                    value={selectedWalletIndex.toString()}
+                    onChange={(value) =>
+                      value !== null && +value >= 0 && setWalletIndexMap({ ...walletIndexMap, [chain]: +value })
+                    }
+                    disabled={loading}
+                    onPressEnter={addLedgerAddressHandler}
+                  />
+                  <InfoIcon tooltip={intl.formatMessage({ id: 'settings.wallet.index.info' })} />
+                </>
 
                 {chain === BTCChain && (
                   <div className="ml-2">
@@ -762,16 +765,11 @@ export const WalletSettings = (props: Props): JSX.Element => {
   const renderAddAddressForm = useCallback(
     () => (
       <div className="flex items-center gap-3 mb-4">
-        <Styled.AutoComplete
-          className="w-40 mr-2"
-          key={newAddress.chain || 'autocomplete'}
+        <AutoComplete
           placeholder={intl.formatMessage({ id: 'common.chain' })}
           options={enabledChains.map((chain) => ({ value: chain }))}
           value={newAddress.chain}
           onChange={(value) => setNewAddress((prev) => ({ ...prev, chain: value as string }))}
-          filterOption={(inputValue, option) =>
-            option ? option.value.toLowerCase().includes(inputValue.toLowerCase()) : false
-          }
         />
         <Input
           className="border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"
@@ -793,7 +791,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
             <PlusCircleIcon className="text-turquoise" width={20} height={20} />
             {intl.formatMessage({ id: 'common.store' })}
           </Styled.AddLedgerButton>
-          <InfoIcon className="ml-10px" tooltip={intl.formatMessage({ id: 'settings.wallet.storeAddress.info' })} />
+          <InfoIcon className="ml-2" tooltip={intl.formatMessage({ id: 'settings.wallet.storeAddress.info' })} />
         </div>
       </div>
     ),
