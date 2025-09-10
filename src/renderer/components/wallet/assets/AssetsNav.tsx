@@ -85,7 +85,7 @@ export const AssetsNav = (): JSX.Element => {
 
   return (
     <nav className="w-full">
-      <ul className="hidden md:flex items-center justify-center bg-bg0 dark:bg-bg0d rounded-t-lg gap-2 border-b border-gray0 dark:border-gray0d px-2">
+      <ul className="hidden md:flex items-center justify-center bg-bg0 dark:bg-bg0d rounded-t-lg gap-2 border-b border-gray0 dark:border-gray0d px-2 mb-0">
         {menuItems.map(({ key, label, path }) => {
           const isActive = key === activeMenu
 

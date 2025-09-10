@@ -229,10 +229,7 @@ export const SavedAddressSelect = ({
             'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
           )}>
           <Label>{selected ? selected : placeholder.toUpperCase()}</Label>
-          <ChevronDownIcon
-            className="group pointer-events-none absolute top-2.5 right-2.5 size-4 stroke-text0 dark:stroke-text0d"
-            aria-hidden="true"
-          />
+          <ChevronDownIcon className="group pointer-events-none absolute top-2.5 right-2.5 size-4 stroke-text0 dark:stroke-text0d" />
         </ListboxButton>
       </div>
       <ListboxOptions

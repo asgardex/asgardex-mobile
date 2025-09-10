@@ -6,6 +6,7 @@ import { useIntl } from 'react-intl'
 
 import { ApiError } from '../../../services/wallet/types'
 import { ButtonProps as UIButtonProps } from '../../uielements/button'
+import { Modal } from '../../uielements/modal'
 import { TxTimer } from '../../uielements/txTimer'
 import * as Styled from './TxModal.styles'
 
@@ -76,7 +77,7 @@ export const TxModal = (props: Props): JSX.Element => {
     )
 
     return (
-      <div className="flex flex-col items-center justify-center pb-7">
+      <div className="flex flex-col items-center justify-center">
         <Styled.ResultButton {...buttonProps} />
         {renderExtraResult}
       </div>
@@ -84,12 +85,12 @@ export const TxModal = (props: Props): JSX.Element => {
   }, [intl, onClose, onFinish, renderExtraResult, txRD])
 
   return (
-    <Styled.Modal visible title={title} footer={null} onCancel={onClose}>
-      <div className="flex items-center justify-center w-full py-8 border-b border-gray0 dark:border-gray0d">
+    <Modal panelClassName="!max-w-[420px]" visible title={title} onCancel={onClose}>
+      <div className="flex flex-col items-center justify-center w-full pb-8 border-b border-gray0 dark:border-gray0d">
         {renderTimer}
         {renderExtra}
       </div>
       {renderResult}
-    </Styled.Modal>
+    </Modal>
   )
 }

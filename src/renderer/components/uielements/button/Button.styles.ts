@@ -229,7 +229,6 @@ export const ButtonWrapper = styled(Button)<Props>`
   text-transform: uppercase;
   text-decoration: ${({ typevalue }) => (typevalue === 'underline' ? 'underline' : 'none')};
 
-  /* set theme colors away from antd defaults */
   &,
   &:active,
   &:focus {

@@ -107,20 +107,10 @@ export function Pagination({
     <div className={`flex flex-col items-center justify-center gap-3 py-5 ${className}`} aria-disabled={disabled}>
       <div className="flex items-center gap-2">
         {/* Prev/First */}
-        <button
-          type="button"
-          className={iconBtn}
-          onClick={() => setPage(1)}
-          disabled={disabled || page <= 1}
-          aria-label="First page">
+        <button type="button" className={iconBtn} onClick={() => setPage(1)} disabled={disabled || page <= 1}>
           «
         </button>
-        <button
-          type="button"
-          className={iconBtn}
-          onClick={() => setPage(page - 1)}
-          disabled={disabled || page <= 1}
-          aria-label="Previous page">
+        <button type="button" className={iconBtn} onClick={() => setPage(page - 1)} disabled={disabled || page <= 1}>
           ‹
         </button>
 
@@ -136,7 +126,6 @@ export function Pagination({
               type="button"
               className={item === page ? active : btn}
               onClick={() => setPage(item as number)}
-              aria-current={item === page ? 'page' : undefined}
               disabled={disabled}>
               {item}
             </button>
@@ -148,16 +137,14 @@ export function Pagination({
           type="button"
           className={iconBtn}
           onClick={() => setPage(page + 1)}
-          disabled={disabled || page >= totalPages}
-          aria-label="Next page">
+          disabled={disabled || page >= totalPages}>
           ›
         </button>
         <button
           type="button"
           className={iconBtn}
           onClick={() => setPage(totalPages)}
-          disabled={disabled || page >= totalPages}
-          aria-label="Last page">
+          disabled={disabled || page >= totalPages}>
           »
         </button>
       </div>

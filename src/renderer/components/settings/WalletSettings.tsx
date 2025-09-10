@@ -653,7 +653,6 @@ export const WalletSettings = (props: Props): JSX.Element => {
                 visible={true}
                 onOk={onOk}
                 onCancel={onCancel}
-                maskClosable={false}
                 closable={false}
                 okText={intl.formatMessage({ id: 'common.confirm' })}
                 okButtonProps={{ autoFocus: true }}
