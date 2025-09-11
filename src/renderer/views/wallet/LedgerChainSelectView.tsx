@@ -1,11 +1,21 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { BTCChain } from '@xchainjs/xchain-bitcoin'
+import { BCHChain } from '@xchainjs/xchain-bitcoincash'
+import { Network } from '@xchainjs/xchain-client'
+import { DASHChain } from '@xchainjs/xchain-dash'
+import { DOGEChain } from '@xchainjs/xchain-doge'
+import { LTCChain } from '@xchainjs/xchain-litecoin'
 import { Chain } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 
+import {
+  getChainDerivationPath,
+  getChainDerivationOptions,
+  chainSupportsMultipleDerivationPaths
+} from '../../../shared/utils/derivationPath'
 import { HDMode, WalletType } from '../../../shared/wallet/types'
 import { AssetIcon } from '../../components/uielements/assets/assetIcon'
 import { FlatButton } from '../../components/uielements/button'
@@ -16,48 +26,46 @@ import { Input } from '../../components/uielements/input'
 import { Label } from '../../components/uielements/label'
 import { Spin } from '../../components/uielements/spin'
 import { useWalletContext } from '../../contexts/WalletContext'
-import { getChainAsset } from '../../helpers/chainHelper'
+import {
+  getChainAsset,
+  isBtcChain,
+  isBchChain,
+  isLtcChain,
+  isDogeChain,
+  isDashChain,
+  isCosmosChain,
+  isThorChain,
+  isMayaChain,
+  isKujiChain
+} from '../../helpers/chainHelper'
+import { isEvmChain } from '../../helpers/evmHelper'
 import { useNetwork } from '../../hooks/useNetwork'
 import * as walletRoutes from '../../routes/wallet'
 import { isStandaloneLedgerMode } from '../../services/wallet/types'
 
-// Check if chain supports HD modes
+// Check if chain supports HD modes or wallet index/account configuration
 const chainSupportsHDModes = (chain: Chain): boolean => {
-  return ['ETH', 'BSC', 'AVAX', 'ARB', 'BASE', 'BTC'].includes(chain)
-}
+  // EVM chains support HD modes
+  if (isEvmChain(chain)) return true
 
-// Helper functions for derivation paths
-const getBitcoinDerivationPaths = (account: number, index: number) => [
-  `Native SegWit P2WPKH (m/84'/0'/${account}'/0/${index})`,
-  `Taproot P2TR (m/86'/0'/${account}'/0/${index})`
-]
+  // UTXO chains support HD modes
+  if (isBtcChain(chain) || isBchChain(chain) || isLtcChain(chain) || isDogeChain(chain) || isDashChain(chain))
+    return true
 
-const getEvmDerivationPaths = (
-  hdMode: 'default' | 'ledgerlive' | 'metamask' | 'legacy' | 'p2wpkh' | 'p2tr',
-  account: number,
-  index: number
-) => {
-  // Handle Bitcoin HD modes by defaulting to Ledger Live display
-  if (hdMode === 'p2wpkh' || hdMode === 'p2tr') {
-    return `Ledger Live (m/44'/60'/${account}'/0/${index})`
-  }
-  if (hdMode === 'ledgerlive' || hdMode === 'default') {
-    return `Ledger Live (m/44'/60'/${account}'/0/${index})`
-  } else if (hdMode === 'metamask') {
-    return `MetaMask (m/44'/60'/0'/0/${index})`
-  } else {
-    return `Legacy (m/44'/60'/0'/0/${index})`
-  }
+  // Cosmos-based chains support HD modes
+  if (isCosmosChain(chain) || isThorChain(chain) || isMayaChain(chain) || isKujiChain(chain)) return true
+
+  return false
 }
 
 interface ChainItemProps {
   chain: Chain
   isSelected: boolean
   onSelect: (chain: Chain) => void
+  network: Network
 }
 
-const ChainItem: React.FC<ChainItemProps> = ({ chain, isSelected, onSelect }) => {
-  const { network } = useNetwork()
+const ChainItem: React.FC<ChainItemProps> = ({ chain, isSelected, onSelect, network }) => {
   const handleClick = useCallback(() => {
     onSelect(chain)
   }, [chain, onSelect])
@@ -83,6 +91,7 @@ export const LedgerChainSelectView: React.FC = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { appWalletService, reloadBalancesByChain, reloadBalances } = useWalletContext()
+  const { network } = useNetwork()
 
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>(undefined)
   const [selectedHDMode, setSelectedHDMode] = useState<HDMode>('default')
@@ -112,6 +121,12 @@ export const LedgerChainSelectView: React.FC = () => {
     } else if (chain === BTCChain) {
       // Default to Native SegWit for Bitcoin
       setSelectedHDMode('p2wpkh')
+    } else if (chain === BCHChain || chain === LTCChain || chain === DOGEChain || chain === DASHChain) {
+      // Other UTXO chains use default mode
+      setSelectedHDMode('default')
+    } else if (chain === 'GAIA' || chain === 'THOR') {
+      // Cosmos chains use default mode
+      setSelectedHDMode('default')
     } else {
       // Default to Ledger Live for EVM chains
       setSelectedHDMode('ledgerlive')
@@ -246,14 +261,20 @@ export const LedgerChainSelectView: React.FC = () => {
           {/* Chain grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-8">
             {standaloneLedgerState.availableChains.map((chain) => (
-              <ChainItem key={chain} chain={chain} isSelected={selectedChain === chain} onSelect={handleChainSelect} />
+              <ChainItem
+                key={chain}
+                chain={chain}
+                isSelected={selectedChain === chain}
+                onSelect={handleChainSelect}
+                network={network}
+              />
             ))}
           </div>
 
           {/* Wallet configuration for chains that support HD modes */}
           {selectedChain && chainSupportsHDModes(selectedChain) && (
-            <div className="bg-bg1 dark:bg-bg1d rounded-lg p-4 mb-4">
-              <div className="flex items-center gap-3">
+            <div className="flex justify-center mb-4">
+              <div className="bg-bg1 dark:bg-bg1d rounded-lg p-4 inline-flex items-center gap-4">
                 {/* Account input */}
                 <div className="flex items-center gap-2">
                   <Label size="small" className="text-12 uppercase text-gray2 dark:text-gray2d">
@@ -282,46 +303,67 @@ export const LedgerChainSelectView: React.FC = () => {
                   />
                 </div>
 
-                {/* Derivation path dropdown for Bitcoin */}
-                {selectedChain === BTCChain && (
-                  <Dropdown
-                    trigger={
-                      <Label className="rounded-lg px-3 py-2 border border-solid border-bg2 dark:border-bg2d cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10">
-                        {getBitcoinDerivationPaths(walletAccount, walletIndex)[selectedHDMode === 'p2tr' ? 1 : 0]}
-                      </Label>
-                    }
-                    options={getBitcoinDerivationPaths(walletAccount, walletIndex).map(
-                      (item: string, index: number) => (
-                        <Label
-                          key={item}
-                          className="px-3 py-2 cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10"
-                          size="normal"
-                          onClick={() => setSelectedHDMode(index === 0 ? 'p2wpkh' : 'p2tr')}>
-                          {item}
+                {/* Derivation path dropdown for chains with multiple paths */}
+                {chainSupportsMultipleDerivationPaths(selectedChain) && !isEvmChain(selectedChain) && (
+                  <div className="min-w-[280px] text-center">
+                    <Dropdown
+                      trigger={
+                        <Label className="rounded-lg px-3 py-2 border border-solid border-bg2 dark:border-bg2d cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10">
+                          {getChainDerivationOptions(selectedChain, walletAccount, walletIndex, network)[
+                            selectedHDMode === 'p2tr' ? 1 : 0
+                          ]?.description || 'Default'}
                         </Label>
-                      )
-                    )}
-                  />
+                      }
+                      options={getChainDerivationOptions(selectedChain, walletAccount, walletIndex, network).map(
+                        (option, index: number) => (
+                          <Label
+                            key={option.path}
+                            className="px-3 py-2 cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10"
+                            size="normal"
+                            onClick={() => setSelectedHDMode(index === 0 ? 'p2wpkh' : 'p2tr')}>
+                            {option.description}
+                          </Label>
+                        )
+                      )}
+                    />
+                  </div>
+                )}
+
+                {/* Derivation path display for chains with single path */}
+                {!chainSupportsMultipleDerivationPaths(selectedChain) && !isEvmChain(selectedChain) && (
+                  <div className="min-w-[280px] text-center">
+                    <Label className="rounded-lg px-3 py-2 border border-solid border-bg2 dark:border-bg2d text-12 inline-block">
+                      {getChainDerivationPath(selectedChain, walletAccount, walletIndex, network).description}
+                    </Label>
+                  </div>
                 )}
 
                 {/* Derivation path dropdown for EVM chains */}
-                {selectedChain && selectedChain !== BTCChain && (
-                  <Dropdown
-                    trigger={
-                      <Label className="rounded-lg px-3 py-2 border border-solid border-bg2 dark:border-bg2d cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10">
-                        {getEvmDerivationPaths(selectedHDMode, walletAccount, walletIndex)}
-                      </Label>
-                    }
-                    options={(['ledgerlive', 'legacy', 'metamask'] as const).map((mode) => (
-                      <Label
-                        key={mode}
-                        className="px-3 py-2 cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10"
-                        size="normal"
-                        onClick={() => setSelectedHDMode(mode as HDMode)}>
-                        {getEvmDerivationPaths(mode, walletAccount, walletIndex)}
-                      </Label>
-                    ))}
-                  />
+                {isEvmChain(selectedChain) && (
+                  <div className="min-w-[280px] text-center">
+                    <Dropdown
+                      trigger={
+                        <Label className="rounded-lg px-3 py-2 border border-solid border-bg2 dark:border-bg2d cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10">
+                          {
+                            getChainDerivationPath(selectedChain, walletAccount, walletIndex, undefined, selectedHDMode)
+                              .description
+                          }
+                        </Label>
+                      }
+                      options={(['ledgerlive', 'legacy', 'metamask'] as const).map((mode) => (
+                        <Label
+                          key={mode}
+                          className="px-3 py-2 cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10"
+                          size="normal"
+                          onClick={() => setSelectedHDMode(mode as HDMode)}>
+                          {
+                            getChainDerivationPath(selectedChain, walletAccount, walletIndex, undefined, mode)
+                              .description
+                          }
+                        </Label>
+                      ))}
+                    />
+                  </div>
                 )}
               </div>
             </div>
