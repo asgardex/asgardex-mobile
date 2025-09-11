@@ -13,7 +13,7 @@ export type Props = {
 export const SwapAssets = (props: Props): JSX.Element => {
   const { source, target, stepDescription, network } = props
   return (
-    <>
+    <div className="flex flex-col items-center justify-center w-full">
       <Styled.StepLabel>{stepDescription}</Styled.StepLabel>
       <Styled.DataWrapper>
         <Styled.StepBar size={50} />
@@ -22,6 +22,6 @@ export const SwapAssets = (props: Props): JSX.Element => {
           <Styled.AssetData asset={target.asset} amount={target.amount} network={network} />
         </Styled.AssetsContainer>
       </Styled.DataWrapper>
-    </>
+    </div>
   )
 }
