@@ -68,14 +68,7 @@ export const PoolActionsHistoryList = ({
             <TxType className="mr-2" type={action.type} showTypeIcon />
             {titleExtra}
           </div>
-          <TxDetail
-            type={action.type}
-            date={date}
-            incomes={H.getValues(action.in)}
-            outgos={H.getValues(action.out)}
-            network={network}
-            isDesktopView
-          />
+          <TxDetail incomes={H.getValues(action.in)} outgos={H.getValues(action.out)} network={network} isDesktopView />
         </div>
       )
     },

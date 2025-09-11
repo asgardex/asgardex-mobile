@@ -235,7 +235,7 @@ export const SavedAddressSelect = ({
       <ListboxOptions
         anchor="bottom start"
         transition
-        className="w-[--button-width] mt-1 p-4 rounded-md bg-bg0 dark:bg-bg0d border border-solid border-gray0 dark:border-gray0d">
+        className="w-[var(--button-width)] mt-1 p-4 rounded-md bg-bg0 dark:bg-bg0d border border-solid border-gray0 dark:border-gray0d">
         {addresses.length ? (
           addresses.map(({ address, name }) => (
             <ListboxOption className="cursor-pointer flex items-center justify-between" key={address} value={address}>

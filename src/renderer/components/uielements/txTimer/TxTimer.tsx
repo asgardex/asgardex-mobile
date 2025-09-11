@@ -28,7 +28,8 @@ const CircleProgress = ({
   strokeColor = '#0068F7',
   trailColor = 'rgba(242, 243, 243, 0.5)',
   strokeLinecap = 'round' as 'round' | 'butt' | 'square',
-  children // centered content (timer label)
+  children, // centered content (timer label)
+  ariaLabel
 }: {
   className?: string
   percent: number
@@ -38,6 +39,7 @@ const CircleProgress = ({
   trailColor?: string
   strokeLinecap?: 'round' | 'butt' | 'square'
   children?: React.ReactNode
+  ariaLabel?: string
 }) => {
   const clamped = Math.max(0, Math.min(100, percent))
   const r = (size - strokeWidth) / 2
@@ -46,7 +48,13 @@ const CircleProgress = ({
   const offset = c * (1 - clamped / 100)
 
   return (
-    <div className={clsx('relative inline-block', className)} style={{ width: size, height: size }}>
+    <div
+      className={clsx('relative inline-block', className)}
+      style={{ width: size, height: size }}
+      aria-label={ariaLabel}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(clamped)}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
         {/* trail */}
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={trailColor} strokeWidth={strokeWidth} />

@@ -1,5 +1,4 @@
-// ProgressBar.tsx
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Transition } from '@headlessui/react'
 import clsx from 'clsx'
 
@@ -31,7 +30,8 @@ export const ProgressBar = ({
   className = '',
   heightPx = 8
 }: Props): JSX.Element => {
-  const clamped = Math.max(0, Math.min(100, percent))
+  const safePercent = Number.isFinite(percent) ? percent : 0
+  const clamped = Math.max(0, Math.min(100, safePercent))
 
   const percentLabels = useMemo(
     () => (

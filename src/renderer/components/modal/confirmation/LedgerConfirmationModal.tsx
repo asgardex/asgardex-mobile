@@ -129,7 +129,7 @@ export const LedgerConfirmationModal = ({
                     <div className="flex items-center space-x-2">
                       <ExclamationTriangleIcon className="w-8 h-8" />
                       <Label size="small">
-                        {intl.formatMessage({ id: 'ledger.legacyformat.note' }, { url: 'ulr' })}
+                        {intl.formatMessage({ id: 'ledger.legacyformat.note' }, { url: 'url' })}
                       </Label>
                     </div>
 

@@ -747,7 +747,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
   const handleAddAddress = useCallback(() => {
     if (newAddress.name && newAddress.address && newAddress.chain) {
       addAddress({ name: newAddress.name, address: newAddress.address, chain: newAddress.chain })
-      setNewAddress({ chain: '', name: '', address: '' })
+      setNewAddress({})
       // TODO: notification
       // message.success(intl.formatMessage({ id: 'common.addAddress' }))
     } else {
@@ -768,7 +768,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
           placeholder={intl.formatMessage({ id: 'common.chain' })}
           options={enabledChains.map((chain) => ({ value: chain }))}
           value={newAddress.chain}
-          onChange={(value) => setNewAddress((prev) => ({ ...prev, chain: value as string }))}
+          onChange={(value) => setNewAddress((prev) => ({ ...prev, chain: value as Chain }))}
         />
         <Input
           className="border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"

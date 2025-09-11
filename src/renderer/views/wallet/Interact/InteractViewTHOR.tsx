@@ -251,10 +251,8 @@ export const InteractViewTHOR = () => {
       ([interactType, { walletType, walletAccount, walletIndex, hdMode }]) => (
         <>
           <div className="relative mb-4 flex items-center justify-between">
-            <div className="flex items-start justify-between">
-              <BackLinkButton />
-              <RefreshButton className="absolute right-0" onClick={reloadHandler} />
-            </div>
+            <BackLinkButton />
+            <RefreshButton className="absolute right-0" onClick={reloadHandler} />
           </div>
 
           <div className="flex flex-col items-center justify-center overflow-auto bg-bg0 dark:bg-bg0d">
