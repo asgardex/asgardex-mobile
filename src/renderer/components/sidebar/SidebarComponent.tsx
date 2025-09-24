@@ -18,6 +18,7 @@ import DiscordIcon from '../../assets/svg/icon-discord.svg?react'
 import FileIcon from '../../assets/svg/icon-file.svg?react'
 import GithubIcon from '../../assets/svg/icon-github.svg?react'
 import GlobeIcon from '../../assets/svg/icon-globe.svg?react'
+import HistoryIcon from '../../assets/svg/icon-history.svg?react'
 import PoolIcon from '../../assets/svg/icon-pools.svg?react'
 import PortfolioIcon from '../../assets/svg/icon-portfolio.svg?react'
 import SwapIcon from '../../assets/svg/icon-swap.svg?react'
@@ -26,8 +27,11 @@ import WalletIcon from '../../assets/svg/icon-wallet.svg?react'
 import AsgardexLogo from '../../assets/svg/logo-asgardex.svg?react'
 import ThorChainIcon from '../../assets/svg/logo-thorchain.svg?react'
 import { DEFAULT_WALLET_TYPE } from '../../const'
+import { useMayachainContext } from '../../contexts/MayachainContext'
+import { useThorchainContext } from '../../contexts/ThorchainContext'
 import * as appRoutes from '../../routes/app'
 import * as bondsRoutes from '../../routes/bonds'
+import * as historyRoutes from '../../routes/history'
 import * as playgroundRoutes from '../../routes/playground'
 import * as poolsRoutes from '../../routes/pools'
 import * as portfolioRoutes from '../../routes/portfolio'
@@ -35,6 +39,7 @@ import * as walletRoutes from '../../routes/wallet'
 import { mayaIconT } from '../icons'
 import { Label } from '../uielements/label'
 import { Tooltip } from '../uielements/tooltip'
+import { TransactionTracker } from '../uielements/transactionProgress/TransactionTracker'
 
 type IconProps = {
   className?: string
@@ -68,6 +73,7 @@ enum TabKey {
   BONDS = 'BONDS',
   PORTFOLIO = 'PORTFOLIO',
   POOLS = 'POOLS',
+  HISTORY = 'History',
   SETTINGS = 'SETTINGS',
   UNKNOWN = 'UNKNOWN'
 }
@@ -90,10 +96,13 @@ export const SidebarComponent = (props: Props): JSX.Element => {
   const { network, commitHash, isDev, publicIP } = props
 
   const intl = useIntl()
+  const { transactionTrackingService } = useThorchainContext()
+  const { transactionTrackingService: mayaTransactionTrackingService } = useMayachainContext()
 
   const navigate = useNavigate()
 
   const matchBondsRoute = useMatch({ path: bondsRoutes.base.path(), end: false })
+  const matchHistoryRoute = useMatch({ path: historyRoutes.base.path(), end: false })
   const matchPoolsRoute = useMatch({ path: poolsRoutes.base.path(), end: false })
   const matchPortfolioRoute = useMatch({ path: portfolioRoutes.base.path(), end: false })
   const matchWalletRoute = useMatch({ path: walletRoutes.base.path(), end: false })
@@ -101,22 +110,24 @@ export const SidebarComponent = (props: Props): JSX.Element => {
   const matchSwapRoute = useMatch({ path: poolsRoutes.swapBase.template, end: false })
 
   const activeKey: TabKey = useMemo(() => {
-    if (matchBondsRoute) {
-      return TabKey.BONDS
-    } else if (matchSwapRoute) {
-      return TabKey.SWAP
-    } else if (matchPoolsRoute) {
-      return TabKey.POOLS
-    } else if (matchPortfolioRoute) {
-      return TabKey.PORTFOLIO
-    } else if (matchWalletRoute) {
-      return TabKey.WALLET
-    } else if (matchSettingsRoute) {
-      return TabKey.SETTINGS
-    } else {
-      return TabKey.UNKNOWN
-    }
-  }, [matchBondsRoute, matchPoolsRoute, matchPortfolioRoute, matchWalletRoute, matchSettingsRoute, matchSwapRoute])
+    if (matchBondsRoute) return TabKey.BONDS
+    if (matchSwapRoute) return TabKey.SWAP
+    if (matchPoolsRoute) return TabKey.POOLS
+    if (matchPortfolioRoute) return TabKey.PORTFOLIO
+    if (matchWalletRoute) return TabKey.WALLET
+    if (matchHistoryRoute) return TabKey.HISTORY
+    if (matchSettingsRoute) return TabKey.SETTINGS
+
+    return TabKey.UNKNOWN
+  }, [
+    matchBondsRoute,
+    matchSwapRoute,
+    matchPoolsRoute,
+    matchPortfolioRoute,
+    matchWalletRoute,
+    matchHistoryRoute,
+    matchSettingsRoute
+  ])
 
   const networkBgCn = useMemo(() => {
     if (network === Network.Mainnet) return 'bg-turquoise'
@@ -163,6 +174,12 @@ export const SidebarComponent = (props: Props): JSX.Element => {
         icon: PoolIcon
       },
       {
+        key: TabKey.HISTORY,
+        label: intl.formatMessage({ id: 'common.transaction' }),
+        path: historyRoutes.base.path(),
+        icon: HistoryIcon
+      },
+      {
         key: TabKey.SETTINGS,
         label: intl.formatMessage({ id: 'common.settings' }),
         path: appRoutes.settings.path(),
@@ -181,7 +198,7 @@ export const SidebarComponent = (props: Props): JSX.Element => {
             <div
               key={key}
               className={clsx(
-                'flex h-full cursor-pointer rounded-lg',
+                'flex cursor-pointer rounded-lg',
                 'font-mainBold text-18 uppercase',
                 'transition duration-100 ease-in-out',
                 'focus-visible:outline-none',
@@ -232,9 +249,20 @@ export const SidebarComponent = (props: Props): JSX.Element => {
   return (
     <div className="w-60 h-full py-5 border-r border-none border-gray0 !bg-bg0 dark:border-gray0d dark:!bg-bg0d">
       <div className="flex h-full flex-col justify-between" ref={setHeaderRef}>
-        <div>
+        <div className="flex-1 flex flex-col">
           {renderLogo}
           {renderMainNav}
+          <TransactionTracker
+            transactionTrackingService={transactionTrackingService}
+            className="mt-6 mx-4"
+            protocol="Thorchain"
+          />
+          <TransactionTracker
+            transactionTrackingService={mayaTransactionTrackingService}
+            className="mt-2 mx-4"
+            protocol="Mayachain"
+          />
+          <div className="flex-1" />
         </div>
         <div className="flex flex-col items-center justify-center">
           <FooterIcon url={ExternalUrl.DOCSTHOR} onClick={clickIconHandler}>
