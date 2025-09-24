@@ -102,6 +102,33 @@ const getInboundAddresses$ = (chain: Chain) => {
 }
 
 /**
+ * Extrapolate fee from gas_rate using FeesWithRates relationship
+ * Uses the ratio between known rate and fee to calculate fee for given gas_rate
+ */
+const extrapolateFeeFromGasRate = (
+  gasRate: number,
+  feesWithRates: {
+    rates: { fast: number; fastest: number; average: number }
+    fees: { fast: BaseAmount; fastest: BaseAmount; average: BaseAmount }
+  }
+): BaseAmount => {
+  // Use 'fast' rate as reference since it's commonly used
+  const referenceRate = feesWithRates.rates.fast
+  const referenceFee = feesWithRates.fees.fast
+
+  if (referenceRate <= 0) {
+    // Fallback to the reference fee if rate is invalid
+    return referenceFee
+  }
+
+  // Calculate fee using the ratio: gasRate / referenceRate * referenceFee
+  const scaleFactor = gasRate / referenceRate
+  const calculatedFeeAmount = referenceFee.amount().multipliedBy(scaleFactor)
+
+  return baseAmount(calculatedFeeAmount, referenceFee.decimal)
+}
+
+/**
  * Fees for pool outbound txs (swap/deposit/withdraw/earn) tobefixed
  */
 export const poolOutboundFee$ = (asset: AnyAsset): PoolFeeLD => {
@@ -180,44 +207,160 @@ export const poolInboundFee$ = (asset: AnyAsset, memo: string): PoolFeeLD => {
   }
   switch (asset.chain) {
     case DOGEChain:
+      // Use gas_rate from inbound addresses with FeesWithRates ratio
       return FP.pipe(
-        DOGE.address$.pipe(
-          RxOp.switchMap(
-            O.fold(
-              () => Rx.of(RD.failure(new Error('No address available'))),
-              (address) =>
-                FP.pipe(
-                  DOGE.feesWithRates$(address.address, memo),
-                  liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
-                )
+        Rx.combineLatest([
+          getInboundAddresses$(DOGEChain),
+          // Get current FeesWithRates to establish rate-to-fee relationship
+          DOGE.address$.pipe(
+            RxOp.switchMap(
+              O.fold(
+                () => Rx.of(RD.initial),
+                (address) => DOGE.feesWithRates$(address.address, memo)
+              )
             )
-          ),
-          RxOp.catchError((error) => Rx.of(RD.failure(error))),
-          RxOp.startWith(RD.pending)
-        )
+          )
+        ]),
+        RxOp.switchMap(([inboundAddressesRD, feesWithRatesRD]) => {
+          if (RD.isSuccess(inboundAddressesRD) && RD.isSuccess(feesWithRatesRD)) {
+            const oChainFeeData = FP.pipe(
+              inboundAddressesRD.value,
+              A.findFirst((item) => item.chain === DOGEChain),
+              O.chain((data) => (data.gas_rate ? O.some({ gas_rate: Number(data.gas_rate) }) : O.none))
+            )
+
+            return FP.pipe(
+              oChainFeeData,
+              O.fold(
+                // Fallback to DOGE service fees if inbound data not available
+                () => Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast })),
+                (feeData) => {
+                  const extrapolatedFee = extrapolateFeeFromGasRate(feeData.gas_rate, feesWithRatesRD.value)
+                  return Rx.of(RD.success({ asset, amount: extrapolatedFee }))
+                }
+              )
+            )
+          }
+          // Fallback to DOGE service if either inbound addresses or fees failed
+          return RD.isSuccess(feesWithRatesRD)
+            ? Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast }))
+            : Rx.of(RD.failure(new Error('Failed to load fees')))
+        }),
+        RxOp.catchError(() => {
+          // Final fallback to DOGE service
+          return FP.pipe(
+            DOGE.address$.pipe(
+              RxOp.switchMap(
+                O.fold(
+                  () => Rx.of(RD.failure(new Error('No address available'))),
+                  (address) =>
+                    FP.pipe(
+                      DOGE.feesWithRates$(address.address, memo),
+                      liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
+                    )
+                )
+              )
+            )
+          )
+        }),
+        RxOp.startWith(RD.pending)
       )
 
     case LTCChain:
+      // Use gas_rate from inbound addresses with FeesWithRates ratio
       return FP.pipe(
-        LTC.address$.pipe(
-          RxOp.switchMap(
-            O.fold(
-              () => Rx.of(RD.failure(new Error('No address available'))),
-              (address) =>
-                FP.pipe(
-                  LTC.feesWithRates$(address.address, memo),
-                  liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
-                )
+        Rx.combineLatest([
+          getInboundAddresses$(LTCChain),
+          LTC.address$.pipe(
+            RxOp.switchMap(
+              O.fold(
+                () => Rx.of(RD.initial),
+                (address) => LTC.feesWithRates$(address.address, memo)
+              )
             )
-          ),
-          RxOp.catchError((error) => Rx.of(RD.failure(error))),
-          RxOp.startWith(RD.pending)
-        )
+          )
+        ]),
+        RxOp.switchMap(([inboundAddressesRD, feesWithRatesRD]) => {
+          if (RD.isSuccess(inboundAddressesRD) && RD.isSuccess(feesWithRatesRD)) {
+            const oChainFeeData = FP.pipe(
+              inboundAddressesRD.value,
+              A.findFirst((item) => item.chain === LTCChain),
+              O.chain((data) => (data.gas_rate ? O.some({ gas_rate: Number(data.gas_rate) }) : O.none))
+            )
+
+            return FP.pipe(
+              oChainFeeData,
+              O.fold(
+                () => Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast })),
+                (feeData) => {
+                  const extrapolatedFee = extrapolateFeeFromGasRate(feeData.gas_rate, feesWithRatesRD.value)
+                  return Rx.of(RD.success({ asset, amount: extrapolatedFee }))
+                }
+              )
+            )
+          }
+          return RD.isSuccess(feesWithRatesRD)
+            ? Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast }))
+            : Rx.of(RD.failure(new Error('Failed to load LTC fees')))
+        }),
+        RxOp.catchError(() => {
+          return FP.pipe(
+            LTC.address$.pipe(
+              RxOp.switchMap(
+                O.fold(
+                  () => Rx.of(RD.failure(new Error('No address available'))),
+                  (address) =>
+                    FP.pipe(
+                      LTC.feesWithRates$(address.address, memo),
+                      liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
+                    )
+                )
+              )
+            )
+          )
+        }),
+        RxOp.startWith(RD.pending)
       )
     case GAIAChain:
+      // Use gas_rate from inbound addresses with FeesWithRates ratio
       return FP.pipe(
-        COSMOS.fees$(),
-        liveData.map((fees) => ({ asset, amount: fees.fast }))
+        Rx.combineLatest([getInboundAddresses$(GAIAChain), COSMOS.fees$()]),
+        RxOp.switchMap(([inboundAddressesRD, feesRD]) => {
+          if (RD.isSuccess(inboundAddressesRD) && RD.isSuccess(feesRD)) {
+            const oChainFeeData = FP.pipe(
+              inboundAddressesRD.value,
+              A.findFirst((item) => item.chain === GAIAChain),
+              O.chain((data) => (data.gas_rate ? O.some({ gas_rate: Number(data.gas_rate) }) : O.none))
+            )
+
+            return FP.pipe(
+              oChainFeeData,
+              O.fold(
+                () => Rx.of(RD.success({ asset, amount: feesRD.value.fast })),
+                (feeData) => {
+                  // For COSMOS chains, we need to estimate gas units for the transaction
+                  const calculatedFee = feeData.gas_rate
+                  return Rx.of(
+                    RD.success({
+                      asset,
+                      amount: baseAmount(calculatedFee, feesRD.value.fast.decimal)
+                    })
+                  )
+                }
+              )
+            )
+          }
+          return RD.isSuccess(feesRD)
+            ? Rx.of(RD.success({ asset, amount: feesRD.value.fast }))
+            : Rx.of(RD.failure(new Error('Failed to load GAIA fees')))
+        }),
+        RxOp.catchError(() => {
+          return FP.pipe(
+            COSMOS.fees$(),
+            liveData.map((fees) => ({ asset, amount: fees.fast }))
+          )
+        }),
+        RxOp.startWith(RD.pending)
       )
     case ETHChain:
       // Use poolInTxFees$ with actual address address for accurate gas estimation
@@ -455,38 +598,114 @@ export const poolInboundFee$ = (asset: AnyAsset, memo: string): PoolFeeLD => {
         RxOp.startWith(RD.pending)
       )
     case BTCChain:
+      // Use gas_rate from inbound addresses with FeesWithRates ratio
       return FP.pipe(
-        BTC.address$.pipe(
-          RxOp.switchMap(
-            O.fold(
-              () => Rx.of(RD.failure(new Error('No address available'))),
-              (address) =>
-                FP.pipe(
-                  BTC.feesWithRates$(address.address, memo),
-                  liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
-                )
+        Rx.combineLatest([
+          getInboundAddresses$(BTCChain),
+          BTC.address$.pipe(
+            RxOp.switchMap(
+              O.fold(
+                () => Rx.of(RD.initial),
+                (address) => BTC.feesWithRates$(address.address, memo)
+              )
             )
-          ),
-          RxOp.catchError((error) => Rx.of(RD.failure(error))),
-          RxOp.startWith(RD.pending)
-        )
+          )
+        ]),
+        RxOp.switchMap(([inboundAddressesRD, feesWithRatesRD]) => {
+          if (RD.isSuccess(inboundAddressesRD) && RD.isSuccess(feesWithRatesRD)) {
+            const oChainFeeData = FP.pipe(
+              inboundAddressesRD.value,
+              A.findFirst((item) => item.chain === BTCChain),
+              O.chain((data) => (data.gas_rate ? O.some({ gas_rate: Number(data.gas_rate) }) : O.none))
+            )
+
+            return FP.pipe(
+              oChainFeeData,
+              O.fold(
+                () => Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast })),
+                (feeData) => {
+                  const extrapolatedFee = extrapolateFeeFromGasRate(feeData.gas_rate, feesWithRatesRD.value)
+                  return Rx.of(RD.success({ asset, amount: extrapolatedFee }))
+                }
+              )
+            )
+          }
+          return RD.isSuccess(feesWithRatesRD)
+            ? Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast }))
+            : Rx.of(RD.failure(new Error('Failed to load BTC fees')))
+        }),
+        RxOp.catchError(() => {
+          return FP.pipe(
+            BTC.address$.pipe(
+              RxOp.switchMap(
+                O.fold(
+                  () => Rx.of(RD.failure(new Error('No address available'))),
+                  (address) =>
+                    FP.pipe(
+                      BTC.feesWithRates$(address.address, memo),
+                      liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
+                    )
+                )
+              )
+            )
+          )
+        }),
+        RxOp.startWith(RD.pending)
       )
     case BCHChain:
+      // Use gas_rate from inbound addresses with FeesWithRates ratio
       return FP.pipe(
-        BCH.address$.pipe(
-          RxOp.switchMap(
-            O.fold(
-              () => Rx.of(RD.failure(new Error('No address available'))),
-              (address) =>
-                FP.pipe(
-                  BCH.feesWithRates$(address.address, memo),
-                  liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
-                )
+        Rx.combineLatest([
+          getInboundAddresses$(BCHChain),
+          BCH.address$.pipe(
+            RxOp.switchMap(
+              O.fold(
+                () => Rx.of(RD.initial),
+                (address) => BCH.feesWithRates$(address.address, memo)
+              )
             )
-          ),
-          RxOp.catchError((error) => Rx.of(RD.failure(error))),
-          RxOp.startWith(RD.pending)
-        )
+          )
+        ]),
+        RxOp.switchMap(([inboundAddressesRD, feesWithRatesRD]) => {
+          if (RD.isSuccess(inboundAddressesRD) && RD.isSuccess(feesWithRatesRD)) {
+            const oChainFeeData = FP.pipe(
+              inboundAddressesRD.value,
+              A.findFirst((item) => item.chain === BCHChain),
+              O.chain((data) => (data.gas_rate ? O.some({ gas_rate: Number(data.gas_rate) }) : O.none))
+            )
+
+            return FP.pipe(
+              oChainFeeData,
+              O.fold(
+                () => Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast })),
+                (feeData) => {
+                  const extrapolatedFee = extrapolateFeeFromGasRate(feeData.gas_rate, feesWithRatesRD.value)
+                  return Rx.of(RD.success({ asset, amount: extrapolatedFee }))
+                }
+              )
+            )
+          }
+          return RD.isSuccess(feesWithRatesRD)
+            ? Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast }))
+            : Rx.of(RD.failure(new Error('Failed to load BCH fees')))
+        }),
+        RxOp.catchError(() => {
+          return FP.pipe(
+            BCH.address$.pipe(
+              RxOp.switchMap(
+                O.fold(
+                  () => Rx.of(RD.failure(new Error('No address available'))),
+                  (address) =>
+                    FP.pipe(
+                      BCH.feesWithRates$(address.address, memo),
+                      liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
+                    )
+                )
+              )
+            )
+          )
+        }),
+        RxOp.startWith(RD.pending)
       )
     case THORChain:
       return FP.pipe(
@@ -539,38 +758,114 @@ export const poolInboundFee$ = (asset: AnyAsset, memo: string): PoolFeeLD => {
         liveData.map((fees) => ({ asset, amount: fees.fast }))
       )
     case DASHChain:
+      // Use gas_rate from inbound addresses with FeesWithRates ratio
       return FP.pipe(
-        DASH.address$.pipe(
-          RxOp.switchMap(
-            O.fold(
-              () => Rx.of(RD.failure(new Error('No address available'))),
-              (address) =>
-                FP.pipe(
-                  DASH.feesWithRates$(address.address, memo),
-                  liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
-                )
+        Rx.combineLatest([
+          getInboundAddresses$(DASHChain),
+          DASH.address$.pipe(
+            RxOp.switchMap(
+              O.fold(
+                () => Rx.of(RD.initial),
+                (address) => DASH.feesWithRates$(address.address, memo)
+              )
             )
-          ),
-          RxOp.catchError((error) => Rx.of(RD.failure(error))),
-          RxOp.startWith(RD.pending)
-        )
+          )
+        ]),
+        RxOp.switchMap(([inboundAddressesRD, feesWithRatesRD]) => {
+          if (RD.isSuccess(inboundAddressesRD) && RD.isSuccess(feesWithRatesRD)) {
+            const oChainFeeData = FP.pipe(
+              inboundAddressesRD.value,
+              A.findFirst((item) => item.chain === DASHChain),
+              O.chain((data) => (data.gas_rate ? O.some({ gas_rate: Number(data.gas_rate) }) : O.none))
+            )
+
+            return FP.pipe(
+              oChainFeeData,
+              O.fold(
+                () => Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast })),
+                (feeData) => {
+                  const extrapolatedFee = extrapolateFeeFromGasRate(feeData.gas_rate, feesWithRatesRD.value)
+                  return Rx.of(RD.success({ asset, amount: extrapolatedFee }))
+                }
+              )
+            )
+          }
+          return RD.isSuccess(feesWithRatesRD)
+            ? Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast }))
+            : Rx.of(RD.failure(new Error('Failed to load DASH fees')))
+        }),
+        RxOp.catchError(() => {
+          return FP.pipe(
+            DASH.address$.pipe(
+              RxOp.switchMap(
+                O.fold(
+                  () => Rx.of(RD.failure(new Error('No address available'))),
+                  (address) =>
+                    FP.pipe(
+                      DASH.feesWithRates$(address.address, memo),
+                      liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
+                    )
+                )
+              )
+            )
+          )
+        }),
+        RxOp.startWith(RD.pending)
       )
     case ZECChain:
+      // Use gas_rate from inbound addresses with FeesWithRates ratio
       return FP.pipe(
-        ZEC.address$.pipe(
-          RxOp.switchMap(
-            O.fold(
-              () => Rx.of(RD.failure(new Error('No address available'))),
-              (address) =>
-                FP.pipe(
-                  ZEC.feesWithRates$(address.address, memo),
-                  liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
-                )
+        Rx.combineLatest([
+          getInboundAddresses$(ZECChain),
+          ZEC.address$.pipe(
+            RxOp.switchMap(
+              O.fold(
+                () => Rx.of(RD.initial),
+                (address) => ZEC.feesWithRates$(address.address, memo)
+              )
             )
-          ),
-          RxOp.catchError((error) => Rx.of(RD.failure(error))),
-          RxOp.startWith(RD.pending)
-        )
+          )
+        ]),
+        RxOp.switchMap(([inboundAddressesRD, feesWithRatesRD]) => {
+          if (RD.isSuccess(inboundAddressesRD) && RD.isSuccess(feesWithRatesRD)) {
+            const oChainFeeData = FP.pipe(
+              inboundAddressesRD.value,
+              A.findFirst((item) => item.chain === ZECChain),
+              O.chain((data) => (data.gas_rate ? O.some({ gas_rate: Number(data.gas_rate) }) : O.none))
+            )
+
+            return FP.pipe(
+              oChainFeeData,
+              O.fold(
+                () => Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast })),
+                (feeData) => {
+                  const extrapolatedFee = extrapolateFeeFromGasRate(feeData.gas_rate, feesWithRatesRD.value)
+                  return Rx.of(RD.success({ asset, amount: extrapolatedFee }))
+                }
+              )
+            )
+          }
+          return RD.isSuccess(feesWithRatesRD)
+            ? Rx.of(RD.success({ asset, amount: feesWithRatesRD.value.fees.fast }))
+            : Rx.of(RD.failure(new Error('Failed to load ZEC fees')))
+        }),
+        RxOp.catchError(() => {
+          return FP.pipe(
+            ZEC.address$.pipe(
+              RxOp.switchMap(
+                O.fold(
+                  () => Rx.of(RD.failure(new Error('No address available'))),
+                  (address) =>
+                    FP.pipe(
+                      ZEC.feesWithRates$(address.address, memo),
+                      liveData.map((fees) => ({ asset, amount: fees.fees.fast }))
+                    )
+                )
+              )
+            )
+          )
+        }),
+        RxOp.startWith(RD.pending)
       )
     default:
       return FP.pipe(
