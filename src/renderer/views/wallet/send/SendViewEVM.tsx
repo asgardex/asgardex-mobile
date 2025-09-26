@@ -7,7 +7,7 @@ import { useObservableState } from 'observable-hooks'
 
 import { TrustedAddresses } from '../../../../shared/api/types'
 import { Spin } from '../../../components/uielements/spin'
-import { SendFormEVM } from '../../../components/wallet/txs/send'
+import { SendForm } from '../../../components/wallet/txs/send'
 import { useChainContext } from '../../../contexts/ChainContext'
 import { useEvmContext } from '../../../contexts/EvmContext'
 import { useWalletContext } from '../../../contexts/WalletContext'
@@ -16,6 +16,7 @@ import { getWalletBalanceByAssetAndWalletType } from '../../../helpers/walletHel
 import { useObserveMayaScanPrice } from '../../../hooks/useMayascanPrice'
 import { useNetwork } from '../../../hooks/useNetwork'
 import { useOpenExplorerTxUrl } from '../../../hooks/useOpenExplorerTxUrl'
+import { useValidateAddress } from '../../../hooks/useValidateAddress'
 import { FeesRD, WalletBalances } from '../../../services/clients'
 import { EVMZeroAddress } from '../../../services/evm/const'
 import { PoolDetails as PoolDetailsMaya } from '../../../services/midgard/mayaMigard/types'
@@ -48,6 +49,7 @@ export const SendViewEVM = (props: Props): JSX.Element => {
   )
 
   const { openExplorerTxUrl, getExplorerTxUrl } = useOpenExplorerTxUrl(O.some(asset.asset.chain))
+  const { validateAddress } = useValidateAddress(asset.asset.chain)
 
   const oWalletBalance = useMemo(() => {
     const result = getWalletBalanceByAssetAndWalletType({
@@ -95,7 +97,7 @@ export const SendViewEVM = (props: Props): JSX.Element => {
       () => (
         <Spin>
           <div className="flex flex-col items-center justify-center overflow-auto bg-bg0 dark:bg-bg0d">
-            <SendFormEVM
+            <SendForm
               asset={asset}
               trustedAddresses={trustedAddresses}
               balance={emptyBalance}
@@ -108,6 +110,7 @@ export const SendViewEVM = (props: Props): JSX.Element => {
               deposit$={deposit$}
               openExplorerTxUrl={openExplorerTxUrl}
               getExplorerTxUrl={getExplorerTxUrl}
+              addressValidation={validateAddress}
               reloadFeesHandler={reloadFees}
               validatePassword$={validatePassword$}
               network={network}
@@ -121,7 +124,7 @@ export const SendViewEVM = (props: Props): JSX.Element => {
       ),
       (walletBalance) => (
         <div className="flex flex-col items-center justify-center overflow-auto bg-bg0 dark:bg-bg0d">
-          <SendFormEVM
+          <SendForm
             asset={asset}
             trustedAddresses={trustedAddresses}
             balance={walletBalance}
@@ -134,6 +137,7 @@ export const SendViewEVM = (props: Props): JSX.Element => {
             deposit$={deposit$}
             openExplorerTxUrl={openExplorerTxUrl}
             getExplorerTxUrl={getExplorerTxUrl}
+            addressValidation={validateAddress}
             reloadFeesHandler={reloadFees}
             validatePassword$={validatePassword$}
             network={network}

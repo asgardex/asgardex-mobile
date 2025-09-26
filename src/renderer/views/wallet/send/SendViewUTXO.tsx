@@ -7,7 +7,7 @@ import { useObservableState } from 'observable-hooks'
 
 import { TrustedAddresses } from '../../../../shared/api/types'
 import { Spin } from '../../../components/uielements/spin'
-import { SendFormUTXO } from '../../../components/wallet/txs/send'
+import { SendForm } from '../../../components/wallet/txs/send'
 import { useChainContext } from '../../../contexts/ChainContext'
 import { useWalletContext } from '../../../contexts/WalletContext'
 import { getWalletBalanceByAddress } from '../../../helpers/walletHelper'
@@ -72,7 +72,7 @@ export const SendViewUTXO = (props: Props): JSX.Element => {
       () => (
         <Spin>
           <div className="flex flex-col items-center justify-center overflow-auto bg-bg0 dark:bg-bg0d">
-            <SendFormUTXO
+            <SendForm
               asset={asset}
               trustedAddresses={trustedAddresses}
               balances={FP.pipe(
@@ -98,7 +98,7 @@ export const SendViewUTXO = (props: Props): JSX.Element => {
       ),
       (walletBalance) => (
         <div className="flex flex-col items-center justify-center overflow-auto bg-bg0 dark:bg-bg0d">
-          <SendFormUTXO
+          <SendForm
             asset={asset}
             balances={FP.pipe(
               oBalances,
