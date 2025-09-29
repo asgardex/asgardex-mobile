@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline'
@@ -148,7 +148,6 @@ export const SendForm = (props: Props): JSX.Element => {
     [asset.chain, pricePoolThor, pricePoolMaya]
   )
 
-  // Initialize react-hook-form
   const {
     handleSubmit,
     setValue,
@@ -166,7 +165,6 @@ export const SendForm = (props: Props): JSX.Element => {
     mode: 'onChange'
   })
 
-  // State management
   const [amountToSend, setAmountToSend] = useState<BaseAmount | O.Option<BaseAmount>>(
     isEVMChain ? O.none : ZERO_BASE_AMOUNT
   )
@@ -182,14 +180,12 @@ export const SendForm = (props: Props): JSX.Element => {
   const [_notAllowed, _setNotAllowed] = useState<boolean>(false)
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
 
-  // Fee and price state
   const [assetFee, setAssetFee] = useState<CryptoAmount>(new CryptoAmount(baseAmount(0), asset))
   const [feePriceValue, setFeePriceValue] = useState<CryptoAmount>(new CryptoAmount(baseAmount(0), asset))
   const [amountPriceValue, setAmountPriceValue] = useState<CryptoAmount>(new CryptoAmount(baseAmount(0), asset))
   const [maxAmountPriceValue, setMaxAmountPriceValue] = useState<CryptoAmount>(new CryptoAmount(baseAmount(0), asset))
   const [feeRate, setFeeRate] = useState<number>(0)
 
-  // Maya asset price calculations
   const _mayascanPriceInUsd = calculateMayaValueInUSD(balance.amount, mayaScanPrice)
   const amountToSendMayaPrice = useMemo(() => {
     const amount = isEVMChain
@@ -198,24 +194,6 @@ export const SendForm = (props: Props): JSX.Element => {
     return calculateMayaValueInUSD(amount, mayaScanPrice)
   }, [amountToSend, mayaScanPrice, isEVMChain])
 
-  // Chain asset detection
-  const _isChainAsset = useMemo(() => {
-    if (isEVMChain) {
-      return isEvmChainAsset(asset)
-    }
-    if (isCOSMOSChain) {
-      const chainAsset = getChainAsset(asset.chain)
-      return asset === chainAsset
-    }
-    return true // UTXO chains are always chain assets
-  }, [isEVMChain, isCOSMOSChain, asset])
-
-  // Refs for fee handling
-  const _prevFeesRef = useRef<O.Option<Fees>>(O.none)
-  const _prevFeesWithRatesRef = useRef<O.Option<FeesWithRates>>(O.none)
-  const _prevSelectedFeeRef = useRef<O.Option<BaseAmount>>(O.none)
-
-  // Transaction state
   const {
     state: sendTxState,
     reset: resetSendTxState,
@@ -230,14 +208,12 @@ export const SendForm = (props: Props): JSX.Element => {
 
   const isLoading = useMemo(() => RD.isPending(sendTxState.status), [sendTxState.status])
 
-  // Saved addresses
   const oSavedAddresses: O.Option<TrustedAddress[]> = useMemo(
     () =>
       FP.pipe(O.fromNullable(trustedAddresses?.addresses), O.map(A.filter((address) => address.chain === asset.chain))),
     [trustedAddresses?.addresses, asset.chain]
   )
 
-  // Fee handling based on chain type
   const oFees: O.Option<Fees> = useMemo(() => {
     if (isEVMChain && feesRD) {
       return FP.pipe(feesRD, RD.toOption)
@@ -259,7 +235,6 @@ export const SendForm = (props: Props): JSX.Element => {
     return O.none
   }, [isCOSMOSChain, feeRD])
 
-  // Fee selection logic
   const selectedFee: O.Option<BaseAmount> = useMemo(() => {
     if (isEVMChain) {
       return FP.pipe(
@@ -299,7 +274,6 @@ export const SendForm = (props: Props): JSX.Element => {
     asset
   ])
 
-  // Balance calculations
   const oAssetAmount: O.Option<BaseAmount> = useMemo(() => {
     if (isEVMChain) {
       const isChainAsset = isEvmChainAsset(asset)
@@ -318,7 +292,6 @@ export const SendForm = (props: Props): JSX.Element => {
     return O.none
   }, [isEVMChain, isUTXOChain, isCOSMOSChain, asset, balance.amount, balances])
 
-  // Max amount calculation
   const maxAmount: BaseAmount = useMemo(() => {
     if (isEVMChain) {
       const maxEthAmount: BigNumber = FP.pipe(
@@ -368,7 +341,6 @@ export const SendForm = (props: Props): JSX.Element => {
     return ZERO_BASE_AMOUNT
   }, [isEVMChain, isUTXOChain, isCOSMOSChain, selectedFee, oAssetAmount, balance.amount, asset, sourceChainAsset])
 
-  // Fee error checking
   const isFeeError = useMemo(() => {
     return FP.pipe(
       sequenceTOption(selectedFee, oAssetAmount),
@@ -379,7 +351,6 @@ export const SendForm = (props: Props): JSX.Element => {
     )
   }, [selectedFee, oAssetAmount])
 
-  // Fee error rendering
   const renderFeeError = useMemo(() => {
     if (!isFeeError) return <></>
 
@@ -406,7 +377,6 @@ export const SendForm = (props: Props): JSX.Element => {
     )
   }, [isFeeError, oAssetAmount, intl, isEVMChain, asset])
 
-  // Price calculation useEffect
   useEffect(() => {
     const amountValue = isEVMChain
       ? O.getOrElse(() => ZERO_BASE_AMOUNT)(amountToSend as O.Option<BaseAmount>)
@@ -485,7 +455,6 @@ export const SendForm = (props: Props): JSX.Element => {
     isEVMChain
   ])
 
-  // Address validation
   const addressValidator = useCallback(
     (value: string) => {
       if (!value) {
@@ -507,7 +476,6 @@ export const SendForm = (props: Props): JSX.Element => {
         }
       }
 
-      // Check for inbound addresses
       const inboundAddress = {
         THOR: FP.pipe(
           oPoolAddress,
@@ -534,7 +502,6 @@ export const SendForm = (props: Props): JSX.Element => {
     [isEVMChain, addressValidation, intl, oPoolAddress, oPoolAddressMaya, asset.chain]
   )
 
-  // Amount validation
   const amountValidator = useCallback(
     async (value: BigNumber) => {
       const errors = {
@@ -555,7 +522,6 @@ export const SendForm = (props: Props): JSX.Element => {
     [intl, maxAmount, isEVMChain]
   )
 
-  // Memo handling
   const handleMemo = useCallback(
     (e?: React.ChangeEvent<HTMLInputElement>) => {
       const memoValue = e ? e.target.value : (watch('memo') as string)
@@ -565,7 +531,6 @@ export const SendForm = (props: Props): JSX.Element => {
     [setValue, watch]
   )
 
-  // Saved address handling
   const handleSavedAddressSelect = useCallback(
     (value: string) => {
       setValue('recipient', value)
@@ -580,7 +545,6 @@ export const SendForm = (props: Props): JSX.Element => {
     [setValue, isEVMChain, oSavedAddresses]
   )
 
-  // Input change handlers
   const onChangeInput = useCallback(
     async (value: BigNumber) => {
       const validationResult = await amountValidator(value)
@@ -614,7 +578,6 @@ export const SendForm = (props: Props): JSX.Element => {
     [isEVMChain, oSavedAddresses]
   )
 
-  // Max amount handler
   const addMaxAmountHandler = useCallback(() => {
     if (isEVMChain) {
       setAmountToSend(O.some(maxAmount))
@@ -624,7 +587,6 @@ export const SendForm = (props: Props): JSX.Element => {
     setValue('amount', baseToAsset(maxAmount).amount())
   }, [isEVMChain, maxAmount, setValue])
 
-  // Fee options rendering
   const feeOptionsLabel: Record<FeeOption, string> = useMemo(
     () => ({
       [FeeOption.Fast]: intl.formatMessage({ id: 'wallet.send.fast' }),
@@ -672,7 +634,6 @@ export const SendForm = (props: Props): JSX.Element => {
     )
   }, [isEVMChain, isUTXOChain, isLoading, selectedFeeOption, selectedFeeOptionKey, feeOptionsLabel])
 
-  // Slider rendering
   const renderSlider = useMemo(() => {
     const amountValue = isEVMChain
       ? O.getOrElse(() => ZERO_BASE_AMOUNT)(amountToSend as O.Option<BaseAmount>)
@@ -710,7 +671,6 @@ export const SendForm = (props: Props): JSX.Element => {
     )
   }, [amountToSend, maxAmount, isLoading, isEVMChain, setValue])
 
-  // Price and fee label calculations
   const priceFeeLabel = useMemo(() => {
     if (!feePriceValue) {
       return loadingString
@@ -803,7 +763,6 @@ export const SendForm = (props: Props): JSX.Element => {
     return price ? `${price} (${amount}) ` : amount
   }, [amountPriceValue, amountToSend, amountToSendMayaPrice, asset, isEVMChain])
 
-  // Deposit transaction submission (EVM only)
   const submitDepositTx = useCallback(() => {
     if (!isEVMChain || !deposit$) return
 
