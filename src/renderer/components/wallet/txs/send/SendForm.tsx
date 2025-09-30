@@ -321,16 +321,16 @@ export const SendForm = (props: Props): JSX.Element => {
     }
     if (isCOSMOSChain) {
       const accountReserve = asset.chain === 'XRP' ? baseAmount(1000000, balance.amount.decimal) : ZERO_BASE_AMOUNT
+      const isChainAsset = eqAsset(asset, sourceChainAsset)
       return FP.pipe(
         sequenceTOption(selectedFee, oAssetAmount),
         O.fold(
           () => {
-            const fallbackMax = isEvmChainAsset(asset) ? balance.amount.minus(accountReserve) : balance.amount
+            const fallbackMax = isChainAsset ? balance.amount.minus(accountReserve) : balance.amount
             const zero = baseAmount(0, balance.amount.decimal)
             return fallbackMax.gt(zero) ? fallbackMax : zero
           },
           ([fee, assetAmount]) => {
-            const isChainAsset = asset === sourceChainAsset
             const max = isChainAsset ? assetAmount.minus(fee).minus(accountReserve) : balance.amount
             const zero = baseAmount(0, max.decimal)
             return max.gt(zero) ? max : zero
@@ -769,8 +769,12 @@ export const SendForm = (props: Props): JSX.Element => {
     const amount = O.getOrElse(() => ZERO_BASE_AMOUNT)(amountToSend as O.Option<BaseAmount>)
 
     FP.pipe(
-      sequenceTOption(O.some(amount), oPoolAddress, oPoolAddressMaya || O.none, oProtocol),
-      O.map(([amount, poolAddressThor, poolAddressMaya, protocol]) => {
+      oProtocol,
+      O.chain((protocol) => {
+        const selectedOPool = protocol === THORChain ? oPoolAddress : oPoolAddressMaya || O.none
+        return sequenceTOption(O.some(amount), selectedOPool, O.some(protocol))
+      }),
+      O.map(([amount, poolAddress, protocol]) => {
         subscribeDepositState(
           deposit$({
             walletType,
@@ -778,7 +782,7 @@ export const SendForm = (props: Props): JSX.Element => {
             walletIndex,
             hdMode,
             sender: walletAddress,
-            poolAddress: protocol === THORChain ? poolAddressThor : poolAddressMaya,
+            poolAddress,
             asset,
             amount,
             memo: currentMemo,
