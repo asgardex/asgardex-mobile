@@ -17,6 +17,7 @@ import { RadixChain } from '@xchainjs/xchain-radix'
 import { XRPChain } from '@xchainjs/xchain-ripple'
 import { SOLChain } from '@xchainjs/xchain-solana'
 import { isTCYAsset, THORChain } from '@xchainjs/xchain-thorchain'
+import { TRONChain } from '@xchainjs/xchain-tron'
 import {
   Address,
   AnyAsset,
@@ -64,6 +65,7 @@ import { ZERO_ADDRESS } from '../../solana/fees'
 import * as THOR from '../../thorchain'
 import { inboundAddressesShared$ as thorInboundAddresses$ } from '../../thorchain'
 import { InboundAddress as ThorInboundAddress } from '../../thorchain/types'
+import * as TRON from '../../tron'
 import { FeesWithRatesLD } from '../../utxo/types'
 import * as ZEC from '../../zcash'
 import { getDecimal } from '../decimal'
@@ -867,6 +869,11 @@ export const poolInboundFee$ = (asset: AnyAsset, memo: string): PoolFeeLD => {
         }),
         RxOp.startWith(RD.pending)
       )
+    case TRONChain:
+      return FP.pipe(
+        TRON.fees$(),
+        liveData.map((fees) => ({ asset: getChainAsset(TRONChain), amount: fees.fast }))
+      )
     default:
       return FP.pipe(
         poolOutboundFee$(asset),
@@ -974,6 +981,8 @@ export const standaloneLedgerFees$ = (params: { chain: Chain; amount: BaseAmount
       return XRD.fees$()
     case SOLChain:
       return SOL.fees$({ amount, recipient })
+    case TRONChain:
+      return TRON.fees$()
     default:
       // Fallback to THOR for unknown chains
       return THOR.fees$()
@@ -1008,6 +1017,9 @@ export const reloadStandaloneLedgerFees = (chain: Chain): void => {
       break
     case SOLChain:
       SOL.reloadFees({ amount: baseAmount(1), recipient: ZERO_ADDRESS })
+      break
+    case TRONChain:
+      TRON.reloadFees()
       break
     default:
       // Fallback to THOR for unknown chains
