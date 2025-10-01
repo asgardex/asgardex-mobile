@@ -1,42 +1,234 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
-import { ARBChain } from '@xchainjs/xchain-arbitrum'
-import { AVAXChain } from '@xchainjs/xchain-avax'
-import { BASEChain } from '@xchainjs/xchain-base'
-import { BTCChain } from '@xchainjs/xchain-bitcoin'
-import { BCHChain } from '@xchainjs/xchain-bitcoincash'
-import { BSCChain } from '@xchainjs/xchain-bsc'
-import { ADAChain } from '@xchainjs/xchain-cardano'
-import { GAIAChain } from '@xchainjs/xchain-cosmos'
-import { DASHChain } from '@xchainjs/xchain-dash'
-import { DOGEChain } from '@xchainjs/xchain-doge'
-import { ETHChain } from '@xchainjs/xchain-ethereum'
-import { KUJIChain } from '@xchainjs/xchain-kujira'
-import { LTCChain } from '@xchainjs/xchain-litecoin'
 import { MAYAChain } from '@xchainjs/xchain-mayachain'
-import { RadixChain } from '@xchainjs/xchain-radix'
-import { XRPChain } from '@xchainjs/xchain-ripple'
-import { SOLChain } from '@xchainjs/xchain-solana'
 import { THORChain } from '@xchainjs/xchain-thorchain'
-import { TRONChain } from '@xchainjs/xchain-tron'
-import { AssetType, baseAmount } from '@xchainjs/xchain-util'
-import { ZECChain } from '@xchainjs/xchain-zcash'
+import { AssetType, baseAmount, Asset, Chain } from '@xchainjs/xchain-util'
 import { function as FP, option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
+import { scheduled, asapScheduler } from 'rxjs'
 
 import { TrustedAddresses } from '../../../../shared/api/types'
 import { isChainOfMaya, isSupportedChain } from '../../../../shared/utils/chain'
 import { BackLinkButton, RefreshButton } from '../../../components/uielements/button'
+import { Spin } from '../../../components/uielements/spin'
+import { SendForm } from '../../../components/wallet/txs/send'
+import { useChainContext } from '../../../contexts/ChainContext'
+import { useEvmContext } from '../../../contexts/EvmContext'
 import { useMidgardContext } from '../../../contexts/MidgardContext'
 import { useMidgardMayaContext } from '../../../contexts/MidgardMayaContext'
 import { useWalletContext } from '../../../contexts/WalletContext'
-import { PoolAddress } from '../../../services/midgard/midgardTypes'
+import { isUtxoAssetChain } from '../../../helpers/assetHelper'
+import { getChainAsset } from '../../../helpers/chainHelper'
+import { isEvmChain } from '../../../helpers/evmHelper'
+import { liveData } from '../../../helpers/rx/liveData'
+import { getWalletBalanceByAddress, getWalletBalanceByAssetAndWalletType } from '../../../helpers/walletHelper'
+import { useObserveMayaScanPrice } from '../../../hooks/useMayascanPrice'
+import { useNetwork } from '../../../hooks/useNetwork'
+import { useOpenExplorerTxUrl } from '../../../hooks/useOpenExplorerTxUrl'
+import { useValidateAddress } from '../../../hooks/useValidateAddress'
+import { FeeRD } from '../../../services/chain/types'
+import { FeesRD, WalletBalances } from '../../../services/clients'
+import { EVMZeroAddress } from '../../../services/evm/const'
+import { PoolDetails as PoolDetailsMaya } from '../../../services/midgard/mayaMigard/types'
+import { PoolAddress, PoolDetails } from '../../../services/midgard/midgardTypes'
+import { ZERO_ADDRESS } from '../../../services/solana/fees'
 import { userAddresses$ } from '../../../services/storage/userAddresses'
+import { FeesWithRatesLD } from '../../../services/utxo/types'
 import { reloadBalancesByChain } from '../../../services/wallet'
-import { SelectedWalletAsset } from '../../../services/wallet/types'
-import { SendViewCOSMOS, SendViewEVM, SendViewUTXO } from './index'
+import { DEFAULT_BALANCES_FILTER, INITIAL_BALANCES_STATE } from '../../../services/wallet/const'
+import { SelectedWalletAsset, WalletBalance } from '../../../services/wallet/types'
+
+type UnifiedSendViewProps = {
+  asset: SelectedWalletAsset
+  trustedAddresses: TrustedAddresses | undefined
+  emptyBalance: WalletBalance
+  poolDetails: PoolDetails | PoolDetailsMaya
+  oPoolAddress: O.Option<PoolAddress>
+  oPoolAddressMaya: O.Option<PoolAddress>
+}
+
+const UnifiedSendView = (props: UnifiedSendViewProps): JSX.Element => {
+  const { asset, trustedAddresses, emptyBalance, poolDetails, oPoolAddress, oPoolAddressMaya } = props
+
+  const { network } = useNetwork()
+  const { mayaScanPriceRD } = useObserveMayaScanPrice()
+
+  const {
+    balancesState$,
+    keystoreService: { validatePassword$ }
+  } = useWalletContext()
+
+  const [{ balances: oBalances }] = useObservableState(
+    () => balancesState$(DEFAULT_BALANCES_FILTER),
+    INITIAL_BALANCES_STATE
+  )
+
+  const { openExplorerTxUrl, getExplorerTxUrl } = useOpenExplorerTxUrl(O.some(asset.asset.chain))
+  const { validateAddress } = useValidateAddress(asset.asset.chain)
+
+  const chain = (
+    asset.asset.type === AssetType.SYNTH
+      ? MAYAChain
+      : asset.asset.type === AssetType.SECURED
+      ? THORChain
+      : asset.asset.chain
+  ) as Chain
+
+  const isUTXOChain = isUtxoAssetChain({ ...asset.asset, chain })
+  const isEVMChain = isEvmChain(chain)
+  const isCOSMOSChain = !isUTXOChain && !isEVMChain
+
+  const oWalletBalance = useMemo(() => {
+    if (isUTXOChain) {
+      return FP.pipe(
+        oBalances,
+        O.chain((balances) => getWalletBalanceByAddress(balances, asset.walletAddress))
+      )
+    } else {
+      return getWalletBalanceByAssetAndWalletType({
+        oWalletBalances: oBalances,
+        asset: asset.asset,
+        walletType: asset.walletType
+      })
+    }
+  }, [asset, oBalances, isUTXOChain])
+
+  const {
+    transfer$,
+    poolDeposit$: deposit$,
+    evmFees$,
+    standaloneLedgerFees$,
+    reloadStandaloneLedgerFees,
+    utxoFeesWithRates$,
+    reloadUtxoFeesWithRates$
+  } = useChainContext()
+
+  const { reloadFees } = useEvmContext(asset.asset.chain)
+
+  const evmFeesObservable = useMemo(
+    () =>
+      isEVMChain
+        ? evmFees$({
+            chain: asset.asset.chain,
+            asset: getChainAsset(asset.asset.chain),
+            amount: baseAmount(1),
+            recipient: EVMZeroAddress,
+            from: asset.walletAddress
+          })
+        : scheduled([RD.initial], asapScheduler),
+    [isEVMChain, asset.asset.chain, asset.walletAddress, evmFees$]
+  )
+  const feesRD = useObservableState<FeesRD>(evmFeesObservable, RD.initial)
+
+  const cosmosFeesObservable = useMemo(
+    () =>
+      isCOSMOSChain
+        ? FP.pipe(
+            standaloneLedgerFees$({
+              chain,
+              amount: baseAmount(1),
+              recipient: ZERO_ADDRESS
+            }),
+            liveData.map((fees) => fees.fast)
+          )
+        : scheduled([RD.initial], asapScheduler),
+    [isCOSMOSChain, chain, standaloneLedgerFees$]
+  )
+  const feeRD = useObservableState<FeeRD>(cosmosFeesObservable, RD.initial)
+
+  const utxoFeesObservable: FeesWithRatesLD = useMemo(
+    () =>
+      isUTXOChain
+        ? utxoFeesWithRates$(asset.asset as Asset, asset.walletAddress)
+        : scheduled([RD.initial], asapScheduler),
+    [asset, utxoFeesWithRates$, isUTXOChain]
+  )
+
+  const feesWithRatesRD = useObservableState(utxoFeesObservable, RD.initial)
+
+  const reloadFeesHandler = () => {
+    if (isEVMChain) {
+      reloadFees({
+        asset: getChainAsset(asset.asset.chain),
+        amount: baseAmount(1),
+        recipient: EVMZeroAddress,
+        from: asset.walletAddress
+      })
+    } else if (isCOSMOSChain) {
+      reloadStandaloneLedgerFees(chain)
+    } else if (isUTXOChain) {
+      reloadUtxoFeesWithRates$(asset.asset as Asset)
+    }
+  }
+
+  const finalOPoolAddress = isCOSMOSChain && !isChainOfMaya(asset.asset.chain) ? oPoolAddress : oPoolAddressMaya
+
+  return FP.pipe(
+    oWalletBalance,
+    O.fold(
+      () => (
+        <Spin>
+          <div className="flex flex-col items-center justify-center overflow-auto bg-bg0 dark:bg-bg0d">
+            <SendForm
+              asset={asset}
+              trustedAddresses={trustedAddresses}
+              balances={FP.pipe(
+                oBalances,
+                O.getOrElse<WalletBalances>(() => [])
+              )}
+              balance={emptyBalance}
+              transfer$={transfer$}
+              deposit$={isEVMChain ? deposit$ : undefined}
+              openExplorerTxUrl={openExplorerTxUrl}
+              getExplorerTxUrl={getExplorerTxUrl}
+              addressValidation={validateAddress}
+              fees={isEVMChain ? feesRD : undefined}
+              fee={isCOSMOSChain ? feeRD : undefined}
+              feesWithRates={isUTXOChain ? feesWithRatesRD : undefined}
+              reloadFeesHandler={reloadFeesHandler}
+              validatePassword$={validatePassword$}
+              network={network}
+              poolDetails={poolDetails}
+              mayaScanPrice={mayaScanPriceRD}
+              oPoolAddress={isEVMChain ? O.none : finalOPoolAddress}
+              oPoolAddressMaya={isEVMChain ? O.none : oPoolAddressMaya}
+            />
+          </div>
+        </Spin>
+      ),
+      (walletBalance) => (
+        <div className="flex flex-col items-center justify-center overflow-auto bg-bg0 dark:bg-bg0d">
+          <SendForm
+            asset={asset}
+            trustedAddresses={trustedAddresses}
+            balances={FP.pipe(
+              oBalances,
+              O.getOrElse<WalletBalances>(() => [])
+            )}
+            balance={walletBalance}
+            transfer$={transfer$}
+            deposit$={isEVMChain ? deposit$ : undefined}
+            openExplorerTxUrl={openExplorerTxUrl}
+            getExplorerTxUrl={getExplorerTxUrl}
+            addressValidation={validateAddress}
+            fees={isEVMChain ? feesRD : undefined}
+            fee={isCOSMOSChain ? feeRD : undefined}
+            feesWithRates={isUTXOChain ? feesWithRatesRD : undefined}
+            reloadFeesHandler={reloadFeesHandler}
+            validatePassword$={validatePassword$}
+            network={network}
+            poolDetails={poolDetails}
+            mayaScanPrice={mayaScanPriceRD}
+            oPoolAddress={isEVMChain ? O.none : finalOPoolAddress}
+            oPoolAddressMaya={isEVMChain ? O.none : oPoolAddressMaya}
+          />
+        </div>
+      )
+    )
+  )
+}
 
 export const SendView = (): JSX.Element => {
   const intl = useIntl()
@@ -121,57 +313,16 @@ export const SendView = (): JSX.Element => {
         asset: asset.asset
       }
 
-      switch (chain) {
-        case BCHChain:
-        case BTCChain:
-        case DOGEChain:
-        case ADAChain:
-        case DASHChain:
-        case LTCChain:
-        case ZECChain:
-          return (
-            <SendViewUTXO
-              asset={asset}
-              trustedAddresses={trustedAddresses}
-              emptyBalance={DEFAULT_WALLET_BALANCE}
-              poolDetails={!isChainOfMaya(asset.asset.chain) ? poolDetailsThor : poolDetailsMaya}
-              oPoolAddress={oPoolAddress}
-              oPoolAddressMaya={oPoolAddressMaya}
-            />
-          )
-        case ETHChain:
-        case ARBChain:
-        case AVAXChain:
-        case BSCChain:
-        case BASEChain:
-          return (
-            <SendViewEVM
-              asset={asset}
-              trustedAddresses={trustedAddresses}
-              emptyBalance={DEFAULT_WALLET_BALANCE}
-              poolDetails={!isChainOfMaya(asset.asset.chain) ? poolDetailsThor : poolDetailsMaya}
-              oPoolAddress={oPoolAddress}
-              oPoolAddressMaya={oPoolAddressMaya}
-            />
-          )
-        case THORChain:
-        case MAYAChain:
-        case KUJIChain:
-        case GAIAChain:
-        case XRPChain:
-        case RadixChain:
-        case SOLChain:
-        case TRONChain:
-          return (
-            <SendViewCOSMOS
-              asset={asset}
-              trustedAddresses={trustedAddresses}
-              emptyBalance={DEFAULT_WALLET_BALANCE}
-              poolDetails={!isChainOfMaya(asset.asset.chain) ? poolDetailsThor : poolDetailsMaya}
-              oPoolAddress={!isChainOfMaya(asset.asset.chain) ? oPoolAddress : oPoolAddressMaya}
-            />
-          )
-      }
+      return (
+        <UnifiedSendView
+          asset={asset}
+          trustedAddresses={trustedAddresses}
+          emptyBalance={DEFAULT_WALLET_BALANCE}
+          poolDetails={!isChainOfMaya(asset.asset.chain) ? poolDetailsThor : poolDetailsMaya}
+          oPoolAddress={oPoolAddress}
+          oPoolAddressMaya={oPoolAddressMaya}
+        />
+      )
     },
     [poolsStateThorRD, poolsStateMayaRD, intl, trustedAddresses, oPoolAddress, oPoolAddressMaya]
   )
