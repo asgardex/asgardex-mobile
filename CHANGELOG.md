@@ -1,5 +1,21 @@
 <!-- markdownlint-disable MD024 MD025 -->
 
+# 1.41.1 (2025-10-02)
+
+## Add
+
+- add XRP destination tag feature [#905](https://github.com/asgardex/asgardex-desktop/pull/905)
+- add TRON client support [#902](https://github.com/asgardex/asgardex-desktop/pull/902)
+- add transaction tracking for thorchain [#896](https://github.com/asgardex/asgardex-desktop/pull/896)
+
+## Update/Fixes
+
+- update send form logic with unified send view [#903](https://github.com/asgardex/asgardex-desktop/pull/903)
+- add proper staple & bump aggregator package [#904](https://github.com/asgardex/asgardex-desktop/pull/904)
+- update gaia to use inbound address for swap fees [#899](https://github.com/asgardex/asgardex-desktop/pull/899)
+- final antd cleanup and package cleanup [#900](https://github.com/asgardex/asgardex-desktop/pull/900)
+- update swap transaction modal [#894](https://github.com/asgardex/asgardex-desktop/pull/894)
+
 # 1.40.9 (2025-09-12)
 
 ## Add
