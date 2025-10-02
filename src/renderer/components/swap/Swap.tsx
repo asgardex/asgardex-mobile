@@ -2087,6 +2087,15 @@ export const Swap = ({
             }
           }
 
+          // Check for Maya price limit error
+          if (error.includes('failed to simulate swap') && error.includes('less than price limit')) {
+            return (
+              <div key={index}>
+                {`Price has moved unfavorably. Please increase your slippage tolerance or adjust your input amount to complete this swap.`}
+              </div>
+            )
+          }
+
           // Default error display
           return <div key={index}>{error}</div>
         })}
