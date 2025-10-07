@@ -1,26 +1,44 @@
-import { useState, useEffect, ReactNode } from 'react'
+import { useState, useEffect, ReactNode, useMemo } from 'react'
 
-import { CheckCircleIcon, ChevronDownIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
+import { ChevronDownIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, PaperAirplaneIcon } from '@heroicons/react/24/solid'
+import { assetFromString } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
 import { useIntl } from 'react-intl'
 
 import { formatSwapTime } from '../../../helpers/timeHelper'
 import { TrackedTransaction } from '../../../services/thorchain/transactionTracking'
-import { CopyLabel } from '../label'
+import { CopyLabel, Label } from '../label'
 import { ProgressBar } from '../progressBar'
 
 export type TransactionItemProps = {
   protocol?: ReactNode
   transaction: TrackedTransaction
   onRemove: (id: string) => void
+  isMini?: boolean
   className?: string
 }
 
-export const TransactionItem = ({ protocol, transaction, onRemove, className }: TransactionItemProps) => {
+export const TransactionItem = ({ className, isMini, protocol, transaction, onRemove }: TransactionItemProps) => {
   const intl = useIntl()
   const [isExpanded, setIsExpanded] = useState(false)
   const [isNewlyCompleted, setIsNewlyCompleted] = useState(false)
+
+  const fromAsset = useMemo(() => {
+    const asset = assetFromString(transaction.fromAsset)
+
+    if (!asset) return transaction.fromAsset
+    if (isMini) return asset.ticker
+    return `${asset.chain}.${asset.ticker}`
+  }, [transaction.fromAsset, isMini])
+
+  const toAsset = useMemo(() => {
+    const asset = assetFromString(transaction.toAsset)
+
+    if (!asset) return transaction.toAsset
+    if (isMini) return asset.ticker
+    return `${asset.chain}.${asset.ticker}`
+  }, [transaction.toAsset, isMini])
 
   // Detect when transaction becomes complete for animation
   useEffect(() => {
@@ -227,10 +245,8 @@ export const TransactionItem = ({ protocol, transaction, onRemove, className }: 
   return (
     <div
       className={clsx(
-        'bg-gray0 dark:bg-gray0d/30 rounded-lg border transition-all duration-500',
-        transaction.isComplete
-          ? 'border-turquoise dark:border-turquoise bg-turquoise/5 dark:bg-turquoise/10'
-          : 'border-gray0 dark:border-gray0d',
+        'bg-gray0/30 dark:bg-gray0d/30 rounded-lg border transition-all duration-500',
+        'border-gray0 dark:border-gray0d',
         isNewlyCompleted && 'animate-pulse',
         className
       )}>
@@ -238,11 +254,10 @@ export const TransactionItem = ({ protocol, transaction, onRemove, className }: 
       <div className="p-2">
         {/* First row: asset swap and controls */}
         <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center space-x-2 min-w-0">
-            {transaction.isComplete && <CheckCircleIcon className="w-4 h-4 text-turquoise shrink-0" />}
-            {!transaction.isComplete && protocol && protocol}
+          <div className="flex items-center space-x-1 min-w-0">
+            {protocol && protocol}
             <span className="text-sm font-medium text-text1 dark:text-text1d truncate">
-              {transaction.fromAsset} → {transaction.toAsset}
+              {fromAsset} → {toAsset}
             </span>
           </div>
 
@@ -264,30 +279,39 @@ export const TransactionItem = ({ protocol, transaction, onRemove, className }: 
         </div>
 
         {/* Second row: status and progress */}
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex-1 min-w-0">
-            <div
-              className={clsx(
-                'flex text-xs truncate',
-                getRichStatusText().urgent
-                  ? 'text-yellow-600 dark:text-yellow-400 font-medium'
-                  : 'text-text2 dark:text-text2d'
-              )}>
-              <PaperAirplaneIcon className="w-4 h-4 mr-1" />
-              {getRichStatusText().text}
+        <div className="flex items-center justify-between">
+          {transaction.isComplete ? (
+            <div className="flex items-center space-x-1 bg-turquoise/80 dark:bg-turquoise/80 px-2 py-1 rounded-lg">
+              <CheckCircleIcon className="w-4 h-4 text-white shrink-0" />
+              <Label size="small" color="white" textTransform="uppercase">
+                {intl.formatMessage({ id: 'transaction.status.complete' })}
+              </Label>
             </div>
-            {getRichStatusText().detail && (
-              <div className="text-xs text-text2 dark:text-text2d truncate opacity-50">
-                {getRichStatusText().detail}
+          ) : (
+            <div className="flex-1 min-w-0">
+              <div
+                className={clsx(
+                  'flex text-xs truncate',
+                  getRichStatusText().urgent
+                    ? 'text-yellow-600 dark:text-yellow-400 font-medium'
+                    : 'text-text2 dark:text-text2d'
+                )}>
+                <PaperAirplaneIcon className="w-4 h-4 mr-1" />
+                {getRichStatusText().text}
               </div>
-            )}
-          </div>
+              {getRichStatusText().detail && (
+                <div className="text-xs text-text2 dark:text-text2d truncate opacity-50">
+                  {getRichStatusText().detail}
+                </div>
+              )}
+            </div>
+          )}
           <span className="text-base font-bold text-text2 dark:text-text2d ml-2 shrink-0">
             {Math.round(getProgressPercentage())}%
           </span>
         </div>
 
-        <ProgressBar heightPx={4} percent={getProgressPercentage()} />
+        {!transaction.isComplete && <ProgressBar className="mt-1" heightPx={4} percent={getProgressPercentage()} />}
       </div>
 
       {/* Expanded details */}
@@ -312,32 +336,32 @@ export const TransactionItem = ({ protocol, transaction, onRemove, className }: 
               {/* <span className="text-text1 dark:text-text1d font-mono text-xs break-all">{transaction.txHash}</span> */}
             </div>
 
-            {transaction.completedAt && (
+            {transaction.completedAt ? (
               <div className="flex justify-between">
                 <span className="text-text2 dark:text-text2d">Completed:</span>
                 <span className="text-text1 dark:text-text1d">
                   {new Date(transaction.completedAt).toLocaleTimeString()}
                 </span>
               </div>
-            )}
+            ) : null}
 
-            {transaction.stages?.inboundConfirmationCounted?.remainingConfirmationSeconds && (
+            {transaction.stages?.inboundConfirmationCounted?.remainingConfirmationSeconds ? (
               <div className="flex justify-between">
                 <span className="text-text2 dark:text-text2d">Confirmations:</span>
                 <span className="text-text1 dark:text-text1d">
                   {formatSwapTime(transaction.stages.inboundConfirmationCounted.remainingConfirmationSeconds)} remaining
                 </span>
               </div>
-            )}
+            ) : null}
 
-            {transaction.stages?.outBoundDelay?.remainDelaySeconds && (
+            {transaction.stages?.outBoundDelay?.remainDelaySeconds ? (
               <div className="flex justify-between">
                 <span className="text-text2 dark:text-text2d">Outbound Delay:</span>
                 <span className="text-text1 dark:text-text1d">
                   {formatSwapTime(transaction.stages.outBoundDelay.remainDelaySeconds)} remaining
                 </span>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}

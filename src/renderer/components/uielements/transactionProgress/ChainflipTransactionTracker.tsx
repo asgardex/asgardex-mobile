@@ -1,23 +1,23 @@
+import React from 'react'
+
 import * as RD from '@devexperts/remote-data-ts'
 import clsx from 'clsx'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 
-import { TransactionTrackingService } from '../../../services/thorchain/transactionTracking'
+import { ChainflipTransactionTrackingService } from '../../../services/chainflip/transactionTracking'
 import { ProviderIcon } from '../../swap/ProviderIcon'
-import { TransactionItem } from './TransactionItem'
+import { ChainflipTransactionItem } from './ChainflipTransactionItem'
 
-export type TransactionTrackerProps = {
-  transactionTrackingService: TransactionTrackingService
+export type ChainflipTransactionTrackerProps = {
+  transactionTrackingService: ChainflipTransactionTrackingService
   className?: string
-  protocol?: 'Thorchain' | 'Mayachain'
 }
 
-export const TransactionTracker = ({
+export const ChainflipTransactionTracker: React.FC<ChainflipTransactionTrackerProps> = ({
   transactionTrackingService,
-  className,
-  protocol = 'Thorchain'
-}: TransactionTrackerProps) => {
+  className
+}) => {
   const intl = useIntl()
 
   const transactionsRD = useObservableState(transactionTrackingService.getTransactions$, RD.initial)
@@ -55,18 +55,14 @@ export const TransactionTracker = ({
   const activeTransactions = transactions.filter((tx) => !tx.isComplete)
   const completedTransactions = transactions.filter((tx) => tx.isComplete)
 
-  const protocolIcon = <ProviderIcon protocol={protocol} className="!w-4 !h-4" />
-
-  const protocolLabel = protocol === 'Mayachain' ? 'Maya' : 'THORChain'
-
   return (
     <div className={clsx('rounded-lg border border-gray1 dark:border-gray1d bg-bg1 dark:bg-bg1d', className)}>
       {/* Header */}
       <div className="p-2 border-b border-gray1 dark:border-gray1d">
         <div className="flex items-center space-x-2">
-          {protocolIcon}
+          <ProviderIcon protocol="Chainflip" className="!w-4 !h-4" />
           <span className="text-xs font-medium text-text1 dark:text-text1d">
-            {protocolLabel} {intl.formatMessage({ id: 'common.transaction.tracking' })}
+            Chainflip {intl.formatMessage({ id: 'common.transaction.tracking' })}
           </span>
           {activeTransactions.length > 0 && (
             <span className="bg-turquoise text-white text-xs px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
@@ -83,7 +79,12 @@ export const TransactionTracker = ({
             {intl.formatMessage({ id: 'common.transaction.active' })}
           </div>
           {activeTransactions.map((transaction) => (
-            <TransactionItem key={transaction.id} isMini transaction={transaction} onRemove={handleRemoveTransaction} />
+            <ChainflipTransactionItem
+              key={transaction.id}
+              isMini
+              transaction={transaction}
+              onRemove={handleRemoveTransaction}
+            />
           ))}
         </div>
       )}
@@ -95,7 +96,12 @@ export const TransactionTracker = ({
             {intl.formatMessage({ id: 'common.transaction.completed' })}
           </div>
           {completedTransactions.map((transaction) => (
-            <TransactionItem key={transaction.id} isMini transaction={transaction} onRemove={handleRemoveTransaction} />
+            <ChainflipTransactionItem
+              key={transaction.id}
+              isMini
+              transaction={transaction}
+              onRemove={handleRemoveTransaction}
+            />
           ))}
         </div>
       )}
