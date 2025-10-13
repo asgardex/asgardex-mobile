@@ -13,7 +13,12 @@ import { defaultArbParams } from '../../../shared/arb/const'
 import { defaultAvaxParams } from '../../../shared/avax/const'
 import { defaultBaseParams } from '../../../shared/base/const'
 import { defaultBscParams } from '../../../shared/bsc/const'
-import { ASGARDEX_AFFILIATE_FEE, ASGARDEX_THORNAME } from '../../../shared/const'
+import {
+  ASGARDEX_AFFILIATE_FEE,
+  ASGARDEX_THORNAME,
+  ASGARDEX_BROKER_URL,
+  ASGARDEX_AFFILIATE_BROKERS_ADDRESS
+} from '../../../shared/const'
 import { defaultEthParams } from '../../../shared/ethereum/const'
 
 export const getEstimate = createAsyncThunk(
@@ -50,16 +55,47 @@ export const getEstimate = createAsyncThunk(
         })
       })
 
+      // Validate broker URL - log warning instead of throwing
+      const brokerUrl =
+        !ASGARDEX_BROKER_URL || typeof ASGARDEX_BROKER_URL !== 'string' || ASGARDEX_BROKER_URL.trim() === ''
+          ? (() => {
+              console.warn(
+                'Invalid or missing broker URL: ASGARDEX_BROKER_URL must be a non-empty string, using empty string'
+              )
+              return ''
+            })()
+          : ASGARDEX_BROKER_URL
+
+      // Validate affiliate broker address pattern (Chainflip addresses start with 'cF')
+      const isValidChainflipAddress = (address: string): address is `cF${string}` => {
+        return typeof address === 'string' && address.length > 2 && address.startsWith('cF')
+      }
+
+      // Prepare affiliate brokers configuration
+      const affiliateBrokers = []
+      if (ASGARDEX_AFFILIATE_BROKERS_ADDRESS && isValidChainflipAddress(ASGARDEX_AFFILIATE_BROKERS_ADDRESS)) {
+        affiliateBrokers.push({
+          account: ASGARDEX_AFFILIATE_BROKERS_ADDRESS,
+          commissionBps: useAffiliate ? ASGARDEX_AFFILIATE_FEE : 0
+        })
+      } else {
+        console.warn('Invalid or missing affiliate broker address, skipping affiliate broker configuration')
+      }
+
       // Fetch estimates for all selected protocols
-      aggregator.setConfiguration({
+      const config = {
         affiliate: {
           basisPoints: useAffiliate ? ASGARDEX_AFFILIATE_FEE : 0,
           affiliates: { Thorchain: ASGARDEX_THORNAME, Mayachain: ASGARDEX_THORNAME }
         },
         protocols,
         wallet,
-        network
-      })
+        network,
+        affiliateBrokers,
+        ...(brokerUrl && { brokerUrl }) // Only include brokerUrl if it's non-empty
+      }
+
+      aggregator.setConfiguration(config)
 
       const estimate = await aggregator.estimateSwap(params)
 

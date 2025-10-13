@@ -103,7 +103,9 @@ import { addAsset } from '../../services/storage/userChainTokens'
 import { TxHashRD, WalletBalance, WalletBalances, isStandaloneLedgerMode } from '../../services/wallet/types'
 import { hasImportedKeystore, isLocked } from '../../services/wallet/util'
 import { useAggregator } from '../../store/aggregator/hooks'
+import { useCoingecko } from '../../store/gecko/hooks'
 import { AssetWithAmount } from '../../types/asgardex'
+import { GECKO_MAP } from '../../types/generated/geckoMap'
 import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../modal/confirmation'
 import { ProviderModal } from '../modal/provider'
 import { SwapAssets } from '../modal/tx/extra'
@@ -174,6 +176,7 @@ export const Swap = ({
   mayaTransactionTrackingService
 }: SwapProps) => {
   const { estimateSwap } = useAggregator()
+  const { geckoPriceMap } = useCoingecko()
   const intl = useIntl()
   const { appWalletService } = useWalletContext()
 
@@ -506,24 +509,54 @@ export const Swap = ({
   )
 
   const priceAmountToSwapMax1e8: CryptoAmount = useMemo(() => {
-    const result = FP.pipe(
-      isChainOfThor(sourceChain)
-        ? PoolHelpers.getUSDValue({
-            balance: { asset: sourceAsset, amount: amountToSwapMax1e8 },
-            poolDetails: poolDetailsThor,
-            pricePool: pricePoolThor
-          })
-        : FP.pipe(
-            PoolHelpersMaya.getUSDValue({
-              balance: { asset: sourceAsset, amount: amountToSwapMax1e8 },
-              poolDetails: poolDetailsMaya,
-              pricePool: pricePoolMaya
-            })
-          ),
-      O.getOrElse(() => baseAmount(0, amountToSwapMax1e8.decimal))
+    // Check if we have a Chainflip quote protocol
+    const isChainflipProtocol = FP.pipe(
+      oQuoteProtocol,
+      O.map((quoteProtocol) => quoteProtocol.protocol === 'Chainflip'),
+      O.getOrElse(() => false)
     )
+
+    let result: BaseAmount
+
+    if (isChainflipProtocol) {
+      // Use CoinGecko price for Chainflip assets
+
+      const assetSymbol = sourceAsset.symbol.toUpperCase()
+      const geckoId = GECKO_MAP[assetSymbol]
+      const geckoPrice = geckoId ? geckoPriceMap[geckoId]?.usd : 0
+      const usdValue = amountToSwapMax1e8.times(geckoPrice || 0)
+      result = usdValue
+    } else {
+      result = FP.pipe(
+        isChainOfThor(sourceChain)
+          ? PoolHelpers.getUSDValue({
+              balance: { asset: sourceAsset, amount: amountToSwapMax1e8 },
+              poolDetails: poolDetailsThor,
+              pricePool: pricePoolThor
+            })
+          : FP.pipe(
+              PoolHelpersMaya.getUSDValue({
+                balance: { asset: sourceAsset, amount: amountToSwapMax1e8 },
+                poolDetails: poolDetailsMaya,
+                pricePool: pricePoolMaya
+              })
+            ),
+        O.getOrElse(() => baseAmount(0, amountToSwapMax1e8.decimal))
+      )
+    }
+
     return new CryptoAmount(result, pricePoolThor.asset)
-  }, [amountToSwapMax1e8, poolDetailsMaya, poolDetailsThor, pricePoolMaya, pricePoolThor, sourceAsset, sourceChain])
+  }, [
+    amountToSwapMax1e8,
+    poolDetailsMaya,
+    poolDetailsThor,
+    pricePoolMaya,
+    pricePoolThor,
+    sourceAsset,
+    sourceChain,
+    oQuoteProtocol,
+    geckoPriceMap
+  ])
 
   const isZeroAmountToSwap = useMemo(() => amountToSwapMax1e8.amount().isZero(), [amountToSwapMax1e8])
 
@@ -1029,12 +1062,24 @@ export const Swap = ({
     [fetchSwap]
   )
 
+  const debouncedSetAmountToSwap = useMemo(
+    () => debounce((amount: BaseAmount) => setAmountToSwapMax1e8(amount), 300), // 300ms delay for input
+    [setAmountToSwapMax1e8]
+  )
+
   useEffect(() => {
     debouncedFetchSwap(amountToSwapMax1e8)
     return () => {
       debouncedFetchSwap.cancel()
     }
   }, [amountToSwapMax1e8, debouncedFetchSwap])
+
+  // Cleanup debounced input handler on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSetAmountToSwap.cancel()
+    }
+  }, [debouncedSetAmountToSwap])
 
   // Function to handle user selection
   const handleSelectQuote = (selectedQuote: QuoteSwap) => {
@@ -1165,6 +1210,13 @@ export const Swap = ({
                 pricePool: pricePoolMaya
               })
             )
+          } else if (quoteProtocol.protocol === 'Chainflip') {
+            // Use CoinGecko price for Chainflip assets
+            const assetSymbol = swapResultAmountMax.asset.symbol.toUpperCase()
+            const geckoId = GECKO_MAP[assetSymbol]
+            const geckoPrice = geckoId ? geckoPriceMap[geckoId]?.usd : 0
+            const usdValue = swapResultAmountMax.baseAmount.times(geckoPrice)
+            return usdValue
           }
           return baseAmount(0, THORCHAIN_DECIMAL)
         }
@@ -1175,11 +1227,11 @@ export const Swap = ({
   }, [
     oQuoteProtocol,
     pricePoolThor,
-    swapResultAmountMax.asset,
-    swapResultAmountMax.baseAmount,
+    swapResultAmountMax,
     poolDetailsThor,
     poolDetailsMaya,
-    pricePoolMaya
+    pricePoolMaya,
+    geckoPriceMap
   ])
 
   /**
@@ -2638,7 +2690,7 @@ export const Swap = ({
           network={network}
           hasAmountShortcut
           onChangeAsset={setSourceAsset}
-          onChange={setAmountToSwapMax1e8}
+          onChange={debouncedSetAmountToSwap}
           onChangePercent={setAmountToSwapFromPercentValue}
           onBlur={reloadFeesHandler}
           showError={minAmountError || belowDustThreshold}
