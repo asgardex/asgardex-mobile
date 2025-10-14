@@ -4,8 +4,9 @@ import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { chainToString } from '../../../../shared/utils/chain'
+import { AddressEllipsis } from '../addressEllipsis'
+import { Modal } from '../modal'
 import { QRCode } from '../qrCode'
-import * as Styled from './QRCodeModal.styles'
 
 export type Props = {
   asset: AnyAsset
@@ -27,7 +28,7 @@ export const QRCodeModal = ({
   const intl = useIntl()
 
   return (
-    <Styled.QRCodeModal
+    <Modal
       key="qr-code-modal"
       title={intl.formatMessage(
         { id: 'wallet.action.receive.title' },
@@ -35,11 +36,18 @@ export const QRCodeModal = ({
       )}
       visible={visible}
       onCancel={onCancel}
-      onOk={() => onOk()}>
+      onOk={() => onOk()}
+      okButtonProps={{ autoFocus: true }}>
       <QRCode text={address} qrError={intl.formatMessage({ id: 'wallet.receive.address.errorQR' })} />
-      <Styled.AddressContainer key={'address info'}>
-        <Styled.AddressEllipsis enableCopy network={network} chain={asset.chain} address={address} />
-      </Styled.AddressContainer>
-    </Styled.QRCodeModal>
+      <div key={'address info'} className="flex flex-row items-center flex-grow mt-5">
+        <AddressEllipsis
+          enableCopy
+          network={network}
+          chain={asset.chain}
+          address={address}
+          className="max-w-full overflow-hidden text-base [&:only-child]:m-auto [&_svg]:h-5 [&_svg]:w-5"
+        />
+      </div>
+    </Modal>
   )
 }
