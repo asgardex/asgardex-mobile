@@ -38,6 +38,7 @@ export default {
         turquoise: '#0068F7',
         cyanblue: '#1fb6ff',
         red: '#FF4954',
+        success: '#23DCC8',
         // text
         text0: t.light.palette.text[0],
         text0d: t.dark.palette.text[0],

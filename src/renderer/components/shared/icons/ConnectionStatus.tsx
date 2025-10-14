@@ -1,27 +1,23 @@
-import styled from 'styled-components'
-import { palette } from 'styled-theme'
+import clsx from 'clsx'
 
 type ConnectionColors = 'red' | 'yellow' | 'green'
 
-type ColorMap = {
-  [key in ConnectionColors]: string
-}
-const colors: ColorMap = {
-  red: palette('error', 0),
-  yellow: palette('warning', 0),
-  green: palette('success', 0)
-}
-
 type Props = {
+  className?: string
   color: ConnectionColors
 }
 
 type ConnectionStatusProps = Props & React.HTMLProps<HTMLDivElement>
 
-export const ConnectionStatus = styled.div<ConnectionStatusProps>`
-  width: 14px;
-  height: 14px;
-  border: none;
-  border-radius: 50%;
-  background-color: ${(props) => colors[props.color] || colors.red};
-`
+const colorMap: Record<ConnectionColors, string> = {
+  red: 'bg-error0 dark:bg-error0d',
+  yellow: 'bg-warning0 dark:bg-warning0d',
+  green: 'bg-success'
+}
+
+export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ color, className, ...rest }) => (
+  <div
+    className={clsx('w-[14px] h-[14px] border-none rounded-full', colorMap[color] || colorMap.red, className)}
+    {...rest}
+  />
+)
