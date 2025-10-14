@@ -11,6 +11,7 @@ import { DEFAULT_LOCALE } from '../../../shared/i18n/const'
 import { envOrDefault } from '../../../shared/utils/env'
 import { Header } from '../../components/header'
 import { Sidebar } from '../../components/sidebar'
+import { Alert } from '../../components/uielements/alert'
 import { BorderButton } from '../../components/uielements/button'
 import { TransactionQuickDial } from '../../components/uielements/quickDial'
 import { useChainflipContext } from '../../contexts/ChainflipContext'
@@ -32,7 +33,6 @@ import { ViewRoutes } from '../ViewRoutes'
 import HaltedChainsWarning from './AppHaltedChains'
 import MidgardErrorAlert from './AppMidgardError'
 import { AppUpdateView } from './AppUpdateView'
-import * as Styled from './AppView.styles'
 
 export const AppView = (): JSX.Element => {
   const intl = useIntl()
@@ -113,7 +113,8 @@ export const AppView = (): JSX.Element => {
         empty,
         empty,
         (e) => (
-          <Styled.Alert
+          <Alert
+            className="mb-2 lg:mb-10 lg:first:mb-2"
             type="warning"
             title={intl.formatMessage({ id: 'wallet.imports.error.keystore.import' })}
             description={e?.message ?? e.toString()}
@@ -137,7 +138,8 @@ export const AppView = (): JSX.Element => {
         empty,
         empty,
         (e) => (
-          <Styled.Alert
+          <Alert
+            className="mb-2 lg:mb-10 lg:first:mb-2"
             type="warning"
             title={intl.formatMessage({ id: 'wallet.imports.error.ledger.import' })}
             description={e?.message ?? e.toString()}
