@@ -1,10 +1,8 @@
 import React, { createContext, useContext } from 'react'
 
 import t, { ThemeType, Theme } from '@asgardex/asgardex-theme'
-import { useObservableState } from 'observable-hooks'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-import * as SC from 'styled-components'
 
 import { observableState } from '../helpers/stateHelper'
 
@@ -48,14 +46,8 @@ type Props = {
   children: React.ReactNode
 }
 
-export const ThemeProvider = ({ children, theme }: Props): JSX.Element => {
-  const themeFromObservable = useObservableState(theme$)
-  const selectedTheme = theme || themeFromObservable
-  return (
-    <ThemeContext.Provider value={initialContext}>
-      <SC.ThemeProvider theme={{ ...selectedTheme }}>{children}</SC.ThemeProvider>
-    </ThemeContext.Provider>
-  )
+export const ThemeProvider = ({ children }: Props): JSX.Element => {
+  return <ThemeContext.Provider value={initialContext}>{children}</ThemeContext.Provider>
 }
 
 export const useThemeContext = () => {
