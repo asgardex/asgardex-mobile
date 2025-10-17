@@ -10,8 +10,7 @@ import { getWalletByAddress } from '../../../helpers/walletHelper'
 import { SendTxState } from '../../../services/chain/types'
 import { WalletBalances } from '../../../services/clients'
 import { TxHashRD } from '../../../services/wallet/types'
-import { WalletTypeLabel } from '../../uielements/common/Common.styles'
-import * as Styled from './TxForm.styles'
+import { WalletTypeLabel } from '../../uielements/common'
 
 export const renderedWalletType = (oWalletType: O.Option<WalletType>, oTrustedAddresses: O.Option<TrustedAddress[]>) =>
   FP.pipe(
@@ -20,9 +19,9 @@ export const renderedWalletType = (oWalletType: O.Option<WalletType>, oTrustedAd
       () => <></>, // Handle None case
       (trustedAddresses) =>
         trustedAddresses.length > 0 ? (
-          <Styled.WalletTypeLabelWrapper>
+          <div className="ml-1.5">
             <WalletTypeLabel>{trustedAddresses[0].name}</WalletTypeLabel> {/* Display TrustedAddress name */}
-          </Styled.WalletTypeLabelWrapper>
+          </div>
         ) : (
           FP.pipe(
             // If no trusted addresses, check wallet type
@@ -30,9 +29,9 @@ export const renderedWalletType = (oWalletType: O.Option<WalletType>, oTrustedAd
             O.fold(
               () => <></>,
               (walletType) => (
-                <Styled.WalletTypeLabelWrapper>
+                <div className="ml-1.5">
                   <WalletTypeLabel>{walletType}</WalletTypeLabel> {/* Display WalletType */}
-                </Styled.WalletTypeLabelWrapper>
+                </div>
               )
             )
           )
