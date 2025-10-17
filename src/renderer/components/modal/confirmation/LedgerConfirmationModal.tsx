@@ -10,7 +10,7 @@ import { useIntl } from 'react-intl'
 
 import { chainToString } from '../../../../shared/utils/chain'
 import LedgerConnectUI from '../../../assets/svg/ledger-device-connect.svg?react'
-import { getChainAsset, isBchChain } from '../../../helpers/chainHelper'
+import { getChainAsset, isBchChain, isMayaChain } from '../../../helpers/chainHelper'
 import { AddressEllipsis } from '../../uielements/addressEllipsis'
 import { AssetIcon } from '../../uielements/assets/assetIcon'
 import { Button } from '../../uielements/button'
@@ -41,6 +41,14 @@ export const LedgerConfirmationModal = ({
   addresses: oAddresses
 }: Props) => {
   const intl = useIntl()
+
+  // Mayachain uses the THORChain ledger app
+  const getLedgerAppName = (chain: Chain): string => {
+    if (isMayaChain(chain)) {
+      return chainToString('THOR')
+    }
+    return chainToString(chain)
+  }
 
   const asset = getChainAsset(chain)
 
@@ -123,7 +131,7 @@ export const LedgerConfirmationModal = ({
             </div>
           </div>
           <Label align="center" color="gray" size="big">
-            {description1 || intl.formatMessage({ id: 'ledger.needsconnected' }, { chain: chainToString(chain) })}
+            {description1 || intl.formatMessage({ id: 'ledger.needsconnected' }, { chain: getLedgerAppName(chain) })}
           </Label>
           {description2 && (
             <Label align="center" color="gray" size="big">
