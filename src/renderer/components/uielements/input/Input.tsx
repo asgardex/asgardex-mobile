@@ -61,7 +61,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref): JSX.
         'w-full rounded-lg appearance-none focus:outline-none',
         'bg-bg0 font-main dark:bg-bg0d',
         'placeholder:text-gray-300 dark:placeholder:text-gray-400',
-        ghost ? 'border-0' : 'border-1',
+        ghost ? 'border-0' : 'border',
         error ? 'border-error0 dark:border-error0d' : 'border-gray0 dark:border-gray0d',
         error ? 'text-error0 dark:text-error0d' : 'text-text0 dark:text-text0d',
         uppercase ? 'uppercase placeholder:uppercase' : 'normal-case',
