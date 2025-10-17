@@ -88,7 +88,7 @@ export const InputSearch = forwardRef<HTMLInputElement, Props>((props, ref): JSX
   }
 
   return (
-    <div className={clsx('relative', className)}>
+    <div className={clsx('relative rounded-lg border border-solid border-gray0 dark:border-gray0d', className)}>
       <MagnifyingGlassIcon
         className={clsx(
           'absolute top-[50%] translate-y-[-50%] text-gray2 dark:text-gray2',

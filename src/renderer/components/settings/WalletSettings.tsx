@@ -83,9 +83,10 @@ import {
 } from '../../services/wallet/types'
 import { walletTypeToI18n } from '../../services/wallet/util'
 import { useApp } from '../../store/app/hooks'
-import { FlatButton } from '../uielements/button'
+import { AddressEllipsis } from '../uielements/addressEllipsis'
+import { FlatButton, Button } from '../uielements/button'
 import { SwitchButton } from '../uielements/button/SwitchButton'
-import { WalletTypeLabel } from '../uielements/common/Common.styles'
+import { WalletTypeLabel } from '../uielements/common'
 import { Dropdown } from '../uielements/dropdown'
 import { InfoIcon } from '../uielements/info'
 import { Input, InputSearch } from '../uielements/input'
@@ -96,7 +97,6 @@ import { WalletSelector } from '../uielements/wallet'
 import { EditableWalletName } from '../uielements/wallet/EditableWalletName'
 import { AutoComplete } from './AutoComplete'
 import { WalletIndexInput } from './WalletIndexInput'
-import * as Styled from './WalletSettings.styles'
 import { WhitelistModal } from './WhitelistModal'
 
 // Convert derivation path index to HDMode for chains that support multiple paths
@@ -287,7 +287,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
   const renderLedgerNotSupported = useMemo(
     () => (
       <div className="mt-10px w-full">
-        <Styled.WalletTypeLabel>{walletTypeToI18n(WalletType.Ledger, intl)}</Styled.WalletTypeLabel>
+        <WalletTypeLabel className="ml-10 inline-block">{walletTypeToI18n(WalletType.Ledger, intl)}</WalletTypeLabel>
         <div className="ml-40px flex items-center pt-5px text-[12px] uppercase text-text2 dark:text-text2d">
           <ExclamationTriangleIcon className="mr-2" width={24} height={24} />
           {intl.formatMessage({ id: 'common.notsupported.fornetwork' }, { network })}
@@ -380,14 +380,15 @@ export const WalletSettings = (props: Props): JSX.Element => {
           <>
             <div className="flex w-full flex-col md:w-auto lg:flex-row">
               <div className="mr-30px flex items-center md:mr-0">
-                <Styled.AddLedgerButton
-                  className="gap-x-1"
+                <Button
+                  className="!p-0 cursor-pointer text-[12px] gap-x-1"
                   sizevalue="small"
                   loading={loading}
+                  typevalue="transparent"
                   onClick={addLedgerAddressHandler}>
                   <PlusCircleIcon className="text-turquoise" width={20} height={20} />
                   {intl.formatMessage({ id: 'ledger.add.device' })}
-                </Styled.AddLedgerButton>
+                </Button>
 
                 <>
                   <div className="ml-2 text-[12px] uppercase text-text2 dark:text-text2d">
@@ -505,7 +506,13 @@ export const WalletSettings = (props: Props): JSX.Element => {
         return (
           <>
             <div className="flex w-full items-center gap-x-1">
-              <Styled.AddressEllipsis address={address} chain={chain} network={network} enableCopy={true} />
+              <AddressEllipsis
+                address={address}
+                chain={chain}
+                network={network}
+                enableCopy={true}
+                className="text-base font-main text-text1 dark:text-text1d max-w-full overflow-hidden only:mx-auto"
+              />
               <QrCodeIcon
                 className="cursor-pointer text-turquoise"
                 width={20}
@@ -616,10 +623,18 @@ export const WalletSettings = (props: Props): JSX.Element => {
       // Render addresses depending on its loading state
       return (
         <>
-          <Styled.WalletTypeLabel>{walletTypeToI18n(WalletType.Keystore, intl)}</Styled.WalletTypeLabel>
+          <WalletTypeLabel className="ml-10 inline-block">
+            {walletTypeToI18n(WalletType.Keystore, intl)}
+          </WalletTypeLabel>
           <div className="my-0 w-full overflow-hidden px-40px ">
             <div className="flex w-full items-center gap-x-1">
-              <Styled.AddressEllipsis address={address} chain={chain} network={network} enableCopy={true} />
+              <AddressEllipsis
+                address={address}
+                chain={chain}
+                network={network}
+                enableCopy={true}
+                className="text-base font-main text-text1 dark:text-text1d max-w-full overflow-hidden only:mx-auto"
+              />
               <QrCodeIcon
                 className="cursor-pointer text-turquoise"
                 width={20}
@@ -786,14 +801,14 @@ export const WalletSettings = (props: Props): JSX.Element => {
           onChange={(value) => setNewAddress((prev) => ({ ...prev, chain: value as Chain }))}
         />
         <Input
-          className="border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"
+          className="h-[38px] border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"
           uppercase={false}
           placeholder={intl.formatMessage({ id: 'common.address' })}
           value={newAddress.address}
           onChange={(e) => setNewAddress((prev) => ({ ...prev, address: e.target.value }))}
         />
         <Input
-          className="border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"
+          className="h-[38px] border border-solid border-bg2 bg-bg0 dark:border-bg2d dark:bg-bg0d"
           uppercase={false}
           placeholder={intl.formatMessage({ id: 'wallet.column.name' })}
           value={newAddress.name}
@@ -801,10 +816,13 @@ export const WalletSettings = (props: Props): JSX.Element => {
         />
 
         <div className="mr-30px flex items-center md:mr-0">
-          <Styled.AddLedgerButton className="gap-x-1" onClick={handleAddAddress}>
+          <Button
+            typevalue="transparent"
+            className="pl-0 text-[12px] cursor-pointer gap-x-1"
+            onClick={handleAddAddress}>
             <PlusCircleIcon className="text-turquoise" width={20} height={20} />
             {intl.formatMessage({ id: 'common.store' })}
-          </Styled.AddLedgerButton>
+          </Button>
           <InfoIcon className="ml-2" tooltip={intl.formatMessage({ id: 'settings.wallet.storeAddress.info' })} />
         </div>
       </div>
@@ -818,7 +836,13 @@ export const WalletSettings = (props: Props): JSX.Element => {
         <div key={item.address} className="flex flex-col w-full">
           <Label size="big">{item.name}</Label>
           <div className="flex w-full items-center space-x-2">
-            <Styled.AddressEllipsis address={item.address} chain={chain} network={network} enableCopy={true} />
+            <AddressEllipsis
+              className="text-base font-main text-text1 dark:text-text1d max-w-full overflow-hidden only:mx-auto"
+              address={item.address}
+              chain={chain}
+              network={network}
+              enableCopy={true}
+            />
             <RemoveIcon className="w-4 h-4" onClick={() => handleRemoveAddress(item)} />
           </div>
         </div>
@@ -836,7 +860,9 @@ export const WalletSettings = (props: Props): JSX.Element => {
               <div key={i} className="flex flex-col p-4 border-b border-solid border-b-gray0 dark:border-b-gray0d">
                 <div className="flex w-full items-center justify-start">
                   <AssetIcon asset={getChainAsset(chain)} size="small" network={Network.Mainnet} />
-                  <Styled.AccountTitle>{chain}</Styled.AccountTitle>
+                  <Label className="p-0 pl-[10px] text-xl leading-[25px] tracking-[2px]" textTransform="uppercase">
+                    {chain}
+                  </Label>
                 </div>
                 <div className="mt-10px w-full">
                   {/* Render keystore and ledger addresses as before */}
@@ -1038,7 +1064,9 @@ export const WalletSettings = (props: Props): JSX.Element => {
         </div>
       </div>
       <div key="accounts" className="mt-4 w-full border-t border-solid border-bg2 dark:border-bg2d">
-        <Styled.Subtitle>{intl.formatMessage({ id: 'settings.accounts.title' })}</Styled.Subtitle>
+        <Label className="text-center pt-5 pl-5 md:text-left text-base" textTransform="uppercase">
+          {intl.formatMessage({ id: 'settings.accounts.title' })}
+        </Label>
         <div className="mt-30px flex justify-center md:ml-4 md:justify-start">
           <InputSearch
             placeholder={intl.formatMessage({ id: 'common.search' }).toUpperCase()}
@@ -1048,7 +1076,9 @@ export const WalletSettings = (props: Props): JSX.Element => {
         </div>
         <div className="mt-10px border-b border-solid border-bg2 px-4 dark:border-bg2d">{renderAddAddressForm()}</div>
         <div className="flex items-center justify-center">
-          <Styled.Subtitle>{intl.formatMessage({ id: 'common.chainManagement' })}</Styled.Subtitle>
+          <Label className="text-center pt-5 pl-5 md:text-left text-base" textTransform="uppercase">
+            {intl.formatMessage({ id: 'common.chainManagement' })}
+          </Label>
           <ActionButton
             className="mt-5 mr-5"
             text={intl.formatMessage({ id: 'common.whitelist' })}
