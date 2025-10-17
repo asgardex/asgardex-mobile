@@ -70,11 +70,10 @@ import { AssetIcon } from '../../uielements/assets/assetIcon'
 import { Action as ActionButtonAction, ActionButton } from '../../uielements/button/ActionButton'
 import { IconButton } from '../../uielements/button/IconButton'
 import { Collapse } from '../../uielements/collapse'
-import { WalletTypeLabel } from '../../uielements/common/Common.styles'
+import { WalletTypeLabel, AssetSynthLabel, AssetSecuredLabel } from '../../uielements/common'
 import { InfoIcon } from '../../uielements/info'
 import { CopyLabel, Label } from '../../uielements/label'
 import { QRCodeModal } from '../../uielements/qrCodeModal/QRCodeModal'
-import * as Styled from './AssetsTableCollapsable.styles'
 
 export type AssetAction = 'send' | 'deposit'
 
@@ -494,8 +493,12 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
                     {asset.chain}
                   </Label>
                 )}
-                {isSynthAsset(asset) && <Styled.AssetSynthLabel>synth</Styled.AssetSynthLabel>}
-                {isSecuredAsset(asset) && <Styled.AssetSecuredLabel>secured</Styled.AssetSecuredLabel>}
+                {isSynthAsset(asset) && (
+                  <AssetSynthLabel className="mt-0.5 px-1 text-[10px] leading-[12px]">synth</AssetSynthLabel>
+                )}
+                {isSecuredAsset(asset) && (
+                  <AssetSecuredLabel className="mt-0.5 px-1 text-[10px] leading-[12px]">secured</AssetSecuredLabel>
+                )}
               </div>
             </div>
           )
