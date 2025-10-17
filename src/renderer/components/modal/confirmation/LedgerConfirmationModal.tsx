@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { ExclamationTriangleIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { isCashAddress, toCashAddress, toLegacyAddress } from '@xchainjs/xchain-bitcoincash'
 import { Network } from '@xchainjs/xchain-client'
 import { Address, Chain } from '@xchainjs/xchain-util'
@@ -9,12 +9,13 @@ import { function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { chainToString } from '../../../../shared/utils/chain'
+import LedgerConnectUI from '../../../assets/svg/ledger-device-connect.svg?react'
 import { getChainAsset, isBchChain } from '../../../helpers/chainHelper'
 import { AddressEllipsis } from '../../uielements/addressEllipsis'
+import { AssetIcon } from '../../uielements/assets/assetIcon'
 import { Button } from '../../uielements/button'
 import { CopyLabel, Label } from '../../uielements/label'
 import { ConfirmationModal } from './ConfirmationModal'
-import * as Styled from './LedgerConfirmationModal.styles'
 
 type Addresses = { sender: Address; recipient: Address }
 
@@ -60,7 +61,9 @@ export const LedgerConfirmationModal = ({
           {/* Sender */}
           <div className="flex flex-col pt-5">
             <div className="flex flex-col items-center normal-case">
-              <Styled.AddressTitle>{intl.formatMessage({ id: 'common.sender' })} (CashAddr)</Styled.AddressTitle>
+              <p className="font-mainBold text-[10px] text-inherit p-0 m-0">
+                {intl.formatMessage({ id: 'common.sender' })} (CashAddr)
+              </p>
               <AddressEllipsis
                 network={network}
                 chain={chain}
@@ -69,14 +72,18 @@ export const LedgerConfirmationModal = ({
               />
             </div>
             <div className="flex flex-col items-center normal-case">
-              <Styled.AddressTitle>{intl.formatMessage({ id: 'common.sender' })} (Legacy)</Styled.AddressTitle>
+              <p className="font-mainBold text-[10px] text-inherit p-0 m-0">
+                {intl.formatMessage({ id: 'common.sender' })} (Legacy)
+              </p>
               <AddressEllipsis network={network} chain={chain} address={toLegacyAddress(sender)} enableCopy />
             </div>
           </div>
           {/* Recipient */}
           <div className="flex flex-col pt-5">
             <div className="flex flex-col items-center normal-case">
-              <Styled.AddressTitle>{intl.formatMessage({ id: 'common.recipient' })} (CashAddr)</Styled.AddressTitle>
+              <p className="font-mainBold text-[10px] text-inherit p-0 m-0">
+                {intl.formatMessage({ id: 'common.recipient' })} (CashAddr)
+              </p>
               <AddressEllipsis
                 network={network}
                 chain={chain}
@@ -85,7 +92,9 @@ export const LedgerConfirmationModal = ({
               />
             </div>
             <div className="flex flex-col items-center normal-case">
-              <Styled.AddressTitle>{intl.formatMessage({ id: 'common.recipient' })} (Legacy)</Styled.AddressTitle>
+              <p className="font-mainBold text-[10px] text-inherit p-0 m-0">
+                {intl.formatMessage({ id: 'common.recipient' })} (Legacy)
+              </p>
               <AddressEllipsis network={network} chain={chain} address={toLegacyAddress(recipient)} enableCopy />
             </div>
           </div>
@@ -108,8 +117,10 @@ export const LedgerConfirmationModal = ({
       content={
         <div className="flex flex-col">
           <div className="relative flex flex-col items-center mb-5">
-            <Styled.LedgerConnect />
-            <Styled.AssetIcon asset={asset} network={network} size="small" />
+            <LedgerConnectUI className="scale-[0.65] md:scale-[0.85]" />
+            <div className="absolute top-5 left-[180px] scale-[0.7] md:top-[21px] md:left-[170px] md:scale-[0.9]">
+              <AssetIcon asset={asset} network={network} size="small" />
+            </div>
           </div>
           <Label align="center" color="gray" size="big">
             {description1 || intl.formatMessage({ id: 'ledger.needsconnected' }, { chain: chainToString(chain) })}
@@ -141,7 +152,9 @@ export const LedgerConfirmationModal = ({
                         {intl.formatMessage({
                           id: showAddresses ? 'ledger.legacyformat.hide' : 'ledger.legacyformat.show'
                         })}
-                        <Styled.ExpandIcon className={clsx('w-4 h-4', showAddresses ? '-rotate-90' : 'rotate-90')} />
+                        <ChevronRightIcon
+                          className={clsx('stroke-inherit w-4 h-4', showAddresses ? '-rotate-90' : 'rotate-90')}
+                        />
                       </Button>
                     </div>
 
