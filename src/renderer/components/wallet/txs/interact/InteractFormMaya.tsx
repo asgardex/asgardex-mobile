@@ -63,7 +63,7 @@ import { BaseButton, FlatButton, ViewTxButton } from '../../../uielements/button
 import { CheckButton } from '../../../uielements/button/CheckButton'
 import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'
 import { SwitchButton } from '../../../uielements/button/SwitchButton'
-import { UIFees, UIFeesRD } from '../../../uielements/fees'
+import { Fees, UIFees, UIFeesRD } from '../../../uielements/fees'
 import { InfoIcon } from '../../../uielements/info'
 import { Input, InputBigNumber } from '../../../uielements/input'
 import { Label } from '../../../uielements/label'
@@ -71,7 +71,6 @@ import { RadioGroup, Radio } from '../../../uielements/radio'
 import { Tooltip } from '../../../uielements/tooltip'
 import { validateTxAmountInput } from '../TxForm.util'
 import * as H from './Interact.helpers'
-import * as Styled from './Interact.styles'
 import { InteractType } from './Interact.types'
 
 type FormValues = {
@@ -843,8 +842,10 @@ export const InteractFormMaya = (props: Props) => {
       <div className="flex flex-col space-y-2">
         {/* Memo input (CUSTOM only) */}
         {interactType === InteractType.Custom && (
-          <Styled.InputContainer>
-            <Styled.InputLabel>{intl.formatMessage({ id: 'common.memo' })}</Styled.InputLabel>
+          <div className="w-full sm:max-w-[630px]">
+            <Label color="input" size="big" textTransform="uppercase">
+              {intl.formatMessage({ id: 'common.memo' })}
+            </Label>
             <div>
               <Input
                 {...register('memo', {
@@ -863,7 +864,9 @@ export const InteractFormMaya = (props: Props) => {
             </div>
             {/* Display example memos */}
             <div className="mt-4">
-              <Styled.InputLabel>{intl.formatMessage({ id: 'common.examples' }, { name: 'Memos' })}</Styled.InputLabel>
+              <Label color="input" size="big" textTransform="uppercase">
+                {intl.formatMessage({ id: 'common.examples' }, { name: 'Memos' })}
+              </Label>
               <div className="rounded-lg bg-gray0 p-4 dark:bg-gray0d">
                 {exampleMemos.map((example, index) => (
                   <div
@@ -882,7 +885,7 @@ export const InteractFormMaya = (props: Props) => {
                 </div>
               </div>
             </div>
-          </Styled.InputContainer>
+          </div>
         )}
 
         {interactType === InteractType.Whitelist && (
@@ -897,8 +900,10 @@ export const InteractFormMaya = (props: Props) => {
           interactType === InteractType.Unbond ||
           interactType === InteractType.Whitelist ||
           interactType === InteractType.Leave) && (
-          <Styled.InputContainer>
-            <Styled.InputLabel>{intl.formatMessage({ id: 'common.nodeAddress' })}</Styled.InputLabel>
+          <div className="w-full sm:max-w-[630px]">
+            <Label color="input" size="big" textTransform="uppercase">
+              {intl.formatMessage({ id: 'common.nodeAddress' })}
+            </Label>
             <div>
               <Input
                 {...register('mayaAddress', {
@@ -919,14 +924,16 @@ export const InteractFormMaya = (props: Props) => {
                 <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.mayaAddress.message}</div>
               )}
             </div>
-          </Styled.InputContainer>
+          </div>
         )}
 
         {/* Provider address input (whitelist only) */}
         {interactType === InteractType.Whitelist && (
           <>
-            <Styled.InputContainer>
-              <Styled.InputLabel>{intl.formatMessage({ id: 'common.providerAddress' })}</Styled.InputLabel>
+            <div className="w-full sm:max-w-[630px]">
+              <Label color="input" size="big" textTransform="uppercase">
+                {intl.formatMessage({ id: 'common.providerAddress' })}
+              </Label>
               <div>
                 <Input
                   {...register('providerAddress', {
@@ -944,9 +951,11 @@ export const InteractFormMaya = (props: Props) => {
                   <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.providerAddress.message}</div>
                 )}
               </div>
-            </Styled.InputContainer>
-            <Styled.InputContainer>
-              <Styled.InputLabel>{intl.formatMessage({ id: 'common.fee.nodeOperator' })}</Styled.InputLabel>
+            </div>
+            <div className="w-full sm:max-w-[630px]">
+              <Label color="input" size="big" textTransform="uppercase">
+                {intl.formatMessage({ id: 'common.fee.nodeOperator' })}
+              </Label>
               <div>
                 <Input
                   {...register('operatorFee', {
@@ -960,14 +969,16 @@ export const InteractFormMaya = (props: Props) => {
                   <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.operatorFee.message}</div>
                 )}
               </div>
-            </Styled.InputContainer>
+            </div>
           </>
         )}
 
         {/* Amount input (BOND/UNBOND/CUSTOM only) */}
         {interactType === InteractType.Custom && (
-          <Styled.InputContainer>
-            <Styled.InputLabel>{intl.formatMessage({ id: 'common.amount' })}</Styled.InputLabel>
+          <div className="w-full sm:max-w-[630px]">
+            <Label color="input" size="big" textTransform="uppercase">
+              {intl.formatMessage({ id: 'common.amount' })}
+            </Label>
             <div>
               <Controller
                 name="amount"
@@ -1008,7 +1019,7 @@ export const InteractFormMaya = (props: Props) => {
                 onChange={() => getMemo()}
               />
             )}
-          </Styled.InputContainer>
+          </div>
         )}
         {(interactType === InteractType.Bond || interactType === InteractType.Unbond) && (
           <>
@@ -1074,15 +1085,17 @@ export const InteractFormMaya = (props: Props) => {
 
         {interactType === InteractType.Bond && renderPoolShares}
         {interactType !== InteractType.MAYAName && (
-          <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
+          <Fees className="pb-5" fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
         )}
         {isFeeError && renderFeeError}
 
         {/* Mayaname Button and Details*/}
         {interactType === InteractType.MAYAName && (
-          <Styled.InputContainer>
+          <div className="w-full sm:max-w-[630px]">
             <div className="flex w-full items-center text-[12px]">
-              <Styled.InputLabel>{intl.formatMessage({ id: 'common.mayaname' })}</Styled.InputLabel>
+              <Label color="input" size="big" textTransform="uppercase">
+                {intl.formatMessage({ id: 'common.mayaname' })}
+              </Label>
               <InfoIcon
                 className="ml-[3px] h-[15px] w-[15px] text-inherit"
                 color="primary"
@@ -1107,11 +1120,11 @@ export const InteractFormMaya = (props: Props) => {
               )}
             </div>
             {O.isSome(oMayaname) && !mayanameAvailable && !isOwner && renderMayanameError}
-          </Styled.InputContainer>
+          </div>
         )}
         {/** Form item for unregistered mayaname */}
         {mayanameAvailable && (
-          <Styled.InputContainer>
+          <div className="w-full sm:max-w-[630px]">
             {isOwner ? (
               <CheckButton
                 checked={mayanameUpdate || isOwner}
@@ -1125,7 +1138,9 @@ export const InteractFormMaya = (props: Props) => {
             {!mayanameRegister ? (
               <>
                 {/* Add input fields for aliasChain, aliasAddress, and expiry */}
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasChain' })}</Styled.InputLabel>
+                <Label color="input" size="big" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.aliasChain' })}
+                </Label>
                 <div>
                   <Controller
                     name="aliasChain"
@@ -1161,7 +1176,9 @@ export const InteractFormMaya = (props: Props) => {
                     <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.aliasChain.message}</div>
                   )}
                 </div>
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasAddress' })}</Styled.InputLabel>
+                <Label color="input" size="big" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.aliasAddress' })}
+                </Label>
                 <div>
                   <Input
                     {...register('aliasAddress', {
@@ -1175,7 +1192,9 @@ export const InteractFormMaya = (props: Props) => {
                     <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.aliasAddress.message}</div>
                   )}
                 </div>
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.expiry' })}</Styled.InputLabel>
+                <Label color="input" size="big" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.expiry' })}
+                </Label>
                 <div>
                   <Controller
                     name="expiry"
@@ -1210,7 +1229,9 @@ export const InteractFormMaya = (props: Props) => {
             ) : (
               <>
                 {/* Initial values needed for tns or mns register */}
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasChain' })}</Styled.InputLabel>
+                <Label color="input" size="big" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.aliasChain' })}
+                </Label>
                 <div>
                   <Controller
                     name="chain"
@@ -1235,7 +1256,9 @@ export const InteractFormMaya = (props: Props) => {
                     <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.chain.message}</div>
                   )}
                 </div>
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasAddress' })}</Styled.InputLabel>
+                <Label color="input" size="big" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.aliasAddress' })}
+                </Label>
                 <div>
                   <Input
                     {...register('chainAddress', {
@@ -1249,7 +1272,9 @@ export const InteractFormMaya = (props: Props) => {
                     <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.chainAddress.message}</div>
                   )}
                 </div>
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.expiry' })}</Styled.InputLabel>
+                <Label color="input" size="big" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.expiry' })}
+                </Label>
                 <div>
                   <Controller
                     name="expiry"
@@ -1285,8 +1310,8 @@ export const InteractFormMaya = (props: Props) => {
                 </div>
               </>
             )}
-            <Styled.Fees className="mt-10px" fees={mayaNamefees} disabled={isLoading} />
-          </Styled.InputContainer>
+            <Fees className="pb-5 mt-10px" fees={mayaNamefees} disabled={isLoading} />
+          </div>
         )}
       </div>
       <div className="flex items-center justify-center">
