@@ -30,7 +30,7 @@ import { ConfirmationModal } from '../../modal/confirmation'
 import { Table } from '../../table'
 import { AssetIcon } from '../../uielements/assets/assetIcon'
 import { BaseButton, TextButton } from '../../uielements/button'
-import { ExternalLinkIcon } from '../../uielements/common/Common.styles'
+import { ExternalLinkIcon } from '../../uielements/common'
 import { Label } from '../../uielements/label'
 import { Tooltip } from '../../uielements/tooltip'
 import { BondProviderInfo } from './BondProviderInfo'
@@ -136,10 +136,7 @@ export const BondsTable = ({
         cell: ({ row }) => (
           <div className="flex items-center justify-between">
             <H.Status data={row.original} />
-            <ExternalLinkIcon
-              className="w-5 h-5 text-text1 dark:text-text1d"
-              onClick={() => goToNode(row.original.address)}
-            />
+            <ExternalLinkIcon className="!w-4 !h-4" onClick={() => goToNode(row.original.address)} />
           </div>
         ),
         enableSorting: false

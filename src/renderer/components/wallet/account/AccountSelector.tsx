@@ -5,7 +5,7 @@ import { isLedgerWallet } from '../../../../shared/utils/guard'
 import { WalletBalance } from '../../../services/wallet/types'
 import { AssetIcon } from '../../uielements/assets/assetIcon'
 import { Size as IconSize } from '../../uielements/assets/assetIcon/AssetIcon.types'
-import { WalletTypeLabel } from '../../uielements/common/Common.styles'
+import { WalletTypeLabel } from '../../uielements/common'
 import { Label } from '../../uielements/label'
 
 export type Props = {

@@ -61,7 +61,7 @@ import { ViewTxButton } from '../../uielements/button'
 import { Action as ActionButtonAction, ActionButton } from '../../uielements/button/ActionButton'
 import { IconButton } from '../../uielements/button/IconButton'
 import { Collapse } from '../../uielements/collapse'
-import { WalletTypeLabel } from '../../uielements/common/Common.styles'
+import { WalletTypeLabel } from '../../uielements/common'
 import { CopyLabel, Label } from '../../uielements/label'
 
 export type TradeWalletBalance = Balance & {

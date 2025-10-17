@@ -1,4 +1,4 @@
-export type Size = 'tiny' | 'small' | 'normal' | 'big' | 'large'
+export type Size = 'tiny' | 'small' | 'normal' | 'big' | 'xbig' | 'large'
 export type Color =
   | 'primary'
   | 'success'
@@ -32,6 +32,7 @@ export const sizeMap: Record<Size, string> = {
   small: 'text-[11px] tracking-[0.42px]',
   normal: 'text-[12px] tracking-[1px]',
   big: 'text-[14px] tracking-[1px]',
+  xbig: 'text-[16px] tracking-[1px]',
   large: 'text-[18px] tracking-[1px]'
 }
 
