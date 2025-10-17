@@ -5,10 +5,10 @@ import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { ApiError } from '../../../services/wallet/types'
-import { ButtonProps as UIButtonProps } from '../../uielements/button'
+import { ErrorView } from '../../shared/error'
+import { Button, ButtonProps } from '../../uielements/button'
 import { Modal } from '../../uielements/modal'
 import { TxTimer } from '../../uielements/txTimer'
-import * as Styled from './TxModal.styles'
 
 type Props = {
   txRD: RD.RemoteData<ApiError, boolean>
@@ -37,8 +37,8 @@ export const TxModal = (props: Props): JSX.Element => {
             () => <TxTimer status={true} maxValue={100} value={timerValue} startTime={startTime} />,
             (error) => (
               // Show full error message without truncation
-              <Styled.ErrorView
-                className="bg-bg1 dark:bg-bg1d"
+              <ErrorView
+                className="max-w-full break-all whitespace-pre-wrap overflow-auto text-sm leading-normal p-2"
                 subTitle={error?.msg || intl.formatMessage({ id: 'common.error' })}
               />
             ),
@@ -57,7 +57,7 @@ export const TxModal = (props: Props): JSX.Element => {
   )
 
   const renderResult = useMemo(() => {
-    const defaultButtonProps: UIButtonProps = {
+    const defaultButtonProps: ButtonProps = {
       color: 'primary',
       disabled: false,
       onClick: onClose,
@@ -66,9 +66,9 @@ export const TxModal = (props: Props): JSX.Element => {
       children: <>{intl.formatMessage({ id: 'common.finish' })}</>
     }
 
-    const buttonProps: UIButtonProps = FP.pipe(
+    const buttonProps: ButtonProps = FP.pipe(
       txRD,
-      RD.fold<ApiError, boolean, UIButtonProps>(
+      RD.fold<ApiError, boolean, ButtonProps>(
         () => ({ ...defaultButtonProps, disabled: true }),
         () => ({ ...defaultButtonProps, disabled: true }),
         () => ({ ...defaultButtonProps, children: intl.formatMessage({ id: 'common.finish' }) }),
@@ -78,7 +78,7 @@ export const TxModal = (props: Props): JSX.Element => {
 
     return (
       <div className="flex flex-col items-center justify-center">
-        <Styled.ResultButton {...buttonProps} />
+        <Button {...buttonProps} className="w-[300px] h-10 mt-6" />
         {renderExtraResult}
       </div>
     )
