@@ -66,7 +66,7 @@ import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../../
 import { BaseButton, FlatButton } from '../../../uielements/button'
 import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'
 import { SwitchButton } from '../../../uielements/button/SwitchButton'
-import { UIFeesRD } from '../../../uielements/fees'
+import { Fees as UIFees, UIFeesRD } from '../../../uielements/fees'
 import { Input, InputBigNumber } from '../../../uielements/input'
 import { Label } from '../../../uielements/label'
 import { RadioGroup, Radio } from '../../../uielements/radio'
@@ -74,7 +74,6 @@ import { ShowDetails } from '../../../uielements/showDetails'
 import { Slider } from '../../../uielements/slider'
 import { AccountSelector } from '../../account'
 import { matchedWalletType, renderedWalletType } from '../TxForm.helpers'
-import * as Styled from '../TxForm.styles'
 import { validateTxAmountInput } from '../TxForm.util'
 import { DEFAULT_FEE_OPTION } from './Send.const'
 import * as Shared from './Send.shared'
@@ -381,9 +380,9 @@ export const SendForm = (props: Props): JSX.Element => {
     )
 
     return (
-      <Styled.Label size="big" color="error">
+      <Label className="mb-3.5" size="big" color="error" textTransform="uppercase">
         {msg}
-      </Styled.Label>
+      </Label>
     )
   }, [isFeeError, oAssetAmount, intl, isEVMChain, asset])
 
@@ -1087,7 +1086,9 @@ export const SendForm = (props: Props): JSX.Element => {
           () => null,
           (addresses) => (
             <div>
-              <Styled.CustomLabel size="big">{intl.formatMessage({ id: 'common.savedAddresses' })}</Styled.CustomLabel>
+              <Label size="big" color="gray" textTransform="uppercase">
+                {intl.formatMessage({ id: 'common.savedAddresses' })}
+              </Label>
               <Shared.SavedAddressSelect
                 placeholder={intl.formatMessage({ id: 'common.savedAddresses' })}
                 addresses={addresses}
@@ -1108,7 +1109,9 @@ export const SendForm = (props: Props): JSX.Element => {
     if (isUTXOChain || isCOSMOSChain || isEVMChain) {
       return (
         <>
-          <Styled.CustomLabel size="big">{intl.formatMessage({ id: 'common.memo' })}</Styled.CustomLabel>
+          <Label size="big" color="gray" textTransform="uppercase">
+            {intl.formatMessage({ id: 'common.memo' })}
+          </Label>
           <div className="flex flex-col">
             <Controller
               name="memo"
@@ -1132,15 +1135,15 @@ export const SendForm = (props: Props): JSX.Element => {
 
   return (
     <>
-      <Styled.Container>
+      <div className="min-h-full w-full max-w-[630px] flex flex-col p-2.5 sm:p-[35px_50px_150px]">
         <AccountSelector selectedWallet={balance} network={network} />
         <form onSubmit={handleSubmit(() => setShowConfirmationModal(true))}>
-          <Styled.SubForm>
+          <div className="max-w-[630px]">
             {renderSavedAddressesDropdown}
-            <Styled.CustomLabel className="mt-2" size="big">
+            <Label className="flex items-center mt-2" size="big" color="gray" textTransform="uppercase">
               {intl.formatMessage({ id: 'common.address' })}
               {renderWalletType}
-            </Styled.CustomLabel>
+            </Label>
             <div className="flex flex-col">
               <Controller
                 name="recipient"
@@ -1173,10 +1176,10 @@ export const SendForm = (props: Props): JSX.Element => {
             {/* Destination Tag field for XRP - show for all XRP transfers */}
             {isXrpChain && (
               <>
-                <Styled.CustomLabel className="mt-2" size="big">
+                <Label className="mt-2 flex items-center" size="big" color="gray" textTransform="uppercase">
                   {intl.formatMessage({ id: 'common.destinationTag' })}
                   {destinationTagRequired && <span className="text-error0 dark:text-error0d"> *</span>}
-                </Styled.CustomLabel>
+                </Label>
                 <div className="flex flex-col">
                   <Controller
                     name="destinationTag"
@@ -1231,9 +1234,9 @@ export const SendForm = (props: Props): JSX.Element => {
               </>
             )}
 
-            <Styled.CustomLabel className="mt-2" size="big">
+            <Label size="big" className="mt-2" textTransform="uppercase" color="gray">
               {intl.formatMessage({ id: 'common.amount' })}
-            </Styled.CustomLabel>
+            </Label>
             <div className="flex flex-col">
               <Controller
                 name="amount"
@@ -1273,7 +1276,8 @@ export const SendForm = (props: Props): JSX.Element => {
 
             <div className="w-full py-2">{renderSlider}</div>
 
-            <Styled.Fees
+            <UIFees
+              className="p-0 pb-5"
               fees={uiFeesRD}
               reloadFees={
                 typeof reloadFeesHandler === 'function' && reloadFeesHandler.length === 0
@@ -1299,11 +1303,11 @@ export const SendForm = (props: Props): JSX.Element => {
             {/* Advanced Settings for EVM chains */}
             {isEVMChain && isEvmChainAsset(asset) && (
               <div className="mt-2 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-                <Styled.SwitchWrapper>
+                <div className="flex items-center gap-4 py-2.5 flex-wrap">
                   <SwitchButton disabled={false} onChange={() => setPoolDeposit(!poolDeposit)} active={poolDeposit} />
                   {poolDeposit ? (
-                    <Styled.Alert>
-                      <span className="text-red-600 dark:text-red-400 font-semibold">
+                    <div className="flex items-center px-3 py-2 bg-error0/[0.13] border border-error0/[0.25] rounded-lg flex-1 max-w-full sm:max-w-[500px]">
+                      <span className="text-sm leading-[1.4] text-error0 dark:text-error0d">
                         <FormattedMessage
                           id="deposit.poolTransactionWarning"
                           defaultMessage="Send pool transaction on {protocol}. Dev use only or risk losing your funds"
@@ -1315,7 +1319,7 @@ export const SendForm = (props: Props): JSX.Element => {
                           }}
                         />
                       </span>
-                    </Styled.Alert>
+                    </div>
                   ) : (
                     <span className="text-gray-600 dark:text-gray-300">
                       <FormattedMessage
@@ -1325,14 +1329,14 @@ export const SendForm = (props: Props): JSX.Element => {
                       />
                     </span>
                   )}
-                </Styled.SwitchWrapper>
-                {<Styled.MemoWrapper>{renderMemo()}</Styled.MemoWrapper>}
+                </div>
+                <div className="mt-4">{renderMemo()}</div>
               </div>
             )}
 
             {/* Memo field for UTXO, COSMOS chains, and EVM tokens (non-chain assets) */}
             {(!isEVMChain || (isEVMChain && !isEvmChainAsset(asset))) && renderMemo()}
-          </Styled.SubForm>
+          </div>
 
           <FlatButton
             className="mt-40px min-w-[200px] w-full"
@@ -1376,7 +1380,7 @@ export const SendForm = (props: Props): JSX.Element => {
             )}
           </div>
         </div>
-      </Styled.Container>
+      </div>
 
       {showConfirmationModal && renderConfirmationModal}
       {renderTxModal}

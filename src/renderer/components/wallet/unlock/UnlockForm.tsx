@@ -209,10 +209,11 @@ export const UnlockForm = ({ keystore, unlock, removeKeystore, changeKeystore$, 
             />
             <InputPassword
               id="password"
-              className="mx-auto mb-20px flex h-10 w-full items-center justify-between rounded-lg border border-solid !border-gray0 dark:!border-gray0d"
+              className="mx-auto mb-20px flex h-[38px] w-full items-center justify-between rounded-lg border border-solid !border-gray0 dark:!border-gray0d"
               inputClassName="!ring-0 w-full"
               {...register('password', { required: true })}
               placeholder={intl.formatMessage({ id: 'common.password' }).toUpperCase()}
+              ghost
               size="normal"
               autoFocus={true}
               error={errors.password ? intl.formatMessage({ id: 'wallet.password.empty' }) : ''}

@@ -228,7 +228,7 @@ export const SavedAddressSelect = ({
             'relative block w-full rounded-lg bg-bg0 dark:bg-bg0d py-1.5 pr-8 pl-3 text-left text-sm/6 text-text0 dark:text-text0d border border-solid border-gray0 dark:border-gray0d',
             'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
           )}>
-          <Label>{selected ? selected : placeholder.toUpperCase()}</Label>
+          <Label size="big">{selected ? selected : placeholder.toUpperCase()}</Label>
           <ChevronDownIcon className="group pointer-events-none absolute top-2.5 right-2.5 size-4 stroke-text0 dark:stroke-text0d" />
         </ListboxButton>
       </div>
