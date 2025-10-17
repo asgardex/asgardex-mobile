@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
+import { ArrowUpIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
 import { function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
@@ -15,7 +16,6 @@ import { TxDetail } from '../uielements/txDetail'
 import { TxType } from '../uielements/txType'
 import { DEFAULT_PAGE_SIZE } from './PoolActionsHistory.const'
 import * as H from './PoolActionsHistory.helper'
-import * as Styled from './PoolActionsHistoryList.styles'
 
 type Props = {
   network: Network
@@ -51,9 +51,12 @@ export const PoolActionsHistoryList = ({
             action,
             H.getTxId,
             O.map((id) => (
-              <Styled.GoToButton key="go" onClick={() => goToTx(id)}>
-                <Styled.InfoArrow />
-              </Styled.GoToButton>
+              <button
+                key={id}
+                onClick={() => goToTx(id)}
+                className="inline-block min-w-0 p-0 bg-transparent border-0 cursor-pointer hover:opacity-70">
+                <ArrowUpIcon className="rotate-45 stroke-turquoise w-4 h-4" />
+              </button>
             )),
             O.getOrElse(() => <></>)
           )}
