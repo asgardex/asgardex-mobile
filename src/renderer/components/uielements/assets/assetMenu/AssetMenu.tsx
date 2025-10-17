@@ -250,10 +250,7 @@ export const AssetMenu = (props: Props): JSX.Element => {
           </div>
           <div className="my-2 flex w-full px-4">
             {filterButtons.map(({ type, text }) => (
-              <FilterButton
-                key={type}
-                active={activeFilter === type ? 'true' : 'false'}
-                onClick={() => setActiveFilter(type)}>
+              <FilterButton key={type} active={activeFilter === type} onClick={() => setActiveFilter(type)}>
                 {text}
               </FilterButton>
             ))}
