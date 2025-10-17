@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
+import { ArrowPathIcon } from '@heroicons/react/20/solid'
 import { ARBChain } from '@xchainjs/xchain-arbitrum'
 import { AVAXChain } from '@xchainjs/xchain-avax'
 import { BASEChain } from '@xchainjs/xchain-base'
@@ -11,6 +12,7 @@ import { SOLChain } from '@xchainjs/xchain-solana'
 import { isTCYAsset, THORChain } from '@xchainjs/xchain-thorchain'
 import { TRONChain } from '@xchainjs/xchain-tron'
 import { AnyAsset, AssetType, isSecuredAsset, isSynthAsset, isTradeAsset } from '@xchainjs/xchain-util'
+import clsx from 'clsx'
 import { function as FP, option as O } from 'fp-ts'
 
 import { AssetSOLUSDC } from '../../../../const'
@@ -84,7 +86,7 @@ import {
   rujiIcon,
   tronIcon
 } from '../../../icons'
-import * as Styled from './AssetIcon.styles'
+import { sizes, borders, fontSizes } from './AssetIcon.styles'
 import { Size } from './AssetIcon.types'
 
 export type ComponentProps = {
@@ -297,23 +299,74 @@ export const AssetIcon = ({ asset, size = 'small', className = '', network }: Pr
   const renderIcon = useCallback(
     (src: string) => {
       const overlayIconSrc = chainIconMap(asset)
+      const hasBorder = isSynth || isTrade || isSecured
+      const borderWidth = hasBorder ? borders[size] : 0
+      const borderColor = isSynth
+        ? 'border-turquoise'
+        : isTrade
+        ? 'border-turquoise'
+        : isSecured
+        ? 'border-[#B224EC]'
+        : 'border-transparent'
+      const shadowClass = isSynth
+        ? 'shadow-[0px_0px_15px_5px_rgba(80,227,194,0.8)]'
+        : isTrade
+        ? 'shadow-[0px_0px_15px_5px_rgba(113,188,247,0.8)]'
+        : isSecured
+        ? 'shadow-[0px_0px_15px_5px_rgba(178,36,236,0.8)]'
+        : ''
+      const adjustment = hasBorder ? 2 * borders[size] : 0
+      const iconSize = sizes[size] - adjustment
+      const overlaySize = sizes[size] * 0.4
 
       return (
-        <Styled.IconWrapper size={size} isSynth={isSynth} isTrade={isTrade} isSecured={isSecured} className={className}>
-          <Styled.Icon src={src} isNotNative={isSynth || isTrade || isSecured} size={size} />
+        <div
+          className={clsx('relative rounded-full bg-cover bg-center', hasBorder && borderColor, shadowClass, className)}
+          style={{
+            width: `${sizes[size]}px`,
+            height: `${sizes[size]}px`,
+            ...(hasBorder && { borderWidth: borderWidth, borderStyle: 'solid' })
+          }}>
+          <img
+            src={src}
+            alt=""
+            className="rounded-full max-w-none"
+            style={{
+              width: iconSize,
+              height: iconSize
+            }}
+          />
           {overlayIconSrc && !asset.symbol.includes(asset.chain) && !isTrxAsset(asset) && (
-            <Styled.OverlayIcon src={overlayIconSrc} size={size} />
+            <img
+              src={overlayIconSrc}
+              alt=""
+              className="absolute right-0 bottom-0 rounded-full z-[2] bg-white/50"
+              style={{
+                width: `${overlaySize}px`,
+                height: `${overlaySize}px`
+              }}
+            />
           )}
-        </Styled.IconWrapper>
+        </div>
       )
     },
     [asset, size, isSynth, isTrade, className, isSecured]
   )
   const renderPendingIcon = useCallback(() => {
+    const hasBorder = isSynth || isTrade
+    const borderWidth = hasBorder ? borders[size] : 0
+    const borderColor = isSynth ? 'border-turquoise' : isTrade ? 'border-turquoise' : ''
+
     return (
-      <Styled.IconWrapper size={size} isNotNative={isSynth || isTrade} className={className}>
-        <Styled.LoadingOutlined />
-      </Styled.IconWrapper>
+      <div
+        className={clsx('relative rounded-full bg-cover bg-center', hasBorder && borderColor, className)}
+        style={{
+          width: `${sizes[size]}px`,
+          height: `${sizes[size]}px`,
+          ...(hasBorder && { borderWidth: `${borderWidth}px`, borderStyle: 'solid' })
+        }}>
+        <ArrowPathIcon className="w-full h-full text-text0 dark:text-text0d" />
+      </div>
     )
   }, [size, isSynth, isTrade, className])
 
@@ -321,13 +374,31 @@ export const AssetIcon = ({ asset, size = 'small', className = '', network }: Pr
     const { chain } = asset
     const numbers = getIntFromName(chain)
     const backgroundImage = `linear-gradient(45deg,${rainbowStop(numbers[0])},${rainbowStop(numbers[1])})`
+    const hasBorder = isSynth || isTrade
+    const borderWidth = hasBorder ? borders[size] : 0
+    const borderColor = isSynth ? 'border-turquoise' : isTrade ? 'border-turquoise' : ''
+    const adjustment = hasBorder ? 2 * borders[size] : 0
+    const iconSize = sizes[size] - adjustment
 
     return (
-      <Styled.IconWrapper isNotNative={isSynth || isTrade} size={size} className={className}>
-        <Styled.IconFallback isNotNative={isSynth || isTrade} size={size} style={{ backgroundImage }}>
+      <div
+        className={clsx('relative rounded-full bg-cover bg-center', hasBorder && borderColor, className)}
+        style={{
+          width: `${sizes[size]}px`,
+          height: `${sizes[size]}px`,
+          ...(hasBorder && { borderWidth: `${borderWidth}px`, borderStyle: 'solid' })
+        }}>
+        <div
+          className="left-0 top-0 rounded-full flex items-center justify-center text-text3 dark:text-text3d"
+          style={{
+            width: `${iconSize}px`,
+            height: `${iconSize}px`,
+            fontSize: `${fontSizes[size]}px`,
+            backgroundImage
+          }}>
           {chain}
-        </Styled.IconFallback>
-      </Styled.IconWrapper>
+        </div>
+      </div>
     )
   }, [asset, isSynth, isTrade, size, className])
 
