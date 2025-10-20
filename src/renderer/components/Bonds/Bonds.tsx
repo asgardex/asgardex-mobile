@@ -325,7 +325,7 @@ export const Bonds = ({
               )}
             </div>
             <Button className="space-x-1" type="submit" disabled={disableForm} typevalue="transparent">
-              <PlusIcon className="bg-turquoise rounded-full w-4 h-4 stroke-text3 dark:stroke-text3d" />
+              <PlusIcon className="mr-1 bg-turquoise rounded-full w-4 h-4 stroke-text3 dark:stroke-text3d" />
               {intl.formatMessage({ id: 'bonds.node.add' })}
             </Button>
           </div>

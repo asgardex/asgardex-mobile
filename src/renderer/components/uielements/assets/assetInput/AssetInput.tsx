@@ -133,10 +133,10 @@ export const AssetInput = (props: Props): JSX.Element => {
           </p>
         )}
         {hasAmountShortcut && (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             {amountShortcuts.map(({ textId, amount }) => (
               <Button
-                className="border border-solid border-turquoise hover:bg-turquoise hover:text-white"
+                className="!text-text0 dark:!text-text0d !border-turquoise hover:!bg-turquoise hover:!text-white rounded-lg"
                 key={textId}
                 typevalue="outline"
                 sizevalue="small"
