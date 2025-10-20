@@ -18,9 +18,9 @@ import { Button } from '../uielements/button'
 import { Label } from '../uielements/label'
 import { Pagination } from '../uielements/pagination'
 import { TxDetail } from '../uielements/txDetail'
+import { TxType } from '../uielements/txType'
 import { DEFAULT_PAGE_SIZE } from './PoolActionsHistory.const'
 import * as H from './PoolActionsHistory.helper'
-import * as Styled from './PoolActionsHistoryTable.styles'
 
 export type Props = {
   network: Network
@@ -51,7 +51,13 @@ export const PoolActionsHistoryTable = ({
       {
         accessorKey: 'txType',
         header: '',
-        cell: ({ row }) => <Styled.TxType type={row.original.type} showTypeIcon={isDesktopView} />,
+        cell: ({ row }) => (
+          <TxType
+            type={row.original.type}
+            showTypeIcon={isDesktopView}
+            className="[&_.label-wrapper]:hidden lg:[&_.label-wrapper]:inline"
+          />
+        ),
         size: 20
       },
       {

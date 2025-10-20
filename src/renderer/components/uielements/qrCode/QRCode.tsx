@@ -7,8 +7,6 @@ import { createRoot } from 'react-dom/client'
 import { useIntl } from 'react-intl'
 import { Spin } from '../spin'
 
-import * as Styled from './QRCode.styles'
-
 type Props = {
   text: string
   qrError: string
@@ -65,5 +63,5 @@ export const QRCode = ({ text, qrError }: Props) => {
     )
   }, [canvasRd])
 
-  return <Styled.QRWrapper ref={canvasContainer} />
+  return <div ref={canvasContainer} className="h-72 flex justify-center items-center [&>canvas]:rounded-2xl" />
 }

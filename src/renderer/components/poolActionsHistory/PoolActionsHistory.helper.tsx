@@ -4,7 +4,6 @@ import { FormattedDateParts, FormattedTime } from 'react-intl'
 
 import { Action, Actions, ActionsPage, Tx } from '../../services/midgard/thorMidgard/types'
 import { AssetWithAmount } from '../../types/asgardex'
-import * as Styled from './PoolActionsHistory.styles'
 import { Filter } from './types'
 
 export const getTxId = (action: Action): O.Option<TxHash> => {
@@ -49,11 +48,11 @@ export const CustomFormattedDate = ({ date }: { date: Date }) => (
 )
 
 export const renderDate = (date: Date) => (
-  <Styled.DateContainer>
+  <span className="text-text0 dark:text-text0d mr-1 last:mr-0">
     <CustomFormattedDate date={date} />
     &nbsp;
     <FormattedTime hour="2-digit" minute="2-digit" hour12={false} value={date} />
-  </Styled.DateContainer>
+  </span>
 )
 
 export const getRowKey = (action: Action) =>

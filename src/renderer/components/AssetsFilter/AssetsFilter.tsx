@@ -7,8 +7,8 @@ import { useIntl } from 'react-intl'
 
 import { emptyString } from '../../helpers/stringHelper'
 import { isStaticPoolFilter, PoolFilter, PoolFilters, StaticPoolFilter } from '../../services/midgard/midgardTypes'
+import { FilterButton } from '../uielements/button'
 import { InputSearch } from '../uielements/input'
-import * as Styled from './AssetsFilter.styles'
 
 type Props = {
   className?: string
@@ -96,14 +96,9 @@ export const AssetsFilter = ({ poolFilters, className, activeFilter: oActiveFilt
 
       return (
         filterLabel && (
-          <Styled.FilterButton
-            focused={isActive}
-            active={isActive ? 'true' : 'false'}
-            weight={isActive ? 'bold' : 'normal'}
-            onClick={() => buttonClickHandler(filter)}
-            key={filter}>
+          <FilterButton key={filter} active={isActive} onClick={() => buttonClickHandler(filter)}>
             {filter !== '__watched__' ? filterLabel : <StarIcon className="w-4 h-4" />}
-          </Styled.FilterButton>
+          </FilterButton>
         )
       )
     }),

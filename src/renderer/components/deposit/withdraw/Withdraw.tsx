@@ -46,13 +46,14 @@ import { LedgerConfirmationModal, WalletPasswordConfirmationModal } from '../../
 import { TxModal } from '../../modal/tx'
 import { DepositAssets } from '../../modal/tx/extra'
 import { AssetIcon } from '../../uielements/assets/assetIcon'
+import { AssetLabel } from '../../uielements/assets/assetLabel'
 import { FlatButton, ViewTxButton } from '../../uielements/button'
+import { WalletTypeLabel } from '../../uielements/common'
 import { Fees, UIFeesRD } from '../../uielements/fees'
 import { CopyLabel, Label } from '../../uielements/label'
 import { Slider } from '../../uielements/slider'
 import { Tooltip } from '../../uielements/tooltip'
 import * as Helper from './Withdraw.helper'
-import * as Styled from './Withdraw.styles'
 
 export type Props = {
   asset: AssetWithDecimal
@@ -491,7 +492,7 @@ export const Withdraw = ({
   )
 
   return (
-    <Styled.Container>
+    <div>
       <Label className="!text-16" textTransform="uppercase">
         {intl.formatMessage({ id: 'deposit.withdraw.sym.title' })}
       </Label>
@@ -527,27 +528,29 @@ export const Withdraw = ({
           error={minRuneAmountError}
         />
       </div>
-      <Styled.AssetOutputContainer>
+      <div className="flex flex-row items-center my-5 last:m-0 [&>div:first-child]:mr-[10px]">
         <Tooltip title={runeAddress} size="big">
           <div className="flex items-center">
             <AssetIcon className="mr-10px" asset={protocolAsset} network={network} />
-            <Styled.AssetLabel asset={protocolAsset} />
+            <AssetLabel asset={protocolAsset} className="p-0 m-0" />
             {isLedgerWallet(runeWalletType) && (
-              <Styled.WalletTypeLabel>{intl.formatMessage({ id: 'ledger.title' })}</Styled.WalletTypeLabel>
+              <WalletTypeLabel className="text-[8px] md:text-[10px] leading-3 mr-[10px]">
+                {intl.formatMessage({ id: 'ledger.title' })}
+              </WalletTypeLabel>
             )}
           </div>
         </Tooltip>
         <div className="flex flex-col">
-          <Styled.OutputLabel>
+          <Label className="text-2xl leading-[25px] md:text-[27px] md:leading-[29px]" weight="bold">
             {formatAssetAmount({
               amount: getTwoSigfigAssetAmount(baseToAsset(runeAmountToWithdraw)),
               decimal: protocolAssetDecimal,
               trimZeros: true
             })}
-          </Styled.OutputLabel>
+          </Label>
           {/* show pricing if price asset is different only */}
           {!eqAsset.equals(protocolAsset, selectedPriceAsset) && (
-            <Styled.OutputUSDLabel>
+            <Label className="text-[11px] leading-[11px] md:text-[13px] md:leading-[13px] whitespace-normal">
               {formatAssetAmountCurrency({
                 amount: getTwoSigfigAssetAmount(
                   baseToAsset(baseAmount(runeAmountToWithdraw.amount().times(dexPrice), protocolAssetDecimal))
@@ -555,23 +558,25 @@ export const Withdraw = ({
                 asset: selectedPriceAsset,
                 trimZeros: true
               })}
-            </Styled.OutputUSDLabel>
+            </Label>
           )}
         </div>
-      </Styled.AssetOutputContainer>
+      </div>
 
-      <Styled.AssetOutputContainer>
+      <div className="flex flex-row items-center my-5 last:m-0 [&>div:first-child]:mr-[10px]">
         <Tooltip title={assetAddress} size="big">
           <div className="flex items-center">
             <AssetIcon className="mr-10px" asset={asset} network={network} />
-            <Styled.AssetLabel asset={asset} />
+            <AssetLabel asset={asset} className="p-0 m-0" />
             {isLedgerWallet(assetWalletType) && (
-              <Styled.WalletTypeLabel>{intl.formatMessage({ id: 'ledger.title' })}</Styled.WalletTypeLabel>
+              <WalletTypeLabel className="text-[8px] md:text-[10px] leading-3 mr-[10px]">
+                {intl.formatMessage({ id: 'ledger.title' })}
+              </WalletTypeLabel>
             )}
           </div>
         </Tooltip>
         <div className="flex flex-col">
-          <Styled.OutputLabel>
+          <Label className="text-2xl leading-[25px] md:text-[27px] md:leading-[29px]" weight="bold">
             {formatAssetAmount({
               amount: getTwoSigfigAssetAmount(baseToAsset(assetAmountToWithdraw)),
               decimal: assetDecimal,
@@ -579,17 +584,17 @@ export const Withdraw = ({
             })}
             {/* show pricing if price asset is different only */}
             {!eqAsset.equals(asset, selectedPriceAsset) && (
-              <Styled.OutputUSDLabel>
+              <Label className="text-[11px] leading-[11px] md:text-[13px] md:leading-[13px] whitespace-normal">
                 {formatAssetAmountCurrency({
                   amount: getTwoSigfigAssetAmount(baseToAsset(assetPriceToWithdraw1e8)),
                   asset: selectedPriceAsset,
                   trimZeros: true
                 })}
-              </Styled.OutputUSDLabel>
+              </Label>
             )}
-          </Styled.OutputLabel>
+          </Label>
         </div>
-      </Styled.AssetOutputContainer>
+      </div>
 
       <div className="flex flex-col space-y-4 pb-4 xl:pb-0">
         <div className="flex items-center">
@@ -625,6 +630,6 @@ export const Withdraw = ({
       {renderPasswordConfirmationModal}
       {renderLedgerConfirmationModal}
       {renderTxModal}
-    </Styled.Container>
+    </div>
   )
 }

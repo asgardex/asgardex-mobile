@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 
-import { FolderPlusIcon, FolderOpenIcon } from '@heroicons/react/20/solid'
+import { FolderPlusIcon, FolderOpenIcon, LockOpenIcon } from '@heroicons/react/20/solid'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import * as walletRoutes from '../../../routes/wallet'
 import { Button } from '../../uielements/button'
-import * as Styled from './AddWallet.styles'
+import { Label } from '../../uielements/label'
 
 export type Props = { isLocked?: boolean }
 
@@ -22,13 +22,19 @@ export const AddWallet = ({ isLocked = false }: Props) => {
   const intlButtonId = isLocked ? 'wallet.action.unlock' : 'wallet.action.connect'
 
   return (
-    <Styled.Container>
-      {isLocked ? <Styled.UnlockIcon /> : <Styled.ConnectIcon />}
-      <Styled.Label>{intl.formatMessage({ id: intlLabelId })}</Styled.Label>
+    <div className="p-[150px_20px] bg-bg0 dark:bg-bg0d flex flex-col items-center justify-center w-full h-full">
+      {isLocked ? (
+        <LockOpenIcon className="h-[60px] w-[60px] mb-0 stroke-gray2 dark:stroke-gray2d" />
+      ) : (
+        <FolderPlusIcon className="h-[60px] w-[60px] mb-0 stroke-gray2 dark:stroke-gray2d" />
+      )}
+      <Label className="!w-auto" textTransform="uppercase">
+        {intl.formatMessage({ id: intlLabelId })}
+      </Label>
       <Button onClick={onButtonClick} round="true">
         {isLocked ? <FolderOpenIcon color="primary" /> : <FolderPlusIcon />}
         {intl.formatMessage({ id: intlButtonId })}
       </Button>
-    </Styled.Container>
+    </div>
   )
 }

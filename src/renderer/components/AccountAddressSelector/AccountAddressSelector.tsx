@@ -14,7 +14,7 @@ import { eqWalletAddress } from '../../helpers/fp/eq'
 import { walletTypeToI18n } from '../../services/wallet/util'
 import { AssetIcon } from '../uielements/assets/assetIcon/AssetIcon'
 import { Size as IconSize } from '../uielements/assets/assetIcon/AssetIcon.types'
-import { WalletTypeLabel } from '../uielements/common/Common.styles'
+import { WalletTypeLabel } from '../uielements/common'
 import { Dropdown } from '../uielements/dropdown'
 
 type Props = {

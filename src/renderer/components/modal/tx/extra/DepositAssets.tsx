@@ -3,41 +3,10 @@ import { useMemo } from 'react'
 import { ArrowRightIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { Network } from '@xchainjs/xchain-client'
 import { function as FP, option as O } from 'fp-ts'
-import styled from 'styled-components'
 
-import { AssetData as UIAssetData } from '../../../uielements/assets/assetData'
-import * as Styled from './Common.styles'
+import { AssetData } from '../../../uielements/assets/assetData'
+import { Label } from '../../../uielements/label'
 import * as C from './Common.types'
-
-// Deposit-specific styled components
-const DepositDataWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  gap: 20px;
-`
-
-const DepositIconContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px;
-`
-
-const DepositAssetData = styled(UIAssetData)`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-
-  /* Ensure consistent left alignment for all asset rows */
-  & > div {
-    justify-content: flex-start;
-    align-items: center;
-  }
-`
 
 export type Props = {
   source: O.Option<C.AssetData>
@@ -57,7 +26,14 @@ export const DepositAssets = (props: Props): JSX.Element => {
       FP.pipe(
         oSource,
         O.map(({ asset, amount }) => (
-          <DepositAssetData key="source-data" asset={asset} amount={amount} network={network} size="big" />
+          <AssetData
+            key="source-data"
+            asset={asset}
+            amount={amount}
+            network={network}
+            size="big"
+            className="flex items-center justify-start w-full"
+          />
         )),
         O.getOrElse(() => <></>)
       ),
@@ -66,20 +42,28 @@ export const DepositAssets = (props: Props): JSX.Element => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <Styled.StepLabel>{stepDescription}</Styled.StepLabel>
-      <DepositDataWrapper>
+      <Label size="small" color="gray" className="w-full px-[10px] pt-[10px] pb-[15px] text-center uppercase">
+        {stepDescription}
+      </Label>
+      <div className="flex flex-col justify-center items-center relative gap-5">
         {renderSource}
         {hasSource && (
-          <DepositIconContainer>
+          <div className="flex justify-center items-center p-2">
             {isWithdraw ? (
               <ArrowLeftIcon className="w-8 h-8 text-gray-400" />
             ) : (
               <ArrowRightIcon className="w-8 h-8 text-gray-400" />
             )}
-          </DepositIconContainer>
+          </div>
         )}
-        <DepositAssetData asset={target.asset} amount={target.amount} network={network} size="big" />
-      </DepositDataWrapper>
+        <AssetData
+          asset={target.asset}
+          amount={target.amount}
+          network={network}
+          size="big"
+          className="flex items-center justify-start w-full"
+        />
+      </div>
     </div>
   )
 }
@@ -98,7 +82,7 @@ export const ClaimAsset = (props: claimProps): JSX.Element => {
       FP.pipe(
         oSource,
         O.map(({ asset, amount }) => (
-          <Styled.AssetData key="source-data" asset={asset} amount={amount} network={network} />
+          <AssetData key="source-data" className="mb-5 last:m-0" asset={asset} amount={amount} network={network} />
         )),
         O.getOrElse(() => <></>)
       ),
@@ -107,10 +91,12 @@ export const ClaimAsset = (props: claimProps): JSX.Element => {
 
   return (
     <>
-      <Styled.StepLabel>{stepDescription}</Styled.StepLabel>
-      <Styled.DataWrapper>
-        <Styled.AssetsContainer>{renderSource}</Styled.AssetsContainer>
-      </Styled.DataWrapper>
+      <Label size="small" color="gray" className="w-full px-[10px] pt-[10px] pb-[15px] text-center uppercase">
+        {stepDescription}
+      </Label>
+      <div className="flex justify-center items-center relative">
+        <div className="px-5 flex flex-col">{renderSource}</div>
+      </div>
     </>
   )
 }

@@ -13,16 +13,17 @@ import { useIntl } from 'react-intl'
 import { isKeystoreWallet, isLedgerWallet } from '../../../../../shared/utils/guard'
 import { WalletType } from '../../../../../shared/wallet/types'
 import { walletTypeToI18n } from '../../../../services/wallet/util'
+import { WalletTypeLabel, AssetSynthLabel, AssetSecuredLabel } from '../../common'
+import { Label } from '../../label'
 import { AssetIcon } from '../assetIcon'
-import * as Styled from './AssetData.styles'
+import type { AssetDataSize } from './AssetData.styles'
 
 type Props = {
   asset: AnyAsset
   walletType?: WalletType
   noTicker?: boolean
   amount?: BaseAmount
-  size?: Styled.AssetDataSize
-  // `className` is needed by `styled components`
+  size?: AssetDataSize
   className?: string
   network: Network
 }
@@ -34,30 +35,40 @@ export const AssetData = (props: Props): JSX.Element => {
 
   return (
     <div className={clsx('flex items-center flex-wrap py-1 mr-2 last:m-0', className)}>
-      <Styled.AssetIconContainer>
+      <div className="flex items-center mr-2 py-[10px] relative">
         <AssetIcon asset={asset} size={size} network={network} />
-      </Styled.AssetIconContainer>
+      </div>
       {!noTicker && (
-        <Styled.LabelContainer>
-          <Styled.TickerLabel>{`${asset.ticker}`}</Styled.TickerLabel>
-          <Styled.ChainLabelWrapper>
-            {!isSynthAsset(asset) && !isSecuredAsset(asset) && <Styled.ChainLabel>{asset.chain}</Styled.ChainLabel>}
-            {isSynthAsset(asset) && <Styled.AssetSynthLabel>synth</Styled.AssetSynthLabel>}
-            {isSecuredAsset(asset) && <Styled.AssetSecuredLabel>secured</Styled.AssetSecuredLabel>}
-          </Styled.ChainLabelWrapper>
+        <div className="flex flex-col items-start">
+          <Label className="h-[18px] pr-4 pl-2 leading-[18px]" size="xbig" textTransform="uppercase" weight="bold">
+            {asset.ticker}
+          </Label>
+          <div className="flex items-center">
+            {!isSynthAsset(asset) && !isSecuredAsset(asset) && (
+              <Label className="h-[18px] pr-4 pl-2 leading-[18px] font-medium" color="input">
+                {asset.chain}
+              </Label>
+            )}
+            {isSynthAsset(asset) && <AssetSynthLabel>synth</AssetSynthLabel>}
+            {isSecuredAsset(asset) && <AssetSecuredLabel>secured</AssetSecuredLabel>}
+          </div>
           {walletType && isLedgerWallet(walletType) && (
-            <Styled.WalletTypeLabel>{walletTypeToI18n(walletType, intl)}</Styled.WalletTypeLabel>
+            <WalletTypeLabel className="text-[8px] leading-3 ml-[10px]">
+              {walletTypeToI18n(walletType, intl)}
+            </WalletTypeLabel>
           )}
           {walletType && isKeystoreWallet(walletType) && (
-            <Styled.WalletTypeLabel>{walletTypeToI18n(walletType, intl)}</Styled.WalletTypeLabel>
+            <WalletTypeLabel className="text-[8px] leading-3 ml-[10px]">
+              {walletTypeToI18n(walletType, intl)}
+            </WalletTypeLabel>
           )}
-        </Styled.LabelContainer>
+        </div>
       )}
       {assetAmount && (
         <div className="mr-2 last:m-0">
-          <Styled.AmountLabel size={size}>
+          <Label className="pl-[10px]" textTransform="uppercase" weight="bold">
             {formatAssetAmountCurrency({ amount: baseToAsset(assetAmount), asset, trimZeros: true })}
-          </Styled.AmountLabel>
+          </Label>
         </div>
       )}
     </div>

@@ -45,16 +45,7 @@ export const Modal = ({
     <Transition appear show={visible} as={Fragment}>
       <Dialog as="div" className={clsx('relative z-50', className)} onClose={onCancel ?? (() => {})}>
         {/* Backdrop */}
-        <TransitionChild
-          as={Fragment}
-          enter="transition-opacity duration-200"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-opacity duration-150"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0">
-          <div className="fixed inset-0 bg-black/40" />
-        </TransitionChild>
+        <DialogBackdrop className="fixed inset-0 bg-bg0/10 dark:bg-bg0d/10" />
 
         {/* Modal container */}
         <div className="fixed inset-0 overflow-y-auto">
@@ -84,7 +75,7 @@ export const Modal = ({
                     <button
                       type="button"
                       onClick={onCancel}
-                      className="absolute right-0 top-0 grid size-10 place-items-center text-white/90 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 rounded">
+                      className="absolute right-0 top-0 grid size-10 place-items-center text-text1 dark:text-text1d/90 focus:outline-none rounded">
                       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M18 6L6 18M6 6l12 12" />
                       </svg>

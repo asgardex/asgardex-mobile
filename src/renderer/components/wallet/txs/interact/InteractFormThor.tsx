@@ -65,7 +65,7 @@ import { BaseButton, FlatButton, ViewTxButton } from '../../../uielements/button
 import { CheckButton } from '../../../uielements/button/CheckButton'
 import { MaxBalanceButton } from '../../../uielements/button/MaxBalanceButton'
 import { SwitchButton } from '../../../uielements/button/SwitchButton'
-import { UIFees, UIFeesRD } from '../../../uielements/fees'
+import { Fees, UIFees, UIFeesRD } from '../../../uielements/fees'
 import { InfoIcon } from '../../../uielements/info'
 import { Input, InputBigNumber } from '../../../uielements/input'
 import { Label } from '../../../uielements/label'
@@ -73,7 +73,6 @@ import { RadioGroup, Radio } from '../../../uielements/radio'
 import { Tooltip } from '../../../uielements/tooltip'
 import { validateTxAmountInput } from '../TxForm.util'
 import * as H from './Interact.helpers'
-import * as Styled from './Interact.styles'
 import { InteractType } from './Interact.types'
 
 type FormValues = {
@@ -951,8 +950,10 @@ export const InteractFormThor = ({
       <div className="flex flex-col space-y-2">
         {/* Memo input (CUSTOM only) */}
         {interactType === InteractType.Custom && (
-          <Styled.InputContainer>
-            <Styled.InputLabel>{intl.formatMessage({ id: 'common.memo' })}</Styled.InputLabel>
+          <div className="w-full sm:max-w-[630px]">
+            <Label color="input" size="big" textTransform="uppercase">
+              {intl.formatMessage({ id: 'common.memo' })}
+            </Label>
             <div>
               <Input
                 {...register('memo', {
@@ -969,7 +970,9 @@ export const InteractFormThor = ({
             </div>
             {/* Display example memos */}
             <div className="mt-4">
-              <Styled.InputLabel>{intl.formatMessage({ id: 'common.examples' }, { name: 'Memos' })}</Styled.InputLabel>
+              <Label color="input" size="big" textTransform="uppercase">
+                {intl.formatMessage({ id: 'common.examples' }, { name: 'Memos' })}
+              </Label>
               <div className="rounded-lg bg-gray0 p-4 dark:bg-gray0d">
                 {exampleMemos.map((example, index) => (
                   <div
@@ -988,7 +991,7 @@ export const InteractFormThor = ({
                 </div>
               </div>
             </div>
-          </Styled.InputContainer>
+          </div>
         )}
         {/** Rune Pool Only */}
         {interactType === InteractType.RunePool && (
@@ -1000,11 +1003,11 @@ export const InteractFormThor = ({
               />
             </span>
             <span className="inline-block ml-2">
-              <Styled.InputLabel>
+              <Label color="input" size="big" textTransform="uppercase">
                 {runePoolAction === Action.add
                   ? intl.formatMessage({ id: 'runePool.detail.titleDeposit' })
                   : intl.formatMessage({ id: 'runePool.detail.titleWithdraw' })}
-              </Styled.InputLabel>
+              </Label>
               {!runePoolAvialable && intl.formatMessage({ id: 'runePool.detail.availability' })}
             </span>
             {runePoolProvider.value.gt(0) && runePoolAction === Action.add && renderRunePoolWarning}
@@ -1023,8 +1026,10 @@ export const InteractFormThor = ({
           interactType === InteractType.Unbond ||
           interactType === InteractType.Whitelist ||
           interactType === InteractType.Leave) && (
-          <Styled.InputContainer>
-            <Styled.InputLabel>{intl.formatMessage({ id: 'common.nodeAddress' })}</Styled.InputLabel>
+          <div className="w-full sm:max-w-[630px]">
+            <Label color="input" size="big" textTransform="uppercase">
+              {intl.formatMessage({ id: 'common.nodeAddress' })}
+            </Label>
             <div>
               <Input
                 {...register('thorAddress', {
@@ -1045,12 +1050,14 @@ export const InteractFormThor = ({
                 <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.thorAddress.message}</div>
               )}
             </div>
-          </Styled.InputContainer>
+          </div>
         )}
         {/* Provider address input (whitelist only) */}
         {interactType === InteractType.Whitelist && (
-          <Styled.InputContainer>
-            <Styled.InputLabel>{intl.formatMessage({ id: 'common.providerAddress' })}</Styled.InputLabel>
+          <div className="w-full sm:max-w-[630px]">
+            <Label color="input" size="big" textTransform="uppercase">
+              {intl.formatMessage({ id: 'common.providerAddress' })}
+            </Label>
             <div>
               <Input
                 {...register('providerAddress', {
@@ -1068,11 +1075,13 @@ export const InteractFormThor = ({
                 <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.providerAddress.message}</div>
               )}
             </div>
-          </Styled.InputContainer>
+          </div>
         )}
         {interactType === InteractType.Whitelist && whitelisting && (
-          <Styled.InputContainer>
-            <Styled.InputLabel>{intl.formatMessage({ id: 'common.fee.nodeOperator' })}</Styled.InputLabel>
+          <div className="w-full sm:max-w-[630px]">
+            <Label color="input" size="big" textTransform="uppercase">
+              {intl.formatMessage({ id: 'common.fee.nodeOperator' })}
+            </Label>
             <div>
               <Input
                 {...register('operatorFee', {
@@ -1086,7 +1095,7 @@ export const InteractFormThor = ({
                 <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.operatorFee.message}</div>
               )}
             </div>
-          </Styled.InputContainer>
+          </div>
         )}
         {/* Amount input (BOND/UNBOND/CUSTOM only) */}
         {!hasProviderAddress && (
@@ -1095,8 +1104,10 @@ export const InteractFormThor = ({
               interactType === InteractType.Unbond ||
               interactType === InteractType.Custom ||
               interactType === InteractType.RunePool) && (
-              <Styled.InputContainer>
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.amount' })}</Styled.InputLabel>
+              <div className="w-full sm:max-w-[630px]">
+                <Label color="input" size="big" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.amount' })}
+                </Label>
                 <div>
                   <Controller
                     name="amount"
@@ -1163,9 +1174,9 @@ export const InteractFormThor = ({
                     </div>
                   </div>
                 )}
-                <Styled.Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
+                <Fees fees={uiFeesRD} reloadFees={reloadFeesHandler} disabled={isLoading} />
                 {isFeeError && renderFeeError}
-              </Styled.InputContainer>
+              </div>
             )}
           </>
         )}
@@ -1174,8 +1185,10 @@ export const InteractFormThor = ({
         {hasProviderAddress && (
           <>
             {interactType === InteractType.Bond && (
-              <Styled.InputContainer>
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.fee.nodeOperator' })}</Styled.InputLabel>
+              <div className="w-full sm:max-w-[630px]">
+                <Label color="input" size="big" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.fee.nodeOperator' })}
+                </Label>
                 <div>
                   <Input
                     {...register('operatorFee', {
@@ -1189,16 +1202,18 @@ export const InteractFormThor = ({
                     <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.operatorFee.message}</div>
                   )}
                 </div>
-              </Styled.InputContainer>
+              </div>
             )}
           </>
         )}
         {/* Thorname Button and Details*/}
         <>
           {interactType === InteractType.THORName && (
-            <Styled.InputContainer>
+            <div className="w-full sm:max-w-[630px]">
               <div className="flex w-full items-center text-[12px]">
-                <Styled.InputLabel>{intl.formatMessage({ id: 'common.thorname' })}</Styled.InputLabel>
+                <Label color="input" size="big" textTransform="uppercase">
+                  {intl.formatMessage({ id: 'common.thorname' })}
+                </Label>
                 <InfoIcon
                   className="ml-[3px] h-[15px] w-[15px] text-inherit"
                   tooltip={intl.formatMessage({ id: 'common.thornameRegistrationSpecifics' })}
@@ -1223,11 +1238,11 @@ export const InteractFormThor = ({
                 )}
               </div>
               {O.isSome(oThorname) && !thornameAvailable && !isOwner && renderThornameError}
-            </Styled.InputContainer>
+            </div>
           )}
           {/** Form item for unregistered thorname */}
           {thornameAvailable && (
-            <Styled.InputContainer>
+            <div className="w-full sm:max-w-[630px]">
               {isOwner ? (
                 <CheckButton
                   checked={thornameUpdate || isOwner}
@@ -1241,7 +1256,9 @@ export const InteractFormThor = ({
               {!thornameRegister ? (
                 <>
                   <div className="flex w-full items-center text-[12px]">
-                    <Styled.InputLabel>{intl.formatMessage({ id: 'common.preferredAsset' })}</Styled.InputLabel>
+                    <Label color="input" size="big" textTransform="uppercase">
+                      {intl.formatMessage({ id: 'common.preferredAsset' })}
+                    </Label>
                   </div>
                   <div>
                     <Controller
@@ -1272,7 +1289,9 @@ export const InteractFormThor = ({
                     )}
                   </div>
                   {/* Add input fields for aliasChain, aliasAddress, and expiry */}
-                  <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasChain' })}</Styled.InputLabel>
+                  <Label color="input" size="big" textTransform="uppercase">
+                    {intl.formatMessage({ id: 'common.aliasChain' })}
+                  </Label>
                   <div>
                     <Controller
                       name="aliasChain"
@@ -1307,7 +1326,9 @@ export const InteractFormThor = ({
                       <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.aliasChain.message}</div>
                     )}
                   </div>
-                  <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasAddress' })}</Styled.InputLabel>
+                  <Label color="input" size="big" textTransform="uppercase">
+                    {intl.formatMessage({ id: 'common.aliasAddress' })}
+                  </Label>
                   <div>
                     <Input
                       {...register('aliasAddress', {
@@ -1321,7 +1342,9 @@ export const InteractFormThor = ({
                       <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.aliasAddress.message}</div>
                     )}
                   </div>
-                  <Styled.InputLabel>{intl.formatMessage({ id: 'common.expiry' })}</Styled.InputLabel>
+                  <Label color="input" size="big" textTransform="uppercase">
+                    {intl.formatMessage({ id: 'common.expiry' })}
+                  </Label>
                   <div>
                     <Controller
                       name="expiry"
@@ -1356,7 +1379,9 @@ export const InteractFormThor = ({
               ) : (
                 <>
                   {/* Initial values needed for tns register */}
-                  <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasChain' })}</Styled.InputLabel>
+                  <Label color="input" size="big" textTransform="uppercase">
+                    {intl.formatMessage({ id: 'common.aliasChain' })}
+                  </Label>
                   <div>
                     <Controller
                       name="chain"
@@ -1381,7 +1406,9 @@ export const InteractFormThor = ({
                       <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.chain.message}</div>
                     )}
                   </div>
-                  <Styled.InputLabel>{intl.formatMessage({ id: 'common.aliasAddress' })}</Styled.InputLabel>
+                  <Label color="input" size="big" textTransform="uppercase">
+                    {intl.formatMessage({ id: 'common.aliasAddress' })}
+                  </Label>
                   <div>
                     <Input
                       {...register('chainAddress', {
@@ -1395,7 +1422,9 @@ export const InteractFormThor = ({
                       <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.chainAddress.message}</div>
                     )}
                   </div>
-                  <Styled.InputLabel>{intl.formatMessage({ id: 'common.expiry' })}</Styled.InputLabel>
+                  <Label color="input" size="big" textTransform="uppercase">
+                    {intl.formatMessage({ id: 'common.expiry' })}
+                  </Label>
                   <div>
                     <Controller
                       name="expiry"
@@ -1431,8 +1460,8 @@ export const InteractFormThor = ({
                   </div>
                 </>
               )}
-              <Styled.Fees className="mt-10px" fees={thorNamefees} disabled={isLoading} />
-            </Styled.InputContainer>
+              <Fees className="mt-10px" fees={thorNamefees} disabled={isLoading} />
+            </div>
           )}
         </>
       </div>

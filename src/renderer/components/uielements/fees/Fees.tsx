@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useRef } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
+import clsx from 'clsx'
 import { function as FP, array as A, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
+import { Button } from '../button'
+import { Label } from '../label'
 import { formatFee } from './Fees.helper'
-import * as Styled from './Fees.styles'
 import { UIFeesRD } from './Fees.types'
 
 export type Props = {
@@ -67,20 +70,27 @@ export const Fees = ({ fees, reloadFees, disabled = false, className }: Props) =
     [formattedFees, intl]
   )
 
+  const isError = RD.isFailure(fees)
+  const isLoading = RD.isPending(fees)
+
   return (
-    <Styled.Container className={className}>
+    <div className={clsx('flex items-center text-text0 dark:text-text0d space-x-2', className)}>
       {reloadFees && (
-        <Styled.ReloadFeeButton
+        <Button
+          className={clsx('!min-w-0 flex items-center justify-center')}
+          typevalue="outline"
+          round="true"
+          disabled={isLoading || disabled}
           onClick={(e) => {
             e.preventDefault()
             reloadFees()
-          }}
-          disabled={RD.isPending(fees) || disabled}
-        />
+          }}>
+          <ArrowPathIcon className={clsx('w-4 h-4', isLoading && 'animate-spin')} />
+        </Button>
       )}
-      <Styled.FeeLabel isError={RD.isFailure(fees)} isLoading={RD.isPending(fees)} disabled={disabled}>
+      <Label color={isError ? 'error' : isLoading ? 'input' : 'normal'} textTransform="uppercase">
         {feesFormattedValue}
-      </Styled.FeeLabel>
-    </Styled.Container>
+      </Label>
+    </div>
   )
 }

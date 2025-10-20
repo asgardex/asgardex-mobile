@@ -5,8 +5,8 @@ import { ArrowPathIcon as SyncOutlined } from '@heroicons/react/20/solid'
 import * as FP from 'fp-ts/function'
 import { useIntl } from 'react-intl'
 
+import { Alert } from '../../components/uielements/alert'
 import { BorderButton } from '../../components/uielements/button'
-import * as Styled from './AppView.styles'
 
 interface ErrorAlertProps {
   apiEndpoint: RD.RemoteData<Error, unknown>
@@ -21,7 +21,8 @@ const MidgardErrorAlert = ({ apiEndpoint, reloadHandler }: ErrorAlertProps) => {
       () => <></>,
       () => <></>,
       (e) => (
-        <Styled.Alert
+        <Alert
+          className="mb-2 lg:mb-10 lg:first:mb-2"
           type="error"
           title={intl.formatMessage({ id: 'midgard.error.endpoint.title' })}
           description={e?.message ?? e.toString()}

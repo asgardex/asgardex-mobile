@@ -330,13 +330,11 @@ export const Bonds = ({
             </Button>
           </div>
           <div className="flex items-center">
-            <FilterButton
-              active={viewMode === BondsViewMode.All ? 'true' : 'false'}
-              onClick={() => setViewMode(BondsViewMode.All)}>
+            <FilterButton active={viewMode === BondsViewMode.All} onClick={() => setViewMode(BondsViewMode.All)}>
               {intl.formatMessage({ id: 'common.all' })}
             </FilterButton>
             <FilterButton
-              active={viewMode === BondsViewMode.Watchlist ? 'true' : 'false'}
+              active={viewMode === BondsViewMode.Watchlist}
               onClick={() => setViewMode(BondsViewMode.Watchlist)}>
               {intl.formatMessage({ id: 'common.watchlist' })}
             </FilterButton>

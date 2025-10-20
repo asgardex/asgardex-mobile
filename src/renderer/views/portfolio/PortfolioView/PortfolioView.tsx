@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom'
 import { EnabledChain } from '../../../../shared/utils/chain'
 import { RefreshButton } from '../../../components/uielements/button'
 import { PieChart } from '../../../components/uielements/charts'
+import { Label } from '../../../components/uielements/label'
 import { ProtocolSwitch } from '../../../components/uielements/protocolSwitch'
 import { Protocol } from '../../../components/uielements/protocolSwitch/types'
 import { RadioGroup } from '../../../components/uielements/radioGroup'
@@ -57,7 +58,7 @@ import { BaseAmountRD } from '../../../types'
 import { WalletAddressInfo } from '../../bonds/types'
 import { getValueOfRuneInAsset } from '../../pools/Pools.utils'
 import * as H from '../../wallet/PoolShareView.helper'
-import * as Styled from './PortfolioView.style'
+// PortfolioView.style removed - using Tailwind directly
 import { PortfolioTabKey } from './utils'
 
 const CardItem = ({
@@ -549,9 +550,9 @@ export const PortfolioView = (): JSX.Element => {
           <RadioGroup options={options} activeIndex={activeIndex} onChange={setActiveIndex} />
         </div>
         <div className="flex flex-col items-center justify-center">
-          <Styled.Title size="big" className="text-gray2 dark:text-gray2d">
+          <Label className="px-1 text-[9px] uppercase !w-auto sm:text-[11px] lg:text-[13px]" color="input">
             {intl.formatMessage({ id: 'wallet.balance.total.portfolio' })}
-          </Styled.Title>
+          </Label>
           <div className="mb-4 !text-[28px] text-text2 dark:text-text2d">
             {isPrivate ? hiddenString : getCurrencyFormat(calculatedTotal)}
           </div>
@@ -568,17 +569,17 @@ export const PortfolioView = (): JSX.Element => {
             <div className="flex flex-col">
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-1 flex-col rounded-lg border border-solid border-gray0 p-4 dark:border-gray0d">
-                  <Styled.Title size="large" className="text-gray2 dark:text-gray2d">
+                  <Label className="px-1 text-[9px] uppercase sm:text-[11px] lg:text-[13px]" color="input">
                     {intl.formatMessage({ id: 'common.allocationByType' })}
-                  </Styled.Title>
+                  </Label>
                   <div className="mt-8 flex items-center justify-center">
                     <PieChart chartData={chartData} showLabelLine isPrivate={isPrivate} />
                   </div>
                 </div>
                 <div className="flex flex-1 flex-col rounded-lg border border-solid border-gray0 p-4 dark:border-gray0d">
-                  <Styled.Title size="large" className="text-gray2 dark:text-gray2d">
+                  <Label className="px-1 text-[9px] uppercase sm:text-[11px] lg:text-[13px]" color="input">
                     {intl.formatMessage({ id: 'common.allocationByChain' })}
-                  </Styled.Title>
+                  </Label>
                   <div className="mt-8 flex items-center justify-center">
                     <PieChart chartData={filteredChainData} showLabelLine isPrivate={isPrivate} />
                   </div>

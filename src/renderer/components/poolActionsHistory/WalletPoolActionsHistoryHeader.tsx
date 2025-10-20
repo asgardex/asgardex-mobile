@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 
 import { WalletAddress, WalletAddresses } from '../../../shared/wallet/types'
 import { AccountAddressSelector } from '../AccountAddressSelector'
-import { ExternalLinkIcon } from '../uielements/common/Common.styles'
+import { ExternalLinkIcon } from '../uielements/common'
 import { Label } from '../uielements/label'
 import { PoolActionsHistoryFilter } from './PoolActionsHistoryFilter'
 import { Filter } from './types'
@@ -67,7 +67,7 @@ export const WalletPoolActionsHistoryHeader = (props: Props) => {
           {protocol === THORChain
             ? intl.formatMessage({ id: 'common.runeScan' })
             : intl.formatMessage({ id: 'common.mayaScan' })}
-          <ExternalLinkIcon className="ml-2" width={18} height={18} />
+          <ExternalLinkIcon className="ml-1" />
         </Label>
       </div>
     </>

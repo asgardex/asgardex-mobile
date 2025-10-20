@@ -1,10 +1,10 @@
 import { useCallback, useState, useEffect } from 'react'
 
+import { CheckCircleIcon } from '@heroicons/react/24/outline'
 import clsx from 'clsx'
 
 import useInterval, { INACTIVE_INTERVAL } from '../../../hooks/useInterval'
 import { RefundIcon } from '../../icons/timerIcons'
-import * as Styled from './TxTimer.styles'
 
 export type Props = {
   className?: string
@@ -153,9 +153,17 @@ export const TxTimer = ({
   const progressBarValue = value || internalValue
 
   return (
-    <Styled.TxTimerWrapper className={clsx('txTimer-wrapper', className)}>
-      <div className="timerchart-icon">
-        {!active && <Styled.IconWrapper>{!refunded ? <Styled.SuccessIcon /> : <RefundIcon />}</Styled.IconWrapper>}
+    <div
+      className={clsx(
+        'flex flex-col justify-center items-center relative w-[120px] h-[120px] mx-auto txTimer-wrapper',
+        className
+      )}>
+      <div className="timerchart-icon absolute top-0 left-0 w-full h-full flex justify-center items-center">
+        {!active && (
+          <div className="flex justify-center items-center bg-turquoise/40 rounded-full w-3/4 h-3/4">
+            {!refunded ? <CheckCircleIcon className="w-[35px] h-[35px] text-turquoise" /> : <RefundIcon />}
+          </div>
+        )}
       </div>
       {active && (
         <CircleProgress
@@ -164,11 +172,13 @@ export const TxTimer = ({
           strokeWidth={7}
           strokeLinecap="round"
           trailColor="rgba(242, 243, 243, 0.5)"
-          className={hide ? 'hide' : 'timerchart-circular-progressbar'}
+          className={hide ? 'invisible' : 'w-full h-full'}
           size={120}>
-          <Styled.TimerLabel>{totalDurationString}s</Styled.TimerLabel>
+          <div className="flex items-center justify-center text-text0 dark:text-text0d text-lg font-main">
+            {totalDurationString}s
+          </div>
         </CircleProgress>
       )}
-    </Styled.TxTimerWrapper>
+    </div>
   )
 }

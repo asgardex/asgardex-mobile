@@ -19,9 +19,9 @@ import { useApp } from '../../store/app/hooks'
 import { DownIcon } from '../icons'
 import { BorderButton } from '../uielements/button'
 import { SwitchButton } from '../uielements/button/SwitchButton'
+import { ExternalLinkIcon } from '../uielements/common'
 import { Dropdown } from '../uielements/dropdown'
 import { Label } from '../uielements/label'
-import * as Styled from './AppSettings.styles'
 
 type Props = {
   version: string
@@ -214,7 +214,7 @@ export const AppGeneralSettings = (props: Props) => {
                 onClick: () => goToReleasePage(version),
                 children: (
                   <>
-                    {intl.formatMessage({ id: 'update.link' })} <Styled.ExternalLinkIcon />
+                    {intl.formatMessage({ id: 'update.link' })} <ExternalLinkIcon className="ml-2 text-turquoise" />
                   </>
                 )
               })

@@ -6,8 +6,9 @@ import { function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
 import { sequenceTOption } from '../../../helpers/fpHelpers'
+import { ExternalLinkIcon } from '../common'
 import { CopyLabel } from '../label'
-import * as Styled from './ViewTxButton.styles'
+import { Button } from './Button'
 
 type Props = {
   label?: string
@@ -85,13 +86,15 @@ export const ViewTxButton = ({
   return (
     <div className="flex flex-col">
       <div className={clsx('flex flex-col items-center', className)}>
-        <Styled.ViewTxButton onClick={onClickHandler} disabled={O.isNone(oTxHash)}>
+        <Button typevalue="transparent" onClick={onClickHandler} disabled={O.isNone(oTxHash)}>
           {label || intl.formatMessage({ id: 'common.viewTransaction' })}
-        </Styled.ViewTxButton>
+          <ExternalLinkIcon className="text-turquoise" />
+        </Button>
         {trackable && (
-          <Styled.ViewTxButton onClick={handleTxTracker} disabled={O.isNone(oTxHash)}>
+          <Button typevalue="transparent" onClick={handleTxTracker} disabled={O.isNone(oTxHash)}>
             {label || intl.formatMessage({ id: 'common.trackTransaction' })}
-          </Styled.ViewTxButton>
+            <ExternalLinkIcon className="text-turquoise" />
+          </Button>
         )}
         <div className="flex space-x-6">
           <div className="flex items-center justify-center">

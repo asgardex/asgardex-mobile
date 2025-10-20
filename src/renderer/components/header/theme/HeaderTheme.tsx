@@ -3,14 +3,23 @@ import { useCallback, useMemo } from 'react'
 import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
+import SunIcon from '../../../assets/svg/icon-theme-day.svg?react'
+import MoonIcon from '../../../assets/svg/icon-theme-night.svg?react'
 import { useTheme } from '../../../hooks/useTheme'
 import { Label } from '../../uielements/label'
-import * as Styled from './HeaderTheme.styles'
 
 export type Props = {
   onPress?: FP.Lazy<void>
   isDesktopView: boolean
 }
+
+const DayThemeIcon = () => (
+  <SunIcon className="cursor-pointer text-[1.5em] [&_path]:fill-text2 [&_path]:dark:fill-text2d" />
+)
+
+const NightThemeIcon = () => (
+  <MoonIcon className="cursor-pointer text-[1.5em] [&_path]:fill-text0 [&_path]:dark:fill-text0d" />
+)
 
 export const HeaderTheme = (props: Props): JSX.Element => {
   const { onPress = FP.constVoid, isDesktopView } = props
@@ -24,10 +33,7 @@ export const HeaderTheme = (props: Props): JSX.Element => {
     onPress()
   }, [toggleTheme, onPress])
 
-  const desktopView = useMemo(
-    () => (isLightTheme ? <Styled.DayThemeIcon /> : <Styled.NightThemeIcon />),
-    [isLightTheme]
-  )
+  const desktopView = useMemo(() => (isLightTheme ? <DayThemeIcon /> : <NightThemeIcon />), [isLightTheme])
 
   const mobileView = useMemo(() => {
     const label = intl.formatMessage({ id: isLightTheme ? 'common.theme.light' : 'common.theme.dark' })
@@ -37,7 +43,7 @@ export const HeaderTheme = (props: Props): JSX.Element => {
         <Label size="large" textTransform="uppercase" weight="bold">
           {label}
         </Label>
-        {isLightTheme ? <Styled.DayThemeIcon /> : <Styled.NightThemeIcon />}
+        {isLightTheme ? <DayThemeIcon /> : <NightThemeIcon />}
       </div>
     )
   }, [intl, isLightTheme])

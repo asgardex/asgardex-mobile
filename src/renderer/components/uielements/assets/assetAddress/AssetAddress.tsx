@@ -2,8 +2,8 @@ import { Network } from '@xchainjs/xchain-client'
 import { Address, AnyAsset } from '@xchainjs/xchain-util'
 
 import clsx from 'clsx'
+import { AddressEllipsis } from '../../addressEllipsis'
 import { AssetIcon, Size } from '../assetIcon'
-import * as Styled from './AssetAddress.styles'
 
 type Props = {
   asset: AnyAsset
@@ -14,6 +14,14 @@ type Props = {
   classNameAddress?: string
 }
 
+const fontSizeMap: Record<Size, string> = {
+  large: 'text-[21px]',
+  big: 'text-[19px]',
+  normal: 'text-[16px]',
+  small: 'text-[14px]',
+  xsmall: 'text-[11px]'
+}
+
 export const AssetAddress = (props: Props) => {
   const { asset, address, network, size = 'normal', className = '', classNameAddress = '' } = props
 
@@ -21,10 +29,9 @@ export const AssetAddress = (props: Props) => {
     <div className={clsx('flex items-center', className)}>
       <AssetIcon asset={asset} size={size} network={network} />
       <div className="w-full overflow-hidden">
-        <Styled.AddressEllipsis
-          className={classNameAddress}
+        <AddressEllipsis
+          className={clsx('pl-1 normal-case', fontSizeMap[size], classNameAddress)}
           address={address}
-          iconSize={size}
           chain={asset.chain}
           network={network}
           enableCopy
