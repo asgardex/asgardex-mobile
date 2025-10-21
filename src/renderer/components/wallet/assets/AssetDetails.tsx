@@ -173,7 +173,7 @@ export const AssetDetails = (props: Props): JSX.Element => {
   return (
     <>
       {renderQRCodeModal}
-      <div className="flex items-start justify-between mb-4">
+      <div className="mb-4 flex items-start justify-between">
         <BackLinkButton path={walletRoutes.assets.path()} />
         <RefreshButton onClick={refreshHandler} />
       </div>
@@ -230,7 +230,7 @@ export const AssetDetails = (props: Props): JSX.Element => {
             <Label size="large" weight="bold">
               {intl.formatMessage({ id: 'wallet.txs.history' })}
             </Label>
-            <ArrowTopRightOnSquareIcon className="w-6 h-6 ml-2 text-text1 dark:text-text1d" />
+            <ArrowTopRightOnSquareIcon className="ml-2 h-6 w-6 text-text1 dark:text-text1d" />
           </TextButton>
         </div>
         <div>
@@ -247,7 +247,7 @@ export const AssetDetails = (props: Props): JSX.Element => {
               extra={
                 <FlatButton size="normal" color="neutral" onClick={openExplorerAddressUrl}>
                   {intl.formatMessage({ id: 'wallet.txs.history' })}
-                  <ArrowTopRightOnSquareIcon className="w-6 h-6 ml-2 text-text1 dark:text-text1d" />
+                  <ArrowTopRightOnSquareIcon className="ml-2 h-6 w-6 text-text1 dark:text-text1d" />
                 </FlatButton>
               }
             />

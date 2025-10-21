@@ -170,16 +170,16 @@ export const AppView = (): JSX.Element => {
   }, [])
 
   return (
-    <div className="h-screen p-0 bg-bg3 dark:bg-bg3d font-main">
+    <div className="h-screen bg-bg3 p-0 font-main dark:bg-bg3d">
       {shouldHideLayout ? (
         <ViewRoutes />
       ) : (
         <div className="flex h-full flex-col">
-          <div className="flex flex-row h-full bg-bg3 dark:bg-bg3d">
+          <div className="flex h-full flex-row bg-bg3 dark:bg-bg3d">
             {isDesktopView && (
               <Sidebar commitHash={envOrDefault($COMMIT_HASH, '')} isDev={$IS_DEV} publicIP={publicIP} />
             )}
-            <div className="flex flex-col w-full overflow-auto p-4 lg:w-[calc(100vw-240px)] lg:py-8 lg:px-12">
+            <div className="flex w-full flex-col overflow-auto p-4 lg:w-[calc(100vw-240px)] lg:px-12 lg:py-8">
               <AppUpdateView />
               <Header />
               <MidgardErrorAlert apiEndpoint={apiEndpointThor} reloadHandler={reloadApiEndpoint} />

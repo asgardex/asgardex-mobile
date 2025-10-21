@@ -402,7 +402,7 @@ const staticPoolFilters = [
   '__avax__',
   '__arb__'
 ] as const
-export type StaticPoolFilter = typeof staticPoolFilters[number]
+export type StaticPoolFilter = (typeof staticPoolFilters)[number]
 
 /**
  * Type guard for `StaticPoolFilters`

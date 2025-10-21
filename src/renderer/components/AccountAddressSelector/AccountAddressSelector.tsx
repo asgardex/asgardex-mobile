@@ -55,11 +55,11 @@ export const AccountAddressSelector = (props: Props) => {
         return (
           <div
             key={`${chain}-${walletAddress}`}
-            className="flex items-center justify-between text-14 p-1"
+            className="flex items-center justify-between p-1 text-14"
             onClick={() => onChangeAddress(walletAddress)}>
             <div className="flex items-center">
               <AssetIcon className="m-0.5" asset={getChainAsset(chain)} size={size} network={network} />
-              <div className="my-1 mx-4 text-text2 dark:text-text2d">{address}</div>
+              <div className="mx-4 my-1 text-text2 dark:text-text2d">{address}</div>
             </div>
             {isLedgerWallet(type) && (
               <WalletTypeLabel
@@ -78,7 +78,7 @@ export const AccountAddressSelector = (props: Props) => {
     O.fold(
       () => <></>,
       ({ chain, type, address }) => (
-        <div className="flex items-center justify-between cursor-pointer border border-solid border-turquoise rounded px-2 py-1">
+        <div className="flex cursor-pointer items-center justify-between rounded border border-solid border-turquoise px-2 py-1">
           <div className="flex items-center">
             <AssetIcon asset={getChainAsset(chain)} size="xsmall" network={network} />
             <div className="ml-1 text-14 text-turquoise">{truncateAddress(address, chain, network)}</div>

@@ -119,7 +119,7 @@ export const BondProviderInfo = ({
         {isMonitoring ? (
           <Tooltip title={intl.formatMessage({ id: 'bonds.tooltip.removeFromWatchlist' })}>
             <RemoveIcon
-              className="w-4 h-4 cursor-pointer"
+              className="h-4 w-4 cursor-pointer"
               onClick={() => removeWatchlist(provider.bondAddress, network)}
             />
           </Tooltip>

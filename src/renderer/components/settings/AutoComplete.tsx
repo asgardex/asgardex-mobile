@@ -30,20 +30,20 @@ export const AutoComplete = ({
       <div className="relative">
         <ListboxButton
           className={clsx(
-            'relative block w-full rounded-lg bg-bg0 dark:bg-bg0d py-1.5 pr-8 pl-3 text-left text-sm/6 text-text0 dark:text-text0d border border-solid border-gray0 dark:border-gray0d',
+            'relative block w-full rounded-lg border border-solid border-gray0 bg-bg0 py-1.5 pl-3 pr-8 text-left text-sm/6 text-text0 dark:border-gray0d dark:bg-bg0d dark:text-text0d',
             'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
           )}>
           <Label>{selected ? selected : placeholder.toUpperCase()}</Label>
-          <ChevronDownIcon className="group pointer-events-none absolute top-2.5 right-2.5 size-4 stroke-text0 dark:stroke-text0d" />
+          <ChevronDownIcon className="group pointer-events-none absolute right-2.5 top-2.5 size-4 stroke-text0 dark:stroke-text0d" />
         </ListboxButton>
       </div>
       <ListboxOptions
         anchor="bottom start"
         transition
-        className="w-[--button-width] mt-1 px-2 py-2 rounded-md bg-bg0 dark:bg-bg0d border border-solid border-gray0 dark:border-gray0d">
+        className="mt-1 w-[--button-width] rounded-md border border-solid border-gray0 bg-bg0 px-2 py-2 dark:border-gray0d dark:bg-bg0d">
         {options.map(({ value }) => (
           <ListboxOption
-            className="rounded-md px-2 py-0.5 cursor-pointer flex items-center justify-between hover:bg-bg2 dark:hover:bg-bg2d"
+            className="flex cursor-pointer items-center justify-between rounded-md px-2 py-0.5 hover:bg-bg2 dark:hover:bg-bg2d"
             key={value}
             value={value}>
             <Label>{value}</Label>

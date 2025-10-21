@@ -29,7 +29,7 @@ const meta: Meta<typeof Template> = {
   },
   decorators: [
     (S) => (
-      <div className="flex flex-col bg-white items-center">
+      <div className="flex flex-col items-center bg-white">
         <S />
       </div>
     )

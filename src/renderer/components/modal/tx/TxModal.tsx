@@ -29,7 +29,7 @@ export const TxModal = (props: Props): JSX.Element => {
 
   const renderTimer = useMemo(
     () => (
-      <div className="w-full flex items-center justify-center">
+      <div className="flex w-full items-center justify-center">
         {FP.pipe(
           txRD,
           RD.fold(
@@ -38,7 +38,7 @@ export const TxModal = (props: Props): JSX.Element => {
             (error) => (
               // Show full error message without truncation
               <ErrorView
-                className="max-w-full break-all whitespace-pre-wrap overflow-auto text-sm leading-normal p-2"
+                className="max-w-full overflow-auto whitespace-pre-wrap break-all p-2 text-sm leading-normal"
                 subTitle={error?.msg || intl.formatMessage({ id: 'common.error' })}
               />
             ),
@@ -50,7 +50,7 @@ export const TxModal = (props: Props): JSX.Element => {
     [intl, startTime, txRD, timerValue]
   )
 
-  const renderExtra = useMemo(() => <div className="w-full flex items-center justify-center">{extra}</div>, [extra])
+  const renderExtra = useMemo(() => <div className="flex w-full items-center justify-center">{extra}</div>, [extra])
   const renderExtraResult = useMemo(
     () => (extraResult ? <div className="flex items-center justify-center pt-6">{extraResult}</div> : <></>),
     [extraResult]
@@ -78,7 +78,7 @@ export const TxModal = (props: Props): JSX.Element => {
 
     return (
       <div className="flex flex-col items-center justify-center">
-        <Button {...buttonProps} className="w-[300px] h-10 mt-6" />
+        <Button {...buttonProps} className="mt-6 h-10 w-[300px]" />
         {renderExtraResult}
       </div>
     )
@@ -86,7 +86,7 @@ export const TxModal = (props: Props): JSX.Element => {
 
   return (
     <Modal panelClassName="!max-w-[420px]" visible title={title} onCancel={onClose}>
-      <div className="flex flex-col items-center justify-center w-full pb-8 border-b border-gray0 dark:border-gray0d">
+      <div className="flex w-full flex-col items-center justify-center border-b border-gray0 pb-8 dark:border-gray0d">
         {renderTimer}
         {renderExtra}
       </div>

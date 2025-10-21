@@ -214,8 +214,8 @@ export const getWhitelistMemo = (
       ? mkMemo(['BOND', nodeAddress, whitelistAddress, fee])
       : mkMemo(['BOND::', nodeAddress, whitelistAddress, fee])
     : protocol === THORChain
-    ? mkMemo(['UNBOND', nodeAddress, whitelistAddress])
-    : mkMemo(['UNBOND::', nodeAddress, whitelistAddress])
+      ? mkMemo(['UNBOND', nodeAddress, whitelistAddress])
+      : mkMemo(['UNBOND::', nodeAddress, whitelistAddress])
 }
 
 // /**

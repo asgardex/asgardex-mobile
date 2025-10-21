@@ -55,21 +55,21 @@ export const TransactionTracker = ({
   const activeTransactions = transactions.filter((tx) => !tx.isComplete)
   const completedTransactions = transactions.filter((tx) => tx.isComplete)
 
-  const protocolIcon = <ProviderIcon protocol={protocol} className="!w-4 !h-4" />
+  const protocolIcon = <ProviderIcon protocol={protocol} className="!h-4 !w-4" />
 
   const protocolLabel = protocol === 'Mayachain' ? 'Maya' : 'THORChain'
 
   return (
-    <div className={clsx('rounded-lg border border-gray1 dark:border-gray1d bg-bg1 dark:bg-bg1d', className)}>
+    <div className={clsx('rounded-lg border border-gray1 bg-bg1 dark:border-gray1d dark:bg-bg1d', className)}>
       {/* Header */}
-      <div className="p-2 border-b border-gray1 dark:border-gray1d">
+      <div className="border-b border-gray1 p-2 dark:border-gray1d">
         <div className="flex items-center space-x-2">
           {protocolIcon}
           <span className="text-xs font-medium text-text1 dark:text-text1d">
             {protocolLabel} {intl.formatMessage({ id: 'common.transaction.tracking' })}
           </span>
           {activeTransactions.length > 0 && (
-            <span className="bg-turquoise text-white text-xs px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
+            <span className="min-w-[1.25rem] rounded-full bg-turquoise px-1.5 py-0.5 text-center text-xs text-white">
               {activeTransactions.length}
             </span>
           )}
@@ -78,8 +78,8 @@ export const TransactionTracker = ({
 
       {/* Active transactions */}
       {activeTransactions.length > 0 && (
-        <div className="p-2 space-y-2">
-          <div className="text-xs font-medium text-text2 dark:text-text2d uppercase tracking-wide">
+        <div className="space-y-2 p-2">
+          <div className="text-xs font-medium uppercase tracking-wide text-text2 dark:text-text2d">
             {intl.formatMessage({ id: 'common.transaction.active' })}
           </div>
           {activeTransactions.map((transaction) => (
@@ -90,8 +90,8 @@ export const TransactionTracker = ({
 
       {/* Completed transactions */}
       {completedTransactions.length > 0 && (
-        <div className="p-2 space-y-2 border-t border-gray1 dark:border-gray1d">
-          <div className="text-xs font-medium text-text2 dark:text-text2d uppercase tracking-wide">
+        <div className="space-y-2 border-t border-gray1 p-2 dark:border-gray1d">
+          <div className="text-xs font-medium uppercase tracking-wide text-text2 dark:text-text2d">
             {intl.formatMessage({ id: 'common.transaction.completed' })}
           </div>
           {completedTransactions.map((transaction) => (

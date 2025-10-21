@@ -69,7 +69,7 @@ export const ActionButton = ({
           <div
             className={clsx(
               'rounded-full bg-turquoise hover:drop-shadow-lg',
-              'px-4 py-1 cursor-pointer',
+              'cursor-pointer px-4 py-1',
               'transition duration-300 ease-in-out'
             )}
             onClick={(event: React.MouseEvent<HTMLElement, MouseEvent>) => {

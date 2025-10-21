@@ -24,7 +24,7 @@ export const IncentivePendulum = (props: Props): JSX.Element => {
   const intl = useIntl()
 
   const loading = (
-    <div className="flex items-center justify-center w-full text-text2 dark:text-text2d px-2 pb-1 uppercase font-main text-xs">
+    <div className="flex w-full items-center justify-center px-2 pb-1 font-main text-xs uppercase text-text2 dark:text-text2d">
       {intl.formatMessage({ id: 'pools.incentivependulum.info' }, { percentage: '...' })}
       <ScaleIcon className="ml-1" width={16} height={16} />
     </div>
@@ -38,7 +38,7 @@ export const IncentivePendulum = (props: Props): JSX.Element => {
       () => loading,
       () => loading,
       (_) => (
-        <div className="uppercase text-center w-full text-text2 dark:text-text2d text-xs font-main px-2 pb-1">
+        <div className="w-full px-2 pb-1 text-center font-main text-xs uppercase text-text2 dark:text-text2d">
           {intl.formatMessage({ id: 'pools.incentivependulum.error' })}
         </div>
       ),
@@ -74,7 +74,7 @@ export const IncentivePendulum = (props: Props): JSX.Element => {
         )
 
         return (
-          <div className="flex items-center justify-center w-full pb-1">
+          <div className="flex w-full items-center justify-center pb-1">
             <Tooltip title={tooltip}>
               <div className="flex items-center justify-center">
                 <Label color="gray" size="small" textTransform="uppercase">

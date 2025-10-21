@@ -125,7 +125,7 @@ import * as Utils from './Swap.utils'
 
 const ErrorLabel = ({ children, className }: { children: ReactNode; className?: string }): JSX.Element => (
   <div
-    className={clsx('mb-[14px] text-center font-main uppercase text-error0 dark:text-error0d text-[12px]', className)}>
+    className={clsx('mb-[14px] text-center font-main text-[12px] uppercase text-error0 dark:text-error0d', className)}>
     {children}
   </div>
 )
@@ -517,7 +517,7 @@ export const TradeSwap = ({
           streamingInterval,
           streamingQuantity,
           affiliateName,
-          affiliateBps: affiliateName ? affiliateBps ?? 0 : undefined
+          affiliateBps: affiliateName ? (affiliateBps ?? 0) : undefined
         })
       }
     )(oRecipientAddress)
@@ -758,7 +758,7 @@ export const TradeSwap = ({
             streamingQuantity: streaminQuant,
             toleranceBps: toleranceBps,
             affiliateAddress: affiliate,
-            affiliateBps: affiliate ? affiliateBps ?? 0 : undefined
+            affiliateBps: affiliate ? (affiliateBps ?? 0) : undefined
           }
         })
       ),
@@ -824,7 +824,7 @@ export const TradeSwap = ({
             streamingQuantity: isStreaming ? streamingQuantity : 0,
             toleranceBps: slipTolerance * 100, // convert to basis points
             affiliateAddress: affiliateName,
-            affiliateBps: affiliateName ? applyBps ?? 0 : undefined
+            affiliateBps: affiliateName ? (applyBps ?? 0) : undefined
           }
           const estimateSwap = estimateThorDexSwap
           if (!estimateSwap.amount.baseAmount.eq(baseAmount(0)) && lockedWallet) {
@@ -2077,7 +2077,7 @@ export const TradeSwap = ({
                 size="small"
                 onClick={onSwitchAssets}
                 className="group rounded-full border border-solid border-turquoise bg-bg0 !p-10px hover:rotate-180 hover:shadow-full dark:bg-bg0d dark:hover:shadow-fulld">
-                <ArrowsUpDownIcon className="ease h-[40px] w-[40px] text-turquoise " />
+                <ArrowsUpDownIcon className="ease h-[40px] w-[40px] text-turquoise" />
               </BaseButton>
             </div>
           </div>
@@ -2126,7 +2126,7 @@ export const TradeSwap = ({
                   {showDetails ? (
                     <MagnifyingGlassMinusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
                   ) : (
-                    <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125 " />
+                    <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
                   )}
                 </BaseButton>
 
@@ -2329,13 +2329,13 @@ export const TradeSwap = ({
                           {walletBalancesLoading
                             ? loadingString
                             : hidePrivateData
-                            ? hiddenString
-                            : formatAssetAmountCurrency({
-                                amount: baseToAsset(sourceAssetAmountMax1e8),
-                                asset: sourceAsset,
-                                decimal: 8,
-                                trimZeros: true
-                              })}
+                              ? hiddenString
+                              : formatAssetAmountCurrency({
+                                  amount: baseToAsset(sourceAssetAmountMax1e8),
+                                  asset: sourceAsset,
+                                  decimal: 8,
+                                  trimZeros: true
+                                })}
                         </div>
                       </div>
                     </>
@@ -2470,7 +2470,7 @@ export const TradeSwap = ({
                   className="flex flex-col rounded-lg border border-solid border-gray0 px-4 py-2 dark:border-gray0d"
                   key="edit-address">
                   <div className="flex items-center">
-                    <h3 className="font-[12px] !mb-0 mr-10px w-auto p-0 font-main uppercase text-text2 dark:text-text2d">
+                    <h3 className="!mb-0 mr-10px w-auto p-0 font-main font-[12px] uppercase text-text2 dark:text-text2d">
                       {intl.formatMessage({ id: 'common.recipient' })}
                     </h3>
                     <WalletTypeLabel key="target-w-type">{getWalletTypeLabel(oTargetWalletType, intl)}</WalletTypeLabel>

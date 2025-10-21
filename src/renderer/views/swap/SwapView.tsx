@@ -165,14 +165,14 @@ const SuccessRouteView = ({
     sourceAsset.type === AssetType.SYNTH
       ? mayaDetails.asset
       : sourceAsset.type === AssetType.SECURED
-      ? AssetRuneNative
-      : sourceAsset
+        ? AssetRuneNative
+        : sourceAsset
   const { chain: targetChain } =
     targetAsset.type === AssetType.SYNTH
       ? mayaDetails.asset
       : targetAsset.type === AssetType.SECURED
-      ? AssetRuneNative
-      : targetAsset
+        ? AssetRuneNative
+        : targetAsset
 
   useEffect(() => {
     // Source asset is the asset of the pool we need to interact with

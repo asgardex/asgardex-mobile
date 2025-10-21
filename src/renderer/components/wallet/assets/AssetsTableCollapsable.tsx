@@ -618,12 +618,12 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
               {chainToString(chain)}
             </Label>
             {!isKeystoreWallet(walletType) && (
-              <WalletTypeLabel className="bg-bg2 dark:bg-bg2d border border-solid border-gray0 dark:border-gray0d">
+              <WalletTypeLabel className="border border-solid border-gray0 bg-bg2 dark:border-gray0d dark:bg-bg2d">
                 {walletTypeToI18n(walletType, intl)}
               </WalletTypeLabel>
             )}
             <Label
-              className="!w-auto flex items-center space-x-2"
+              className="flex !w-auto items-center space-x-2"
               color={RD.isFailure(balancesRD) ? 'error' : 'gray'}
               textTransform="uppercase">
               <span>{assetsTxt}</span>
@@ -705,7 +705,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
     <>
       <div className="flex items-center space-x-2">
         <div
-          className="my-2 cursor-pointer rounded-md border border-solid border-turquoise bg-bg0 py-1 px-2 text-14 text-text2 dark:border-gray1d dark:bg-bg0d dark:text-text2d"
+          className="my-2 cursor-pointer rounded-md border border-solid border-turquoise bg-bg0 px-2 py-1 text-14 text-text2 dark:border-gray1d dark:bg-bg0d dark:text-text2d"
           onClick={handleCollapseAll}>
           {openPanelKeys.length === 0
             ? intl.formatMessage({ id: 'common.expandAll' })

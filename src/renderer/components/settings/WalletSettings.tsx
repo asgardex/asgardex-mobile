@@ -381,7 +381,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
             <div className="flex w-full flex-col md:w-auto lg:flex-row">
               <div className="mr-30px flex items-center md:mr-0">
                 <Button
-                  className="!p-0 cursor-pointer text-[12px] gap-x-1"
+                  className="cursor-pointer gap-x-1 !p-0 text-[12px]"
                   sizevalue="small"
                   loading={loading}
                   typevalue="transparent"
@@ -425,7 +425,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
                   <div className="ml-2">
                     <Dropdown
                       trigger={
-                        <Label className="rounded-lg p-2 border border-solid border-bg2 dark:border-bg2d">
+                        <Label className="rounded-lg border border-solid border-bg2 p-2 dark:border-bg2d">
                           {getChainDerivationOptions(chain, selectedAccountIndex, selectedWalletIndex, network)[
                             derivationPathIndex[chain]
                           ]?.description || 'Default'}
@@ -455,11 +455,11 @@ export const WalletSettings = (props: Props): JSX.Element => {
               </div>
               {isEvmChain(chain) && (
                 <RadioGroup
-                  className="flex flex-col items-start lg:flex-row lg:items-center lg:pl-30px lg:space-x-2"
+                  className="flex flex-col items-start lg:flex-row lg:items-center lg:space-x-2 lg:pl-30px"
                   onChange={onChangeEvmDerivationMode}
                   value={evmHDMode}>
                   <Radio value="ledgerlive" key="ledgerlive">
-                    <Label className="flex items-center mt-10px lg:mt-0" textTransform="uppercase">
+                    <Label className="mt-10px flex items-center lg:mt-0" textTransform="uppercase">
                       {intl.formatMessage({ id: 'common.ledgerlive' })}
                       <InfoIcon
                         tooltip={intl.formatMessage(
@@ -472,7 +472,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
                     </Label>
                   </Radio>
                   <Radio value="legacy" key="legacy">
-                    <Label className="flex items-center mt-10px lg:mt-0" textTransform="uppercase">
+                    <Label className="mt-10px flex items-center lg:mt-0" textTransform="uppercase">
                       {intl.formatMessage({ id: 'common.legacy' })}
                       <InfoIcon
                         tooltip={intl.formatMessage(
@@ -483,7 +483,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
                     </Label>
                   </Radio>
                   <Radio value="metamask" key="metamask">
-                    <Label className="flex items-center mt-10px lg:mt-0" textTransform="uppercase">
+                    <Label className="mt-10px flex items-center lg:mt-0" textTransform="uppercase">
                       {intl.formatMessage({ id: 'common.metamask' })}
                       <InfoIcon
                         tooltip={intl.formatMessage(
@@ -511,7 +511,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
                 chain={chain}
                 network={network}
                 enableCopy={true}
-                className="text-base font-main text-text1 dark:text-text1d max-w-full overflow-hidden only:mx-auto"
+                className="max-w-full overflow-hidden font-main text-base text-text1 only:mx-auto dark:text-text1d"
               />
               <QrCodeIcon
                 className="cursor-pointer text-turquoise"
@@ -538,7 +538,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
                   { address }
                 )}>
                 <EyeIcon
-                  className="text-turquoise cursor-pointer"
+                  className="cursor-pointer text-turquoise"
                   width={20}
                   height={20}
                   onClick={() => verifyLedgerAddressHandler(walletAddress)}
@@ -551,7 +551,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
                   },
                   { chain }
                 )}>
-                <RemoveIcon className="w-4 h-4" onClick={() => removeLedgerAddress(chain)} />
+                <RemoveIcon className="h-4 w-4" onClick={() => removeLedgerAddress(chain)} />
               </Tooltip>
             </div>
           </>
@@ -588,14 +588,14 @@ export const WalletSettings = (props: Props): JSX.Element => {
       return (
         <>
           <div className="flex-row">
-            <WalletTypeLabel className="ml-40px mt-10px inline-block ">
+            <WalletTypeLabel className="ml-40px mt-10px inline-block">
               {walletTypeToI18n(WalletType.Ledger, intl)}
             </WalletTypeLabel>
-            <div className="ml-40px mt-10px inline-block ">
+            <div className="ml-40px mt-10px inline-block">
               {O.isSome(oAddress) ? renderAccount(oAddress.value) : <span></span>}
             </div>
           </div>
-          <div className="my-0 w-full overflow-hidden px-40px ">
+          <div className="my-0 w-full overflow-hidden px-40px">
             {FP.pipe(oAddress, O.fold(renderAddAddress, renderAddress))}
           </div>
         </>
@@ -626,14 +626,14 @@ export const WalletSettings = (props: Props): JSX.Element => {
           <WalletTypeLabel className="ml-10 inline-block">
             {walletTypeToI18n(WalletType.Keystore, intl)}
           </WalletTypeLabel>
-          <div className="my-0 w-full overflow-hidden px-40px ">
+          <div className="my-0 w-full overflow-hidden px-40px">
             <div className="flex w-full items-center gap-x-1">
               <AddressEllipsis
                 address={address}
                 chain={chain}
                 network={network}
                 enableCopy={true}
-                className="text-base font-main text-text1 dark:text-text1d max-w-full overflow-hidden only:mx-auto"
+                className="max-w-full overflow-hidden font-main text-base text-text1 only:mx-auto dark:text-text1d"
               />
               <QrCodeIcon
                 className="cursor-pointer text-turquoise"
@@ -761,7 +761,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
       setExportKeystoreErrorMsg(emptyString)
       await exportKeystore()
     } catch (error) {
-      const errorMsg = isError(error) ? error?.message ?? error.toString() : `${error}`
+      const errorMsg = isError(error) ? (error?.message ?? error.toString()) : `${error}`
       setExportKeystoreErrorMsg(errorMsg)
     }
   }, [exportKeystore, setExportKeystoreErrorMsg])
@@ -793,7 +793,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
 
   const renderAddAddressForm = useCallback(
     () => (
-      <div className="flex items-center gap-3 mb-4">
+      <div className="mb-4 flex items-center gap-3">
         <AutoComplete
           placeholder={intl.formatMessage({ id: 'common.chain' })}
           options={enabledChains.map((chain) => ({ value: chain }))}
@@ -818,7 +818,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
         <div className="mr-30px flex items-center md:mr-0">
           <Button
             typevalue="transparent"
-            className="pl-0 text-[12px] cursor-pointer gap-x-1"
+            className="cursor-pointer gap-x-1 pl-0 text-[12px]"
             onClick={handleAddAddress}>
             <PlusCircleIcon className="text-turquoise" width={20} height={20} />
             {intl.formatMessage({ id: 'common.store' })}
@@ -833,17 +833,17 @@ export const WalletSettings = (props: Props): JSX.Element => {
   const renderTrustedAddresses = useCallback(
     (chain: Chain) => {
       return (trustedAddresses?.addresses.filter((addr) => addr.chain === chain) || []).map((item) => (
-        <div key={item.address} className="flex flex-col w-full">
+        <div key={item.address} className="flex w-full flex-col">
           <Label size="big">{item.name}</Label>
           <div className="flex w-full items-center space-x-2">
             <AddressEllipsis
-              className="text-base font-main text-text1 dark:text-text1d max-w-full overflow-hidden only:mx-auto"
+              className="max-w-full overflow-hidden font-main text-base text-text1 only:mx-auto dark:text-text1d"
               address={item.address}
               chain={chain}
               network={network}
               enableCopy={true}
             />
-            <RemoveIcon className="w-4 h-4" onClick={() => handleRemoveAddress(item)} />
+            <RemoveIcon className="h-4 w-4" onClick={() => handleRemoveAddress(item)} />
           </div>
         </div>
       ))
@@ -857,7 +857,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
         O.map((walletAccounts) => (
           <div className="flex flex-col" key="wallet-accounts">
             {walletAccounts.map(({ chain, accounts: { keystore, ledger: oLedger } }, i: number) => (
-              <div key={i} className="flex flex-col p-4 border-b border-solid border-b-gray0 dark:border-b-gray0d">
+              <div key={i} className="flex flex-col border-b border-solid border-b-gray0 p-4 dark:border-b-gray0d">
                 <div className="flex w-full items-center justify-start">
                   <AssetIcon asset={getChainAsset(chain)} size="small" network={Network.Mainnet} />
                   <Label className="p-0 pl-[10px] text-xl leading-[25px] tracking-[2px]" textTransform="uppercase">
@@ -1064,7 +1064,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
         </div>
       </div>
       <div key="accounts" className="mt-4 w-full border-t border-solid border-bg2 dark:border-bg2d">
-        <Label className="text-center pt-5 pl-5 md:text-left text-base" textTransform="uppercase">
+        <Label className="pl-5 pt-5 text-center text-base md:text-left" textTransform="uppercase">
           {intl.formatMessage({ id: 'settings.accounts.title' })}
         </Label>
         <div className="mt-30px flex justify-center md:ml-4 md:justify-start">
@@ -1076,11 +1076,11 @@ export const WalletSettings = (props: Props): JSX.Element => {
         </div>
         <div className="mt-10px border-b border-solid border-bg2 px-4 dark:border-bg2d">{renderAddAddressForm()}</div>
         <div className="flex items-center justify-center">
-          <Label className="text-center pt-5 pl-5 md:text-left text-base" textTransform="uppercase">
+          <Label className="pl-5 pt-5 text-center text-base md:text-left" textTransform="uppercase">
             {intl.formatMessage({ id: 'common.chainManagement' })}
           </Label>
           <ActionButton
-            className="mt-5 mr-5"
+            className="mr-5 mt-5"
             text={intl.formatMessage({ id: 'common.whitelist' })}
             onClick={() => setIsWhitelistModalOpen(true)}
           />

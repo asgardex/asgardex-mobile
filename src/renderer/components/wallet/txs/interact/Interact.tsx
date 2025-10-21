@@ -54,12 +54,12 @@ export const Interact = ({ interactType, interactTypeChanged, network, walletTyp
   const asset = getChainAsset(chain)
 
   return (
-    <div className="min-h-full w-full max-w-[630px] flex flex-col p-2.5 sm:p-[35px_50px_150px]">
-      <div className="flex flex-col items-center justify-center mb-5 sm:justify-start sm:flex-row">
-        <AssetIcon className="mr-0 mb-10px sm:mr-4 sm:mb-0" network={network} asset={asset} size="big" />
+    <div className="flex min-h-full w-full max-w-[630px] flex-col p-2.5 sm:p-[35px_50px_150px]">
+      <div className="mb-5 flex flex-col items-center justify-center sm:flex-row sm:justify-start">
+        <AssetIcon className="mb-10px mr-0 sm:mb-0 sm:mr-4" network={network} asset={asset} size="big" />
         <div>
           <div className="flex items-center justify-center sm:justify-start">
-            <Label className="w-auto text-center sm:text-left text-[24px]" textTransform="uppercase">
+            <Label className="w-auto text-center text-[24px] sm:text-left" textTransform="uppercase">
               {intl.formatMessage({ id: 'deposit.interact.title' })}
             </Label>
             {isLedgerWallet(walletType) && (
@@ -72,7 +72,7 @@ export const Interact = ({ interactType, interactTypeChanged, network, walletTyp
         </div>
       </div>
 
-      <ul className="hidden md:flex items-center gap-2 border-b border-gray0 dark:border-gray0d">
+      <ul className="hidden items-center gap-2 border-b border-gray0 dark:border-gray0d md:flex">
         {tabs.map(({ type, label }) => {
           const isActive = type === interactType
           return (
@@ -81,10 +81,10 @@ export const Interact = ({ interactType, interactTypeChanged, network, walletTyp
                 type="button"
                 onClick={() => interactTypeChanged(type)}
                 className={clsx(
-                  'inline-flex items-center px-3 py-2 text-sm font-medium rounded-t-md border-b-2',
+                  'inline-flex items-center rounded-t-md border-b-2 px-3 py-2 text-sm font-medium',
                   isActive
-                    ? 'text-turquoise border-turquoise'
-                    : 'border-transparent text-text0 dark:text-text0d hover:text-turquoise hover:bg-gray0/50 dark:hover:bg-gray0d/50'
+                    ? 'border-turquoise text-turquoise'
+                    : 'border-transparent text-text0 hover:bg-gray0/50 hover:text-turquoise dark:text-text0d dark:hover:bg-gray0d/50'
                 )}>
                 {label}
               </button>
@@ -97,7 +97,7 @@ export const Interact = ({ interactType, interactTypeChanged, network, walletTyp
         <Menu as="div" className="relative inline-block w-full">
           <MenuButton
             className={clsx(
-              'flex w-full items-center justify-between rounded-md border border-gray0 dark:border-gray0d px-3 py-2 text-sm',
+              'flex w-full items-center justify-between rounded-md border border-gray0 px-3 py-2 text-sm dark:border-gray0d',
               'bg-bg0 dark:bg-bg0d'
             )}>
             <Label size="big">{tabs.find((t) => t.type === interactType)?.label ?? tabs[0]?.label}</Label>
@@ -116,7 +116,7 @@ export const Interact = ({ interactType, interactTypeChanged, network, walletTyp
               className={clsx(
                 'absolute z-10 mt-1 w-[--button-width] min-w-[12rem] rounded-md shadow-lg',
                 'border border-gray0 dark:border-gray0d',
-                'bg-bg0 dark:bg-bg0d focus:outline-none'
+                'bg-bg0 focus:outline-none dark:bg-bg0d'
               )}>
               <div className="py-1">
                 {tabs.map(({ type, label }) => {

@@ -56,7 +56,7 @@ export const PlaygroundView = (): JSX.Element => {
   )
 
   return (
-    <div className="bg-bg0 dark:bg-bg0d p-4 rounded-lg">
+    <div className="rounded-lg bg-bg0 p-4 dark:bg-bg0d">
       <h1>Playground</h1>
       <h1>i18n</h1>
       <h2>{intl.formatMessage({ id: 'common.greeting' }, { name: 'ASGARDEX' })}</h2>
@@ -68,7 +68,7 @@ export const PlaygroundView = (): JSX.Element => {
       {renderPools}
       <div className="flex items-center justify-center">
         <Button
-          className="bg-turquoise rounded-lg px-4 py-2 text-white"
+          className="rounded-lg bg-turquoise px-4 py-2 text-white"
           onClick={() => {
             midgardService.pools.reloadPools()
             midgardMayaService.pools.reloadPools()

@@ -96,7 +96,7 @@ export const BondsTable = ({
                 <div className="flex items-center justify-center" onClick={() => row.toggleExpanded()}>
                   <ChevronRightIcon
                     className={clsx(
-                      'mt-0 w-5 h-5 stroke-turquoise cursor-pointer',
+                      'mt-0 h-5 w-5 cursor-pointer stroke-turquoise',
                       row.getIsExpanded() ? 'rotate-90' : 'rotate-0'
                     )}
                   />
@@ -136,7 +136,7 @@ export const BondsTable = ({
         cell: ({ row }) => (
           <div className="flex items-center justify-between">
             <H.Status data={row.original} />
-            <ExternalLinkIcon className="!w-4 !h-4" onClick={() => goToNode(row.original.address)} />
+            <ExternalLinkIcon className="!h-4 !w-4" onClick={() => goToNode(row.original.address)} />
           </div>
         ),
         enableSorting: false
@@ -288,7 +288,7 @@ export const BondsTable = ({
           <FormattedMessage
             id="bonds.node.removeMessage"
             values={{
-              node: <span className="text-16 font-bold font-mainBold">{nodeAddress}</span>
+              node: <span className="font-mainBold text-16 font-bold">{nodeAddress}</span>
             }}
           />
         </Label>
@@ -425,7 +425,7 @@ export const BondsTable = ({
             if (protocol === THORChain) {
               const thorRecord = record as ThorNodeInfo
               return (
-                <div className="p-2 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-2 p-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                   {thorRecord.bondProviders.providers.map((provider: Providers, index: number) => {
                     const isMonitoring = watchlist.includes(provider.bondAddress)
                     const isMyAddy = isMyAddress(provider.bondAddress)
@@ -451,7 +451,7 @@ export const BondsTable = ({
                           {isMonitoring ? (
                             <Tooltip title={intl.formatMessage({ id: 'bonds.tooltip.removeFromWatchlist' })}>
                               <RemoveIcon
-                                className="w-4 h-4 cursor-pointer"
+                                className="h-4 w-4 cursor-pointer"
                                 onClick={() => removeWatchlist(provider.bondAddress, network)}
                               />
                             </Tooltip>
@@ -481,7 +481,7 @@ export const BondsTable = ({
             } else {
               const mayaRecord = record as MayaNodeInfo
               return (
-                <div className="p-2 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-2 p-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                   {mayaRecord.bondProviders.providers.map((provider: MayaProviders, index: number) => (
                     <BondProviderInfo
                       key={`${record.address}-${index}`}

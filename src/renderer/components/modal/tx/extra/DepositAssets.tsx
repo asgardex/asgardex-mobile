@@ -32,7 +32,7 @@ export const DepositAssets = (props: Props): JSX.Element => {
             amount={amount}
             network={network}
             size="big"
-            className="flex items-center justify-start w-full"
+            className="flex w-full items-center justify-start"
           />
         )),
         O.getOrElse(() => <></>)
@@ -41,18 +41,18 @@ export const DepositAssets = (props: Props): JSX.Element => {
   )
 
   return (
-    <div className="flex flex-col items-center justify-center w-full">
-      <Label size="small" color="gray" className="w-full px-[10px] pt-[10px] pb-[15px] text-center uppercase">
+    <div className="flex w-full flex-col items-center justify-center">
+      <Label size="small" color="gray" className="w-full px-[10px] pb-[15px] pt-[10px] text-center uppercase">
         {stepDescription}
       </Label>
-      <div className="flex flex-col justify-center items-center relative gap-5">
+      <div className="relative flex flex-col items-center justify-center gap-5">
         {renderSource}
         {hasSource && (
-          <div className="flex justify-center items-center p-2">
+          <div className="flex items-center justify-center p-2">
             {isWithdraw ? (
-              <ArrowLeftIcon className="w-8 h-8 text-gray-400" />
+              <ArrowLeftIcon className="h-8 w-8 text-gray-400" />
             ) : (
-              <ArrowRightIcon className="w-8 h-8 text-gray-400" />
+              <ArrowRightIcon className="h-8 w-8 text-gray-400" />
             )}
           </div>
         )}
@@ -61,7 +61,7 @@ export const DepositAssets = (props: Props): JSX.Element => {
           amount={target.amount}
           network={network}
           size="big"
-          className="flex items-center justify-start w-full"
+          className="flex w-full items-center justify-start"
         />
       </div>
     </div>
@@ -91,11 +91,11 @@ export const ClaimAsset = (props: claimProps): JSX.Element => {
 
   return (
     <>
-      <Label size="small" color="gray" className="w-full px-[10px] pt-[10px] pb-[15px] text-center uppercase">
+      <Label size="small" color="gray" className="w-full px-[10px] pb-[15px] pt-[10px] text-center uppercase">
         {stepDescription}
       </Label>
-      <div className="flex justify-center items-center relative">
-        <div className="px-5 flex flex-col">{renderSource}</div>
+      <div className="relative flex items-center justify-center">
+        <div className="flex flex-col px-5">{renderSource}</div>
       </div>
     </>
   )

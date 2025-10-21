@@ -165,7 +165,7 @@ const EditableUrl = (props: Props): JSX.Element => {
       }
       return (
         <form className="flex w-full flex-col" onSubmit={handleSubmit(submit)}>
-          <div className="flex w-full items-center ">
+          <div className="flex w-full items-center">
             <Input
               id="url"
               className={clsx(

@@ -89,8 +89,8 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      <div className="relative flex flex-col max-w-2xl w-full">
-        <div className="flex items-center justify-between mb-4">
+      <div className="relative flex w-full max-w-2xl flex-col">
+        <div className="mb-4 flex items-center justify-between">
           <CopyLabel
             className="text-turquoise"
             textToCopy={phrase}
@@ -98,11 +98,11 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
           />
           <RefreshButton onClick={clickRefreshButtonHandler} />
         </div>
-        <div className="grid grid-cols-3 border border-solid border-gray0 dark:border-gray0d rounded-xl p-2 gap-1">
+        <div className="grid grid-cols-3 gap-1 rounded-xl border border-solid border-gray0 p-2 dark:border-gray0d">
           {phraseWords.map((word, index) => (
             <span
               key={word._id}
-              className="text-sm bg-turquoise/10 text-text0 dark:text-text0d font-bold px-2 py-1 rounded-full">
+              className="rounded-full bg-turquoise/10 px-2 py-1 text-sm font-bold text-text0 dark:text-text0d">
               {index + 1}. {word.text}
             </span>
           ))}
@@ -110,8 +110,8 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
       </div>
       <form className="w-full pt-4" onSubmit={handleSubmit(handleFormFinish)}>
         <div className="flex flex-col items-center">
-          <div className="w-full !max-w-[380px] mb-4">
-            <label className="block mb-2 text-sm font-medium text-text0 dark:text-text0d">
+          <div className="mb-4 w-full !max-w-[380px]">
+            <label className="mb-2 block text-sm font-medium text-text0 dark:text-text0d">
               {intl.formatMessage({ id: 'common.password' })}
             </label>
             <InputPassword
@@ -123,8 +123,8 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
             />
           </div>
 
-          <div className="w-full !max-w-[380px] mb-4">
-            <label className="block mb-2 text-sm font-medium text-text0 dark:text-text0d">
+          <div className="mb-4 w-full !max-w-[380px]">
+            <label className="mb-2 block text-sm font-medium text-text0 dark:text-text0d">
               {intl.formatMessage({ id: 'wallet.password.repeat' })}
             </label>
             <InputPassword
@@ -143,8 +143,8 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
             />
           </div>
 
-          <div className="w-full !max-w-[380px] mb-4">
-            <label className="block mb-2 text-sm font-medium text-text0 dark:text-text0d">
+          <div className="mb-4 w-full !max-w-[380px]">
+            <label className="mb-2 block text-sm font-medium text-text0 dark:text-text0d">
               <div>
                 {intl.formatMessage({ id: 'wallet.name' })}
                 <span className="pl-5px text-[12px] text-gray1 dark:text-gray1d">

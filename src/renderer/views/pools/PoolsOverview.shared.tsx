@@ -15,24 +15,23 @@ export const renderWatchColumn = ({
   remove: FP.Lazy<void>
 }) => (
   <div
-    className="flex items-center justify-center w-full h-full"
+    className="flex h-full w-full items-center justify-center"
     onClick={(event) => {
       event.preventDefault()
       event.stopPropagation()
       watched ? remove() : add()
     }}>
     {watched ? (
-      <StarFilled className="w-5 h-5 stroke-turquoise fill-turquoise" />
+      <StarFilled className="h-5 w-5 fill-turquoise stroke-turquoise" />
     ) : (
-      <StarOutlined className="w-5 h-5 stroke-turquoise" />
+      <StarOutlined className="h-5 w-5 stroke-turquoise" />
     )}
   </div>
 )
 
-export const renderTableError = (reloadBtnLabel: string, reloadBtnAction: FP.Lazy<void>) => (error: Error) =>
-  (
-    <ErrorView
-      title={error?.toString() ?? ''}
-      extra={<ReloadButton label={reloadBtnLabel} onClick={reloadBtnAction} />}
-    />
-  )
+export const renderTableError = (reloadBtnLabel: string, reloadBtnAction: FP.Lazy<void>) => (error: Error) => (
+  <ErrorView
+    title={error?.toString() ?? ''}
+    extra={<ReloadButton label={reloadBtnLabel} onClick={reloadBtnAction} />}
+  />
+)

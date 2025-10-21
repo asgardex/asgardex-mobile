@@ -69,8 +69,8 @@ const UnifiedSendView = (props: UnifiedSendViewProps): JSX.Element => {
     asset.asset.type === AssetType.SYNTH
       ? MAYAChain
       : asset.asset.type === AssetType.SECURED
-      ? THORChain
-      : asset.asset.chain
+        ? THORChain
+        : asset.asset.chain
   ) as Chain
 
   const { validateAddress } = useValidateAddress(chain)
@@ -285,8 +285,8 @@ export const SendView = (): JSX.Element => {
         asset.asset.type === AssetType.SYNTH
           ? MAYAChain
           : asset.asset.type === AssetType.SECURED
-          ? THORChain
-          : asset.asset.chain
+            ? THORChain
+            : asset.asset.chain
       if (!isSupportedChain(chain)) {
         return (
           <h1>
@@ -331,15 +331,15 @@ export const SendView = (): JSX.Element => {
       () => <></>,
       (selectedAsset) => (
         <div>
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <BackLinkButton />
             <RefreshButton
               onClick={reloadBalancesByChain(
                 selectedAsset.asset.type === AssetType.SYNTH
                   ? MAYAChain
                   : selectedAsset.asset.type === AssetType.SECURED
-                  ? THORChain
-                  : selectedAsset.asset.chain,
+                    ? THORChain
+                    : selectedAsset.asset.chain,
                 selectedAsset.walletType
               )}
             />

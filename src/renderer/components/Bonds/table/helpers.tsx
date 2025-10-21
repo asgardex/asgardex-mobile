@@ -23,7 +23,7 @@ import { Color, Label } from '../../uielements/label'
 
 export const NodeAddress = ({ address, network }: { address: Address; network: Network }) => (
   <AddressEllipsis
-    className="font-light text-[12px] tracking-[1px] text-text1 dark:text-text1d normal-case"
+    className="text-[12px] font-light normal-case tracking-[1px] text-text1 dark:text-text1d"
     address={address}
     chain={address.startsWith('thor') ? THORChain : MAYAChain}
     network={network}
@@ -109,11 +109,11 @@ export const Status = ({ data }: { data: NodeInfo | NodeInfoMaya }) => {
 }
 
 export const Watchlist = ({ addWatchlist }: { addWatchlist: () => void }) => (
-  <TvIcon className="cursor-pointer text-turquoise w-5 h-5" onClick={addWatchlist} />
+  <TvIcon className="h-5 w-5 cursor-pointer text-turquoise" onClick={addWatchlist} />
 )
 
 export const Delete = ({ deleteNode }: { deleteNode: () => void }) => (
-  <RemoveIcon className="cursor-pointer w-5 h-5" onClick={deleteNode} />
+  <RemoveIcon className="h-5 w-5 cursor-pointer" onClick={deleteNode} />
 )
 
 type CalculateBondedAmountParams = {

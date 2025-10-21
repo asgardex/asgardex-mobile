@@ -65,7 +65,7 @@ export const TxDetail = ({ className, outgos, incomes, fees = [], slip, network,
         NEA.fromArray,
         O.map(RD.success),
         O.map((fees) => (
-          <div key="fees" className="inline-block relative mr-0.5 first:ml-0 last:mr-0">
+          <div key="fees" className="relative mr-0.5 inline-block first:ml-0 last:mr-0">
             <Fees fees={fees} />
           </div>
         )),
@@ -76,36 +76,36 @@ export const TxDetail = ({ className, outgos, incomes, fees = [], slip, network,
 
   return (
     <div className={clsx('flex flex-col items-start', className)}>
-      <div className="flex flex-wrap text-left md:mr-4 last:mr-0">
+      <div className="flex flex-wrap text-left last:mr-0 md:mr-4">
         <div
           className={clsx(
-            'flex items-center text-xs uppercase px-[5px] py-[3px] leading-[22px]',
-            'bg-bg2 dark:bg-bg2d border border-gray2 dark:border-gray2d text-text0 dark:text-text0d',
-            'first:rounded-l-[1.7rem] first:self-start last:rounded-r-[1.7rem]',
-            'md:text-sm md:px-[10px] md:py-[5px]'
+            'flex items-center px-[5px] py-[3px] text-xs uppercase leading-[22px]',
+            'border border-gray2 bg-bg2 text-text0 dark:border-gray2d dark:bg-bg2d dark:text-text0d',
+            'first:self-start first:rounded-l-[1.7rem] last:rounded-r-[1.7rem]',
+            'md:px-[10px] md:py-[5px] md:text-sm'
           )}>
-          <span className="text-xs text-text2 dark:text-text2d uppercase mr-1 first:mr-1 first:ml-1 last:ml-1 only:m-0">
+          <span className="mr-1 text-xs uppercase text-text2 first:ml-1 first:mr-1 last:ml-1 only:m-0 dark:text-text2d">
             in
           </span>
           {renderIncomes}
         </div>
         <div
           className={clsx(
-            'flex items-center text-xs uppercase px-[5px] py-[3px] leading-[22px]',
-            'bg-bg2 dark:bg-bg2d border border-gray2 dark:border-gray2d text-text0 dark:text-text0d',
-            'first:rounded-l-[1.7rem] first:self-start last:rounded-r-[1.7rem]',
-            'md:text-sm md:px-[10px] md:py-[5px]'
+            'flex items-center px-[5px] py-[3px] text-xs uppercase leading-[22px]',
+            'border border-gray2 bg-bg2 text-text0 dark:border-gray2d dark:bg-bg2d dark:text-text0d',
+            'first:self-start first:rounded-l-[1.7rem] last:rounded-r-[1.7rem]',
+            'md:px-[10px] md:py-[5px] md:text-sm'
           )}>
           {renderOutgos}
-          <span className="text-xs text-text2 dark:text-text2d uppercase mr-1 first:mr-1 first:ml-1 last:ml-1 only:m-0">
+          <span className="mr-1 text-xs uppercase text-text2 first:ml-1 first:mr-1 last:ml-1 only:m-0 dark:text-text2d">
             out
           </span>
         </div>
       </div>
 
-      <span className="mr-[10px] last:mr-0 text-gray2 dark:text-gray2d text-sm p-0">
+      <span className="mr-[10px] p-0 text-sm text-gray2 last:mr-0 dark:text-gray2d">
         {feesComponent}
-        {slip && <div className="inline-block relative mr-[2px] first:ml-0 last:mr-0">slip: {slip}%</div>}
+        {slip && <div className="relative mr-[2px] inline-block first:ml-0 last:mr-0">slip: {slip}%</div>}
       </span>
     </div>
   )

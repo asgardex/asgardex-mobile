@@ -14,7 +14,7 @@ export const Spin = ({ className, spinning = true, tip, children }: SpinProps) =
         {spinning && (
           <>
             <svg
-              className="border border-solid border-turquoise bg-turquoise rounded-full animate-spin fill-bg0 dark:fill-bg0d"
+              className="animate-spin rounded-full border border-solid border-turquoise bg-turquoise fill-bg0 dark:fill-bg0d"
               width="40"
               height="40"
               viewBox="0 0 512.000000 512.000000"
@@ -33,9 +33,9 @@ export const Spin = ({ className, spinning = true, tip, children }: SpinProps) =
   return (
     <div className={clsx('relative', className)}>
       {spinning && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-50 space-y-2">
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center space-y-2">
           <svg
-            className="border border-solid border-turquoise bg-turquoise rounded-full animate-spin fill-bg0 dark:fill-bg0d"
+            className="animate-spin rounded-full border border-solid border-turquoise bg-turquoise fill-bg0 dark:fill-bg0d"
             width="40"
             height="40"
             viewBox="0 0 512.000000 512.000000"

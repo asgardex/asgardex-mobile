@@ -107,11 +107,11 @@ const HaltedChainsWarning = ({ haltedChainsRD, mimirHaltRD, protocol, midgardSta
         haltedChains.length === 1
           ? `${msg} ${intl.formatMessage({ id: 'halt.chain' }, { chain: haltedChains[0], dex: protocol })}`
           : haltedChains.length > 1
-          ? `${msg} ${intl.formatMessage(
-              { id: 'halt.chains' },
-              { chains: haltedChains.join(', '), protocol: protocol }
-            )}`
-          : msg
+            ? `${msg} ${intl.formatMessage(
+                { id: 'halt.chains' },
+                { chains: haltedChains.join(', '), protocol: protocol }
+              )}`
+            : msg
 
       const haltedTradingChains = haltedChainsState
         .filter(({ haltedTrading }) => haltedTrading)
@@ -130,13 +130,13 @@ const HaltedChainsWarning = ({ haltedChainsRD, mimirHaltRD, protocol, midgardSta
         pausedLPs.length > 0
           ? `${msg} ${intl.formatMessage({ id: 'halt.chain.pause' }, { chains: pausedLPs.join(', ') })}`
           : mimirHalt.PAUSELP
-          ? `${msg} ${intl.formatMessage({ id: 'halt.chain.pauseall' })}`
-          : pausedLPsDeposits.length > 0
-          ? `${msg} ${intl.formatMessage(
-              { id: 'halt.chain.pauseDeposits' },
-              { chains: pausedLPsDeposits.join(', '), protocol: chainToString(protocol) }
-            )}`
-          : msg
+            ? `${msg} ${intl.formatMessage({ id: 'halt.chain.pauseall' })}`
+            : pausedLPsDeposits.length > 0
+              ? `${msg} ${intl.formatMessage(
+                  { id: 'halt.chain.pauseDeposits' },
+                  { chains: pausedLPsDeposits.join(', '), protocol: chainToString(protocol) }
+                )}`
+              : msg
     }
 
     // Append Midgard offline message if the endpoint is down
@@ -160,10 +160,10 @@ const HaltedChainsWarning = ({ haltedChainsRD, mimirHaltRD, protocol, midgardSta
     // Just show the warning icon when collapsed
     return (
       <div
-        className="inline-flex items-center justify-center w-8 h-8 bg-warning0/10 border border-warning0 rounded-lg cursor-pointer hover:bg-warning0/20"
+        className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-warning0 bg-warning0/10 hover:bg-warning0/20"
         onClick={() => setIsCollapsed(false)}
         title={`${protocol} Warning - Click to expand`}>
-        <ExclamationTriangleIcon className="w-6 h-6 text-warning0" />
+        <ExclamationTriangleIcon className="h-6 w-6 text-warning0" />
       </div>
     )
   }
@@ -178,7 +178,7 @@ const HaltedChainsWarning = ({ haltedChainsRD, mimirHaltRD, protocol, midgardSta
           size="small"
           onClick={() => setIsCollapsed(true)}
           className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800">
-          <XMarkIcon className="w-4 h-4" />
+          <XMarkIcon className="h-4 w-4" />
         </BorderButton>
       }
     />

@@ -32,13 +32,13 @@ export const DepositAsset = (props: Props): JSX.Element => {
   )
 
   return (
-    <div className="flex flex-col items-center justify-center w-full">
-      <Label size="small" color="gray" className="w-full px-[10px] pt-[10px] pb-[15px] text-center uppercase">
+    <div className="flex w-full flex-col items-center justify-center">
+      <Label size="small" color="gray" className="w-full px-[10px] pb-[15px] pt-[10px] text-center uppercase">
         {stepDescription}
       </Label>
-      <div className="flex justify-center items-center relative">
+      <div className="relative flex items-center justify-center">
         {hasSource && <StepBar className="justify-center p-0.5" />}
-        <div className="px-5 flex flex-col">{renderSource}</div>
+        <div className="flex flex-col px-5">{renderSource}</div>
       </div>
     </div>
   )

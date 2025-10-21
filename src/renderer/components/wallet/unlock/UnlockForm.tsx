@@ -187,8 +187,8 @@ export const UnlockForm = ({ keystore, unlock, removeKeystore, changeKeystore$, 
         <div
           className={clsx(
             'flex h-full flex-col items-center justify-between',
-            'bg-bg0 dark:bg-bg0d rounded-lg',
-            'px-30px pt-[45px] pb-[35px] sm:pb-[70px] sm:px-[60px] sm:pt-[90px]'
+            'rounded-lg bg-bg0 dark:bg-bg0d',
+            'px-30px pb-[35px] pt-[45px] sm:px-[60px] sm:pb-[70px] sm:pt-[90px]'
           )}>
           <div className="w-full max-w-[320px] space-y-3">
             <div className="flex flex-col">
@@ -239,7 +239,7 @@ export const UnlockForm = ({ keystore, unlock, removeKeystore, changeKeystore$, 
             <div className="flex w-full flex-col items-center border-t border-solid border-gray1 dark:border-gray0d">
               <div className="flex w-full flex-col justify-between space-y-3 pt-4">
                 <BorderButton
-                  className="w-full min-w-[200px] flex items-center justify-center gap-2"
+                  className="flex w-full min-w-[200px] items-center justify-center gap-2"
                   size="normal"
                   color="primary"
                   onClick={useLedgerOnlyHandler}

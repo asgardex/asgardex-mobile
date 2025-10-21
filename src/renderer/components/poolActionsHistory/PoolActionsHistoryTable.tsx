@@ -85,7 +85,7 @@ export const PoolActionsHistoryTable = ({
               <div key={txID} className="flex items-center justify-center">
                 <Label>{H.renderDate(row.original.date)}</Label>
                 <ArrowTopRightOnSquareIcon
-                  className="text-turquoise cursor-pointer w-4 h-4 min-w-4"
+                  className="h-4 w-4 min-w-4 cursor-pointer text-turquoise"
                   onClick={() => openExplorerTxUrl(txID)}
                 />
               </div>

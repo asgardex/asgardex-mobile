@@ -202,8 +202,8 @@ export const TcyView = () => {
           ? tcyLedgerBalance.value.walletType
           : DEFAULT_WALLET_TYPE
         : O.isSome(tcyKeystoreBalance)
-        ? tcyKeystoreBalance.value.walletType
-        : DEFAULT_WALLET_TYPE,
+          ? tcyKeystoreBalance.value.walletType
+          : DEFAULT_WALLET_TYPE,
     [useLedger, tcyLedgerBalance, tcyKeystoreBalance]
   )
 
@@ -320,8 +320,8 @@ export const TcyView = () => {
         activeTab === TcyOperation.Stake
           ? maxAmountToStake
           : activeTab === TcyOperation.Unstake
-          ? maxAmountToUnstake
-          : ZERO_BASE_AMOUNT
+            ? maxAmountToUnstake
+            : ZERO_BASE_AMOUNT
 
       return validateTxAmountInput({
         input: value,
@@ -761,10 +761,10 @@ export const TcyView = () => {
 
       <AssetsNav />
 
-      <div className="relative grid grid-cols-8 gap-2 bg-bg1 dark:bg-bg1d rounded-b-lg space-x-0 space-y-2 sm:space-x-2 sm:space-y-0 py-8 px-4 sm:px-8">
+      <div className="relative grid grid-cols-8 gap-2 space-x-0 space-y-2 rounded-b-lg bg-bg1 px-4 py-8 dark:bg-bg1d sm:space-x-2 sm:space-y-0 sm:px-8">
         <div className="col-span-8 md:col-span-5">
-          <div className="flex flex-col py-4 w-full border border-solid border-gray0 dark:border-gray0d rounded-lg ">
-            <div className="flex flex-row space-x-4 px-4 pb-4 mb-4 border-b border-solid border-gray0 dark:border-gray0d">
+          <div className="flex w-full flex-col rounded-lg border border-solid border-gray0 py-4 dark:border-gray0d">
+            <div className="mb-4 flex flex-row space-x-4 border-b border-solid border-gray0 px-4 pb-4 dark:border-gray0d">
               {tcyTabs.map((tab) => (
                 <div key={tab} className="cursor-pointer" onClick={() => setActiveTab(tab)}>
                   <span
@@ -777,33 +777,33 @@ export const TcyView = () => {
             <div className="flex flex-col px-4">
               {activeTab === TcyOperation.Claim && (
                 <div>
-                  <span className="text-text2 dark:text-text2d text-16">
+                  <span className="text-16 text-text2 dark:text-text2d">
                     {intl.formatMessage({ id: 'tcy.claimNotice' })}
                   </span>
                   <div className="mt-4">
                     {RD.fold<Error, TcyClaim[], JSX.Element>(
                       () => (
-                        <div className="flex flex-col items-center w-full p-4 space-y-2">
-                          <ArrowPathIcon className="animate-spin w-8 h-8" />
-                          <span className="text-text2 dark:text-text2d px-4">Loading claims...</span>
+                        <div className="flex w-full flex-col items-center space-y-2 p-4">
+                          <ArrowPathIcon className="h-8 w-8 animate-spin" />
+                          <span className="px-4 text-text2 dark:text-text2d">Loading claims...</span>
                         </div>
                       ),
                       () => (
-                        <div className="flex flex-col items-center w-full p-4 space-y-2">
-                          <ArrowPathIcon className="animate-spin w-8 h-8" />
-                          <span className="text-text2 dark:text-text2d px-4">Fetching claims...</span>
+                        <div className="flex w-full flex-col items-center space-y-2 p-4">
+                          <ArrowPathIcon className="h-8 w-8 animate-spin" />
+                          <span className="px-4 text-text2 dark:text-text2d">Fetching claims...</span>
                         </div>
                       ),
                       () => (
-                        <div className="flex flex-col items-center w-full border border-solid border-warning0 dark:border-warning0d bg-warning0/5 dark:bg-warning0d/5 rounded-lg p-4 space-y-2">
-                          <ArchiveBoxXMarkIcon className="text-warning0 dark:text-warning0d w-8 h-8" />
-                          <span className="text-text2 dark:text-text2d px-4">Nothing to claim</span>
+                        <div className="flex w-full flex-col items-center space-y-2 rounded-lg border border-solid border-warning0 bg-warning0/5 p-4 dark:border-warning0d dark:bg-warning0d/5">
+                          <ArchiveBoxXMarkIcon className="h-8 w-8 text-warning0 dark:text-warning0d" />
+                          <span className="px-4 text-text2 dark:text-text2d">Nothing to claim</span>
                         </div>
                       ),
                       (claims) => (
                         <div>
                           {claims.length === 0 ? (
-                            <span className="text-text2 dark:text-text2d p-4">No claims available</span>
+                            <span className="p-4 text-text2 dark:text-text2d">No claims available</span>
                           ) : (
                             claims.map((tcyData, index) => (
                               <div
@@ -835,7 +835,7 @@ export const TcyView = () => {
                                   </div>
                                 </div>
                                 <FlatButton
-                                  className="p-2 bg-turquoise text-white cursor-pointer rounded-lg text-11 uppercase"
+                                  className="cursor-pointer rounded-lg bg-turquoise p-2 text-11 uppercase text-white"
                                   onClick={() =>
                                     handleClaim({
                                       asset: tcyData.asset,
@@ -859,10 +859,10 @@ export const TcyView = () => {
               )}
               {activeTab === TcyOperation.Stake && (
                 <div className="flex flex-col space-y-2">
-                  <span className="text-text2 dark:text-text2d text-16">
+                  <span className="text-16 text-text2 dark:text-text2d">
                     {intl.formatMessage({ id: 'tcy.stakeNotice' })}
                   </span>
-                  <div className="flex items-center justify-between rounded-lg py-2 px-4 border border-gray0 dark:border-gray0d">
+                  <div className="flex items-center justify-between rounded-lg border border-gray0 px-4 py-2 dark:border-gray0d">
                     <div className="flex flex-col">
                       <InputBigNumber
                         className="w-full !px-0 leading-none text-text0 !opacity-100 dark:text-text0d"
@@ -924,10 +924,10 @@ export const TcyView = () => {
               )}
               {activeTab === TcyOperation.Unstake && (
                 <div className="flex flex-col space-y-2">
-                  <span className="text-text2 dark:text-text2d text-16">
+                  <span className="text-16 text-text2 dark:text-text2d">
                     {intl.formatMessage({ id: 'tcy.unstakeNotice' })}
                   </span>
-                  <div className="flex items-center justify-between rounded-lg py-2 px-4 border border-gray0 dark:border-gray0d">
+                  <div className="flex items-center justify-between rounded-lg border border-gray0 px-4 py-2 dark:border-gray0d">
                     <div className="flex flex-col">
                       <InputBigNumber
                         value={baseToAsset(_amountToSend).amount()}
@@ -989,8 +989,8 @@ export const TcyView = () => {
           </div>
         </div>
         <div className="col-span-8 md:col-span-3">
-          <div className="flex flex-col py-4 w-full border border-solid border-gray0 dark:border-gray0d rounded-lg">
-            <div className="flex flex-row space-x-2 px-4 pb-4 mb-4 border-b border-solid border-gray0 dark:border-gray0d">
+          <div className="flex w-full flex-col rounded-lg border border-solid border-gray0 py-4 dark:border-gray0d">
+            <div className="mb-4 flex flex-row space-x-2 border-b border-solid border-gray0 px-4 pb-4 dark:border-gray0d">
               <span className="text-16 text-text2 dark:text-text2d">{intl.formatMessage({ id: 'tcy.status' })}</span>
             </div>
 
@@ -1000,7 +1000,7 @@ export const TcyView = () => {
                   {intl.formatMessage({ id: 'tcy.stakedAmount' })}
                 </Label>
                 <Tooltip title={intl.formatMessage({ id: 'tcy.stakedAmountTooltip' })}>
-                  <InformationCircleIcon className="cursor-pointer text-turquoise w-4 h-4" />
+                  <InformationCircleIcon className="h-4 w-4 cursor-pointer text-turquoise" />
                 </Tooltip>
               </div>
               <Label size="large">
@@ -1021,7 +1021,7 @@ export const TcyView = () => {
                   Wallet Balance
                 </Label>
                 <Tooltip title={intl.formatMessage({ id: 'tcy.walletBalanceTooltip' })}>
-                  <InformationCircleIcon className="cursor-pointer text-turquoise w-4 h-4" />
+                  <InformationCircleIcon className="h-4 w-4 cursor-pointer text-turquoise" />
                 </Tooltip>
               </div>
 

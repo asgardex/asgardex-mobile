@@ -65,9 +65,9 @@ export const Button: React.ForwardRefExoticComponent<ButtonProps> = React.forwar
       <HeadlessButton
         ref={ref}
         className={clsx(
-          'btn-wrapper flex justify-around items-center uppercase',
+          'btn-wrapper flex items-center justify-around uppercase',
           round === 'true' ? 'rounded-full' : '',
-          'disabled:opacity-50 disabled:cursor-not-allowed',
+          'disabled:cursor-not-allowed disabled:opacity-50',
           textClasses[sizevalue],
           sizeClasses[sizevalue],
           colorClasses[color],
@@ -77,7 +77,7 @@ export const Button: React.ForwardRefExoticComponent<ButtonProps> = React.forwar
           className
         )}
         {...otherProps}>
-        {loading ? <LoadingIcon className="w-4 h-4 animate-spin group-hover:opacity-70" /> : children}
+        {loading ? <LoadingIcon className="h-4 w-4 animate-spin group-hover:opacity-70" /> : children}
       </HeadlessButton>
     )
   }

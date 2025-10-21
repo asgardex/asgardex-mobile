@@ -74,10 +74,10 @@ export const Fees = ({ fees, reloadFees, disabled = false, className }: Props) =
   const isLoading = RD.isPending(fees)
 
   return (
-    <div className={clsx('flex items-center text-text0 dark:text-text0d space-x-2', className)}>
+    <div className={clsx('flex items-center space-x-2 text-text0 dark:text-text0d', className)}>
       {reloadFees && (
         <Button
-          className={clsx('!min-w-0 flex items-center justify-center')}
+          className={clsx('flex !min-w-0 items-center justify-center')}
           typevalue="outline"
           round="true"
           disabled={isLoading || disabled}
@@ -85,7 +85,7 @@ export const Fees = ({ fees, reloadFees, disabled = false, className }: Props) =
             e.preventDefault()
             reloadFees()
           }}>
-          <ArrowPathIcon className={clsx('w-4 h-4', isLoading && 'animate-spin')} />
+          <ArrowPathIcon className={clsx('h-4 w-4', isLoading && 'animate-spin')} />
         </Button>
       )}
       <Label color={isError ? 'error' : isLoading ? 'input' : 'normal'} textTransform="uppercase">

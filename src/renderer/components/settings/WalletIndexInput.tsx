@@ -25,8 +25,8 @@ export const WalletIndexInput = ({ value, className = '', onChange, onPressEnter
       inputMode="numeric"
       min={0}
       className={clsx(
-        'rounded-lg pl-2 pr-0 py-0.5 bg-bg1 dark:bg-bg1d text-text2 dark:text-text2d border border-bg2 dark:border-bg2d',
-        'focus:outline-none focus:ring-none',
+        'rounded-lg border border-bg2 bg-bg1 py-0.5 pl-2 pr-0 text-text2 dark:border-bg2d dark:bg-bg1d dark:text-text2d',
+        'focus:ring-none focus:outline-none',
         className
       )}
       value={displayValue}

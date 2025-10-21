@@ -34,7 +34,7 @@ export const Tabs = ({
                   textTransform="uppercase">
                   {label}
                 </Label>
-                {selected && <div className="w-full bg-turquoise h-0.5" />}
+                {selected && <div className="h-0.5 w-full bg-turquoise" />}
               </div>
             )}
           </Tab>

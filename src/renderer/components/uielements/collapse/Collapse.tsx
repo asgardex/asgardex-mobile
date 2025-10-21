@@ -19,7 +19,7 @@ export const Collapse = ({ className, header, children, isOpen, onToggle }: Prop
       {({ open }) => (
         <>
           <DisclosureButton
-            className="flex cursor-pointer flex-row items-center justify-between rounded-lg py-2 px-4"
+            className="flex cursor-pointer flex-row items-center justify-between rounded-lg px-4 py-2"
             onClick={onToggle}>
             {header}
             <ChevronDownIcon className={clsx('size-5 text-turquoise', { 'rotate-180': open })} />

@@ -85,7 +85,7 @@ export const AssetsNav = (): JSX.Element => {
 
   return (
     <nav className="w-full">
-      <ul className="hidden md:flex items-center justify-center bg-bg0 dark:bg-bg0d rounded-t-lg gap-2 border-b border-gray0 dark:border-gray0d px-2 mb-0">
+      <ul className="mb-0 hidden items-center justify-center gap-2 rounded-t-lg border-b border-gray0 bg-bg0 px-2 dark:border-gray0d dark:bg-bg0d md:flex">
         {menuItems.map(({ key, label, path }) => {
           const isActive = key === activeMenu
 
@@ -94,11 +94,11 @@ export const AssetsNav = (): JSX.Element => {
               <Link
                 to={path}
                 className={clsx(
-                  'flex items-center gap-2 px-3 py-4 text-sm font-bold rounded-t-md',
-                  'font-main text-16 uppercase border-b-2',
+                  'flex items-center gap-2 rounded-t-md px-3 py-4 text-sm font-bold',
+                  'border-b-2 font-main text-16 uppercase',
                   isActive
-                    ? 'text-turquoise border-turquoise'
-                    : 'text-text0 border-transparent dark:text-text0d hover:text-turquoise'
+                    ? 'border-turquoise text-turquoise'
+                    : 'border-transparent text-text0 hover:text-turquoise dark:text-text0d'
                 )}>
                 {label}
               </Link>
@@ -111,7 +111,7 @@ export const AssetsNav = (): JSX.Element => {
         <Menu as="div" className="relative inline-block w-full">
           <MenuButton
             className={clsx(
-              'flex w-full items-center justify-between rounded-t-md border-b border-gray0 dark:border-gray0d p-3',
+              'flex w-full items-center justify-between rounded-t-md border-b border-gray0 p-3 dark:border-gray0d',
               'bg-bg0 dark:bg-bg0d'
             )}>
             <Label size="big" textTransform="uppercase">
@@ -132,7 +132,7 @@ export const AssetsNav = (): JSX.Element => {
               className={clsx(
                 'absolute z-10 mt-1 w-[--button-width] min-w-[12rem] rounded-md shadow-lg',
                 'border border-gray0 dark:border-gray0d',
-                'bg-bg0 dark:bg-bg0d focus:outline-none'
+                'bg-bg0 focus:outline-none dark:bg-bg0d'
               )}>
               <div className="py-1">
                 {menuItems.map(({ key, label, path }) => {

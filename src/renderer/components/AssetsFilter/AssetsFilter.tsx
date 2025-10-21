@@ -97,7 +97,7 @@ export const AssetsFilter = ({ poolFilters, className, activeFilter: oActiveFilt
       return (
         filterLabel && (
           <FilterButton key={filter} active={isActive} onClick={() => buttonClickHandler(filter)}>
-            {filter !== '__watched__' ? filterLabel : <StarIcon className="w-4 h-4" />}
+            {filter !== '__watched__' ? filterLabel : <StarIcon className="h-4 w-4" />}
           </FilterButton>
         )
       )

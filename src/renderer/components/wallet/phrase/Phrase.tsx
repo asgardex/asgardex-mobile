@@ -12,20 +12,20 @@ type Props = {
 
 export const Phrase = ({ words, onWordClick = () => {}, readOnly, wordIcon = null }: Props) => {
   return (
-    <div className="grid grid-cols-3 rounded-xl p-2 gap-1 min-h-[142px] border border-solid border-gray0 dark:border-gray0d">
+    <div className="grid min-h-[142px] grid-cols-3 gap-1 rounded-xl border border-solid border-gray0 p-2 dark:border-gray0d">
       {words.map((word, index) => (
         <div
           key={word._id}
-          className="flex items-center justify-between bg-turquoise/10 px-2 py-1 rounded-full max-h-7"
+          className="flex max-h-7 items-center justify-between rounded-full bg-turquoise/10 px-2 py-1"
           onClick={readOnly ? undefined : () => onWordClick(word._id)}>
-          <span key={word._id} className="text-sm text-text0 dark:text-text0d font-bold">
+          <span key={word._id} className="text-sm font-bold text-text0 dark:text-text0d">
             {index + 1}. {word.text}
           </span>
           {wordIcon}
         </div>
       ))}
       {Array.from({ length: 12 - words.length }, (_, i) => i).map((_, index) => (
-        <div key={index} className="bg-turquoise/10 px-2 py-1 rounded-full max-h-7 h-7" />
+        <div key={index} className="h-7 max-h-7 rounded-full bg-turquoise/10 px-2 py-1" />
       ))}
     </div>
   )

@@ -56,7 +56,7 @@ export const TxType = ({ type, showTypeIcon, className }: Props) => {
 
   return (
     <div className={clsx('flex items-center', className)}>
-      {showTypeIcon && <div className="w-6 h-6 flex items-center justify-center">{getIcon(type)}</div>}
+      {showTypeIcon && <div className="flex h-6 w-6 items-center justify-center">{getIcon(type)}</div>}
       <Label className="ml-1 !w-auto" textTransform="uppercase">
         {getTxTypeI18n(type, intl)}
       </Label>

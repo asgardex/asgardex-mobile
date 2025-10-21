@@ -39,7 +39,7 @@ export const QRCodeModal = ({
       onOk={() => onOk()}
       okButtonProps={{ autoFocus: true }}>
       <QRCode text={address} qrError={intl.formatMessage({ id: 'wallet.receive.address.errorQR' })} />
-      <div key={'address info'} className="flex flex-row items-center flex-grow mt-5">
+      <div key={'address info'} className="mt-5 flex flex-grow flex-row items-center">
         <AddressEllipsis
           enableCopy
           network={network}

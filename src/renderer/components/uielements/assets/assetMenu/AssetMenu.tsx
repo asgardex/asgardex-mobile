@@ -110,7 +110,7 @@ export const AssetMenu = (props: Props): JSX.Element => {
         NEA.fromArray,
         O.fold(
           () => (
-            <div className="flex h-full w-[calc(100%-32px)] flex-col items-center justify-center px-20px py-50px border border-solid border-gray0 dark:border-gray0d rounded-lg p-1">
+            <div className="flex h-full w-[calc(100%-32px)] flex-col items-center justify-center rounded-lg border border-solid border-gray0 p-1 px-20px py-50px dark:border-gray0d">
               <ArchiveBoxXMarkIcon className="h-[75px] w-[75px] text-gray0 dark:text-gray0d" />
               <h2 className="mb-10px text-[14px] uppercase text-gray1 dark:text-gray1d">
                 {intl.formatMessage({ id: 'common.noResult' })}
@@ -118,14 +118,14 @@ export const AssetMenu = (props: Props): JSX.Element => {
             </div>
           ),
           (assets) => (
-            <div className="w-[calc(100%-32px)] overflow-y-auto border border-solid border-gray0 dark:border-gray0d rounded-lg p-1">
+            <div className="w-[calc(100%-32px)] overflow-y-auto rounded-lg border border-solid border-gray0 p-1 dark:border-gray0d">
               {FP.pipe(
                 assets,
                 NEA.map((assetInList) => {
                   const selected = eqAsset.equals(asset, assetInList)
                   return (
                     <BaseButton
-                      className="w-full !justify-between !pr-20px hover:bg-gray0 hover:dark:bg-gray0d rounded-lg"
+                      className="w-full !justify-between rounded-lg !pr-20px hover:bg-gray0 hover:dark:bg-gray0d"
                       key={assetToString(assetInList)}
                       onClick={() => handleChangeAsset(assetInList)}
                       disabled={selected}>

@@ -28,7 +28,7 @@ const AllProtocols: Protocol[] = ['Thorchain', 'Mayachain', 'Chainflip']
 const Section = ({ title, subtitle, className, children }: SectionProps) => (
   <div
     className={clsx(
-      'flex w-full items-start justify-between py-6 px-4',
+      'flex w-full items-start justify-between px-4 py-6',
       'border-b border-solid border-gray0 last:border-none dark:border-gray0d',
       className
     )}>
@@ -70,7 +70,7 @@ export const AppDexSettingsView = (): JSX.Element => {
   const slipMenu = useCallback((onClick: (slip: SlipTolerance) => void, isStreaming: boolean) => {
     const slipToleranceOptions: SlipTolerance[] = isStreaming ? [1, 3, 5, 10, 15, 20] : [0.5, 1, 3, 5, 10, 15, 20]
     return slipToleranceOptions.map((slip) => (
-      <div key={slip} className="flex items-center space-x-4 px-2 py-1 min-w-[102px]" onClick={() => onClick(slip)}>
+      <div key={slip} className="flex min-w-[102px] items-center space-x-4 px-2 py-1" onClick={() => onClick(slip)}>
         <div className="flex flex-col">
           <Label
             className="pr-5 tracking-tight"
@@ -98,11 +98,11 @@ export const AppDexSettingsView = (): JSX.Element => {
       <Section
         title={intl.formatMessage({ id: 'settings.protocols.title' })}
         subtitle={intl.formatMessage({ id: 'settings.protocols.subtitle' })}>
-        <div className="flex flex-col w-full gap-2">
+        <div className="flex w-full flex-col gap-2">
           {AllProtocols.map((protocol) => (
             <div key={protocol} className="flex items-center justify-between">
-              <div className="flex items-center gap-2 mr-4">
-                <ProviderIcon className="w-8 h-8" protocol={protocol} />
+              <div className="mr-4 flex items-center gap-2">
+                <ProviderIcon className="h-8 w-8" protocol={protocol} />
                 <span className="text-text2 dark:text-text2d">{protocol}</span>
               </div>
               <SwitchButton
@@ -115,7 +115,7 @@ export const AppDexSettingsView = (): JSX.Element => {
       </Section>
       <div
         className={clsx(
-          'flex flex-col w-full py-6 px-4',
+          'flex w-full flex-col px-4 py-6',
           'border-b border-solid border-gray0 last:border-none dark:border-gray0d'
         )}>
         <div className="flex flex-col">
@@ -126,9 +126,9 @@ export const AppDexSettingsView = (): JSX.Element => {
             <span className="font-main text-gray1 dark:text-gray1d">Streaming Swaps</span>
             <Dropdown
               trigger={
-                <div className="flex items-center justify-between px-2 py-1 min-w-[120px] border border-solid border-gray0 dark:border-gray0d rounded-md">
+                <div className="flex min-w-[120px] items-center justify-between rounded-md border border-solid border-gray0 px-2 py-1 dark:border-gray0d">
                   <Label>{streamingSlipTolerance} %</Label>
-                  <ChevronDownIcon className="w-4 h-4 text-turquoise" />
+                  <ChevronDownIcon className="h-4 w-4 text-turquoise" />
                 </div>
               }
               options={slipMenu((slip) => {
@@ -142,9 +142,9 @@ export const AppDexSettingsView = (): JSX.Element => {
             <Dropdown
               anchor={{ to: 'bottom', gap: 4, padding: 8 }}
               trigger={
-                <div className="flex items-center justify-between px-2 py-1 min-w-[120px] border border-solid border-gray0 dark:border-gray0d rounded-md">
+                <div className="flex min-w-[120px] items-center justify-between rounded-md border border-solid border-gray0 px-2 py-1 dark:border-gray0d">
                   <Label>{tradeSlipTolerance} %</Label>
-                  <ChevronDownIcon className="w-4 h-4 text-turquoise" />
+                  <ChevronDownIcon className="h-4 w-4 text-turquoise" />
                 </div>
               }
               options={slipMenu((slip) => {

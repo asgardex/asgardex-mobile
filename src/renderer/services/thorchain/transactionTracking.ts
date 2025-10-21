@@ -74,7 +74,7 @@ export const createTransactionTrackingService = (
     // Check if outbound is required - if outboundSigned.completed is undefined,
     // it means this is not an L1 swap and no outbound transaction is needed
     const outboundRequired = stages.outboundSigned.completed !== undefined
-    const outboundComplete = outboundRequired ? stages.outboundSigned.completed ?? false : true
+    const outboundComplete = outboundRequired ? (stages.outboundSigned.completed ?? false) : true
 
     const allStagesComplete = basicStagesComplete && outboundComplete
 

@@ -1100,10 +1100,10 @@ export const SymDeposit = (props: Props) => {
       !hasAssetBalance && !hasDexAssetBalance
         ? noRuneAndAssetBalancesMsg
         : // no rune balance
-        !hasDexAssetBalance
-        ? noRuneBalancesMsg
-        : // no balance of pool asset
-          noAssetBalancesMsg
+          !hasDexAssetBalance
+          ? noRuneBalancesMsg
+          : // no balance of pool asset
+            noAssetBalancesMsg
 
     const title = intl.formatMessage({ id: 'deposit.add.error.nobalances' })
 
@@ -2196,7 +2196,7 @@ export const SymDeposit = (props: Props) => {
                   <BaseButton
                     size="small"
                     className="group rounded-full border border-solid border-turquoise bg-bg0 !p-10px hover:shadow-full dark:bg-bg0d dark:hover:shadow-fulld">
-                    <PlusIcon className="ease h-[40px] w-[40px] text-turquoise " />
+                    <PlusIcon className="ease h-[40px] w-[40px] text-turquoise" />
                   </BaseButton>
                 </div>
               </div>
@@ -2424,8 +2424,8 @@ export const SymDeposit = (props: Props) => {
                 checkIsApproved
                   ? intl.formatMessage({ id: 'common.approve.checking' }, { asset: asset.ticker })
                   : walletBalancesLoading
-                  ? intl.formatMessage({ id: 'common.balance.loading' })
-                  : undefined
+                    ? intl.formatMessage({ id: 'common.balance.loading' })
+                    : undefined
               }
             />
           )}

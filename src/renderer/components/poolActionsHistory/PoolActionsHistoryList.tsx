@@ -54,8 +54,8 @@ export const PoolActionsHistoryList = ({
               <button
                 key={id}
                 onClick={() => goToTx(id)}
-                className="inline-block min-w-0 p-0 bg-transparent border-0 cursor-pointer hover:opacity-70">
-                <ArrowUpIcon className="rotate-45 stroke-turquoise w-4 h-4" />
+                className="inline-block min-w-0 cursor-pointer border-0 bg-transparent p-0 hover:opacity-70">
+                <ArrowUpIcon className="h-4 w-4 rotate-45 stroke-turquoise" />
               </button>
             )),
             O.getOrElse(() => <></>)
@@ -66,7 +66,7 @@ export const PoolActionsHistoryList = ({
       return (
         <div
           key={H.getRowKey(action)}
-          className="flex flex-col p-2 border-t-0 first:border-t last:border-b-0 border-b border-solid border-gray0/40 dark:border-gray0d/40">
+          className="flex flex-col border-b border-t-0 border-solid border-gray0/40 p-2 first:border-t last:border-b-0 dark:border-gray0d/40">
           <div className="flex items-center justify-between">
             <TxType className="mr-2" type={action.type} showTypeIcon />
             {titleExtra}

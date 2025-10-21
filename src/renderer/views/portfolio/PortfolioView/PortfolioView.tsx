@@ -80,7 +80,7 @@ const CardItem = ({
   }, [route, navigate])
 
   return (
-    <div className="rounded-lg border border-l-4 border-solid border-gray0 !border-l-turquoise py-2 px-4 dark:border-gray0d">
+    <div className="rounded-lg border border-l-4 border-solid border-gray0 !border-l-turquoise px-4 py-2 dark:border-gray0d">
       <div className="flex w-full items-center justify-between">
         <div className="text-[13px] text-text2 dark:text-text2d">{title}</div>
         <div className="cursor-pointer text-[13px] text-turquoise" onClick={handleManage}>
@@ -203,17 +203,23 @@ export const PortfolioView = (): JSX.Element => {
     const calculateTotalBondThor = (nodes: NodeInfo[]) => {
       const walletAddressSet = new Set(walletAddresses.THOR.map((info) => info.address.toLowerCase()))
 
-      return nodes.reduce((acc, node) => {
-        const totalBondProviderAmount = node.bondProviders.providers.reduce((providerSum, provider) => {
-          const normalizedAddress = provider.bondAddress.toLowerCase()
-          if (walletAddressSet.has(normalizedAddress)) {
-            return providerSum.plus(provider.bond) // Sum THORChain provider bond (BaseAmount)
-          }
-          return providerSum
-        }, assetToBase(assetAmount(0)))
+      return nodes.reduce(
+        (acc, node) => {
+          const totalBondProviderAmount = node.bondProviders.providers.reduce(
+            (providerSum, provider) => {
+              const normalizedAddress = provider.bondAddress.toLowerCase()
+              if (walletAddressSet.has(normalizedAddress)) {
+                return providerSum.plus(provider.bond) // Sum THORChain provider bond (BaseAmount)
+              }
+              return providerSum
+            },
+            assetToBase(assetAmount(0))
+          )
 
-        return acc.plus(totalBondProviderAmount)
-      }, assetToBase(assetAmount(0)))
+          return acc.plus(totalBondProviderAmount)
+        },
+        assetToBase(assetAmount(0))
+      )
     }
 
     return FP.pipe(
@@ -245,21 +251,27 @@ export const PortfolioView = (): JSX.Element => {
     const calculateTotalBondMaya = (nodes: NodeInfoMaya[]) => {
       const walletAddressSet = new Set(walletAddresses.MAYA.map((info) => info.address.toLowerCase()))
 
-      return nodes.reduce((acc, node) => {
-        const totalBondProviderAmount = node.bondProviders.providers.reduce((providerSum, provider) => {
-          const normalizedAddress = provider.bondAddress.toLowerCase()
-          if (walletAddressSet.has(normalizedAddress)) {
-            const poolSum = Object.values(provider.pools).reduce(
-              (sum, amount) => sum.plus(baseAmount(amount.units, 8)), // Assuming 8 decimals; adjust as needed
-              assetToBase(assetAmount(0))
-            )
-            return providerSum.plus(poolSum)
-          }
-          return providerSum
-        }, assetToBase(assetAmount(0)))
+      return nodes.reduce(
+        (acc, node) => {
+          const totalBondProviderAmount = node.bondProviders.providers.reduce(
+            (providerSum, provider) => {
+              const normalizedAddress = provider.bondAddress.toLowerCase()
+              if (walletAddressSet.has(normalizedAddress)) {
+                const poolSum = Object.values(provider.pools).reduce(
+                  (sum, amount) => sum.plus(baseAmount(amount.units, 8)), // Assuming 8 decimals; adjust as needed
+                  assetToBase(assetAmount(0))
+                )
+                return providerSum.plus(poolSum)
+              }
+              return providerSum
+            },
+            assetToBase(assetAmount(0))
+          )
 
-        return acc.plus(totalBondProviderAmount)
-      }, assetToBase(assetAmount(0)))
+          return acc.plus(totalBondProviderAmount)
+        },
+        assetToBase(assetAmount(0))
+      )
     }
 
     return FP.pipe(
@@ -550,7 +562,7 @@ export const PortfolioView = (): JSX.Element => {
           <RadioGroup options={options} activeIndex={activeIndex} onChange={setActiveIndex} />
         </div>
         <div className="flex flex-col items-center justify-center">
-          <Label className="px-1 text-[9px] uppercase !w-auto sm:text-[11px] lg:text-[13px]" color="input">
+          <Label className="!w-auto px-1 text-[9px] uppercase sm:text-[11px] lg:text-[13px]" color="input">
             {intl.formatMessage({ id: 'wallet.balance.total.portfolio' })}
           </Label>
           <div className="mb-4 !text-[28px] text-text2 dark:text-text2d">
