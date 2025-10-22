@@ -35,7 +35,7 @@ export const getAddress = async (
     return E.left({
       errorId: LedgerErrorId.GET_ADDRESS_FAILED,
       msg: `Could not get address from Ledger's DOGE app: ${
-        isError(error) ? error?.message ?? error.toString() : `${error}`
+        isError(error) ? (error?.message ?? error.toString()) : `${error}`
       }`
     })
   }
