@@ -37,7 +37,7 @@ export const Slider = ({
         defaultValue={defaultValue}
         disabled={disabled}
         className={clsx(
-          'w-full h-2 rounded-lg appearance-none cursor-pointer',
+          'h-2 w-full cursor-pointer appearance-none rounded-lg',
           error ? 'bg-error0/40' : 'bg-gray0 dark:bg-gray0d'
         )}
         onChange={(e) => onChange?.(parseInt(e.target.value))}
@@ -45,14 +45,14 @@ export const Slider = ({
         onTouchEnd={() => onAfterChange?.()}
       />
 
-      <div className="flex items-center justify-between mt-2">
+      <div className="mt-2 flex items-center justify-between">
         {labels.map((label, idx) => {
           const leftPercent = labels.length === 1 ? 0 : (idx / (labels.length - 1)) * 100
 
           return (
             <span
               key={idx}
-              className="text-sm text-gray-500 dark:text-gray-400 -bottom-6"
+              className="-bottom-6 text-sm text-gray-500 dark:text-gray-400"
               style={{ left: `${leftPercent}%` }}>
               {label}
             </span>

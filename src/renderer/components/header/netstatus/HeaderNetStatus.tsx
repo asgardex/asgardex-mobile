@@ -290,7 +290,7 @@ export const HeaderNetStatus = (props: Props) => {
       return (
         <div
           key={key}
-          className="flex items-center space-x-4 px-6 h-[60px] border-b border-solid border-bg2 dark:border-bg2d last:border-none">
+          className="flex h-[60px] items-center space-x-4 border-b border-solid border-bg2 px-6 last:border-none dark:border-bg2d">
           <ConnectionStatus color={color} />
           <div className="flex flex-col">
             <Label className="pr-5" color="normal" size="big" weight="bold" textTransform="uppercase" nowrap>

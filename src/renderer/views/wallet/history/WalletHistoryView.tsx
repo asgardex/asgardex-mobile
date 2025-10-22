@@ -192,7 +192,7 @@ export const WalletHistoryView = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-5">
+      <div className="mb-5 flex items-center justify-between">
         <ProtocolSwitch protocol={protocol} setProtocol={setProtocol} />
         <RefreshButton
           onClick={protocol === THORChain ? reloadHistory : reloadHistoryMaya}

@@ -67,7 +67,7 @@ const Route = ({
           </div>
         )}
         {quote.errors && quote.errors.length > 0 && (
-          <div className="mt-1 text-[11px] text-red-600 dark:text-red-400">
+          <div className="text-red-600 dark:text-red-400 mt-1 text-[11px]">
             {quote.errors.map((error, index) => (
               <span key={index}>
                 {error.includes('price limit')

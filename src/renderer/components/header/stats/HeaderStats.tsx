@@ -219,7 +219,7 @@ export const HeaderStats = (props: Props): JSX.Element => {
 
         {!isSmallMobileView && (
           <>
-            <div className="w-[1px] h-5 bg-gray2 dark:bg-gray2d" />
+            <div className="h-5 w-[1px] bg-gray2 dark:bg-gray2d" />
             <Label className="!w-auto" color="gray" textTransform="uppercase">
               {volume24PriceRuneLabel}
             </Label>

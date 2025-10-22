@@ -860,7 +860,7 @@ export const InteractFormMaya = (props: Props) => {
                 disabled={isLoading}
                 size="large"
               />
-              {errors.memo && <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.memo.message}</div>}
+              {errors.memo && <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.memo.message}</div>}
             </div>
             {/* Display example memos */}
             <div className="mt-4">
@@ -921,7 +921,7 @@ export const InteractFormMaya = (props: Props) => {
                 size="large"
               />
               {errors.mayaAddress && (
-                <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.mayaAddress.message}</div>
+                <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.mayaAddress.message}</div>
               )}
             </div>
           </div>
@@ -948,7 +948,7 @@ export const InteractFormMaya = (props: Props) => {
                   size="large"
                 />
                 {errors.providerAddress && (
-                  <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.providerAddress.message}</div>
+                  <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.providerAddress.message}</div>
                 )}
               </div>
             </div>
@@ -966,7 +966,7 @@ export const InteractFormMaya = (props: Props) => {
                   size="large"
                 />
                 {errors.operatorFee && (
-                  <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.operatorFee.message}</div>
+                  <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.operatorFee.message}</div>
                 )}
               </div>
             </div>
@@ -1004,7 +1004,7 @@ export const InteractFormMaya = (props: Props) => {
                 )}
               />
               {errors.amount && (
-                <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.amount.message}</div>
+                <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.amount.message}</div>
               )}
             </div>
             {/* max. amount button (BOND/CUSTOM only) */}
@@ -1073,7 +1073,7 @@ export const InteractFormMaya = (props: Props) => {
                 </div>
               </div>
             ) : (
-              <div className="ml-[-2px] mb-2 flex w-full justify-between font-mainBold text-[14px] text-gray2 dark:text-gray2d">
+              <div className="mb-2 ml-[-2px] flex w-full justify-between font-mainBold text-[14px] text-gray2 dark:text-gray2d">
                 {intl.formatMessage({ id: 'deposit.share.units' })}
                 <div className="truncate pl-10px font-main text-[12px]">
                   {intl.formatMessage({ id: 'common.noResult' })}
@@ -1116,7 +1116,7 @@ export const InteractFormMaya = (props: Props) => {
                 size="large"
               />
               {errors.mayaname && (
-                <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.mayaname.message}</div>
+                <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.mayaname.message}</div>
               )}
             </div>
             {O.isSome(oMayaname) && !mayanameAvailable && !isOwner && renderMayanameError}
@@ -1173,7 +1173,7 @@ export const InteractFormMaya = (props: Props) => {
                     )}
                   />
                   {errors.aliasChain && (
-                    <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.aliasChain.message}</div>
+                    <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.aliasChain.message}</div>
                   )}
                 </div>
                 <Label color="input" size="big" textTransform="uppercase">
@@ -1189,7 +1189,7 @@ export const InteractFormMaya = (props: Props) => {
                     size="large"
                   />
                   {errors.aliasAddress && (
-                    <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.aliasAddress.message}</div>
+                    <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.aliasAddress.message}</div>
                   )}
                 </div>
                 <Label color="input" size="big" textTransform="uppercase">
@@ -1222,7 +1222,7 @@ export const InteractFormMaya = (props: Props) => {
                     )}
                   />
                   {errors.expiry && (
-                    <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.expiry.message}</div>
+                    <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.expiry.message}</div>
                   )}
                 </div>
               </>
@@ -1253,7 +1253,7 @@ export const InteractFormMaya = (props: Props) => {
                     )}
                   />
                   {errors.chain && (
-                    <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.chain.message}</div>
+                    <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.chain.message}</div>
                   )}
                 </div>
                 <Label color="input" size="big" textTransform="uppercase">
@@ -1269,7 +1269,7 @@ export const InteractFormMaya = (props: Props) => {
                     size="large"
                   />
                   {errors.chainAddress && (
-                    <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.chainAddress.message}</div>
+                    <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.chainAddress.message}</div>
                   )}
                 </div>
                 <Label color="input" size="big" textTransform="uppercase">
@@ -1305,12 +1305,12 @@ export const InteractFormMaya = (props: Props) => {
                     )}
                   />
                   {errors.expiry && (
-                    <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.expiry.message}</div>
+                    <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.expiry.message}</div>
                   )}
                 </div>
               </>
             )}
-            <Fees className="pb-5 mt-10px" fees={mayaNamefees} disabled={isLoading} />
+            <Fees className="mt-10px pb-5" fees={mayaNamefees} disabled={isLoading} />
           </div>
         )}
       </div>
@@ -1346,7 +1346,7 @@ export const InteractFormMaya = (props: Props) => {
             {showDetails ? (
               <MagnifyingGlassMinusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
             ) : (
-              <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125 " />
+              <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
             )}
           </BaseButton>
           {showDetails && (
@@ -1515,7 +1515,7 @@ const PoolShareItem = ({
             placeholder="Enter percentage (0-100)"
           />
           {customPercentage && (parseFloat(customPercentage) <= 0 || parseFloat(customPercentage) > 100) && (
-            <div className="text-error0 dark:text-error0d text-sm mt-1">Percentage must be between 0 and 100</div>
+            <div className="mt-1 text-sm text-error0 dark:text-error0d">Percentage must be between 0 and 100</div>
           )}
         </div>
       )}

@@ -158,7 +158,7 @@ export const EditableAddress = ({
     return (
       <div className="w-full">
         <form className="flex w-full items-start" onSubmit={(e) => e.preventDefault()}>
-          <div className="flex flex-col w-full">
+          <div className="flex w-full flex-col">
             <Input
               className="!text-[16px] normal-case"
               color="primary"
@@ -170,7 +170,7 @@ export const EditableAddress = ({
               error={!!errors.recipient}
             />
             {errors.recipient && (
-              <span className="text-error0 dark:text-error0d text-xs mt-1">{errors.recipient.message}</span>
+              <span className="mt-1 text-xs text-error0 dark:text-error0d">{errors.recipient.message}</span>
             )}
           </div>
 

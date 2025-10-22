@@ -248,7 +248,7 @@ export const createTransactionService = (client$: Client$, network$: Network$): 
           RD.failure({
             errorId: ErrorId.APPROVE_LEDGER_TX,
             msg: `Approve Ledger ERC20 token failed. ${
-              isError(error) ? error?.message ?? error.toString() : error.toString()
+              isError(error) ? (error?.message ?? error.toString()) : error.toString()
             }`
           })
         )

@@ -40,7 +40,7 @@ type Props = {
 }
 
 const getWhitelistAssets = (
-  chain: typeof WhitelistChains[number],
+  chain: (typeof WhitelistChains)[number],
   searchQuery: string,
   checkIsActive: (asset: TokenAsset) => boolean
 ) => {
@@ -70,7 +70,7 @@ const getWhitelistAssets = (
 export const WhitelistModal = ({ open, onClose }: Props): JSX.Element => {
   const [page, setPage] = useState(1)
   const [searchValue, setSearchValue] = useState<string>(emptyString)
-  const [chain, setChain] = useState<typeof WhitelistChains[number]>(ETHChain)
+  const [chain, setChain] = useState<(typeof WhitelistChains)[number]>(ETHChain)
 
   const inputSearchRef = useRef(null)
   const intl = useIntl()
@@ -102,7 +102,7 @@ export const WhitelistModal = ({ open, onClose }: Props): JSX.Element => {
     setSearchValue(emptyString)
   }, [])
 
-  const changeChain = useCallback((chain: typeof WhitelistChains[number]) => {
+  const changeChain = useCallback((chain: (typeof WhitelistChains)[number]) => {
     setChain(chain)
     setPage(1)
   }, [])

@@ -5,7 +5,7 @@ const chainflip: ChainflipMessages = {
   'chainflip.status.receiving': 'Réception du dépôt',
   'chainflip.status.receiving.detail': 'Traitement de votre dépôt...',
   'chainflip.status.swapping': 'Échange',
-  'chainflip.status.swapping.detail': 'Exécution de l\'échange sur Chainflip...',
+  'chainflip.status.swapping.detail': "Exécution de l'échange sur Chainflip...",
   'chainflip.status.sending': 'Envoi',
   'chainflip.status.sending.detail': 'Préparation de la transaction de sortie...',
   'chainflip.status.sent': 'Envoyé',
@@ -21,7 +21,7 @@ const chainflip: ChainflipMessages = {
   'chainflip.field.amount': 'Montant:',
   'chainflip.field.time': 'Temps:',
   'chainflip.field.channelId': 'ID du canal:',
-  'chainflip.field.swapId': 'ID d\'échange:',
+  'chainflip.field.swapId': "ID d'échange:",
   'chainflip.field.depositTx': 'Tx de dépôt:',
   'chainflip.field.egressTx': 'Tx de sortie:'
 }

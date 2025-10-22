@@ -204,7 +204,7 @@ export const ActivePools = (): JSX.Element => {
         accessorKey: 'asset',
         header: intl.formatMessage({ id: 'common.pool' }),
         cell: ({ row }) => (
-          <div className="flex items-center w-full">
+          <div className="flex w-full items-center">
             <AssetData asset={row.original.asset} network={network} />
           </div>
         ),
@@ -313,7 +313,7 @@ export const ActivePools = (): JSX.Element => {
           <div className="flex items-center justify-center">
             <TextButton size={isDesktopView ? 'normal' : 'large'} onClick={refreshHandler}>
               <div className="flex items-center">
-                <ArrowPathIcon className={clsx('w-4 h-4', { 'mr-2': isDesktopView })} />
+                <ArrowPathIcon className={clsx('h-4 w-4', { 'mr-2': isDesktopView })} />
                 {isDesktopView && intl.formatMessage({ id: 'common.refresh' })}
               </div>
             </TextButton>

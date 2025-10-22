@@ -77,7 +77,7 @@ export const TransactionQuickDial = ({
     <div className={clsx('fixed bottom-4 right-4 z-50', className)}>
       <div
         className={clsx(
-          'relative w-14 h-14 rounded-full shadow-lg cursor-pointer',
+          'relative h-14 w-14 cursor-pointer rounded-full shadow-lg',
           'flex items-center justify-center',
           'bg-turquoise transition-all duration-300 ease-in-out'
         )}
@@ -85,8 +85,8 @@ export const TransactionQuickDial = ({
         onMouseDown={(e) => {
           e.stopPropagation()
         }}>
-        {isExpanded ? <XMarkIcon className="w-6 h-6 text-white" /> : <SwapIcon className="w-8 h-8 text-white" />}
-        <div className="flex items-center justify-center absolute -top-1 -right-1 w-5 h-5 bg-error0 rounded-full">
+        {isExpanded ? <XMarkIcon className="h-6 w-6 text-white" /> : <SwapIcon className="h-8 w-8 text-white" />}
+        <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-error0">
           <Label align="center" size="small">
             {activeTransactions.length}
           </Label>
@@ -98,16 +98,16 @@ export const TransactionQuickDial = ({
         <div
           className={clsx(
             'absolute bottom-16 right-0 w-80',
-            'bg-white dark:bg-bg1d rounded-lg shadow-xl border border-gray0 dark:border-gray0d',
+            'rounded-lg border border-gray0 bg-white shadow-xl dark:border-gray0d dark:bg-bg1d',
             'transition-all duration-200 ease-out',
-            'transform origin-bottom-right',
+            'origin-bottom-right transform',
             'z-40'
           )}>
           {/* Header */}
-          <div className="p-3 border-b border-gray0 dark:border-gray0d">
+          <div className="border-b border-gray0 p-3 dark:border-gray0d">
             <div className="flex items-center space-x-2">
               <div className="flex items-center -space-x-1">
-                <SwapIcon className="w-4 h-4 text-text0 dark:text-text0d" />
+                <SwapIcon className="h-4 w-4 text-text0 dark:text-text0d" />
               </div>
               <span className="text-sm font-medium text-text0 dark:text-text0d">
                 {intl.formatMessage({ id: 'common.transaction.tracking' })}
@@ -117,13 +117,13 @@ export const TransactionQuickDial = ({
 
           {/* Transaction List */}
           <div className="max-h-96 overflow-y-auto">
-            <div className="p-3 space-y-2">
-              <div className="text-xs font-medium text-text2 dark:text-text2d uppercase tracking-wide">
+            <div className="space-y-2 p-3">
+              <div className="text-xs font-medium uppercase tracking-wide text-text2 dark:text-text2d">
                 {intl.formatMessage({ id: 'common.transaction.active' })} ({activeTransactions.length})
               </div>
 
               {activeTransactions.map((transaction) => {
-                const protocolIcon = <ProviderIcon protocol={transaction.protocol} className="!w-4 !h-4" />
+                const protocolIcon = <ProviderIcon protocol={transaction.protocol} className="!h-4 !w-4" />
 
                 // Use appropriate component based on protocol
                 return transaction.protocol === 'Chainflip' ? (

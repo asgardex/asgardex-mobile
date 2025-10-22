@@ -34,18 +34,18 @@ export const AssetData = (props: Props): JSX.Element => {
   const intl = useIntl()
 
   return (
-    <div className={clsx('flex items-center flex-wrap py-1 mr-2 last:m-0', className)}>
-      <div className="flex items-center mr-2 py-[10px] relative">
+    <div className={clsx('mr-2 flex flex-wrap items-center py-1 last:m-0', className)}>
+      <div className="relative mr-2 flex items-center py-[10px]">
         <AssetIcon asset={asset} size={size} network={network} />
       </div>
       {!noTicker && (
         <div className="flex flex-col items-start">
-          <Label className="h-[18px] pr-4 pl-2 leading-[18px]" size="xbig" textTransform="uppercase" weight="bold">
+          <Label className="h-[18px] pl-2 pr-4 leading-[18px]" size="xbig" textTransform="uppercase" weight="bold">
             {asset.ticker}
           </Label>
           <div className="flex items-center">
             {!isSynthAsset(asset) && !isSecuredAsset(asset) && (
-              <Label className="h-[18px] pr-4 pl-2 leading-[18px] font-medium" color="input">
+              <Label className="h-[18px] pl-2 pr-4 font-medium leading-[18px]" color="input">
                 {asset.chain}
               </Label>
             )}
@@ -53,12 +53,12 @@ export const AssetData = (props: Props): JSX.Element => {
             {isSecuredAsset(asset) && <AssetSecuredLabel>secured</AssetSecuredLabel>}
           </div>
           {walletType && isLedgerWallet(walletType) && (
-            <WalletTypeLabel className="text-[8px] leading-3 ml-[10px]">
+            <WalletTypeLabel className="ml-[10px] text-[8px] leading-3">
               {walletTypeToI18n(walletType, intl)}
             </WalletTypeLabel>
           )}
           {walletType && isKeystoreWallet(walletType) && (
-            <WalletTypeLabel className="text-[8px] leading-3 ml-[10px]">
+            <WalletTypeLabel className="ml-[10px] text-[8px] leading-3">
               {walletTypeToI18n(walletType, intl)}
             </WalletTypeLabel>
           )}

@@ -81,13 +81,13 @@ export const Table = <T extends object>({
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className="h-16 bg-bg1 dark:bg-bg1d border border-solid border-gray0/40 dark:border-gray0d/40"
+                  className="h-16 border border-solid border-gray0/40 bg-bg1 dark:border-gray0d/40 dark:bg-bg1d"
                   style={header.getSize() ? { width: header.getSize(), maxWidth: header.getSize() } : undefined}
                   onClick={header.column.getToggleSortingHandler()}>
                   {header.isPlaceholder ? null : (
                     <div
                       className={clsx(
-                        'flex items-center justify-center cursor-pointer px-2 space-x-2',
+                        'flex cursor-pointer items-center justify-center space-x-2 px-2',
                         header.column.columnDef.meta
                       )}>
                       {header.column.columnDef.header && (
@@ -99,13 +99,13 @@ export const Table = <T extends object>({
                         <div className="flex flex-col">
                           <ChevronUpIcon
                             className={clsx(
-                              'w-3 h-3',
+                              'h-3 w-3',
                               header.column.getIsSorted() === 'asc' ? 'text-turquoise' : 'text-gray1 dark:text-gray1d'
                             )}
                           />
                           <ChevronDownIcon
                             className={clsx(
-                              'w-3 h-3',
+                              'h-3 w-3',
                               header.column.getIsSorted() === 'desc' ? 'text-turquoise' : 'text-gray1 dark:text-gray1d'
                             )}
                           />
@@ -125,8 +125,8 @@ export const Table = <T extends object>({
             <td
               className="border border-solid border-gray0/40 dark:border-gray0d/40"
               colSpan={table.getAllLeafColumns().length}>
-              <div className="bg-bg1 dark:bg-bg1d min-h-28 w-full flex items-center justify-center space-x-2">
-                <SignalIcon className="w-6 h-6 animate-spin text-turquoise" />
+              <div className="flex min-h-28 w-full items-center justify-center space-x-2 bg-bg1 dark:bg-bg1d">
+                <SignalIcon className="h-6 w-6 animate-spin text-turquoise" />
                 <Label className="!w-auto" textTransform="uppercase">
                   {intl.formatMessage({ id: 'common.loading' })}
                 </Label>
@@ -148,7 +148,7 @@ export const Table = <T extends object>({
                     key={cell.id}
                     className={clsx(
                       hideVerticalBorder ? 'border-x-0 border-y' : 'border',
-                      'px-2 bg-bg1 dark:bg-bg1d h-16 border-solid border-gray0/40 dark:border-gray0d/40 text-center uppercase',
+                      'h-16 border-solid border-gray0/40 bg-bg1 px-2 text-center uppercase dark:border-gray0d/40 dark:bg-bg1d',
                       'group-last:first:rounded-bl-lg group-last:last:rounded-br-lg'
                       // ' group-last:border-b-0'
                     )}

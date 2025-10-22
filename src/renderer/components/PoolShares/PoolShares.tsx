@@ -51,7 +51,7 @@ export const PoolShares = ({ data, priceAsset, openShareInfo, loading, network, 
           return (
             <div className="flex items-center justify-between">
               <AssetData asset={asset} network={network} />
-              <Label className="hidden lg:flex bg-turquoise !w-auto px-1 rounded" color="white">
+              <Label className="hidden !w-auto rounded bg-turquoise px-1 lg:flex" color="white">
                 {type}
               </Label>
             </div>
@@ -159,13 +159,13 @@ export const PoolShares = ({ data, priceAsset, openShareInfo, loading, network, 
 
   const renderAnalyticsInfo = useMemo(() => {
     return network !== Network.Testnet ? (
-      <div className="w-full flex justify-end mt-2 mb-4">
-        <div className="bg-turquoise/20 px-2 py-1 rounded-lg">
-          <Button className="w-full !p-0 !justify-between" typevalue="transparent" onClick={openShareInfo}>
+      <div className="mb-4 mt-2 flex w-full justify-end">
+        <div className="rounded-lg bg-turquoise/20 px-2 py-1">
+          <Button className="w-full !justify-between !p-0" typevalue="transparent" onClick={openShareInfo}>
             <Label className="!w-auto" size="big" textTransform="uppercase">
               {intl.formatMessage({ id: 'common.analytics' })}
             </Label>
-            <ArrowUpIcon className="stroke-turquoise w-4 h-4 rotate-45" />
+            <ArrowUpIcon className="h-4 w-4 rotate-45 stroke-turquoise" />
           </Button>
           <Label color="input" size="normal" textTransform="uppercase">
             {protocolUrl}
@@ -178,7 +178,7 @@ export const PoolShares = ({ data, priceAsset, openShareInfo, loading, network, 
   }, [network, openShareInfo, intl, protocolUrl])
 
   return (
-    <div className="bg-bg0 dark:bg-bg0d px-2">
+    <div className="bg-bg0 px-2 dark:bg-bg0d">
       <Table loading={loading} columns={columns} data={data} />
       {renderAnalyticsInfo}
     </div>

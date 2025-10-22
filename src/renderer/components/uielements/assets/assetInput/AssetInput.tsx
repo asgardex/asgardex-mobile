@@ -121,7 +121,7 @@ export const AssetInput = (props: Props): JSX.Element => {
   }, [])
 
   return (
-    <div className={clsx('flex flex-col rounded-lg py-2 px-4', 'border border-gray0 dark:border-gray0d', className)}>
+    <div className={clsx('flex flex-col rounded-lg px-4 py-2', 'border border-gray0 dark:border-gray0d', className)}>
       <div className="flex items-center justify-between">
         {title && (
           <p
@@ -136,7 +136,7 @@ export const AssetInput = (props: Props): JSX.Element => {
           <div className="flex items-center space-x-1">
             {amountShortcuts.map(({ textId, amount }) => (
               <Button
-                className="!text-text0 dark:!text-text0d !border-turquoise hover:!bg-turquoise hover:!text-white rounded-lg"
+                className="rounded-lg !border-turquoise !text-text0 hover:!bg-turquoise hover:!text-white dark:!text-text0d"
                 key={textId}
                 typevalue="outline"
                 sizevalue="small"

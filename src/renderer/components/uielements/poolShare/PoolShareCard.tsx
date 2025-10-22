@@ -7,8 +7,8 @@ export type Props = {
 
 export const PoolShareCard = ({ title, children }: Props) => {
   return (
-    <div className="border border-solid border-gray0 dark:border-gray0d rounded-lg bg-bg1 dark:bg-bg1d p-4">
-      <Label className="text-[16px] px-4 pb-4" align="center" textTransform="uppercase" weight="bold">
+    <div className="rounded-lg border border-solid border-gray0 bg-bg1 p-4 dark:border-gray0d dark:bg-bg1d">
+      <Label className="px-4 pb-4 text-[16px]" align="center" textTransform="uppercase" weight="bold">
         {title}
       </Label>
       <div>{children}</div>

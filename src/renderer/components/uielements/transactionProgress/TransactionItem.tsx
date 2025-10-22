@@ -245,7 +245,7 @@ export const TransactionItem = ({ className, isMini, protocol, transaction, onRe
   return (
     <div
       className={clsx(
-        'bg-gray0/30 dark:bg-gray0d/30 rounded-lg border transition-all duration-500',
+        'rounded-lg border bg-gray0/30 transition-all duration-500 dark:bg-gray0d/30',
         'border-gray0 dark:border-gray0d',
         isNewlyCompleted && 'animate-pulse',
         className
@@ -253,10 +253,10 @@ export const TransactionItem = ({ className, isMini, protocol, transaction, onRe
       {/* Header */}
       <div className="p-2">
         {/* First row: asset swap and controls */}
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center space-x-1 min-w-0">
+        <div className="mb-1 flex items-center justify-between">
+          <div className="flex min-w-0 items-center space-x-1">
             {protocol && protocol}
-            <span className="text-sm font-medium text-text1 dark:text-text1d truncate">
+            <span className="truncate text-sm font-medium text-text1 dark:text-text1d">
               {fromAsset} → {toAsset}
             </span>
           </div>
@@ -264,15 +264,15 @@ export const TransactionItem = ({ className, isMini, protocol, transaction, onRe
           <div className="flex items-center space-x-1">
             <button
               onClick={toggleExpanded}
-              className="p-1 text-text2 dark:text-text2d hover:text-text1 dark:hover:text-text1d transition-colors">
-              {isExpanded ? <ChevronUpIcon className="w-3 h-3" /> : <ChevronDownIcon className="w-3 h-3" />}
+              className="p-1 text-text2 transition-colors hover:text-text1 dark:text-text2d dark:hover:text-text1d">
+              {isExpanded ? <ChevronUpIcon className="h-3 w-3" /> : <ChevronDownIcon className="h-3 w-3" />}
             </button>
 
             {transaction.isComplete && (
               <button
                 onClick={handleRemove}
-                className="p-1 text-text2 dark:text-text2d hover:text-error0 dark:hover:text-error0d transition-colors">
-                <XMarkIcon className="w-3 h-3" />
+                className="p-1 text-text2 transition-colors hover:text-error0 dark:text-text2d dark:hover:text-error0d">
+                <XMarkIcon className="h-3 w-3" />
               </button>
             )}
           </div>
@@ -281,32 +281,32 @@ export const TransactionItem = ({ className, isMini, protocol, transaction, onRe
         {/* Second row: status and progress */}
         <div className="flex items-center justify-between">
           {transaction.isComplete ? (
-            <div className="flex items-center space-x-1 bg-turquoise/80 dark:bg-turquoise/80 px-2 py-1 rounded-lg">
-              <CheckCircleIcon className="w-4 h-4 text-white shrink-0" />
+            <div className="flex items-center space-x-1 rounded-lg bg-turquoise/80 px-2 py-1 dark:bg-turquoise/80">
+              <CheckCircleIcon className="h-4 w-4 shrink-0 text-white" />
               <Label size="small" color="white" textTransform="uppercase">
                 {intl.formatMessage({ id: 'transaction.status.complete' })}
               </Label>
             </div>
           ) : (
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <div
                 className={clsx(
-                  'flex text-xs truncate',
+                  'flex truncate text-xs',
                   getRichStatusText().urgent
-                    ? 'text-yellow-600 dark:text-yellow-400 font-medium'
+                    ? 'font-medium text-yellow-600 dark:text-yellow-400'
                     : 'text-text2 dark:text-text2d'
                 )}>
-                <PaperAirplaneIcon className="w-4 h-4 mr-1" />
+                <PaperAirplaneIcon className="mr-1 h-4 w-4" />
                 {getRichStatusText().text}
               </div>
               {getRichStatusText().detail && (
-                <div className="text-xs text-text2 dark:text-text2d truncate opacity-50">
+                <div className="truncate text-xs text-text2 opacity-50 dark:text-text2d">
                   {getRichStatusText().detail}
                 </div>
               )}
             </div>
           )}
-          <span className="text-base font-bold text-text2 dark:text-text2d ml-2 shrink-0">
+          <span className="ml-2 shrink-0 text-base font-bold text-text2 dark:text-text2d">
             {Math.round(getProgressPercentage())}%
           </span>
         </div>
@@ -316,7 +316,7 @@ export const TransactionItem = ({ className, isMini, protocol, transaction, onRe
 
       {/* Expanded details */}
       {isExpanded && (
-        <div className="border-t border-gray1 dark:border-gray1d p-2">
+        <div className="border-t border-gray1 p-2 dark:border-gray1d">
           {/* Additional details */}
           <div className="space-y-1 text-xs">
             <div className="flex justify-between">

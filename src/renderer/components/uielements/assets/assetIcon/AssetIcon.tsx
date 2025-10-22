@@ -304,17 +304,17 @@ export const AssetIcon = ({ asset, size = 'small', className = '', network }: Pr
       const borderColor = isSynth
         ? 'border-turquoise'
         : isTrade
-        ? 'border-turquoise'
-        : isSecured
-        ? 'border-[#B224EC]'
-        : 'border-transparent'
+          ? 'border-turquoise'
+          : isSecured
+            ? 'border-[#B224EC]'
+            : 'border-transparent'
       const shadowClass = isSynth
         ? 'shadow-[0px_0px_15px_5px_rgba(80,227,194,0.8)]'
         : isTrade
-        ? 'shadow-[0px_0px_15px_5px_rgba(113,188,247,0.8)]'
-        : isSecured
-        ? 'shadow-[0px_0px_15px_5px_rgba(178,36,236,0.8)]'
-        : ''
+          ? 'shadow-[0px_0px_15px_5px_rgba(113,188,247,0.8)]'
+          : isSecured
+            ? 'shadow-[0px_0px_15px_5px_rgba(178,36,236,0.8)]'
+            : ''
       const adjustment = hasBorder ? 2 * borders[size] : 0
       const iconSize = sizes[size] - adjustment
       const overlaySize = sizes[size] * 0.4
@@ -330,7 +330,7 @@ export const AssetIcon = ({ asset, size = 'small', className = '', network }: Pr
           <img
             src={src}
             alt=""
-            className="rounded-full max-w-none"
+            className="max-w-none rounded-full"
             style={{
               width: iconSize,
               height: iconSize
@@ -340,7 +340,7 @@ export const AssetIcon = ({ asset, size = 'small', className = '', network }: Pr
             <img
               src={overlayIconSrc}
               alt=""
-              className="absolute right-0 bottom-0 rounded-full z-[2] bg-white/50"
+              className="absolute bottom-0 right-0 z-[2] rounded-full bg-white/50"
               style={{
                 width: `${overlaySize}px`,
                 height: `${overlaySize}px`
@@ -365,7 +365,7 @@ export const AssetIcon = ({ asset, size = 'small', className = '', network }: Pr
           height: `${sizes[size]}px`,
           ...(hasBorder && { borderWidth: `${borderWidth}px`, borderStyle: 'solid' })
         }}>
-        <ArrowPathIcon className="w-full h-full text-text0 dark:text-text0d" />
+        <ArrowPathIcon className="h-full w-full text-text0 dark:text-text0d" />
       </div>
     )
   }, [size, isSynth, isTrade, className])
@@ -389,7 +389,7 @@ export const AssetIcon = ({ asset, size = 'small', className = '', network }: Pr
           ...(hasBorder && { borderWidth: `${borderWidth}px`, borderStyle: 'solid' })
         }}>
         <div
-          className="left-0 top-0 rounded-full flex items-center justify-center text-text3 dark:text-text3d"
+          className="left-0 top-0 flex items-center justify-center rounded-full text-text3 dark:text-text3d"
           style={{
             width: `${iconSize}px`,
             height: `${iconSize}px`,

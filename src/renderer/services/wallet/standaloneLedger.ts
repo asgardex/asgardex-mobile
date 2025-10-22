@@ -204,7 +204,7 @@ export const createStandaloneLedgerService = ({ network$ }: { network$: Network$
             Rx.of(
               RD.failure({
                 errorId: LedgerErrorId.GET_ADDRESS_FAILED,
-                msg: isError(error) ? error?.message ?? error.toString() : `${error}`
+                msg: isError(error) ? (error?.message ?? error.toString()) : `${error}`
               })
             )
           ),
@@ -266,7 +266,7 @@ export const createStandaloneLedgerService = ({ network$ }: { network$: Network$
             Rx.of(
               RD.failure({
                 errorId: LedgerErrorId.GET_ADDRESS_FAILED,
-                msg: isError(error) ? error?.message ?? error.toString() : `${error}`
+                msg: isError(error) ? (error?.message ?? error.toString()) : `${error}`
               })
             )
           ),

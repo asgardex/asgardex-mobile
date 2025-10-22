@@ -44,7 +44,7 @@ type SectionProps = {
 const Section = ({ title, subtitle, className, children }: SectionProps) => (
   <div
     className={clsx(
-      'flex w-full items-center justify-between py-6 px-4',
+      'flex w-full items-center justify-between px-4 py-6',
       'border-b border-solid border-gray0 last:border-none dark:border-gray0d',
       className
     )}>
@@ -110,7 +110,7 @@ export const AppGeneralSettings = (props: Props) => {
           <div
             key={l}
             className={clsx(
-              'dark:text-1 flex items-center min-w-[222px] px-10px py-2 font-main text-16 uppercase text-text1 dark:text-text1d',
+              'dark:text-1 flex min-w-[222px] items-center px-10px py-2 font-main text-16 uppercase text-text1 dark:text-text1d',
               l === locale ? 'font-mainSemiBold' : 'font-main'
             )}
             onClick={() => changeLocale(l)}>
@@ -156,7 +156,7 @@ export const AppGeneralSettings = (props: Props) => {
         <div
           key={n}
           className={clsx(
-            'flex items-center min-w-[222px] px-10px py-2 text-16 uppercase',
+            'flex min-w-[222px] items-center px-10px py-2 text-16 uppercase',
             n === network ? 'font-mainSemiBold' : 'font-main',
             networkTextColor(n)
           )}
@@ -273,7 +273,7 @@ export const AppGeneralSettings = (props: Props) => {
       <Section
         title={intl.formatMessage({ id: 'settings.ledgerMode.title' })}
         subtitle={intl.formatMessage({ id: 'settings.ledgerMode.subtitle' })}>
-        <div className="flex flex-col gap-2 items-end">
+        <div className="flex flex-col items-end gap-2">
           {isInStandaloneLedgerMode && (
             <BorderButton size="normal" onClick={handleChangeChainClick} className="flex items-center gap-2">
               <CpuChipIcon width={16} height={16} />
@@ -285,14 +285,14 @@ export const AppGeneralSettings = (props: Props) => {
             onClick={handleLedgerModeClick}
             disabled={!isInStandaloneLedgerMode && isUnlocked}
             className={`flex items-center gap-2 ${
-              !isInStandaloneLedgerMode && isUnlocked ? 'opacity-50 cursor-not-allowed' : ''
+              !isInStandaloneLedgerMode && isUnlocked ? 'cursor-not-allowed opacity-50' : ''
             }`}
             title={!isInStandaloneLedgerMode && isUnlocked ? 'Lock wallet to enter Ledger mode' : undefined}>
             <CpuChipIcon width={16} height={16} />
             {isInStandaloneLedgerMode ? 'Exit Ledger Mode' : 'Enter Ledger Mode'}
           </BorderButton>
           {!isInStandaloneLedgerMode && isUnlocked && (
-            <span className="text-warning0 dark:text-warning0d text-xs mt-1">
+            <span className="mt-1 text-xs text-warning0 dark:text-warning0d">
               {intl.formatMessage({ id: 'settings.ledgerMode.lockWalletWarning' })}
             </span>
           )}

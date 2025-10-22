@@ -116,7 +116,7 @@ export const NewPhraseConfirm = ({ mnemonic, onConfirm }: { mnemonic: string; on
           .catch((error) => {
             setLoading(false)
             const errorMsg = `${intl.formatMessage({ id: 'wallet.create.error' })} (error: ${
-              isError(error) ? error?.message ?? error.toString() : `${error}`
+              isError(error) ? (error?.message ?? error.toString()) : `${error}`
             })`
             setMnemonicError(errorMsg)
           })
@@ -130,29 +130,29 @@ export const NewPhraseConfirm = ({ mnemonic, onConfirm }: { mnemonic: string; on
   )
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex w-full flex-col">
       <form onSubmit={handleFormSubmit}>
         <h2 className="mb-20px font-mainSemiBold text-sm text-text0 dark:text-text0d">
           {intl.formatMessage({ id: 'wallet.create.enter.phrase' })}
         </h2>
         <div className="flex w-full flex-col items-center justify-center">
-          <div className="w-full !mb-2">
+          <div className="!mb-2 w-full">
             <Phrase
-              wordIcon={<DeleteOutlined className="w-4 h-4 text-red" />}
+              wordIcon={<DeleteOutlined className="h-4 w-4 text-red" />}
               words={sortedSelectedWords}
               onWordClick={handleRemoveWord}
             />
           </div>
 
-          <span className="text-red text-xs px-2">{mnemonicError}</span>
+          <span className="px-2 text-xs text-red">{mnemonicError}</span>
 
-          <h2 className="w-full flex items-center font-mainSemiBold text-sm text-text0 dark:text-text0d mt-8">
+          <h2 className="mt-8 flex w-full items-center font-mainSemiBold text-sm text-text0 dark:text-text0d">
             {intl.formatMessage({ id: 'wallet.create.words.click' })}
             <FlatButton onClick={handleResetPhrase} color="neutral" className="ml-10px">
-              <RedoOutlined className="w-4 h-4" />
+              <RedoOutlined className="h-4 w-4" />
             </FlatButton>
           </h2>
-          <div className="mt-1 mb-4 w-full grid grid-cols-3 gap-1">
+          <div className="mb-4 mt-1 grid w-full grid-cols-3 gap-1">
             {shuffledWordsList.map((word: WordType) => (
               <div key={word._id} className="text-center">
                 <TextButton

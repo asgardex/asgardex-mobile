@@ -50,7 +50,7 @@ const FormValidation = () => {
   return (
     <form onSubmit={handleSubmit(onFinish)}>
       <div className="mb-4">
-        <label className="block mb-2 text-sm font-medium">Amount</label>
+        <label className="mb-2 block text-sm font-medium">Amount</label>
         <Controller
           name="amount"
           control={control}
@@ -59,7 +59,7 @@ const FormValidation = () => {
             <InputBigNumber value={value} onChange={onChange as unknown as (v: BigNumber) => void} />
           )}
         />
-        {errors.amount && <p className="mt-1 text-xs text-red-500">{errors.amount.message}</p>}
+        {errors.amount && <p className="text-red-500 mt-1 text-xs">{errors.amount.message}</p>}
       </div>
       <Button type="submit">Submit</Button>
     </form>
@@ -80,7 +80,7 @@ const SetValue = () => {
   return (
     <div className="p-4">
       <InputBigNumber value={value} onChange={handleChange} />
-      <div className="flex gap-2 mt-2">
+      <div className="mt-2 flex gap-2">
         <Button onClick={() => setValue(bn(40000))}>Set 40k</Button>
         <Button onClick={() => setValue(bn(2000))}>Set 2k</Button>
       </div>

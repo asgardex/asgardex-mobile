@@ -183,11 +183,11 @@ export const RunepoolView = (): JSX.Element => {
 
   const renderRunePoolTotal = useMemo(() => {
     return (
-      <div className="flex flex-col items-center justify-center bg-bg1 dark:bg-bg1d px-4 pt-4 pb-8">
+      <div className="flex flex-col items-center justify-center bg-bg1 px-4 pb-8 pt-4 dark:bg-bg1d">
         <Label className="!w-auto" align="center" color="input" textTransform="uppercase">
           {intl.formatMessage({ id: 'wallet.shares.total' })}
         </Label>
-        <Label className="mt-4 mx-10px text-[28px]" align="center" color="gray">
+        <Label className="mx-10px mt-4 text-[28px]" align="center" color="gray">
           {isPrivate ? hiddenString : totalRedeemPrice}
         </Label>
       </div>
@@ -200,12 +200,12 @@ export const RunepoolView = (): JSX.Element => {
   }, [reloadAllPools, reloadRunePoolProvider])
   return (
     <div>
-      <div className="flex justify-end mb-5">
+      <div className="mb-5 flex justify-end">
         <RefreshButton onClick={refreshHandler} disabled={false} />
       </div>
       <AssetsNav />
       {renderRunePoolTotal}
-      <div className="bg-bg1 dark:bg-bg1d p-2">
+      <div className="bg-bg1 p-2 dark:bg-bg1d">
         <RunePoolTable assetDetails={assetDetailsArray} />
       </div>
     </div>

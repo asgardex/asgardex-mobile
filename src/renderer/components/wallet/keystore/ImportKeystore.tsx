@@ -73,7 +73,7 @@ export const ImportKeystore = (props: Props): JSX.Element => {
   }
 
   const renderError = (msg: string) => (
-    <Label className="font-main mb-20px" color="error" size="normal" textTransform="uppercase">
+    <Label className="mb-20px font-main" color="error" size="normal" textTransform="uppercase">
       {msg}
     </Label>
   )
@@ -136,22 +136,22 @@ export const ImportKeystore = (props: Props): JSX.Element => {
       <div className="flex flex-col items-center">
         {/* import button */}
         <BorderButton
-          className="mb-2 cursor-pointer !rounded-lg w-full"
+          className="mb-2 w-full cursor-pointer !rounded-lg"
           type="button"
           size="large"
           onClick={uploadKeystore}>
           {RD.isSuccess(loadKeystoreState) ? (
-            <CheckCircleIcon className="w-4 h-4 text-turquoise" />
+            <CheckCircleIcon className="h-4 w-4 text-turquoise" />
           ) : (
-            <ArrowUpTrayIcon className="w-4 h-4" />
+            <ArrowUpTrayIcon className="h-4 w-4" />
           )}
           <span className="ml-2">{intl.formatMessage({ id: 'wallet.imports.keystore.select' })}</span>
         </BorderButton>
         {renderLoadError}
         {renderImportError}
         {/* password */}
-        <div className="w-full mb-4">
-          <label className="block mb-2 text-sm font-medium text-text0 dark:text-text0d">
+        <div className="mb-4 w-full">
+          <label className="mb-2 block text-sm font-medium text-text0 dark:text-text0d">
             {intl.formatMessage({ id: 'common.keystorePassword' })}
           </label>
           <InputPassword
@@ -163,8 +163,8 @@ export const ImportKeystore = (props: Props): JSX.Element => {
           />
         </div>
         {/* name */}
-        <div className="w-full mb-4">
-          <label className="block mb-2 text-sm font-medium text-text0 dark:text-text0d">
+        <div className="mb-4 w-full">
+          <label className="mb-2 block text-sm font-medium text-text0 dark:text-text0d">
             <div>
               {intl.formatMessage({ id: 'wallet.name' })}
               <span className="pl-5px text-[12px] text-gray1 dark:text-gray1d">

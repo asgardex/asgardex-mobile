@@ -16,31 +16,31 @@ export type Props = {
 export const SwapAssets = (props: Props): JSX.Element => {
   const { source, target, stepDescription, network } = props
   return (
-    <div className="flex flex-col items-center justify-center w-full">
-      <Label size="small" color="gray" className="w-full px-[10px] pt-[10px] pb-[15px] font-main text-center uppercase">
+    <div className="flex w-full flex-col items-center justify-center">
+      <Label size="small" color="gray" className="w-full px-[10px] pb-[15px] pt-[10px] text-center font-main uppercase">
         {stepDescription}
       </Label>
-      <div className="flex flex-col justify-center items-center relative w-full gap-1">
-        <div className="flex items-center justify-between w-full px-10">
+      <div className="relative flex w-full flex-col items-center justify-center gap-1">
+        <div className="flex w-full items-center justify-between px-10">
           <AssetData
             asset={source.asset}
             network={network}
             size="small"
-            className="flex items-center justify-start w-full"
+            className="flex w-full items-center justify-start"
           />
           <Label className="text-3xl" align="right">
             {formatAssetAmount({ amount: baseToAsset(source.amount), trimZeros: true })}
           </Label>
         </div>
-        <div className="flex justify-center items-center">
-          <ArrowsRightLeftIcon className="w-8 h-8 text-gray-400 rotate-90" />
+        <div className="flex items-center justify-center">
+          <ArrowsRightLeftIcon className="h-8 w-8 rotate-90 text-gray-400" />
         </div>
-        <div className="flex items-center justify-between w-full px-10">
+        <div className="flex w-full items-center justify-between px-10">
           <AssetData
             asset={target.asset}
             network={network}
             size="small"
-            className="flex items-center justify-start w-full"
+            className="flex w-full items-center justify-start"
           />
           <Label className="text-3xl" align="right">
             {formatAssetAmount({ amount: baseToAsset(target.amount), trimZeros: true })}

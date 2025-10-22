@@ -59,7 +59,7 @@ const FooterIcon = (props: IconProps): JSX.Element => {
   return (
     <div
       className={clsx(
-        'inline text-text1 dark:text-text1d cursor-pointer ml-3 first:ml-0 [&>svg]:text-text1 [&>svg]:dark:text-text1d',
+        'ml-3 inline cursor-pointer text-text1 first:ml-0 dark:text-text1d [&>svg]:text-text1 [&>svg]:dark:text-text1d',
         className
       )}
       onClick={clickHandler}>
@@ -228,7 +228,7 @@ export const SidebarComponent = (props: Props): JSX.Element => {
 
   const renderLogo = useMemo(
     () => (
-      <div className="flex flex-col items-center justify-center mt-4">
+      <div className="mt-4 flex flex-col items-center justify-center">
         <AsgardexLogo className="[&>*]:fill-text1 [&>*]:dark:fill-text1d" />
         <Label
           className={clsx('-mt-3 !w-auto rounded-full px-2', networkBgCn)}
@@ -249,24 +249,24 @@ export const SidebarComponent = (props: Props): JSX.Element => {
   const gotoPlayground = useCallback(() => navigate(playgroundRoutes.base.path()), [navigate])
 
   return (
-    <div className="w-60 h-full py-5 border-r border-none border-gray0 !bg-bg0 dark:border-gray0d dark:!bg-bg0d">
+    <div className="h-full w-60 border-r border-none border-gray0 !bg-bg0 py-5 dark:border-gray0d dark:!bg-bg0d">
       <div className="flex h-full flex-col justify-between" ref={setHeaderRef}>
-        <div className="flex-1 flex flex-col">
+        <div className="flex flex-1 flex-col">
           {renderLogo}
           {renderMainNav}
           <TransactionTracker
             transactionTrackingService={transactionTrackingService}
-            className="mt-6 mx-4"
+            className="mx-4 mt-6"
             protocol="Thorchain"
           />
           <TransactionTracker
             transactionTrackingService={mayaTransactionTrackingService}
-            className="mt-2 mx-4"
+            className="mx-4 mt-2"
             protocol="Mayachain"
           />
           <ChainflipTransactionTracker
             transactionTrackingService={chainflipTransactionTrackingService}
-            className="mt-2 mx-4"
+            className="mx-4 mt-2"
           />
           <div className="flex-1" />
         </div>
@@ -278,7 +278,7 @@ export const SidebarComponent = (props: Props): JSX.Element => {
           </FooterIcon>
           <FooterIcon className="!ml-0" url={ExternalUrl.DOCSMAYA} onClick={clickIconHandler}>
             <div className="flex h-12 flex-row items-center space-x-2">
-              <img className="rounded-full w-8 h-8" src={mayaIconT} />
+              <img className="h-8 w-8 rounded-full" src={mayaIconT} />
               <Label size="big" textTransform="uppercase">
                 MAYACHAIN
               </Label>
@@ -292,44 +292,44 @@ export const SidebarComponent = (props: Props): JSX.Element => {
           <div className="mt-6 flex items-center justify-center">
             <FooterIcon url={ExternalUrl.ASGARDEX} onClick={clickIconHandler}>
               <Tooltip title={intl.formatMessage({ id: 'sidebar.tooltip.website' })}>
-                <GlobeIcon className="w-5 h-5" />
+                <GlobeIcon className="h-5 w-5" />
               </Tooltip>
             </FooterIcon>
             <FooterIcon url={ExternalUrl.GITHUB_REPO} onClick={clickIconHandler}>
               <Tooltip title={intl.formatMessage({ id: 'sidebar.tooltip.github' })}>
-                <GithubIcon className="w-5 h-5" />
+                <GithubIcon className="h-5 w-5" />
               </Tooltip>
             </FooterIcon>
             <FooterIcon url={ExternalUrl.DISCORD} onClick={clickIconHandler}>
               <Tooltip title={intl.formatMessage({ id: 'sidebar.tooltip.discord' })}>
-                <DiscordIcon className="w-5 h-5" />
+                <DiscordIcon className="h-5 w-5" />
               </Tooltip>
             </FooterIcon>
             <FooterIcon url={ExternalUrl.TWITTER} onClick={clickIconHandler}>
               <Tooltip title={intl.formatMessage({ id: 'sidebar.tooltip.twitter' })}>
-                <TwitterIcon className="w-5 h-5" />
+                <TwitterIcon className="h-5 w-5" />
               </Tooltip>
             </FooterIcon>
             <FooterIcon url={ExternalUrl.LICENSE} onClick={clickIconHandler}>
               <Tooltip title={intl.formatMessage({ id: 'sidebar.tooltip.license' })}>
-                <FileIcon className="w-5 h-5" />
+                <FileIcon className="h-5 w-5" />
               </Tooltip>
             </FooterIcon>
             {/* hidden in production build */}
             {isDev && commitHash && (
               <FooterIcon url={`${ExternalUrl.GITHUB_REPO}/commit/${commitHash}`} onClick={clickIconHandler}>
                 <Tooltip title={intl.formatMessage({ id: 'sidebar.tooltip.commitHash' })}>
-                  <BranchIcon className="w-5 h-5" />
+                  <BranchIcon className="h-5 w-5" />
                 </Tooltip>
               </FooterIcon>
             )}
             {/* hidden in production build */}
             {isDev && (
               <div
-                className="inline text-text1 dark:text-text1d cursor-pointer ml-3 [&>svg]:text-text1 [&>svg]:dark:text-text1d"
+                className="ml-3 inline cursor-pointer text-text1 dark:text-text1d [&>svg]:text-text1 [&>svg]:dark:text-text1d"
                 onClick={gotoPlayground}>
                 <Tooltip title={intl.formatMessage({ id: 'sidebar.tooltip.playground' })}>
-                  <BugIcon className="w-5 h-5" />
+                  <BugIcon className="h-5 w-5" />
                 </Tooltip>
               </div>
             )}

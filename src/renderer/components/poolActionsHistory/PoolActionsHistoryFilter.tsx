@@ -26,10 +26,10 @@ export const PoolActionsHistoryFilter = ({ currentFilter, onFilterChanged, class
   const allItemContent = useMemo(
     () => (
       <div className="flex items-center">
-        <div className="w-8 h-8 flex items-center justify-center">
+        <div className="flex h-8 w-8 items-center justify-center">
           <AllIcon />
         </div>
-        <Label className="!w-auto ml-10px " size="big" textTransform="uppercase">
+        <Label className="ml-10px !w-auto" size="big" textTransform="uppercase">
           {intl.formatMessage({ id: 'common.all' })}
         </Label>
       </div>
@@ -57,7 +57,7 @@ export const PoolActionsHistoryFilter = ({ currentFilter, onFilterChanged, class
       trigger={
         <div
           className={clsx(
-            'flex items-center justify-between cursor-pointer border border-solid border-turquoise rounded px-2 py-1',
+            'flex cursor-pointer items-center justify-between rounded border border-solid border-turquoise px-2 py-1',
             className
           )}>
           <Label className="!w-auto" color="primary" size="big">

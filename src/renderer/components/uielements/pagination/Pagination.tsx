@@ -117,7 +117,7 @@ export function Pagination({
         {/* Pages */}
         {range.map((item, i) =>
           item === DOTS ? (
-            <span key={`dots-${i}`} className="px-2 text-sm text-turquoise select-none" aria-hidden="true">
+            <span key={`dots-${i}`} className="select-none px-2 text-sm text-turquoise" aria-hidden="true">
               …
             </span>
           ) : (

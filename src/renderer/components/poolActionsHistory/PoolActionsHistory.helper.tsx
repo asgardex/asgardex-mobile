@@ -48,7 +48,7 @@ export const CustomFormattedDate = ({ date }: { date: Date }) => (
 )
 
 export const renderDate = (date: Date) => (
-  <span className="text-text0 dark:text-text0d mr-1 last:mr-0">
+  <span className="mr-1 text-text0 last:mr-0 dark:text-text0d">
     <CustomFormattedDate date={date} />
     &nbsp;
     <FormattedTime hour="2-digit" minute="2-digit" hour12={false} value={date} />

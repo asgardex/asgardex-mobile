@@ -72,7 +72,7 @@ export const send = async ({
   } catch (error) {
     return E.left({
       errorId: LedgerErrorId.SEND_TX_FAILED,
-      msg: isError(error) ? error?.message ?? error.toString() : `${error}`
+      msg: isError(error) ? (error?.message ?? error.toString()) : `${error}`
     })
   }
 }
@@ -167,7 +167,7 @@ export const deposit = async ({
   } catch (error) {
     return E.left({
       errorId: LedgerErrorId.DEPOSIT_TX_FAILED,
-      msg: isError(error) ? error?.message ?? error.toString() : `${error}`
+      msg: isError(error) ? (error?.message ?? error.toString()) : `${error}`
     })
   }
 }

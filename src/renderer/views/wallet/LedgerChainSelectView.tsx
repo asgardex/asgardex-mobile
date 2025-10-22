@@ -77,14 +77,14 @@ const ChainItem: React.FC<ChainItemProps> = ({ chain, isSelected, onSelect, netw
     <button
       onClick={handleClick}
       className={clsx(
-        'flex items-center gap-3 p-4 rounded-lg border transition-all cursor-pointer',
+        'flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-all',
         'hover:border-turquoise hover:bg-gray0/10 dark:hover:bg-gray0d/10',
         isSelected
           ? 'border-turquoise bg-turquoise/10 dark:bg-turquoise/5'
-          : 'border-gray0 dark:border-gray0d bg-bg1 dark:bg-bg1d'
+          : 'border-gray0 bg-bg1 dark:border-gray0d dark:bg-bg1d'
       )}>
       <AssetIcon asset={getChainAsset(chain)} network={network} size="small" />
-      <span className="text-text1 dark:text-text1d font-medium text-16">{chain}</span>
+      <span className="text-16 font-medium text-text1 dark:text-text1d">{chain}</span>
     </button>
   )
 }
@@ -200,19 +200,19 @@ export const LedgerChainSelectView: React.FC = () => {
   // Detection in progress state
   if (standaloneLedgerState.detectionPhase === 'detecting') {
     return (
-      <div className="flex flex-col min-h-screen bg-bg0 dark:bg-bg0d">
+      <div className="flex min-h-screen flex-col bg-bg0 dark:bg-bg0d">
         <div className="px-6 py-4">
           <BackLinkButton />
         </div>
 
         <div className="flex-1 px-6 pt-8">
-          <div className="w-full max-w-2xl mx-auto">
+          <div className="mx-auto w-full max-w-2xl">
             <Label className="mb-8" align="center" size="large" color="primary" textTransform="uppercase" weight="bold">
               {intl.formatMessage({ id: 'ledger.detect.title' })}
             </Label>
 
             <Spin
-              className="min-h-24 border border-gray0 dark:border-gray0d rounded-lg mb-6"
+              className="mb-6 min-h-24 rounded-lg border border-gray0 dark:border-gray0d"
               spinning={true}
               tip={
                 standaloneLedgerState.detectionProgress?.currentChain
@@ -224,8 +224,8 @@ export const LedgerChainSelectView: React.FC = () => {
               }
             />
 
-            <div className="text-center space-y-3">
-              <p className="text-text2 dark:text-text2d text-14">
+            <div className="space-y-3 text-center">
+              <p className="text-14 text-text2 dark:text-text2d">
                 {standaloneLedgerState.detectionProgress?.currentChain
                   ? intl.formatMessage(
                       { id: 'ledger.needsconnected' },
@@ -233,7 +233,7 @@ export const LedgerChainSelectView: React.FC = () => {
                     )
                   : intl.formatMessage({ id: 'ledger.connect.instructions' })}
               </p>
-              <p className="text-text2 dark:text-text2d text-12 opacity-75">
+              <p className="text-12 text-text2 opacity-75 dark:text-text2d">
                 Make sure to open the {standaloneLedgerState.detectionProgress?.currentChain || 'required'} app on your
                 Ledger device
               </p>
@@ -246,23 +246,23 @@ export const LedgerChainSelectView: React.FC = () => {
 
   // Chain selection state
   return (
-    <div className="flex flex-col min-h-screen bg-bg0 dark:bg-bg0d">
+    <div className="flex min-h-screen flex-col bg-bg0 dark:bg-bg0d">
       <div className="px-6 py-4">
         <BackLinkButton />
       </div>
 
-      <div className="flex-1 flex flex-col items-center px-6 pb-6">
+      <div className="flex flex-1 flex-col items-center px-6 pb-6">
         <div className="w-full max-w-2xl">
           <Label align="center" size="large" color="primary" textTransform="uppercase" weight="bold" className="mb-2">
             {intl.formatMessage({ id: 'ledger.connect.title' })}
           </Label>
 
-          <p className="text-center text-text2 dark:text-text2d text-16 mb-8">
+          <p className="mb-8 text-center text-16 text-text2 dark:text-text2d">
             {intl.formatMessage({ id: 'ledger.connect.instruction' })}
           </p>
 
           {/* Chain grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-8">
+          <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {standaloneLedgerState.availableChains.map((chain) => (
               <ChainItem
                 key={chain}
@@ -276,8 +276,8 @@ export const LedgerChainSelectView: React.FC = () => {
 
           {/* Wallet configuration for chains that support HD modes */}
           {selectedChain && chainSupportsHDModes(selectedChain) && (
-            <div className="flex justify-center mb-4">
-              <div className="bg-bg1 dark:bg-bg1d rounded-lg p-4 inline-flex items-center gap-4">
+            <div className="mb-4 flex justify-center">
+              <div className="inline-flex items-center gap-4 rounded-lg bg-bg1 p-4 dark:bg-bg1d">
                 {/* Account input */}
                 <div className="flex items-center gap-2">
                   <Label size="small" className="text-12 uppercase text-gray2 dark:text-gray2d">
@@ -287,7 +287,7 @@ export const LedgerChainSelectView: React.FC = () => {
                     type="number"
                     value={walletAccount.toString()}
                     onChange={(e) => setWalletAccount(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-14 h-8 text-13 px-2 text-center border border-gray0 dark:border-gray0d rounded"
+                    className="text-13 h-8 w-14 rounded border border-gray0 px-2 text-center dark:border-gray0d"
                     min="0"
                   />
                 </div>
@@ -301,7 +301,7 @@ export const LedgerChainSelectView: React.FC = () => {
                     type="number"
                     value={walletIndex.toString()}
                     onChange={(e) => setWalletIndex(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-14 h-8 text-13 px-2 text-center border border-gray0 dark:border-gray0d rounded"
+                    className="text-13 h-8 w-14 rounded border border-gray0 px-2 text-center dark:border-gray0d"
                     min="0"
                   />
                 </div>
@@ -311,7 +311,7 @@ export const LedgerChainSelectView: React.FC = () => {
                   <div className="min-w-[280px] text-center">
                     <Dropdown
                       trigger={
-                        <Label className="rounded-lg px-3 py-2 border border-solid border-bg2 dark:border-bg2d cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10">
+                        <Label className="cursor-pointer rounded-lg border border-solid border-bg2 px-3 py-2 hover:bg-gray0/10 dark:border-bg2d dark:hover:bg-gray0d/10">
                           {getChainDerivationOptions(selectedChain, walletAccount, walletIndex, network)[
                             selectedHDMode === 'p2tr' ? 1 : 0
                           ]?.description || 'Default'}
@@ -321,7 +321,7 @@ export const LedgerChainSelectView: React.FC = () => {
                         (option, index: number) => (
                           <Label
                             key={option.path}
-                            className="px-3 py-2 cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10"
+                            className="cursor-pointer px-3 py-2 hover:bg-gray0/10 dark:hover:bg-gray0d/10"
                             size="normal"
                             onClick={() => setSelectedHDMode(index === 0 ? 'p2wpkh' : 'p2tr')}>
                             {option.description}
@@ -335,7 +335,7 @@ export const LedgerChainSelectView: React.FC = () => {
                 {/* Derivation path display for chains with single path */}
                 {!chainSupportsMultipleDerivationPaths(selectedChain) && !isEvmChain(selectedChain) && (
                   <div className="min-w-[280px] text-center">
-                    <Label className="rounded-lg px-3 py-2 border border-solid border-bg2 dark:border-bg2d text-12 inline-block">
+                    <Label className="text-12 inline-block rounded-lg border border-solid border-bg2 px-3 py-2 dark:border-bg2d">
                       {getChainDerivationPath(selectedChain, walletAccount, walletIndex, network).description}
                     </Label>
                   </div>
@@ -346,7 +346,7 @@ export const LedgerChainSelectView: React.FC = () => {
                   <div className="min-w-[280px] text-center">
                     <Dropdown
                       trigger={
-                        <Label className="rounded-lg px-3 py-2 border border-solid border-bg2 dark:border-bg2d cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10">
+                        <Label className="cursor-pointer rounded-lg border border-solid border-bg2 px-3 py-2 hover:bg-gray0/10 dark:border-bg2d dark:hover:bg-gray0d/10">
                           {
                             getChainDerivationPath(selectedChain, walletAccount, walletIndex, undefined, selectedHDMode)
                               .description
@@ -356,7 +356,7 @@ export const LedgerChainSelectView: React.FC = () => {
                       options={(['ledgerlive', 'legacy', 'metamask'] as const).map((mode) => (
                         <Label
                           key={mode}
-                          className="px-3 py-2 cursor-pointer hover:bg-gray0/10 dark:hover:bg-gray0d/10"
+                          className="cursor-pointer px-3 py-2 hover:bg-gray0/10 dark:hover:bg-gray0d/10"
                           size="normal"
                           onClick={() => setSelectedHDMode(mode as HDMode)}>
                           {

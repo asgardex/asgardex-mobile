@@ -186,7 +186,7 @@ export const HeaderComponent = (props: Props): JSX.Element => {
         <Link key={key} to={path} onClick={closeMenu}>
           <div
             className={clsx(
-              'flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d',
+              'flex h-[60px] items-center border-b border-solid border-bg2 dark:border-bg2d',
               activeKey === key ? 'text-turquoise' : 'text-text1 dark:text-text1d',
               { 'border-t': index === 0 }
             )}>
@@ -277,7 +277,7 @@ export const HeaderComponent = (props: Props): JSX.Element => {
 
   return (
     <div className="!bg-bg3 dark:!bg-bg3d">
-      <div className="flex items-center justify-between h-[70px]" ref={setHeaderRef}>
+      <div className="flex h-[70px] items-center justify-between" ref={setHeaderRef}>
         <HeaderStats
           runePrice={runePriceRD}
           tcyPrice={tcyPriceRD}
@@ -304,11 +304,11 @@ export const HeaderComponent = (props: Props): JSX.Element => {
             {renderHeaderSettings}
           </div>
         ) : (
-          <div className="flex items-center h-[70px] cursor-pointer" onClick={toggleMenu}>
+          <div className="flex h-[70px] cursor-pointer items-center" onClick={toggleMenu}>
             {menuVisible ? (
-              <CloseIcon className="[&>*]:fill-text0 [&>*]:dark:fill-text0d text-[24px] mr-5" />
+              <CloseIcon className="mr-5 text-[24px] [&>*]:fill-text0 [&>*]:dark:fill-text0d" />
             ) : (
-              <MenuIcon className="[&>*]:fill-text0 [&>*]:dark:fill-text0d text-[24px] mr-5" />
+              <MenuIcon className="mr-5 text-[24px] [&>*]:fill-text0 [&>*]:dark:fill-text0d" />
             )}
           </div>
         )}
@@ -319,16 +319,16 @@ export const HeaderComponent = (props: Props): JSX.Element => {
           isOpen={menuVisible}
           onClose={() => setMenuVisible(false)}>
           {links}
-          <div className="flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d">
+          <div className="flex h-[60px] items-center border-b border-solid border-bg2 dark:border-bg2d">
             {renderHeaderCurrency}
           </div>
-          <div className="flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d">
+          <div className="flex h-[60px] items-center border-b border-solid border-bg2 dark:border-bg2d">
             <HeaderTheme isDesktopView={isDesktopView} />
           </div>
-          <div className="flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d">
+          <div className="flex h-[60px] items-center border-b border-solid border-bg2 dark:border-bg2d">
             <HeaderLockMobile keystoreState={keystore} onPress={clickLockHandler} />
           </div>
-          <div className="flex items-center h-[60px] border-b border-solid border-bg2 dark:border-bg2d">
+          <div className="flex h-[60px] items-center border-b border-solid border-bg2 dark:border-bg2d">
             {renderHeaderSettings}
           </div>
           {renderHeaderNetStatus}

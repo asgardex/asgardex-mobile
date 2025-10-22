@@ -66,7 +66,7 @@ export const TxsTable = (props: Props): JSX.Element => {
   const renderTypeColumn = useCallback(({ type }: Tx) => {
     switch (type) {
       case 'transfer':
-        return <ArrowsRightLeftIcon className="w-5 h-5 text-text1 dark:text-text1d" />
+        return <ArrowsRightLeftIcon className="h-5 w-5 text-text1 dark:text-text1d" />
       default:
         return <></>
     }
@@ -126,7 +126,7 @@ export const TxsTable = (props: Props): JSX.Element => {
     ({ hash }: Tx) => (
       <div className="flex items-center justify-center">
         <ArrowTopRightOnSquareIcon
-          className="text-turquoise cursor-pointer w-5 h-5"
+          className="h-5 w-5 cursor-pointer text-turquoise"
           onClick={() => clickTxLinkHandler(hash)}
         />
       </div>

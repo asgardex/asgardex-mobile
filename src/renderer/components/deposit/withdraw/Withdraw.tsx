@@ -528,13 +528,13 @@ export const Withdraw = ({
           error={minRuneAmountError}
         />
       </div>
-      <div className="flex flex-row items-center my-5 last:m-0 [&>div:first-child]:mr-[10px]">
+      <div className="my-5 flex flex-row items-center last:m-0 [&>div:first-child]:mr-[10px]">
         <Tooltip title={runeAddress} size="big">
           <div className="flex items-center">
             <AssetIcon className="mr-10px" asset={protocolAsset} network={network} />
-            <AssetLabel asset={protocolAsset} className="p-0 m-0" />
+            <AssetLabel asset={protocolAsset} className="m-0 p-0" />
             {isLedgerWallet(runeWalletType) && (
-              <WalletTypeLabel className="text-[8px] md:text-[10px] leading-3 mr-[10px]">
+              <WalletTypeLabel className="mr-[10px] text-[8px] leading-3 md:text-[10px]">
                 {intl.formatMessage({ id: 'ledger.title' })}
               </WalletTypeLabel>
             )}
@@ -550,7 +550,7 @@ export const Withdraw = ({
           </Label>
           {/* show pricing if price asset is different only */}
           {!eqAsset.equals(protocolAsset, selectedPriceAsset) && (
-            <Label className="text-[11px] leading-[11px] md:text-[13px] md:leading-[13px] whitespace-normal">
+            <Label className="whitespace-normal text-[11px] leading-[11px] md:text-[13px] md:leading-[13px]">
               {formatAssetAmountCurrency({
                 amount: getTwoSigfigAssetAmount(
                   baseToAsset(baseAmount(runeAmountToWithdraw.amount().times(dexPrice), protocolAssetDecimal))
@@ -563,13 +563,13 @@ export const Withdraw = ({
         </div>
       </div>
 
-      <div className="flex flex-row items-center my-5 last:m-0 [&>div:first-child]:mr-[10px]">
+      <div className="my-5 flex flex-row items-center last:m-0 [&>div:first-child]:mr-[10px]">
         <Tooltip title={assetAddress} size="big">
           <div className="flex items-center">
             <AssetIcon className="mr-10px" asset={asset} network={network} />
-            <AssetLabel asset={asset} className="p-0 m-0" />
+            <AssetLabel asset={asset} className="m-0 p-0" />
             {isLedgerWallet(assetWalletType) && (
-              <WalletTypeLabel className="text-[8px] md:text-[10px] leading-3 mr-[10px]">
+              <WalletTypeLabel className="mr-[10px] text-[8px] leading-3 md:text-[10px]">
                 {intl.formatMessage({ id: 'ledger.title' })}
               </WalletTypeLabel>
             )}
@@ -584,7 +584,7 @@ export const Withdraw = ({
             })}
             {/* show pricing if price asset is different only */}
             {!eqAsset.equals(asset, selectedPriceAsset) && (
-              <Label className="text-[11px] leading-[11px] md:text-[13px] md:leading-[13px] whitespace-normal">
+              <Label className="whitespace-normal text-[11px] leading-[11px] md:text-[13px] md:leading-[13px]">
                 {formatAssetAmountCurrency({
                   amount: getTwoSigfigAssetAmount(baseToAsset(assetPriceToWithdraw1e8)),
                   asset: selectedPriceAsset,

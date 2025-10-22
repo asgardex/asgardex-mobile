@@ -45,7 +45,7 @@ export const HeaderPriceSelector = (props: Props): JSX.Element => {
   )
 
   return (
-    <div className="flex items-center justify-between w-full px-6 lg:w-auto lg:px-0">
+    <div className="flex w-full items-center justify-between px-6 lg:w-auto lg:px-0">
       {!isDesktopView && (
         <Label size="large" textTransform="uppercase" weight="bold">
           Currency
@@ -54,7 +54,7 @@ export const HeaderPriceSelector = (props: Props): JSX.Element => {
       <Dropdown
         anchor={{ to: 'bottom', gap: 4 }}
         trigger={
-          <div className="min-w-24 lg:min-w-0 flex items-center cursor-pointer">
+          <div className="flex min-w-24 cursor-pointer items-center lg:min-w-0">
             <Label className="!text-16" color="dark" weight="bold" textTransform="uppercase">
               {title}
             </Label>

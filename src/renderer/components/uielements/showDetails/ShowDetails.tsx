@@ -59,7 +59,7 @@ export const ShowDetails = ({
   return (
     <>
       <div className="flex w-full items-center justify-between text-[14px] text-gray2 dark:text-gray2d">
-        <div className="font-mainBold ">{intl.formatMessage({ id: 'common.recipient' })}</div>
+        <div className="font-mainBold">{intl.formatMessage({ id: 'common.recipient' })}</div>
         <div className="truncate text-[13px] normal-case leading-normal">{recipient}</div>
       </div>
       <div className="flex w-full justify-between">

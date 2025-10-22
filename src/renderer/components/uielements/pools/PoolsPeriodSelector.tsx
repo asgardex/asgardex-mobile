@@ -67,10 +67,10 @@ export const PoolsPeriodSelector = ({
         <ListboxButton
           as="div"
           className={clsx(
-            'group flex items-center cursor-pointer',
-            'bg-bg0 dark:bg-bg0d text-text0 dark:text-text0d',
+            'group flex cursor-pointer items-center',
+            'bg-bg0 text-text0 dark:bg-bg0d dark:text-text0d',
             'py-5px pl-10px pr-10px',
-            'font-main text-[12px] whitespace-nowrap',
+            'whitespace-nowrap font-main text-[12px]',
             'transition duration-300 ease-in-out hover:shadow-full hover:dark:shadow-fulld',
             { 'opacity-70': disabled }
           )}>
@@ -78,7 +78,7 @@ export const PoolsPeriodSelector = ({
             <>
               <span className="w-full">{selectedItem.label}</span>
               <ChevronDownIcon
-                className={clsx('ml-2 ease h-20px w-20px group-hover:rotate-180', { 'rotate-180': open })}
+                className={clsx('ease ml-2 h-20px w-20px group-hover:rotate-180', { 'rotate-180': open })}
               />
             </>
           )}

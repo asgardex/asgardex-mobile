@@ -51,7 +51,7 @@ export const HistoryView = (): JSX.Element => {
 
   if (activeTxs.length === 0 && completedTxs.length === 0) {
     return (
-      <div className="bg-bg0 dark:bg-bg0d p-4 rounded-lg">
+      <div className="rounded-lg bg-bg0 p-4 dark:bg-bg0d">
         <Label size="big" align="center">
           No transactions found
         </Label>
@@ -60,7 +60,7 @@ export const HistoryView = (): JSX.Element => {
   }
 
   return (
-    <div className="bg-bg0 dark:bg-bg0d p-4 rounded-lg">
+    <div className="rounded-lg bg-bg0 p-4 dark:bg-bg0d">
       {activeTxs.length ? (
         <Label className="mb-1" size="big">
           In Progress ({activeTxs.length})
@@ -68,7 +68,7 @@ export const HistoryView = (): JSX.Element => {
       ) : null}
       <div className="flex flex-col space-y-1">
         {activeTxs.map((transaction) => {
-          const protocolIcon = <ProviderIcon protocol={transaction.protocol} className="w-3 h-3" />
+          const protocolIcon = <ProviderIcon protocol={transaction.protocol} className="h-3 w-3" />
 
           // Use appropriate component based on protocol
           return transaction.protocol === 'Chainflip' ? (
@@ -95,7 +95,7 @@ export const HistoryView = (): JSX.Element => {
       ) : null}
       <div className="flex flex-col space-y-1">
         {completedTxs.map((transaction) => {
-          const protocolIcon = <ProviderIcon protocol={transaction.protocol} className="w-3 h-3" />
+          const protocolIcon = <ProviderIcon protocol={transaction.protocol} className="h-3 w-3" />
 
           // Use appropriate component based on protocol
           return transaction.protocol === 'Chainflip' ? (

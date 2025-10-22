@@ -81,8 +81,8 @@ const PasswordModal = (props: PasswordModalProps) => {
             'bg-bg0 dark:bg-bg0d',
             'rounded-lg border border-solid border-gray0 dark:border-gray0d'
           )}>
-          <div className="flex flex-col w-full mb-2">
-            <WalletIcon className="self-center w-1/5 h-1/5 text-turquoise" />
+          <div className="mb-2 flex w-full flex-col">
+            <WalletIcon className="h-1/5 w-1/5 self-center text-turquoise" />
             <h1 className="mb-4 text-center text-xl uppercase text-text2 dark:text-text2d">
               {intl.formatMessage({ id: 'wallet.password.confirmation.title' })}
             </h1>
@@ -108,7 +108,7 @@ const PasswordModal = (props: PasswordModalProps) => {
           <div className="flex w-full items-center justify-end gap-2">
             <BaseButton
               className={clsx(
-                '!px-4 !py-2 rounded-md',
+                'rounded-md !px-4 !py-2',
                 'border border-solid border-gray1/20 dark:border-gray1d/20',
                 'text-text0 dark:text-text0d',
                 'hover:bg-gray1/20 hover:dark:bg-gray1d/20'
@@ -117,7 +117,7 @@ const PasswordModal = (props: PasswordModalProps) => {
               {intl.formatMessage({ id: 'common.cancel' })}
             </BaseButton>
             <BaseButton
-              className="rounded-lg !px-4 !py-2 text-white bg-turquoise hover:bg-turquoise/80"
+              className="rounded-lg bg-turquoise !px-4 !py-2 text-white hover:bg-turquoise/80"
               onClick={onOkCb}>
               {intl.formatMessage({ id: 'common.confirm' })}
             </BaseButton>

@@ -125,41 +125,41 @@ export const TransactionProgressBar: React.FC<TransactionProgressBarProps> = ({ 
   return (
     <div className={clsx('w-full', className)}>
       {/* Progress bar */}
-      <div className="w-full bg-gray1 dark:bg-gray1d rounded-full h-2 mb-4">
+      <div className="mb-4 h-2 w-full rounded-full bg-gray1 dark:bg-gray1d">
         <div
-          className="bg-turquoise h-2 rounded-full transition-all duration-300 ease-in-out"
+          className="h-2 rounded-full bg-turquoise transition-all duration-300 ease-in-out"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
 
       {/* Stage indicators */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         {transactionStages.map((stage, index) => (
-          <div key={stage.id} className="flex flex-col items-center min-w-0 flex-1">
+          <div key={stage.id} className="flex min-w-0 flex-1 flex-col items-center">
             {/* Stage circle */}
             <div
               className={clsx(
-                'w-8 h-8 rounded-full border-2 flex items-center justify-center mb-2 transition-all duration-200',
+                'mb-2 flex h-8 w-8 items-center justify-center rounded-full border-2 transition-all duration-200',
                 {
-                  'bg-turquoise border-turquoise text-white': stage.completed,
-                  'bg-yellow-500 border-yellow-500 text-white animate-pulse': stage.current,
-                  'bg-gray1 dark:bg-gray1d border-gray1 dark:border-gray1d text-text2 dark:text-text2d':
+                  'border-turquoise bg-turquoise text-white': stage.completed,
+                  'animate-pulse border-yellow-500 bg-yellow-500 text-white': stage.current,
+                  'border-gray1 bg-gray1 text-text2 dark:border-gray1d dark:bg-gray1d dark:text-text2d':
                     !stage.completed && !stage.current,
                   'opacity-60': stage.optional && !stage.completed && !stage.current
                 }
               )}>
               {stage.completed ? (
-                <CheckIcon className="w-4 h-4" />
+                <CheckIcon className="h-4 w-4" />
               ) : stage.current ? (
-                <ClockIcon className="w-4 h-4" />
+                <ClockIcon className="h-4 w-4" />
               ) : (
-                <span className="w-2 h-2 rounded-full bg-current" />
+                <span className="h-2 w-2 rounded-full bg-current" />
               )}
             </div>
 
             {/* Stage label */}
             <span
-              className={clsx('text-xs text-center font-medium leading-tight', {
+              className={clsx('text-center text-xs font-medium leading-tight', {
                 'text-turquoise': stage.completed,
                 'text-text1 dark:text-text1d': stage.current,
                 'text-text2 dark:text-text2d': !stage.completed && !stage.current,
@@ -172,7 +172,7 @@ export const TransactionProgressBar: React.FC<TransactionProgressBarProps> = ({ 
             {index < transactionStages.length - 1 && (
               <div
                 className={clsx(
-                  'absolute h-0.5 mt-4 transition-all duration-300',
+                  'absolute mt-4 h-0.5 transition-all duration-300',
                   stage.completed ? 'bg-turquoise' : 'bg-gray1 dark:bg-gray1d'
                 )}
                 style={{
@@ -187,7 +187,7 @@ export const TransactionProgressBar: React.FC<TransactionProgressBarProps> = ({ 
       </div>
 
       {/* Progress text */}
-      <div className="text-center mt-2">
+      <div className="mt-2 text-center">
         <span className="text-sm text-text2 dark:text-text2d">
           {intl.formatMessage(
             { id: 'transaction.progress.summary' },

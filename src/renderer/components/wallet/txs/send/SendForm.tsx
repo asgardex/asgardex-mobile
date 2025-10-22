@@ -1225,12 +1225,12 @@ export const SendForm = (props: Props): JSX.Element => {
 
   return (
     <>
-      <div className="min-h-full w-full max-w-[630px] flex flex-col p-2.5 sm:p-[35px_50px_150px]">
+      <div className="flex min-h-full w-full max-w-[630px] flex-col p-2.5 sm:p-[35px_50px_150px]">
         <AccountSelector selectedWallet={balance} network={network} />
         <form onSubmit={handleSubmit(() => setShowConfirmationModal(true))}>
           <div className="max-w-[630px]">
             {renderSavedAddressesDropdown}
-            <Label className="flex items-center mt-2" size="big" color="gray" textTransform="uppercase">
+            <Label className="mt-2 flex items-center" size="big" color="gray" textTransform="uppercase">
               {intl.formatMessage({ id: 'common.address' })}
               {renderWalletType}
             </Label>
@@ -1256,12 +1256,12 @@ export const SendForm = (props: Props): JSX.Element => {
                 )}
               />
               {errors.recipient && (
-                <span className="text-error0 dark:text-error0d text-xs mt-1">
+                <span className="mt-1 text-xs text-error0 dark:text-error0d">
                   {typeof errors.recipient === 'string' ? errors.recipient : errors.recipient.message}
                 </span>
               )}
             </div>
-            {warningMessage && <div className="pb-20px text-warning0 dark:text-warning0d ">{warningMessage}</div>}
+            {warningMessage && <div className="pb-20px text-warning0 dark:text-warning0d">{warningMessage}</div>}
 
             {/* Destination Tag field for XRP - show for all XRP transfers */}
             {isXrpChain && (
@@ -1314,7 +1314,7 @@ export const SendForm = (props: Props): JSX.Element => {
                     )}
                   />
                   {errors.destinationTag && (
-                    <span className="text-error0 dark:text-error0d text-xs mt-1">
+                    <span className="mt-1 text-xs text-error0 dark:text-error0d">
                       {typeof errors.destinationTag === 'string'
                         ? errors.destinationTag
                         : errors.destinationTag.message}
@@ -1351,7 +1351,7 @@ export const SendForm = (props: Props): JSX.Element => {
                 )}
               />
               {errors.amount && (
-                <span className="text-error0 dark:text-error0d text-xs mt-1">{errors.amount.message}</span>
+                <span className="mt-1 text-xs text-error0 dark:text-error0d">{errors.amount.message}</span>
               )}
             </div>
 
@@ -1393,10 +1393,10 @@ export const SendForm = (props: Props): JSX.Element => {
             {/* Advanced Settings for EVM chains */}
             {isEVMChain && isEvmChainAsset(asset) && (
               <div className="mt-2 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-                <div className="flex items-center gap-4 py-2.5 flex-wrap">
+                <div className="flex flex-wrap items-center gap-4 py-2.5">
                   <SwitchButton disabled={false} onChange={() => setPoolDeposit(!poolDeposit)} active={poolDeposit} />
                   {poolDeposit ? (
-                    <div className="flex items-center px-3 py-2 bg-error0/[0.13] border border-error0/[0.25] rounded-lg flex-1 max-w-full sm:max-w-[500px]">
+                    <div className="flex max-w-full flex-1 items-center rounded-lg border border-error0/[0.25] bg-error0/[0.13] px-3 py-2 sm:max-w-[500px]">
                       <span className="text-sm leading-[1.4] text-error0 dark:text-error0d">
                         <FormattedMessage
                           id="deposit.poolTransactionWarning"
@@ -1429,7 +1429,7 @@ export const SendForm = (props: Props): JSX.Element => {
           </div>
 
           <FlatButton
-            className="mt-40px min-w-[200px] w-full"
+            className="mt-40px w-full min-w-[200px]"
             loading={isLoading}
             disabled={isFeeError || isLoading || isRouterAddress}
             type="submit"
@@ -1449,7 +1449,7 @@ export const SendForm = (props: Props): JSX.Element => {
               {showDetails ? (
                 <MagnifyingGlassMinusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
               ) : (
-                <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125 " />
+                <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
               )}
             </BaseButton>
             {showDetails && (

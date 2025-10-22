@@ -198,47 +198,12 @@ export const BondsView = (): JSX.Element => {
   // THORChain-specific bond total calculation (Connected)
   const calculateTotalBondThor = (nodes: NodeInfoThor[], walletAddresses: WalletAddressInfo[]): BaseAmount => {
     const walletAddressSet = new Set(walletAddresses.map((info) => info.address.toLowerCase()))
-    return nodes.reduce((acc: BaseAmount, node: NodeInfoThor) => {
-      const totalBondProviderAmount = node.bondProviders.providers.reduce(
-        (providerSum: BaseAmount, provider: { bondAddress: string; bond: BaseAmount }) => {
-          const normalizedAddress = provider.bondAddress.toLowerCase()
-          if (walletAddressSet.has(normalizedAddress)) {
-            return providerSum.plus(provider.bond)
-          }
-          return providerSum
-        },
-        assetToBase(assetAmount(0))
-      )
-      return acc.plus(totalBondProviderAmount)
-    }, assetToBase(assetAmount(0)))
-  }
-
-  // MayaChain-specific bond total calculation (Connected)
-  const calculateTotalBondMaya = (nodes: NodeInfoMaya[], walletAddresses: WalletAddressInfo[]): BaseAmount => {
-    const walletAddressSet = new Set(walletAddresses.map((info) => info.address.toLowerCase()))
-    return nodes.reduce((acc: BaseAmount, node: NodeInfoMaya) => {
-      const totalBondProviderAmount = node.bondProviders.providers.reduce(
-        (providerSum: BaseAmount, provider: MayaProviders) => {
-          const normalizedAddress = provider.bondAddress.toLowerCase()
-          if (walletAddressSet.has(normalizedAddress)) {
-            return providerSum.plus(node.bond)
-          }
-          return providerSum
-        },
-        assetToBase(assetAmount(0))
-      )
-      return acc.plus(totalBondProviderAmount)
-    }, assetToBase(assetAmount(0)))
-  }
-
-  const renderBondTotal = useMemo(() => {
-    // THORChain-specific monitored bond total calculation
-    const calculateTotalMonitoredBondThor = (nodes: NodeInfoThor[]): BaseAmount => {
-      return nodes.reduce((acc: BaseAmount, node: NodeInfoThor) => {
+    return nodes.reduce(
+      (acc: BaseAmount, node: NodeInfoThor) => {
         const totalBondProviderAmount = node.bondProviders.providers.reduce(
           (providerSum: BaseAmount, provider: { bondAddress: string; bond: BaseAmount }) => {
             const normalizedAddress = provider.bondAddress.toLowerCase()
-            if (bondProviderWatchList.includes(normalizedAddress)) {
+            if (walletAddressSet.has(normalizedAddress)) {
               return providerSum.plus(provider.bond)
             }
             return providerSum
@@ -246,16 +211,20 @@ export const BondsView = (): JSX.Element => {
           assetToBase(assetAmount(0))
         )
         return acc.plus(totalBondProviderAmount)
-      }, assetToBase(assetAmount(0)))
-    }
+      },
+      assetToBase(assetAmount(0))
+    )
+  }
 
-    // MayaChain-specific monitored bond total calculation
-    const calculateTotalMonitoredBondMaya = (nodes: NodeInfoMaya[]): BaseAmount => {
-      return nodes.reduce((acc: BaseAmount, node: NodeInfoMaya) => {
+  // MayaChain-specific bond total calculation (Connected)
+  const calculateTotalBondMaya = (nodes: NodeInfoMaya[], walletAddresses: WalletAddressInfo[]): BaseAmount => {
+    const walletAddressSet = new Set(walletAddresses.map((info) => info.address.toLowerCase()))
+    return nodes.reduce(
+      (acc: BaseAmount, node: NodeInfoMaya) => {
         const totalBondProviderAmount = node.bondProviders.providers.reduce(
           (providerSum: BaseAmount, provider: MayaProviders) => {
             const normalizedAddress = provider.bondAddress.toLowerCase()
-            if (bondProviderWatchList.includes(normalizedAddress)) {
+            if (walletAddressSet.has(normalizedAddress)) {
               return providerSum.plus(node.bond)
             }
             return providerSum
@@ -263,18 +232,61 @@ export const BondsView = (): JSX.Element => {
           assetToBase(assetAmount(0))
         )
         return acc.plus(totalBondProviderAmount)
-      }, assetToBase(assetAmount(0)))
+      },
+      assetToBase(assetAmount(0))
+    )
+  }
+
+  const renderBondTotal = useMemo(() => {
+    // THORChain-specific monitored bond total calculation
+    const calculateTotalMonitoredBondThor = (nodes: NodeInfoThor[]): BaseAmount => {
+      return nodes.reduce(
+        (acc: BaseAmount, node: NodeInfoThor) => {
+          const totalBondProviderAmount = node.bondProviders.providers.reduce(
+            (providerSum: BaseAmount, provider: { bondAddress: string; bond: BaseAmount }) => {
+              const normalizedAddress = provider.bondAddress.toLowerCase()
+              if (bondProviderWatchList.includes(normalizedAddress)) {
+                return providerSum.plus(provider.bond)
+              }
+              return providerSum
+            },
+            assetToBase(assetAmount(0))
+          )
+          return acc.plus(totalBondProviderAmount)
+        },
+        assetToBase(assetAmount(0))
+      )
+    }
+
+    // MayaChain-specific monitored bond total calculation
+    const calculateTotalMonitoredBondMaya = (nodes: NodeInfoMaya[]): BaseAmount => {
+      return nodes.reduce(
+        (acc: BaseAmount, node: NodeInfoMaya) => {
+          const totalBondProviderAmount = node.bondProviders.providers.reduce(
+            (providerSum: BaseAmount, provider: MayaProviders) => {
+              const normalizedAddress = provider.bondAddress.toLowerCase()
+              if (bondProviderWatchList.includes(normalizedAddress)) {
+                return providerSum.plus(node.bond)
+              }
+              return providerSum
+            },
+            assetToBase(assetAmount(0))
+          )
+          return acc.plus(totalBondProviderAmount)
+        },
+        assetToBase(assetAmount(0))
+      )
     }
 
     const renderThorTotal = RD.fold(
       () => (
-        <Label className="my-4 mx-10px text-[28px]" align="center" color="gray">
+        <Label className="mx-10px my-4 text-[28px]" align="center" color="gray">
           --
         </Label>
       ),
       () => <Spin className="pt-4" />,
       (error: Error) => (
-        <Label className="my-4 mx-10px text-[28px]" align="center" color="gray">
+        <Label className="mx-10px my-4 text-[28px]" align="center" color="gray">
           {intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message })}
         </Label>
       ),
@@ -284,7 +296,7 @@ export const BondsView = (): JSX.Element => {
         const activeAmount = activeLabel === LabelView.Connected ? totals : totalMonitored
 
         return (
-          <Label className="my-4 mx-10px text-[28px]" align="center" color="gray">
+          <Label className="mx-10px my-4 text-[28px]" align="center" color="gray">
             {isPrivate
               ? hiddenString
               : formatAssetAmountCurrency({
@@ -303,13 +315,13 @@ export const BondsView = (): JSX.Element => {
 
     const renderMayaTotal = RD.fold(
       () => (
-        <Label className="my-4 mx-10px text-[28px]" align="center" color="gray">
+        <Label className="mx-10px my-4 text-[28px]" align="center" color="gray">
           --
         </Label>
       ),
       () => <Spin className="pt-4" />,
       (error: Error) => (
-        <Label className="my-4 mx-10px text-[28px]" align="center" color="gray">
+        <Label className="mx-10px my-4 text-[28px]" align="center" color="gray">
           {intl.formatMessage({ id: 'common.error.api.limit' }, { errorMsg: error.message })}
         </Label>
       ),
@@ -319,7 +331,7 @@ export const BondsView = (): JSX.Element => {
         const activeAmount = activeLabel === LabelView.Connected ? totals : totalMonitored
 
         return (
-          <Label className="my-4 mx-10px text-[28px]" align="center" color="gray">
+          <Label className="mx-10px my-4 text-[28px]" align="center" color="gray">
             {isPrivate
               ? hiddenString
               : formatAssetAmountCurrency({
@@ -358,7 +370,7 @@ export const BondsView = (): JSX.Element => {
       <div className="flex w-full justify-end pb-10px">
         <ProtocolSwitch protocol={protocol} setProtocol={setProtocol} />
       </div>
-      <div className="flex flex-col items-center justify-center rounded-t-lg bg-bg1 dark:bg-bg1d px-4 pt-4 pb-8">
+      <div className="flex flex-col items-center justify-center rounded-t-lg bg-bg1 px-4 pb-8 pt-4 dark:bg-bg1d">
         <div className="relative flex w-full items-center justify-center">
           <div className="flex items-center">
             <Label className="!w-auto" align="center" color="input" textTransform="uppercase">
@@ -371,7 +383,7 @@ export const BondsView = (): JSX.Element => {
               onClick={() =>
                 setActiveLabel((prev) => (prev === LabelView.Connected ? LabelView.Monitored : LabelView.Connected))
               }>
-              <SwapOutlined className="rounded-full border border-solid border-turquoise p-[2px] w-5 h-5" />
+              <SwapOutlined className="h-5 w-5 rounded-full border border-solid border-turquoise p-[2px]" />
             </BaseButton>
           </div>
           <div className="absolute right-0 flex items-center">

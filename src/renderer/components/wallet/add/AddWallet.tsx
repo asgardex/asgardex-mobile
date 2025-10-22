@@ -22,11 +22,11 @@ export const AddWallet = ({ isLocked = false }: Props) => {
   const intlButtonId = isLocked ? 'wallet.action.unlock' : 'wallet.action.connect'
 
   return (
-    <div className="p-[150px_20px] bg-bg0 dark:bg-bg0d flex flex-col items-center justify-center w-full h-full">
+    <div className="flex h-full w-full flex-col items-center justify-center bg-bg0 p-[150px_20px] dark:bg-bg0d">
       {isLocked ? (
-        <LockOpenIcon className="h-[60px] w-[60px] mb-0 stroke-gray2 dark:stroke-gray2d" />
+        <LockOpenIcon className="mb-0 h-[60px] w-[60px] stroke-gray2 dark:stroke-gray2d" />
       ) : (
-        <FolderPlusIcon className="h-[60px] w-[60px] mb-0 stroke-gray2 dark:stroke-gray2d" />
+        <FolderPlusIcon className="mb-0 h-[60px] w-[60px] stroke-gray2 dark:stroke-gray2d" />
       )}
       <Label className="!w-auto" textTransform="uppercase">
         {intl.formatMessage({ id: intlLabelId })}

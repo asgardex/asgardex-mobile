@@ -25,8 +25,8 @@ export const Label = React.forwardRef<HTMLDivElement, LabelProps>(
       sizeMap[size],
       colorMap[color],
       {
-        'font-bold font-mainBold': weight === 'bold',
-        'font-normal font-main': weight !== 'bold',
+        'font-mainBold font-bold': weight === 'bold',
+        'font-main font-normal': weight !== 'bold',
         uppercase: textTransform === 'uppercase',
         lowercase: textTransform === 'lowercase',
         capitalize: textTransform === 'capitalize',
@@ -43,7 +43,7 @@ export const Label = React.forwardRef<HTMLDivElement, LabelProps>(
 
     return (
       <div ref={ref} className={baseClasses} onClick={onClick}>
-        {loading ? <div className="animate-pulse bg-gray-200 rounded h-4 w-full" /> : children}
+        {loading ? <div className="h-4 w-full animate-pulse rounded bg-gray-200" /> : children}
       </div>
     )
   }

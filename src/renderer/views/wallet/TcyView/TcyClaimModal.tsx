@@ -46,7 +46,7 @@ export const TcyClaimModal = (props: Props) => {
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <DialogPanel
           className={clsx(
-            'mx-auto flex flex-col items-center py-5 gap-4',
+            'mx-auto flex flex-col items-center gap-4 py-5',
             'w-full max-w-[360px] md:max-w-[480px]',
             'bg-bg0 dark:bg-bg0d',
             'rounded-lg border border-solid border-gray1 dark:border-gray0d'
@@ -60,8 +60,8 @@ export const TcyClaimModal = (props: Props) => {
             </BaseButton>
           </div>
           <div className="h-[1px] w-full bg-gray1 dark:bg-gray0d" />
-          <div className="w-full px-4 space-y-1">
-            <div className="w-full flex items-center justify-between">
+          <div className="w-full space-y-1 px-4">
+            <div className="flex w-full items-center justify-between">
               <AssetData asset={tcyInfo.asset} network={network} />
             </div>
             <div className="flex items-center justify-between">

@@ -13,16 +13,16 @@ export type Props = {
 
 export const Alert = ({ className, type, title, description, action }: Props): JSX.Element => {
   return (
-    <div className={clsx('bg-bg0 dark:bg-bg0d rounded-lg', className)}>
+    <div className={clsx('rounded-lg bg-bg0 dark:bg-bg0d', className)}>
       <div
         className={clsx(
-          'flex justify-between items-start border border-solid p-2 rounded-lg',
+          'flex items-start justify-between rounded-lg border border-solid p-2',
           { 'border-turquoise bg-turquoise/10': type === 'info' },
           { 'border-warning0 bg-warning0/10 dark:bg-warning0/10': type === 'warning' },
           { 'border-error0 bg-error0/10 dark:bg-error0/10': type === 'error' }
         )}>
-        <div className="flex space-x-2 items-start">
-          <div className="w-6 h-6">
+        <div className="flex items-start space-x-2">
+          <div className="h-6 w-6">
             {type === 'info' && <InformationCircleIcon className="text-turquoise" />}
             {type === 'warning' && <ExclamationTriangleIcon className="text-warning0" />}
             {type === 'error' && <ExclamationCircleIcon className="text-error0" />}

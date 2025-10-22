@@ -196,14 +196,14 @@ export const Swap = ({
     sourceAsset.type === AssetType.SYNTH
       ? AssetCacao
       : sourceAsset.type === AssetType.SECURED
-      ? AssetRuneNative
-      : sourceAsset
+        ? AssetRuneNative
+        : sourceAsset
   const { chain: targetChain } =
     targetAsset.type === AssetType.SYNTH
       ? AssetCacao
       : sourceAsset.type === AssetType.SECURED
-      ? AssetRuneNative
-      : targetAsset
+        ? AssetRuneNative
+        : targetAsset
 
   const lockedWallet: boolean = useMemo(() => {
     // In standalone ledger mode, bypass keystore authentication
@@ -328,10 +328,10 @@ export const Swap = ({
         quoteSwap.protocol === 'Thorchain'
           ? O.some(THORChain)
           : quoteSwap.protocol === 'Mayachain'
-          ? O.some(MAYAChain)
-          : quoteSwap.protocol === 'Chainflip'
-          ? O.some(sourceChain)
-          : O.none
+            ? O.some(MAYAChain)
+            : quoteSwap.protocol === 'Chainflip'
+              ? O.some(sourceChain)
+              : O.none
       )
     )
   )
@@ -622,7 +622,7 @@ export const Swap = ({
           streamingInterval,
           streamingQuantity,
           affiliateName: affiliateName,
-          affiliateBps: affiliateName ? affiliateBps ?? 0 : undefined
+          affiliateBps: affiliateName ? (affiliateBps ?? 0) : undefined
         })
       }
     )(effectiveRecipientAddress)
@@ -771,8 +771,8 @@ export const Swap = ({
             swapFees.outFee.asset.type === AssetType.SYNTH
               ? AssetCacao
               : swapFees.outFee.asset.type === AssetType.SECURED
-              ? AssetRuneNative
-              : swapFees.outFee.asset
+                ? AssetRuneNative
+                : swapFees.outFee.asset
           ),
         (txDetails) => {
           const txOutFee = txDetails.fees.outboundFee
@@ -2703,8 +2703,8 @@ export const Swap = ({
                       targetAsset.type === AssetType.SYNTH
                         ? MAYAChain
                         : targetAsset.type === AssetType.SECURED
-                        ? THORChain
-                        : targetAsset.chain
+                          ? THORChain
+                          : targetAsset.chain
                   }
                 )}
               </div>
@@ -2725,7 +2725,7 @@ export const Swap = ({
       <div>
         {/* Note: Input value is shown as AssetAmount */}
         <div className="flex flex-wrap">
-          <div className="mb-3 w-full flex items-center justify-between">
+          <div className="mb-3 flex w-full items-center justify-between">
             <FlatButton
               className="rounded-full hover:shadow-full group-hover:rotate-180 dark:hover:shadow-fulld"
               size="small"
@@ -2802,7 +2802,7 @@ export const Swap = ({
                 size="small"
                 onClick={onSwitchAssets}
                 className="group rounded-full border border-solid border-turquoise bg-bg0 !p-10px hover:rotate-180 hover:shadow-full dark:bg-bg0d dark:hover:shadow-fulld">
-                <ArrowsUpDownIcon className="ease h-[40px] w-[40px] text-turquoise " />
+                <ArrowsUpDownIcon className="ease h-[40px] w-[40px] text-turquoise" />
               </BaseButton>
             </div>
           </div>
@@ -2810,7 +2810,7 @@ export const Swap = ({
         <div className="mt-1 space-y-1">
           {isFetchingEstimate ? (
             <Spin
-              className="min-h-24 border border-gray0 dark:border-gray0d rounded-lg"
+              className="min-h-24 rounded-lg border border-gray0 dark:border-gray0d"
               spinning={isFetchingEstimate}
               tip={intl.formatMessage({ id: 'common.loading' })}
             />
@@ -2853,7 +2853,7 @@ export const Swap = ({
                   {showDetails ? (
                     <MagnifyingGlassMinusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
                   ) : (
-                    <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125 " />
+                    <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
                   )}
                 </BaseButton>
 
@@ -3065,13 +3065,13 @@ export const Swap = ({
                           {walletBalancesLoading
                             ? loadingString
                             : hidePrivateData
-                            ? hiddenString
-                            : formatAssetAmountCurrency({
-                                amount: baseToAsset(sourceAssetAmountNative),
-                                asset: sourceAsset,
-                                decimal: 8,
-                                trimZeros: true
-                              })}
+                              ? hiddenString
+                              : formatAssetAmountCurrency({
+                                  amount: baseToAsset(sourceAssetAmountNative),
+                                  asset: sourceAsset,
+                                  decimal: 8,
+                                  trimZeros: true
+                                })}
                         </div>
                       </div>
                     </>
@@ -3166,7 +3166,7 @@ export const Swap = ({
                     key="standalone-recipient-address">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        <h3 className="font-[12px] !mb-0 mr-10px w-auto p-0 font-main uppercase text-text2 dark:text-text2d">
+                        <h3 className="!mb-0 mr-10px w-auto p-0 font-main font-[12px] uppercase text-text2 dark:text-text2d">
                           {intl.formatMessage({ id: 'common.recipient' })}
                         </h3>
                         <WalletTypeLabel key="target-w-type">Ledger</WalletTypeLabel>
@@ -3183,7 +3183,7 @@ export const Swap = ({
                                   type="number"
                                   value={targetWalletAccount.toString()}
                                   onChange={(e) => setTargetWalletAccount(Math.max(0, parseInt(e.target.value) || 0))}
-                                  className="w-12 h-6 text-10 px-1 text-center bg-bg0 dark:bg-bg0d border border-gray1 dark:border-gray1d rounded"
+                                  className="text-10 h-6 w-12 rounded border border-gray1 bg-bg0 px-1 text-center dark:border-gray1d dark:bg-bg0d"
                                   min="0"
                                 />
                               </div>
@@ -3193,7 +3193,7 @@ export const Swap = ({
                                   type="number"
                                   value={targetWalletIndex.toString()}
                                   onChange={(e) => setTargetWalletIndex(Math.max(0, parseInt(e.target.value) || 0))}
-                                  className="w-12 h-6 text-10 px-1 text-center bg-bg0 dark:bg-bg0d border border-gray1 dark:border-gray1d rounded"
+                                  className="text-10 h-6 w-12 rounded border border-gray1 bg-bg0 px-1 text-center dark:border-gray1d dark:bg-bg0d"
                                   min="0"
                                 />
                               </div>
@@ -3201,7 +3201,7 @@ export const Swap = ({
                                 <select
                                   value={targetHDMode}
                                   onChange={(e) => setTargetHDMode(e.target.value as HDMode)}
-                                  className="text-10 px-2 py-1 bg-bg0 dark:bg-bg0d border border-gray1 dark:border-gray1d rounded">
+                                  className="text-10 rounded border border-gray1 bg-bg0 px-2 py-1 dark:border-gray1d dark:bg-bg0d">
                                   <option value="p2wpkh">{intl.formatMessage({ id: 'common.nativeSegwit' })}</option>
                                   <option value="p2tr">{intl.formatMessage({ id: 'common.taproot' })}</option>
                                 </select>
@@ -3210,7 +3210,7 @@ export const Swap = ({
                                 <select
                                   value={targetHDMode}
                                   onChange={(e) => setTargetHDMode(e.target.value as HDMode)}
-                                  className="text-10 px-2 py-1 bg-bg0 dark:bg-bg0d border border-gray1 dark:border-gray1d rounded">
+                                  className="text-10 rounded border border-gray1 bg-bg0 px-2 py-1 dark:border-gray1d dark:bg-bg0d">
                                   <option value="default">Default</option>
                                 </select>
                               )}
@@ -3218,7 +3218,7 @@ export const Swap = ({
                                 <select
                                   value={targetHDMode}
                                   onChange={(e) => setTargetHDMode(e.target.value as HDMode)}
-                                  className="text-10 px-2 py-1 bg-bg0 dark:bg-bg0d border border-gray1 dark:border-gray1d rounded">
+                                  className="text-10 rounded border border-gray1 bg-bg0 px-2 py-1 dark:border-gray1d dark:bg-bg0d">
                                   <option value="ledgerlive">Ledger Live</option>
                                   <option value="legacy">Legacy</option>
                                   <option value="metamask">MetaMask</option>
@@ -3257,7 +3257,7 @@ export const Swap = ({
                           <div className="mt-3 space-y-3">
                             <div className="grid grid-cols-1 gap-3">
                               <button
-                                className="group flex items-center justify-between p-4 border border-gray0 dark:border-gray0d rounded-lg hover:border-turquoise hover:bg-bg1 dark:hover:bg-bg1d transition-all duration-200"
+                                className="group flex items-center justify-between rounded-lg border border-gray0 p-4 transition-all duration-200 hover:border-turquoise hover:bg-bg1 dark:border-gray0d dark:hover:bg-bg1d"
                                 disabled={isFetchingStandaloneLedgerAddress}
                                 onClick={() => {
                                   if (
@@ -3269,8 +3269,8 @@ export const Swap = ({
                                   }
                                 }}>
                                 <div className="flex items-center space-x-3">
-                                  <div className="w-8 h-8 rounded-full bg-turquoise/10 flex items-center justify-center">
-                                    <div className="w-4 h-4 bg-turquoise rounded-sm"></div>
+                                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-turquoise/10">
+                                    <div className="h-4 w-4 rounded-sm bg-turquoise"></div>
                                   </div>
                                   <div className="text-left">
                                     <div className="font-medium text-text0 dark:text-text0d">
@@ -3281,20 +3281,20 @@ export const Swap = ({
                                     </div>
                                   </div>
                                 </div>
-                                <div className="text-turquoise group-hover:translate-x-1 transition-transform duration-200">
+                                <div className="text-turquoise transition-transform duration-200 group-hover:translate-x-1">
                                   →
                                 </div>
                               </button>
 
                               <button
-                                className="group flex items-center justify-between p-4 border border-gray0 dark:border-gray0d rounded-lg hover:border-turquoise hover:bg-bg1 dark:hover:bg-bg1d transition-all duration-200"
+                                className="group flex items-center justify-between rounded-lg border border-gray0 p-4 transition-all duration-200 hover:border-turquoise hover:bg-bg1 dark:border-gray0d dark:hover:bg-bg1d"
                                 onClick={() => {
                                   setStandaloneLedgerTargetAddress(O.none)
                                   setCustomAddressEditActive(true)
                                 }}>
                                 <div className="flex items-center space-x-3">
-                                  <div className="w-8 h-8 rounded-full bg-warning0/10 flex items-center justify-center">
-                                    <div className="w-4 h-4 border-2 border-warning0 rounded-sm"></div>
+                                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-warning0/10">
+                                    <div className="h-4 w-4 rounded-sm border-2 border-warning0"></div>
                                   </div>
                                   <div className="text-left">
                                     <div className="font-medium text-text0 dark:text-text0d">Enter Manually</div>
@@ -3303,7 +3303,7 @@ export const Swap = ({
                                     </div>
                                   </div>
                                 </div>
-                                <div className="text-turquoise group-hover:translate-x-1 transition-transform duration-200">
+                                <div className="text-turquoise transition-transform duration-200 group-hover:translate-x-1">
                                   →
                                 </div>
                               </button>
@@ -3393,7 +3393,7 @@ export const Swap = ({
                     className="flex flex-col rounded-lg border border-solid border-gray0 px-4 py-2 dark:border-gray0d"
                     key="edit-address">
                     <div className="flex items-center">
-                      <h3 className="font-[12px] !mb-0 mr-10px w-auto p-0 font-main uppercase text-text2 dark:text-text2d">
+                      <h3 className="!mb-0 mr-10px w-auto p-0 font-main font-[12px] uppercase text-text2 dark:text-text2d">
                         {intl.formatMessage({ id: 'common.recipient' })}
                       </h3>
                       <WalletTypeLabel key="target-w-type">
@@ -3429,8 +3429,8 @@ export const Swap = ({
             isFetchingEstimate
               ? intl.formatMessage({ id: 'common.loading' })
               : walletBalancesLoading
-              ? intl.formatMessage({ id: 'common.balance.loading' })
-              : undefined
+                ? intl.formatMessage({ id: 'common.balance.loading' })
+                : undefined
           }
         />
       )}

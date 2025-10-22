@@ -37,10 +37,13 @@ export const useMayachainMimirHalt = (): { mimirHaltRD: MimirHaltRD; mimirHalt: 
   const { mimir$, mayachainLastblockState$ } = useMayachainContext()
 
   const createMimirGroup = (keys: string[], mimir: Mimir, lastHeight?: number) => {
-    return keys.reduce((acc, key) => {
-      acc[key] = getMimirStatus(mimir[key], lastHeight)
-      return acc
-    }, {} as Record<string, boolean>)
+    return keys.reduce(
+      (acc, key) => {
+        acc[key] = getMimirStatus(mimir[key], lastHeight)
+        return acc
+      },
+      {} as Record<string, boolean>
+    )
   }
 
   const [mimirHaltRD] = useObservableState<MimirHaltRD>(

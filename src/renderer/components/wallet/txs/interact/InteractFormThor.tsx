@@ -966,7 +966,7 @@ export const InteractFormThor = ({
                 disabled={isLoading}
                 size="large"
               />
-              {errors.memo && <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.memo.message}</div>}
+              {errors.memo && <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.memo.message}</div>}
             </div>
             {/* Display example memos */}
             <div className="mt-4">
@@ -1002,7 +1002,7 @@ export const InteractFormThor = ({
                 onChange={(active) => setRunePoolAction(active ? Action.add : Action.withdraw)}
               />
             </span>
-            <span className="inline-block ml-2">
+            <span className="ml-2 inline-block">
               <Label color="input" size="big" textTransform="uppercase">
                 {runePoolAction === Action.add
                   ? intl.formatMessage({ id: 'runePool.detail.titleDeposit' })
@@ -1047,7 +1047,7 @@ export const InteractFormThor = ({
                 size="large"
               />
               {errors.thorAddress && (
-                <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.thorAddress.message}</div>
+                <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.thorAddress.message}</div>
               )}
             </div>
           </div>
@@ -1072,7 +1072,7 @@ export const InteractFormThor = ({
                 size="large"
               />
               {errors.providerAddress && (
-                <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.providerAddress.message}</div>
+                <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.providerAddress.message}</div>
               )}
             </div>
           </div>
@@ -1092,7 +1092,7 @@ export const InteractFormThor = ({
                 size="large"
               />
               {errors.operatorFee && (
-                <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.operatorFee.message}</div>
+                <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.operatorFee.message}</div>
               )}
             </div>
           </div>
@@ -1133,7 +1133,7 @@ export const InteractFormThor = ({
                     )}
                   />
                   {errors.amount && (
-                    <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.amount.message}</div>
+                    <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.amount.message}</div>
                   )}
                 </div>
                 {/* max. amount button (BOND/CUSTOM/UNBOND only) */}
@@ -1161,7 +1161,7 @@ export const InteractFormThor = ({
                       {intl.formatMessage({ id: 'common.address.self' })}
                       <div className="truncate pl-10px font-main text-[12px]">{walletAddress}</div>
                     </div>
-                    <div className="ml-[-2px] flex w-full justify-between  py-10px font-mainBold text-[14px] text-gray2 dark:text-gray2d">
+                    <div className="ml-[-2px] flex w-full justify-between py-10px font-mainBold text-[14px] text-gray2 dark:text-gray2d">
                       {intl.formatMessage({ id: 'bonds.currentBond' })}
                       <div className="truncate pl-10px font-main text-[12px]">
                         {formatAssetAmountCurrency({
@@ -1199,7 +1199,7 @@ export const InteractFormThor = ({
                     size="large"
                   />
                   {errors.operatorFee && (
-                    <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.operatorFee.message}</div>
+                    <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.operatorFee.message}</div>
                   )}
                 </div>
               </div>
@@ -1234,7 +1234,7 @@ export const InteractFormThor = ({
                   size="large"
                 />
                 {errors.thorname && (
-                  <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.thorname.message}</div>
+                  <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.thorname.message}</div>
                 )}
               </div>
               {O.isSome(oThorname) && !thornameAvailable && !isOwner && renderThornameError}
@@ -1285,7 +1285,7 @@ export const InteractFormThor = ({
                       )}
                     />
                     {errors.preferredAsset && (
-                      <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.preferredAsset.message}</div>
+                      <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.preferredAsset.message}</div>
                     )}
                   </div>
                   {/* Add input fields for aliasChain, aliasAddress, and expiry */}
@@ -1323,7 +1323,7 @@ export const InteractFormThor = ({
                       )}
                     />
                     {errors.aliasChain && (
-                      <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.aliasChain.message}</div>
+                      <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.aliasChain.message}</div>
                     )}
                   </div>
                   <Label color="input" size="big" textTransform="uppercase">
@@ -1339,7 +1339,7 @@ export const InteractFormThor = ({
                       size="large"
                     />
                     {errors.aliasAddress && (
-                      <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.aliasAddress.message}</div>
+                      <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.aliasAddress.message}</div>
                     )}
                   </div>
                   <Label color="input" size="big" textTransform="uppercase">
@@ -1372,7 +1372,7 @@ export const InteractFormThor = ({
                       )}
                     />
                     {errors.expiry && (
-                      <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.expiry.message}</div>
+                      <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.expiry.message}</div>
                     )}
                   </div>
                 </>
@@ -1403,7 +1403,7 @@ export const InteractFormThor = ({
                       )}
                     />
                     {errors.chain && (
-                      <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.chain.message}</div>
+                      <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.chain.message}</div>
                     )}
                   </div>
                   <Label color="input" size="big" textTransform="uppercase">
@@ -1419,7 +1419,7 @@ export const InteractFormThor = ({
                       size="large"
                     />
                     {errors.chainAddress && (
-                      <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.chainAddress.message}</div>
+                      <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.chainAddress.message}</div>
                     )}
                   </div>
                   <Label color="input" size="big" textTransform="uppercase">
@@ -1455,7 +1455,7 @@ export const InteractFormThor = ({
                       )}
                     />
                     {errors.expiry && (
-                      <div className="text-error0 dark:text-error0d text-sm mt-1">{errors.expiry.message}</div>
+                      <div className="mt-1 text-sm text-error0 dark:text-error0d">{errors.expiry.message}</div>
                     )}
                   </div>
                 </>
@@ -1517,7 +1517,7 @@ export const InteractFormThor = ({
             {showDetails ? (
               <MagnifyingGlassMinusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
             ) : (
-              <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125 " />
+              <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
             )}
           </BaseButton>
           {showDetails && (

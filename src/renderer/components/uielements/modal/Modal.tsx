@@ -62,12 +62,12 @@ export const Modal = ({
                 className={clsx(
                   'w-full max-w-lg overflow-hidden rounded-lg border',
                   // body/bg/border map to your palette('background', 1) / palette('gray',0)
-                  'border-gray0 dark:border-gray0d bg-bg0 dark:bg-bg0d',
+                  'border-gray0 bg-bg0 dark:border-gray0d dark:bg-bg0d',
                   panelClassName
                 )}>
                 {/* Header — uppercase, centered, primary bg like palette('primary',2) */}
                 <div className="relative px-3.5 py-2.5 text-center uppercase">
-                  <DialogTitle as="h1" className="text-md tracking-wide font-main text-text2 dark:text-text2d mb-0">
+                  <DialogTitle as="h1" className="text-md mb-0 font-main tracking-wide text-text2 dark:text-text2d">
                     {title}
                   </DialogTitle>
 
@@ -75,7 +75,7 @@ export const Modal = ({
                     <button
                       type="button"
                       onClick={onCancel}
-                      className="absolute right-0 top-0 grid size-10 place-items-center text-text1 dark:text-text1d/90 focus:outline-none rounded">
+                      className="absolute right-0 top-0 grid size-10 place-items-center rounded text-text1 focus:outline-none dark:text-text1d/90">
                       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M18 6L6 18M6 6l12 12" />
                       </svg>
@@ -88,18 +88,18 @@ export const Modal = ({
 
                 {/* Footer — height 46px, two equal buttons, uppercase */}
                 {footer && (
-                  <div className="h-11 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                  <div className="h-11 border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
                     <div className="flex h-full">
                       <button
                         type="button"
                         onClick={onCancel}
                         className={clsx(
-                          'cancel-ant-btn flex-1 h-full border-0 rounded-none uppercase font-[MainFontRegular] text-sm',
+                          'cancel-ant-btn h-full flex-1 rounded-none border-0 font-[MainFontRegular] text-sm uppercase',
                           // text/background like palette('text',2)/(background,1)
-                          'text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900',
+                          'bg-white text-gray-700 dark:bg-gray-900 dark:text-gray-200',
                           // first-child right border like your styled rule
                           'border-r border-gray-200 dark:border-gray-700',
-                          'hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
+                          'hover:text-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-indigo-400',
                           cancelButtonProps?.className
                         )}
                         {...cancelButtonProps}>
@@ -111,12 +111,12 @@ export const Modal = ({
                         onClick={onOk}
                         disabled={confirmLoading}
                         className={clsx(
-                          'ok-ant-btn flex-1 h-full border-0 rounded-none uppercase font-[MainFontRegular] text-sm',
+                          'ok-ant-btn h-full flex-1 rounded-none border-0 font-[MainFontRegular] text-sm uppercase',
                           // primary text like palette('primary',2)
-                          'text-indigo-600 dark:text-indigo-400 bg-white dark:bg-gray-900',
+                          'bg-white text-indigo-600 dark:bg-gray-900 dark:text-indigo-400',
                           // hover gradient echoing palette('gradient',1)
                           'hover:bg-gradient-to-r hover:from-indigo-600/10 hover:to-teal-400/10',
-                          'disabled:opacity-50 disabled:cursor-not-allowed',
+                          'disabled:cursor-not-allowed disabled:opacity-50',
                           'focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
                           okButtonProps?.className
                         )}

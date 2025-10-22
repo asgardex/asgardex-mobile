@@ -61,19 +61,19 @@ export const ProviderModalContent = ({ open, onClose, midgardStatusRD, midgardSt
               {intl.formatMessage({ id: 'modal.provider.selectProtocols.title' })}
             </h1>
             <BaseButton
-              className="!p-0 text-gray1 hover:text-gray2 dark:text-gray1d hover:dark:text-gray2d focus:outline-none focus:ring-0"
+              className="!p-0 text-gray1 hover:text-gray2 focus:outline-none focus:ring-0 dark:text-gray1d hover:dark:text-gray2d"
               onClick={onCloseMenu}>
               <XMarkIcon className="h-20px w-20px text-inherit" />
             </BaseButton>
           </div>
-          <span className="mt-2 px-5 text-gray1 dark:text-gray1d text-sm">
+          <span className="mt-2 px-5 text-sm text-gray1 dark:text-gray1d">
             Choose which protocols to consider when finding optimal swap routes.
           </span>
-          <div className="mt-4 flex flex-col w-full px-4 gap-2">
+          <div className="mt-4 flex w-full flex-col gap-2 px-4">
             {AllProtocols.map((protocol) => (
               <div key={protocol} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <ProviderIcon className="w-8 h-8" protocol={protocol} />
+                  <ProviderIcon className="h-8 w-8" protocol={protocol} />
                   <span className="text-text2 dark:text-text2d">{protocol}</span>
                 </div>
                 <SwitchButton

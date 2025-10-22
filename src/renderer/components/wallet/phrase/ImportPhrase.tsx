@@ -120,13 +120,13 @@ export const ImportPhrase = (props: Props): JSX.Element => {
       <form className="w-full p-8 pt-4" onSubmit={handleSubmit(submitForm)}>
         <div className="flex flex-col items-center">
           {/* phrase */}
-          <div className="w-full mb-4">
-            <label className="block mb-2 text-sm font-medium text-text0 dark:text-text0d">
+          <div className="mb-4 w-full">
+            <label className="mb-2 block text-sm font-medium text-text0 dark:text-text0d">
               {intl.formatMessage({ id: 'wallet.imports.enterphrase' })}
             </label>
             <Textarea
               className={clsx(
-                'w-full p-2 text-14 bg-bg0 dark:bg-bg0d rounded-lg',
+                'w-full rounded-lg bg-bg0 p-2 text-14 dark:bg-bg0d',
                 'border border-solid',
                 'placeholder:text-gray-300 dark:placeholder:text-gray-400',
                 'text-text0 dark:text-text0d',
@@ -154,8 +154,8 @@ export const ImportPhrase = (props: Props): JSX.Element => {
           {renderImportError}
 
           {/* password */}
-          <div className="w-full mb-4">
-            <label className="block mb-2 text-sm font-medium text-text0 dark:text-text0d">
+          <div className="mb-4 w-full">
+            <label className="mb-2 block text-sm font-medium text-text0 dark:text-text0d">
               {intl.formatMessage({ id: 'common.password' })}
             </label>
             <InputPassword
@@ -168,8 +168,8 @@ export const ImportPhrase = (props: Props): JSX.Element => {
           </div>
 
           {/* repeat password */}
-          <div className="w-full mb-4">
-            <label className="block mb-2 text-sm font-medium text-text0 dark:text-text0d">
+          <div className="mb-4 w-full">
+            <label className="mb-2 block text-sm font-medium text-text0 dark:text-text0d">
               {intl.formatMessage({ id: 'wallet.password.repeat' })}
             </label>
             <InputPassword
@@ -189,8 +189,8 @@ export const ImportPhrase = (props: Props): JSX.Element => {
           </div>
 
           {/* name */}
-          <div className="w-full mb-4">
-            <label className="block mb-2 text-sm font-medium text-text0 dark:text-text0d">
+          <div className="mb-4 w-full">
+            <label className="mb-2 block text-sm font-medium text-text0 dark:text-text0d">
               <div>
                 {intl.formatMessage({ id: 'wallet.name' })}
                 <span className="pl-5px text-[12px] text-gray1 dark:text-gray1d">

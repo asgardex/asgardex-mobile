@@ -75,7 +75,7 @@ export const TotalAssetValue = (props: Props): JSX.Element => {
   const filteredChartData = chartData.filter((entry) => entry.value !== 0.0)
 
   return (
-    <div className="flex flex-col items-center justify-center px-4 pt-4 pb-8 bg-bg1 dark:bg-bg1d">
+    <div className="flex flex-col items-center justify-center bg-bg1 px-4 pb-8 pt-4 dark:bg-bg1d">
       <div className="flex items-center">
         <Label className="!w-auto" align="center" color="input" textTransform="uppercase">
           {title}
@@ -91,7 +91,7 @@ export const TotalAssetValue = (props: Props): JSX.Element => {
           (showDetails ? (
             <MagnifyingGlassMinusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
           ) : (
-            <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125 " />
+            <MagnifyingGlassPlusIcon className="ease h-[20px] w-[20px] text-inherit group-hover:scale-125" />
           ))}
       </BaseButton>
       {hasErrors && chainErrors}

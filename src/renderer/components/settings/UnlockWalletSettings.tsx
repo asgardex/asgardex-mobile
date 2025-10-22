@@ -57,13 +57,13 @@ export const UnlockWalletSettings = ({ keystoreState, unlockHandler }: Props): J
           size="normal"
           onClick={handleLedgerModeClick}
           disabled={isUnlocked}
-          className={`flex items-center gap-2 min-w-[200px] ${isUnlocked ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`flex min-w-[200px] items-center gap-2 ${isUnlocked ? 'cursor-not-allowed opacity-50' : ''}`}
           title={isUnlocked ? 'Lock wallet to enter Ledger mode' : 'Enter Ledger Mode'}>
           <CpuChipIcon className="h-5 w-5" />
           Enter Ledger Mode
         </BorderButton>
         {isUnlocked && (
-          <span className="text-warning0 dark:text-warning0d text-xs">
+          <span className="text-xs text-warning0 dark:text-warning0d">
             {intl.formatMessage({ id: 'settings.ledgerMode.lockWalletWarning' })}
           </span>
         )}

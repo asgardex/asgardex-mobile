@@ -193,16 +193,16 @@ export const ChainflipTransactionItem = ({
   return (
     <div
       className={clsx(
-        'bg-gray0/30 dark:bg-gray0d/30 rounded-lg border transition-all duration-500',
+        'rounded-lg border bg-gray0/30 transition-all duration-500 dark:bg-gray0d/30',
         'border-gray0 dark:border-gray0d',
         isNewlyCompleted && 'animate-pulse',
         className
       )}>
       <div className="p-2">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center space-x-1 min-w-0">
+        <div className="mb-1 flex items-center justify-between">
+          <div className="flex min-w-0 items-center space-x-1">
             {protocol && protocol}
-            <span className="text-sm font-medium text-text1 dark:text-text1d truncate">
+            <span className="truncate text-sm font-medium text-text1 dark:text-text1d">
               {fromAsset} → {toAsset}
             </span>
           </div>
@@ -210,47 +210,47 @@ export const ChainflipTransactionItem = ({
           <div className="flex items-center space-x-1">
             <button
               onClick={toggleExpanded}
-              className="p-1 text-text2 dark:text-text2d hover:text-text1 dark:hover:text-text1d transition-colors">
+              className="p-1 text-text2 transition-colors hover:text-text1 dark:text-text2d dark:hover:text-text1d">
               {isExpanded ? (
-                <ChevronUpIcon className="w-3 h-3 text-text2 dark:text-text2d" />
+                <ChevronUpIcon className="h-3 w-3 text-text2 dark:text-text2d" />
               ) : (
-                <ChevronDownIcon className="w-3 h-3 text-text2 dark:text-text2d" />
+                <ChevronDownIcon className="h-3 w-3 text-text2 dark:text-text2d" />
               )}
             </button>
             <button
               onClick={handleRemove}
-              className="p-1 text-text2 dark:text-text2d hover:text-error0 dark:hover:text-error0d transition-colors">
-              <XMarkIcon className="w-3 h-3 text-text2 dark:text-text2d group-hover:text-error0 dark:group-hover:text-error0d" />
+              className="p-1 text-text2 transition-colors hover:text-error0 dark:text-text2d dark:hover:text-error0d">
+              <XMarkIcon className="h-3 w-3 text-text2 group-hover:text-error0 dark:text-text2d dark:group-hover:text-error0d" />
             </button>
           </div>
         </div>
 
         <div className="flex items-center justify-between">
           {transaction.isComplete ? (
-            <div className="flex items-center space-x-1 bg-turquoise/80 dark:bg-turquoise/80 px-2 py-1 rounded-lg">
-              <CheckCircleIcon className="w-4 h-4 text-white shrink-0" />
+            <div className="flex items-center space-x-1 rounded-lg bg-turquoise/80 px-2 py-1 dark:bg-turquoise/80">
+              <CheckCircleIcon className="h-4 w-4 shrink-0 text-white" />
               <Label size="small" color="white" textTransform="uppercase">
                 {intl.formatMessage({ id: 'chainflip.completed', defaultMessage: 'Completed' })}
               </Label>
             </div>
           ) : (
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <div
                 className={clsx(
-                  'flex text-xs truncate',
+                  'flex truncate text-xs',
                   getRichStatusText().urgent
-                    ? 'text-yellow-600 dark:text-yellow-400 font-medium'
+                    ? 'font-medium text-yellow-600 dark:text-yellow-400'
                     : 'text-text2 dark:text-text2d'
                 )}>
-                <PaperAirplaneIcon className="w-4 h-4 mr-1" />
+                <PaperAirplaneIcon className="mr-1 h-4 w-4" />
                 {statusInfo.text}
               </div>
               {statusInfo.detail && (
-                <div className="text-xs text-text2 dark:text-text2d truncate opacity-50">{statusInfo.detail}</div>
+                <div className="truncate text-xs text-text2 opacity-50 dark:text-text2d">{statusInfo.detail}</div>
               )}
             </div>
           )}
-          <span className="text-base font-bold text-text2 dark:text-text2d ml-2 shrink-0">{Math.round(progress)}%</span>
+          <span className="ml-2 shrink-0 text-base font-bold text-text2 dark:text-text2d">{Math.round(progress)}%</span>
         </div>
 
         {!transaction.isComplete && <ProgressBar className="mt-1" heightPx={4} percent={progress} />}
@@ -258,7 +258,7 @@ export const ChainflipTransactionItem = ({
 
       {/* Expanded Details */}
       {isExpanded && (
-        <div className="border-t border-gray1 dark:border-gray1d p-2 text-xs">
+        <div className="border-t border-gray1 p-2 text-xs dark:border-gray1d">
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
               <span className="text-text2 dark:text-text2d">
@@ -280,7 +280,7 @@ export const ChainflipTransactionItem = ({
             <CopyLabel
               textToCopy={transaction.depositChannelId}
               label={transaction.depositChannelId}
-              className="ml-1 text-text1 dark:text-text1d text-xs"
+              className="ml-1 text-xs text-text1 dark:text-text1d"
               iconClassName="!w-4 !h-4"
             />
           </div>
@@ -292,7 +292,7 @@ export const ChainflipTransactionItem = ({
               <CopyLabel
                 textToCopy={transaction.swapId}
                 label={transaction.swapId}
-                className="ml-1 text-text1 dark:text-text1d text-xs"
+                className="ml-1 text-xs text-text1 dark:text-text1d"
                 iconClassName="!w-4 !h-4"
               />
             </div>
@@ -305,7 +305,7 @@ export const ChainflipTransactionItem = ({
               <CopyLabel
                 textToCopy={transaction.stages.depositTxHash}
                 label={truncateMiddle(transaction.stages.depositTxHash, { start: 6, end: 4 })}
-                className="ml-1 text-text1 dark:text-text1d text-xs"
+                className="ml-1 text-xs text-text1 dark:text-text1d"
                 iconClassName="!w-4 !h-4"
               />
             </div>
@@ -318,7 +318,7 @@ export const ChainflipTransactionItem = ({
               <CopyLabel
                 textToCopy={transaction.stages.egressTxHash}
                 label={truncateMiddle(transaction.stages.egressTxHash)}
-                className="ml-1 text-text1 dark:text-text1d text-xs"
+                className="ml-1 text-xs text-text1 dark:text-text1d"
                 iconClassName="!w-4 !h-4"
               />
             </div>

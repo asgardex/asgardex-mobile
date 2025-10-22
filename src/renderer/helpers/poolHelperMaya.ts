@@ -113,7 +113,7 @@ export const getPoolTableRowsData = ({
               ...poolTableRowData,
               key: poolDetail?.asset || index.toString(),
               deepest
-            } as PoolTableRowData)
+            }) as PoolTableRowData
         )
       )
     }),

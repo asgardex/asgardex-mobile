@@ -36,17 +36,17 @@ export const PhraseCopyModal = (props: Props) => {
               {intl.formatMessage({ id: 'settings.view.phrase.title' })}
             </h1>
             <BaseButton
-              className="!p-0 text-gray1 hover:text-gray2 dark:text-gray1d hover:dark:text-gray2d focus:outline-none focus:ring-0"
+              className="!p-0 text-gray1 hover:text-gray2 focus:outline-none focus:ring-0 dark:text-gray1d hover:dark:text-gray2d"
               onClick={onClose}>
               <XMarkIcon className="h-20px w-20px text-inherit" />
             </BaseButton>
           </div>
-          <div className="mt-4 flex flex-col items-center w-full px-4 gap-2">
-            <div className="w-full grid grid-cols-3 border border-solid border-gray0 dark:border-gray0d rounded-xl p-2 gap-1">
+          <div className="mt-4 flex w-full flex-col items-center gap-2 px-4">
+            <div className="grid w-full grid-cols-3 gap-1 rounded-xl border border-solid border-gray0 p-2 dark:border-gray0d">
               {phrase.split(' ').map((item, index) => (
                 <span
                   key={index}
-                  className="text-sm bg-turquoise/10 text-text0 dark:text-text0d font-bold px-2 py-1 rounded-full">
+                  className="rounded-full bg-turquoise/10 px-2 py-1 text-sm font-bold text-text0 dark:text-text0d">
                   {index + 1}. {item}
                 </span>
               ))}

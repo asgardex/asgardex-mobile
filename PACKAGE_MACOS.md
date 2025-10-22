@@ -21,7 +21,6 @@ To package `ASGARDEX` on your machine locally, you have to provide these ENV loc
 - `SIGNING_APPLE_ID` and `SIGNING_APP_PASSWORD` are needed for notarizing macOS builds using [`electron-notarize`](https://github.com/electron/electron-notarize).
 
 - `MAC_CERTIFICATE` and `MAC_CERTIFICATE_PASSWORD` are needed for code signing https://www.electron.build/code-signing
-
   - `MAC_CERTIFICATE` becomes `CSC_LINK` (The HTTPS link (or base64-encoded data, or file:// link, or local path) to certificate (_.p12 or _.pfx file). Shorthand ~/ is supported (home directory).)
   - `MAC_CERTIFICATE_PASSWORD` becomes `CSC_KEY_PASSWORD (The password to decrypt the certificate given in CSC_LINK.)
 

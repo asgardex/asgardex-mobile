@@ -530,7 +530,7 @@ export const TradeAssetsTableCollapsable = ({
         cell: ({ row }) => {
           const { asset, protocol } = row.original
           return (
-            <div className="flex items-center space-x-2 mx-2">
+            <div className="mx-2 flex items-center space-x-2">
               <AssetIcon asset={asset} size="normal" network={network} />
               <div className="flex flex-col">
                 <Label className="!text-16 !leading-[18px]" textTransform="uppercase" weight="bold">
@@ -633,11 +633,14 @@ export const TradeAssetsTableCollapsable = ({
 
       // Group accounts by protocol for each wallet type
       const groupByProtocol = (accounts: TradeAccount[]): Record<string, TradeAccount[]> =>
-        accounts.reduce((acc, account) => {
-          const protocol = account.protocol.toLowerCase()
-          acc[protocol] = [...(acc[protocol] || []), account]
-          return acc
-        }, {} as Record<string, TradeAccount[]>)
+        accounts.reduce(
+          (acc, account) => {
+            const protocol = account.protocol.toLowerCase()
+            acc[protocol] = [...(acc[protocol] || []), account]
+            return acc
+          },
+          {} as Record<string, TradeAccount[]>
+        )
 
       const keystoreByProtocol = groupByProtocol(keystoreAccounts)
       const ledgerByProtocol = groupByProtocol(ledgerAccounts)
@@ -695,11 +698,14 @@ export const TradeAssetsTableCollapsable = ({
       return null
     }
 
-    const balancesByChainAndWalletType: Record<string, TradeAccount[]> = tradeAccountBalances.reduce((acc, account) => {
-      const key = `${account.protocol}.${account.walletType}`
-      acc[key] = [...(acc[key] || []), account]
-      return acc
-    }, {} as Record<string, TradeAccount[]>)
+    const balancesByChainAndWalletType: Record<string, TradeAccount[]> = tradeAccountBalances.reduce(
+      (acc, account) => {
+        const key = `${account.protocol}.${account.walletType}`
+        acc[key] = [...(acc[key] || []), account]
+        return acc
+      },
+      {} as Record<string, TradeAccount[]>
+    )
 
     return Object.entries(balancesByChainAndWalletType).map(([key, balances]) => {
       const [protocol, walletType] = key.split('.')
@@ -723,7 +729,7 @@ export const TradeAssetsTableCollapsable = ({
               {protocol}
             </Label>
             {!isKeystoreWallet(walletType as WalletType) && (
-              <WalletTypeLabel className="bg-bg2 dark:bg-bg2d border border-solid border-gray0 dark:border-gray0d">
+              <WalletTypeLabel className="border border-solid border-gray0 bg-bg2 dark:border-gray0d dark:bg-bg2d">
                 {walletTypeToI18n(walletType as WalletType, intl)}
               </WalletTypeLabel>
             )}

@@ -17,7 +17,7 @@ const colorMap: Record<ConnectionColors, string> = {
 
 export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ color, className, ...rest }) => (
   <div
-    className={clsx('w-[14px] h-[14px] border-none rounded-full', colorMap[color] || colorMap.red, className)}
+    className={clsx('h-[14px] w-[14px] rounded-full border-none', colorMap[color] || colorMap.red, className)}
     {...rest}
   />
 )

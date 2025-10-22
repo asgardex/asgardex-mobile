@@ -155,13 +155,13 @@ export const TxTimer = ({
   return (
     <div
       className={clsx(
-        'flex flex-col justify-center items-center relative w-[120px] h-[120px] mx-auto txTimer-wrapper',
+        'txTimer-wrapper relative mx-auto flex h-[120px] w-[120px] flex-col items-center justify-center',
         className
       )}>
-      <div className="timerchart-icon absolute top-0 left-0 w-full h-full flex justify-center items-center">
+      <div className="timerchart-icon absolute left-0 top-0 flex h-full w-full items-center justify-center">
         {!active && (
-          <div className="flex justify-center items-center bg-turquoise/40 rounded-full w-3/4 h-3/4">
-            {!refunded ? <CheckCircleIcon className="w-[35px] h-[35px] text-turquoise" /> : <RefundIcon />}
+          <div className="flex h-3/4 w-3/4 items-center justify-center rounded-full bg-turquoise/40">
+            {!refunded ? <CheckCircleIcon className="h-[35px] w-[35px] text-turquoise" /> : <RefundIcon />}
           </div>
         )}
       </div>
@@ -172,9 +172,9 @@ export const TxTimer = ({
           strokeWidth={7}
           strokeLinecap="round"
           trailColor="rgba(242, 243, 243, 0.5)"
-          className={hide ? 'invisible' : 'w-full h-full'}
+          className={hide ? 'invisible' : 'h-full w-full'}
           size={120}>
-          <div className="flex items-center justify-center text-text0 dark:text-text0d text-lg font-main">
+          <div className="flex items-center justify-center font-main text-lg text-text0 dark:text-text0d">
             {totalDurationString}s
           </div>
         </CircleProgress>

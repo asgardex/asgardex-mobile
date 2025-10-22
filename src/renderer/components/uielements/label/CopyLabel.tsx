@@ -34,14 +34,14 @@ export const CopyLabel = ({ label, textToCopy, className = '', iconClassName = '
 
   return (
     <div
-      className={clsx('flex items-center cursor-pointer text-turquoise group transition-colors', className)}
+      className={clsx('group flex cursor-pointer items-center text-turquoise transition-colors', className)}
       onClick={handleCopy}>
       {label && <span className={clsx('mr-1 font-main text-inherit', className)}>{label}</span>}
       {copied ? (
         <CheckIcon className={clsx('h-5 w-5 text-turquoise', iconClassName)} />
       ) : (
         <DocumentDuplicateIcon
-          className={clsx('h-5 w-5 text-text2 dark:text-text2d group-hover:text-inherit', iconClassName)}
+          className={clsx('h-5 w-5 text-text2 group-hover:text-inherit dark:text-text2d', iconClassName)}
         />
       )}
     </div>
