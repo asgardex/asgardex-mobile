@@ -19,32 +19,32 @@ repo:
 lint:
   enabled:
     # 🧹 General Code Quality & Formatting
-    - eslint@8.57.0!             # JS/TS linting
-    - prettier@2.6.2!            # Code formatting
-    - markdownlint@0.44.0        # Markdown formatting
-    - codespell@2.4.1           # Spell-checking
+    - eslint@8.57.0! # JS/TS linting
+    - prettier@3.6.2! # Code formatting
+    - markdownlint@0.44.0 # Markdown formatting
+    - codespell@2.4.1 # Spell-checking
     # - stylelint@16.18.0         # CSS / SCSS linting
-    - yamllint@1.37.0           # YAML formatting
-    - shfmt@3.6.0               # Shell formatting
+    - yamllint@1.37.0 # YAML formatting
+    - shfmt@3.6.0 # Shell formatting
     # - svgo@3.3.2                # Optimize SVGs
     # - oxipng@9.1.4              # Optimize PNGs
 
     # 🔐 Security
     # - osv-scanner@2.0.1         # Open source vuln scanner
-    - checkov@3.2.407           # IaC security scanning
-    - trufflehog@3.88.25        # Secrets detection
-    - semgrep@1.120.0             # Static analysis tool that detects security issues, bugs, and code quality problems
+    - checkov@3.2.407 # IaC security scanning
+    - trufflehog@3.88.25 # Secrets detection
+    - semgrep@1.120.0 # Static analysis tool that detects security issues, bugs, and code quality problems
 
     # 📦 Project Hygiene
-    - git-diff-check           # Restrict to changed files
+    - git-diff-check # Restrict to changed files
 
     # 🔧 CI/CD
-    - actionlint@1.7.7          # GitHub Actions workflows
+    - actionlint@1.7.7 # GitHub Actions workflows
 
   definitions:
     - name: stylelint
       commands:
-      - run: stylelint --config .stylelint.config.js ${target}
+        - run: stylelint --config .stylelint.config.js ${target}
 
     - name: codespell
       commands:
