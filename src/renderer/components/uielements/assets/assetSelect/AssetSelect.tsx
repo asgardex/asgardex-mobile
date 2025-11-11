@@ -20,6 +20,7 @@ type Props = {
   shadowless?: boolean
   disabled?: boolean
   network: Network
+  synthDisabled?: boolean
 }
 
 export const AssetSelect = (props: Props): JSX.Element => {
@@ -32,7 +33,8 @@ export const AssetSelect = (props: Props): JSX.Element => {
     showAssetName = true,
     disabled = false,
     shadowless = false,
-    network
+    network,
+    synthDisabled = false
   } = props
 
   const [openMenu, setOpenMenu] = useState<boolean>(false)
@@ -62,6 +64,7 @@ export const AssetSelect = (props: Props): JSX.Element => {
         onClose={() => setOpenMenu(false)}
         headline={dialogHeadline}
         network={network}
+        synthDisabled={synthDisabled}
       />
       <BaseButton
         className={clsx(

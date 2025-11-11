@@ -51,6 +51,7 @@ export type Props = {
   className?: string
   classNameInput?: string
   onChangePercent?: (percents: number) => void
+  synthDisabled?: boolean
 }
 
 /**
@@ -94,7 +95,8 @@ export const AssetInput = (props: Props): JSX.Element => {
     useLedgerHandler,
     protocol,
     className = '',
-    classNameInput = ''
+    classNameInput = '',
+    synthDisabled = false
   } = props
 
   const inputWrapperRef = useRef<FixmeType>()
@@ -192,6 +194,7 @@ export const AssetInput = (props: Props): JSX.Element => {
             dialogHeadline={intl.formatMessage({ id: 'common.asset.chooseAsset' })}
             shadowless
             disabled={disabled}
+            synthDisabled={synthDisabled}
           />
           {walletBalance ? (
             <div className="flex items-center justify-end space-x-1 pr-4">
