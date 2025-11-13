@@ -219,7 +219,11 @@ const common: CommonMessages = {
   'common.nativeSegwit': 'Native Segwit',
   'common.taproot': 'Taproot',
   'common.protocols': 'Protocols',
-  'common.resetToDefault': 'Reset to streaming default'
+  'common.resetToDefault': 'Reset to streaming default',
+  'common.importTokens': 'Import Tokens',
+  'common.searchToken': 'Search token',
+  'common.warning.token.import':
+    'Anyone can create tokens, including fake versions of existing ones. Please be cautious of scams and security risks.'
 }
 
 export default common

@@ -3,30 +3,22 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { TRONChain } from '@xchainjs/xchain-tron'
 import { Chain, TokenAsset, AssetType } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
-import { function as FP } from 'fp-ts'
 import { useIntl } from 'react-intl'
 
-import { getChainAsset } from '../../helpers/chainHelper'
 import { emptyString } from '../../helpers/stringHelper'
-import { useNetwork } from '../../hooks/useNetwork'
 import { useValidateAddress } from '../../hooks/useValidateAddress'
 import { EVMChains } from '../../services/evm/const'
 import { addAsset } from '../../services/storage/userChainTokens'
-import { AssetIcon } from '../uielements/assets/assetIcon'
-import { Button, FlatButton } from '../uielements/button'
+import { Alert } from '../uielements/alert'
+import { ChainIcon } from '../uielements/assets/chainIcon/ChainIcon'
+import { FlatButton } from '../uielements/button'
 import { Input } from '../uielements/input'
 import { Label } from '../uielements/label'
-import { HeadlessModal } from '../uielements/modal/Modal'
 
 // Supported custom token chains (EVM + TRON)
 const CustomTokenChains = [...EVMChains, TRONChain]
 
-type Props = {
-  open: boolean
-  onClose: FP.Lazy<void>
-}
-
-export const CustomTokenModal = ({ open, onClose }: Props): JSX.Element => {
+export const CustomTokenPanel = (): JSX.Element => {
   const [contractAddress, setContractAddress] = useState<string>(emptyString)
   const [tokenSymbol, setTokenSymbol] = useState<string>(emptyString)
   const [tokenName, setTokenName] = useState<string>(emptyString)
@@ -38,7 +30,6 @@ export const CustomTokenModal = ({ open, onClose }: Props): JSX.Element => {
 
   const contractAddressRef = useRef(null)
   const intl = useIntl()
-  const { network } = useNetwork()
   const { validateAddress } = useValidateAddress(selectedChain)
 
   const isEVMChain = (chain: Chain): boolean => {
@@ -107,11 +98,6 @@ export const CustomTokenModal = ({ open, onClose }: Props): JSX.Element => {
     setIsLoading(false)
   }, [])
 
-  const handleClose = useCallback(() => {
-    clearForm()
-    onClose()
-  }, [clearForm, onClose])
-
   const addCustomToken = useCallback(async () => {
     if (!canAddToken) return
 
@@ -129,56 +115,44 @@ export const CustomTokenModal = ({ open, onClose }: Props): JSX.Element => {
       addAsset(customAsset)
 
       clearForm()
-      onClose()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add custom token')
     } finally {
       setIsLoading(false)
     }
-  }, [canAddToken, selectedChain, tokenSymbol, contractAddress, clearForm, onClose])
+  }, [canAddToken, selectedChain, tokenSymbol, contractAddress, clearForm])
 
   const chainFilter = useMemo(
     () => (
-      <div className="flex w-full flex-col px-4 py-4">
-        <Label size="big" color="primary">
-          {intl.formatMessage({ id: 'settings.custom.token.modal.chain' })}
-        </Label>
-        <div className="mt-2 flex flex-row space-x-2 overflow-x-auto">
+      <div className="flex w-full flex-col items-center px-4 py-4">
+        <div className="flex flex-row space-x-2 overflow-x-auto">
           {CustomTokenChains.map((chain) => (
             <div key={chain} className="cursor-pointer" onClick={() => handleChainChange(chain)}>
               <div
                 className={clsx(
                   'flex flex-col items-center',
-                  'space-y-2 px-4 py-2',
+                  'space-y-2 px-3 py-2',
                   'rounded-lg border border-solid border-bg2 dark:border-bg2d',
                   'hover:bg-bg2 dark:hover:bg-bg2d',
-                  { 'bg-bg2 dark:bg-bg2d': selectedChain === chain }
+                  { 'border-turquoise bg-bg2 dark:border-turquoise dark:bg-bg2d': selectedChain === chain }
                 )}>
-                <AssetIcon asset={getChainAsset(chain)} network={network} />
-                <span className="text-text2 dark:text-text2d">{chain}</span>
+                <ChainIcon chain={chain} />
               </div>
             </div>
           ))}
         </div>
       </div>
     ),
-    [intl, selectedChain, network, handleChainChange]
+    [selectedChain, handleChainChange]
   )
 
   return (
-    <HeadlessModal
-      className="h-3/4 max-h-[600px] min-h-[500px]"
-      title={intl.formatMessage({ id: 'settings.custom.token.modal.title' })}
-      initialFocus={contractAddressRef}
-      isOpen={open}
-      onClose={handleClose}>
+    <div className="flex h-[510px] flex-col items-center">
       {chainFilter}
 
       <div className="flex w-full flex-col space-y-4 px-4">
         <div>
-          <Label size="big" color="primary">
-            {intl.formatMessage({ id: 'settings.custom.token.modal.address' })}
-          </Label>
+          <Label size="big">{intl.formatMessage({ id: 'settings.custom.token.modal.address' })}</Label>
           <Input
             ref={contractAddressRef}
             className="w-full"
@@ -198,9 +172,7 @@ export const CustomTokenModal = ({ open, onClose }: Props): JSX.Element => {
         </div>
 
         <div>
-          <Label size="big" color="primary">
-            {intl.formatMessage({ id: 'settings.custom.token.modal.symbol' })}
-          </Label>
+          <Label size="big">{intl.formatMessage({ id: 'settings.custom.token.modal.symbol' })}</Label>
           <Input
             className="w-full"
             size="normal"
@@ -211,9 +183,7 @@ export const CustomTokenModal = ({ open, onClose }: Props): JSX.Element => {
         </div>
 
         <div>
-          <Label size="big" color="primary">
-            {intl.formatMessage({ id: 'settings.custom.token.modal.name' })}
-          </Label>
+          <Label size="big">{intl.formatMessage({ id: 'settings.custom.token.modal.name' })}</Label>
           <Input
             className="w-full"
             size="normal"
@@ -224,9 +194,7 @@ export const CustomTokenModal = ({ open, onClose }: Props): JSX.Element => {
         </div>
 
         <div>
-          <Label size="big" color="primary">
-            {intl.formatMessage({ id: 'settings.custom.token.modal.decimals' })}
-          </Label>
+          <Label size="big">{intl.formatMessage({ id: 'settings.custom.token.modal.decimals' })}</Label>
           <Input
             className="w-full"
             size="normal"
@@ -252,20 +220,21 @@ export const CustomTokenModal = ({ open, onClose }: Props): JSX.Element => {
           </Label>
         )}
 
-        <div className="flex justify-end space-x-2 pt-4">
-          <FlatButton className="min-w-[100px]" color="primary" onClick={handleClose}>
-            {intl.formatMessage({ id: 'settings.custom.token.modal.cancel' })}
-          </FlatButton>
-          <Button
-            className="min-w-[100px]"
+        <div className="flex justify-end space-x-2 pt-2">
+          <FlatButton
+            className="w-full rounded-md"
             color="primary"
+            size="large"
             disabled={!canAddToken}
             loading={isLoading}
             onClick={addCustomToken}>
             {intl.formatMessage({ id: 'settings.custom.token.modal.add' })}
-          </Button>
+          </FlatButton>
+        </div>
+        <div>
+          <Alert type="warning" description="" />
         </div>
       </div>
-    </HeadlessModal>
+    </div>
   )
 }

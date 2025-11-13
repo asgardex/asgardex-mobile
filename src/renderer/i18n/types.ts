@@ -218,6 +218,9 @@ export type CommonMessageKey =
   | 'common.taproot'
   | 'common.protocols'
   | 'common.resetToDefault'
+  | 'common.importTokens'
+  | 'common.searchToken'
+  | 'common.warning.token.import'
 
 export type CommonMessages = {
   [key in CommonMessageKey]: string
@@ -552,6 +555,8 @@ type SettingMessageKey =
   | 'settings.expert.midgardMaya.title'
   | 'settings.expert.mayanodeApi.title'
   | 'settings.ledgerMode.lockWalletWarning'
+  | 'settings.wallet.whitelist'
+  | 'settings.wallet.customToken'
 
 export type SettingMessages = { [key in SettingMessageKey]: string }
 
