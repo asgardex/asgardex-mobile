@@ -35,7 +35,9 @@ const swap: SwapMessages = {
   'swap.min.result.info':
     'Dein Swap ist mit diesem Mindestwert basierend auf der ausgewählten {tolerance}% Slippage-Toleranz abgesichert. Falls eine Preisänderung vor der Transaktions-Bestätigung mehr als {tolerance}% zu Deinem Nachteil beträgt, wird Deine Swap-Transaktion zurücküberwiesen.',
   'swap.min.result.protected': 'Gesichertes Swap-Ergebnis',
-  'swap.address.evm.warning': 'NICHT zu Smart Contract Adressen tauschen'
+  'swap.address.evm.warning': 'NICHT zu Smart Contract Adressen tauschen',
+  'swap.synth.warning':
+    'Das Minten von Synths wurde eingestellt. Die Einlösung von Synths ist noch 3 Monate lang möglich — bitte löse sie ein, solange du kannst.'
 }
 
 export default swap

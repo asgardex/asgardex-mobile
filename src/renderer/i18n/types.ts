@@ -595,6 +595,7 @@ type SwapMessageKey =
   | 'swap.min.result.info'
   | 'swap.min.result.protected'
   | 'swap.address.evm.warning'
+  | 'swap.synth.warning'
 
 export type SwapMessages = { [key in SwapMessageKey]: string }
 

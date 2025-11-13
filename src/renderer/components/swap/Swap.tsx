@@ -2857,6 +2857,7 @@ export const Swap = ({
             useLedger={useTargetAssetLedger}
             useLedgerHandler={onClickUseTargetAssetLedger}
             hasLedger={hasTargetAssetLedger}
+            synthDisabled
           />
           <div className="absolute -top-[32px] left-[calc(50%-30px)] flex flex-col justify-center">
             <div className="w-60px h-60px">
