@@ -6,16 +6,19 @@
   "main": "build/main/electron.js",
   "scripts": {
     "dev": "tauri dev",
-    "dev:tauri": "cross-env-shell VITE_NODE_ENV=development electron-vite dev --rendererOnly",
+    "dev:tauri": "cross-env-shell VITE_NODE_ENV=development vite --config vite.tauri.config.mjs --host",
     "force-rebuild-native-deps": "rimraf ./node_modules/prebuild-install",
     "preview": "cross-env VITE_NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=8192\" electron-vite preview",
     "build": "cross-env VITE_NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=8192\" CI=false yarn build:tauri",
-    "build:tauri": "cross-env VITE_NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=8192\" CI=false electron-vite build",
+    "build:tauri": "cross-env VITE_NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=8192\" CI=false vite build --config vite.tauri.config.mjs",
     "build:dev": "cross-env VITE_NODE_ENV=development CI=false electron-vite build --mode development",
     "test": "vitest --config vite.test.config.ts",
     "package": "yarn package:electron",
     "package:electron": "tauri build",
     "package:ci": "yarn postinstall && yarn package:electron",
+    "tauri:android:debug": "cross-env-shell PATH=$HOME/.cargo/bin:$PATH NDK_HOME=${NDK_HOME:-$HOME/.ndk} ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-$HOME/Android/Sdk} yarn tauri android build --debug --apk",
+    "tauri:android:release": "cross-env-shell PATH=$HOME/.cargo/bin:$PATH NDK_HOME=${NDK_HOME:-$HOME/.ndk} ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-$HOME/Android/Sdk} yarn tauri android build --aab true",
+    "tauri:clean": "cross-env-shell ./scripts/tauri-clean.sh",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "postinstall": "echo 'postinstall skipped'",
     "lint": "trunk check --filter=eslint --filter=prettier",
@@ -30,7 +33,9 @@
     "generate:trontrc20whitelist": "npm run generate:erc20whitelist -- TRON",
     "storybook": "NODE_OPTIONS=\"--max-old-space-size=4096\" storybook dev -p 9009 ",
     "build-storybook": "NODE_OPTIONS=\"--max-old-space-size=8192\" storybook build",
-    "analyze": "NODE_OPTIONS=\"--max-old-space-size=12000\" yarn build:dev && source-map-explorer 'build/renderer/assets/*.js'"
+    "analyze": "NODE_OPTIONS=\"--max-old-space-size=12000\" yarn build:dev && source-map-explorer 'build/renderer/assets/*.js'",
+    "android:tail": "node ./scripts/android/tail-log.mjs",
+    "ios:tail": "node ./scripts/ios/tail-log.mjs"
   },
   "repository": {
     "type": "git",
