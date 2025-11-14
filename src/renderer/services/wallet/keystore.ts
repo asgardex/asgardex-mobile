@@ -18,6 +18,7 @@ import { isError } from '../../../shared/utils/guard'
 import { liveData } from '../../helpers/rx/liveData'
 import { observableState, triggerStream } from '../../helpers/stateHelper'
 import { recordSecureStorageEvent } from '../app/telemetry'
+import { createLogger } from '../app/logging'
 import { INITIAL_KEYSTORE_STATE } from './const'
 import {
   KeystoreService,
@@ -142,6 +143,25 @@ const ensureVisibilityLifecycleHandlers = () => {
 
 ensureVisibilityLifecycleHandlers()
 
+const walletLogger = createLogger('wallet-keystore')
+
+const logWalletInfo = (message: string, context?: Record<string, unknown>) => {
+  void walletLogger.info(message, context)
+}
+
+const logWalletWarn = (message: string, context?: Record<string, unknown>) => {
+  void walletLogger.warn(message, context)
+}
+
+const logWalletError = (message: string, context?: Record<string, unknown>) => {
+  void walletLogger.error(message, context)
+}
+
+const normalizeErrorMessage = (error: unknown): string => {
+  const normalized = isError(error) ? error : Error(String(error))
+  return normalized.message
+}
+
 const secureStorageBridge = getKeystoreMobileBridge()
 const { biometricNotice$, clearBiometricNotice, resolveBiometricOptIn, shouldBlockOnSecureFailure } =
   secureStorageBridge
@@ -245,6 +265,8 @@ const addKeystoreWallet = async ({
 
     let updatedWallets: KeystoreWallets
 
+    let storageMode: 'secure' | 'legacy' = 'legacy'
+
     if (secure) {
       let secureKeyId: string | null = null
       let secureWriteTimestamp: string | null = null
@@ -259,6 +281,7 @@ const addKeystoreWallet = async ({
         })
         secureKeyId = result.secureKeyId
         secureWriteTimestamp = result.updatedAt
+        storageMode = 'secure'
 
         updatedWallets = [
           ...wallets,
@@ -282,6 +305,11 @@ const addKeystoreWallet = async ({
 
         if (shouldBlockOnSecureFailure()) {
           const error = createSecureStorageRequiredError(secureError)
+          logWalletError('secure storage required for wallet onboarding', {
+            walletId: id,
+            name,
+            reason: error.message
+          })
           recordSecureStorageEvent({
             action: 'onboarding_blocked',
             walletId: id,
@@ -297,6 +325,11 @@ const addKeystoreWallet = async ({
 
         const writeError = createSecureStorageWriteError(secureError)
         const failureReason = getSecureStorageFailureReason(writeError)
+        logWalletWarn('secure storage write failed, falling back to legacy keystore', {
+          walletId: id,
+          name,
+          reason: failureReason
+        })
         recordSecureStorageEvent({
           action: 'write_failure',
           walletId: id,
@@ -337,8 +370,18 @@ const addKeystoreWallet = async ({
     scheduleRuntimeCacheIdleClear()
     setKeystoreState(O.some({ id, phrase, name }))
     setImportingKeystoreState(RD.success(true))
+    logWalletInfo('keystore wallet saved', {
+      walletId: id,
+      name,
+      storageMode
+    })
     return Promise.resolve()
   } catch (error) {
+    logWalletError('failed to add keystore wallet', {
+      walletId: id,
+      name,
+      reason: normalizeErrorMessage(error)
+    })
     setImportingKeystoreState(RD.failure(isError(error) ? error : Error('Could not add keystore')))
     return Promise.reject(error)
   }
@@ -381,6 +424,10 @@ export const removeKeystoreWallet = async () => {
   // Set previous to current wallets (if available)
   const prevWallet = FP.pipe(wallets, A.last)
   setKeystoreState(prevWallet)
+  logWalletInfo('keystore wallet removed', {
+    walletId: keystoreId,
+    remainingWallets: wallets.length
+  })
 
   // return no. of wallets
   return wallets.length
@@ -419,6 +466,7 @@ const changeKeystoreWallet: ChangeKeystoreWalletHandler = (keystoreId: KeystoreI
             setKeystoreWallets(updatedWallets)
             // set selected wallet as locked wallet
             setKeystoreState(O.some({ id, name }))
+            logWalletInfo('keystore selection changed', { walletId: id, name })
 
             return RD.success(true)
           }
@@ -461,6 +509,7 @@ const renameKeystoreWallet: RenameKeystoreWalletHandler = (id, name) => {
       setKeystoreWallets(updatedWallets)
       // set selected wallet - still unlocked
       setKeystoreState(O.some(updatedKeystoreState))
+      logWalletInfo('keystore renamed', { walletId: id, name })
       return true
     }),
     RxOp.startWith(RD.pending)
@@ -535,6 +584,7 @@ const lock = async () => {
   }
   setKeystoreState(O.some(lockedState))
   runtimeKeystoreCache.delete(lockedState.id)
+  logWalletInfo('keystore locked', { walletId: lockedState.id, name: lockedState.name })
 }
 
 const unlock = async (password: string) => {
@@ -552,7 +602,9 @@ const unlock = async (password: string) => {
     const keystore = await resolveKeystoreById(id)
     const phrase = await decryptFromKeystore(keystore, password)
     setKeystoreState(O.some({ id, phrase, name }))
+    logWalletInfo('keystore unlocked', { walletId: id, name })
   } catch (error) {
+    logWalletWarn('keystore unlock failed', { walletId: id, name, reason: normalizeErrorMessage(error) })
     throw Error(`Can't unlock - could not decrypt phrase from keystore: ${error}`)
   }
 }

@@ -1,6 +1,9 @@
 import { KeystoreId } from '../../../shared/api/types'
 import { safeStringify } from '../../../shared/utils/safeStringify'
 import { isError } from '../../../shared/utils/guard'
+import { createLogger } from './logging'
+
+const telemetryLogger = createLogger('telemetry')
 
 const SHA256_K = new Uint32Array([
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98,
@@ -197,6 +200,8 @@ const hashSecureIdentifier = (value: string | undefined): string | undefined => 
   return sha256Hex(`${resolveTelemetrySalt()}::${value}`)
 }
 
+type PlatformBridgeWindow = typeof window & { __ASGARDEX_PLATFORM_LOG_BRIDGE__?: boolean }
+
 const sanitizeExternalLinkLogPayload = (payload: ExternalLinkAttemptTelemetry) => ({
   attemptId: payload.attemptId,
   occurredAt: payload.occurredAt,
@@ -305,6 +310,17 @@ export const __setTelemetryConsoleLoggingForTests = (enabled: boolean): void => 
   forceConsoleLoggingInTests = enabled
 }
 
+const isPlatformLogBridgeActive = (): boolean => {
+  if (typeof window === 'undefined') return false
+  return Boolean((window as PlatformBridgeWindow).__ASGARDEX_PLATFORM_LOG_BRIDGE__)
+}
+
+const shouldLogTelemetryToConsole = (): boolean => {
+  if (forceConsoleLoggingInTests) return true
+  if (isTestEnv()) return false
+  return !isPlatformLogBridgeActive()
+}
+
 const isTestEnv = (): boolean => {
   try {
     const envMode = (import.meta as unknown as { env?: { MODE?: string } } | undefined)?.env?.MODE
@@ -320,6 +336,14 @@ const sanitizeSecureStorageLogPayload = (payload: SecureStorageTelemetry) => ({
   deviceType: payload.deviceType,
   appVersion: payload.appVersion
 })
+
+const logSecureStorageTelemetry = (payload: SecureStorageTelemetry): void => {
+  void telemetryLogger.info('secure_storage', sanitizeSecureStorageLogPayload(payload))
+}
+
+const logExternalLinkTelemetry = (payload: ExternalLinkAttemptTelemetry): void => {
+  void telemetryLogger.info('external_link_attempt', sanitizeExternalLinkLogPayload(payload))
+}
 
 const createAttemptId = (): string => {
   const cryptoApi = typeof crypto === 'undefined' ? undefined : crypto
@@ -356,11 +380,9 @@ export const recordSecureStorageEvent = (params: SecureStorageTelemetryParams): 
 
   dispatchTelemetryEvent(record)
 
-  if (
-    (forceConsoleLoggingInTests || !isTestEnv()) &&
-    typeof console !== 'undefined' &&
-    typeof console.info === 'function'
-  ) {
+  logSecureStorageTelemetry(payload)
+
+  if (shouldLogTelemetryToConsole() && typeof console !== 'undefined' && typeof console.info === 'function') {
     console.info('[telemetry]', 'secure_storage', safeStringify(sanitizeSecureStorageLogPayload(payload)))
   }
 
@@ -397,11 +419,9 @@ export const recordExternalLinkAttempt = (params: ExternalLinkTelemetryParams): 
 
   dispatchTelemetryEvent(record)
 
-  if (
-    (forceConsoleLoggingInTests || !isTestEnv()) &&
-    typeof console !== 'undefined' &&
-    typeof console.info === 'function'
-  ) {
+  logExternalLinkTelemetry(payload)
+
+  if (shouldLogTelemetryToConsole() && typeof console !== 'undefined' && typeof console.info === 'function') {
     console.info('[telemetry]', 'external_link_attempt', safeStringify(sanitizeExternalLinkLogPayload(payload)))
   }
 

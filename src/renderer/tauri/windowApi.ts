@@ -46,8 +46,12 @@ import { safeStringify } from '../../shared/utils/safeStringify'
 import { normalizeExternalUrl, isWhitelistedExternalHost } from '../../shared/url/whitelist'
 import { createSecureStorageVersionMismatchError } from '../services/wallet/secureStorageErrors'
 import { recordSecureStorageEvent, recordExternalLinkAttempt } from '../services/app/telemetry'
+import { createLogger } from '../services/app/logging'
 import { setPlatformDevice } from '../../shared/utils/platform'
 import { defaultWalletName } from '../../shared/utils/wallet'
+import { installPlatformLogBridge } from './platformLogBridge'
+
+installPlatformLogBridge()
 
 const APP_NAME = 'ASGARDEX'
 const STORAGE_SUBDIR = 'storage'
@@ -56,6 +60,8 @@ const ANDROID_EXPORT_COMMAND = 'save_keystore_to_downloads_android'
 
 let storageDirPromise: Promise<string> | undefined
 let deviceTypePromise: Promise<'mobile' | 'desktop' | 'unknown'> | undefined
+
+const tauriWindowLogger = createLogger('tauri-windowApi')
 
 const normalizeError = (error: unknown): Error => (isError(error) ? error : new Error(String(error)))
 
@@ -66,12 +72,20 @@ const ensureDir = async (path: string) => {
   }
 }
 
+async function resolveElectronLikeAppDir(): Promise<string> {
+  const tauriAppData = await appDataDir()
+  const deviceType = await ensureDeviceType()
+  if (deviceType === 'mobile') {
+    return join(tauriAppData, APP_NAME)
+  }
+  const parentDir = await dirname(tauriAppData)
+  return join(parentDir, APP_NAME)
+}
+
 const resolveStorageDir = (): Promise<string> => {
   if (!storageDirPromise) {
     storageDirPromise = (async () => {
-      const tauriAppData = await appDataDir()
-      const parentDir = await dirname(tauriAppData)
-      const electronLikeAppDir = await join(parentDir, APP_NAME)
+      const electronLikeAppDir = await resolveElectronLikeAppDir()
       await ensureDir(electronLikeAppDir)
       const storageDir = await join(electronLikeAppDir, STORAGE_SUBDIR)
       await ensureDir(storageDir)
@@ -155,7 +169,7 @@ const dispatchExternalLinkEvent = (detail: ExternalLinkEventDetail) => {
     win.dispatchEvent(new Event(EXTERNAL_LINK_EVENT_NAME))
   } catch (error) {
     const normalized = isError(error) ? error : new Error(String(error))
-    console.warn(`[tauri-windowApi] Failed to dispatch external link event: ${normalized.message}`)
+    void tauriWindowLogger.warn('Failed to dispatch external link event', { error: normalized.message })
   }
 }
 
@@ -186,7 +200,7 @@ const tryOpenWithShell = async (href: string): Promise<{ ok: true } | { ok: fals
     return { ok: true }
   } catch (error) {
     const normalized = isError(error) ? error : new Error(String(error))
-    console.warn(`[tauri-windowApi] Failed to open external link via plugin-shell: ${normalized.message}`)
+    void tauriWindowLogger.warn('Failed to open external link via plugin-shell', { error: normalized.message })
     return { ok: false, error: normalized }
   }
 }
@@ -199,7 +213,7 @@ const shareUrl = async (href: string): Promise<boolean> => {
       return true
     } catch (error) {
       const normalized = isError(error) ? error : new Error(String(error))
-      console.warn(`[tauri-windowApi] Share sheet rejected external link: ${normalized.message}`)
+      void tauriWindowLogger.warn('Share sheet rejected external link', { error: normalized.message })
     }
   }
   return false
@@ -213,7 +227,7 @@ const copyUrlToClipboard = async (href: string): Promise<boolean> => {
       return true
     } catch (error) {
       const normalized = isError(error) ? error : new Error(String(error))
-      console.warn(`[tauri-windowApi] Clipboard fallback failed: ${normalized.message}`)
+      void tauriWindowLogger.warn('Clipboard fallback failed', { error: normalized.message })
     }
   }
   return false
@@ -356,7 +370,7 @@ const normalizeUnknownError = (error: unknown): Error => {
   if (isError(error)) return error
   const normalized = new Error(toErrorMessage(error))
   if (error && typeof error === 'object') {
-    ;(normalized as Error & { cause?: unknown }).cause = error
+    ; (normalized as Error & { cause?: unknown }).cause = error
   }
   return normalized
 }
@@ -405,7 +419,7 @@ const secureStorageApi: SecureStorageApi = {
       } catch (error) {
         // Ignore parse errors here (including version mismatch); callers will handle them on read.
         const message = isError(error) ? error.message : String(error)
-        console.warn(`[tauri-windowApi] Failed to read existing secure entry ${key}: ${message}`)
+        void tauriWindowLogger.warn('Failed to read existing secure entry', { key, error: message })
       }
     }
 
@@ -631,7 +645,7 @@ const migrateLegacyWallet = async (): Promise<E.Either<Error, KeystoreWallets>> 
   }
 }
 
-const ensureDeviceType = async (): Promise<'mobile' | 'desktop' | 'unknown'> => {
+async function ensureDeviceType(): Promise<'mobile' | 'desktop' | 'unknown'> {
   if (!deviceTypePromise) {
     deviceTypePromise = invoke<'mobile' | 'desktop' | 'unknown'>('resolve_device_type')
       .then((classification) => {
@@ -839,7 +853,7 @@ const openExternalWithWhitelist = async (target: string): Promise<OpenExternalRe
     return fallbackResult
   } catch (fallbackError) {
     const normalizedFallbackError = isError(fallbackError) ? fallbackError : new Error(String(fallbackError))
-    console.warn(`[tauri-windowApi] External link fallback unavailable: ${normalizedFallbackError.message}`)
+    void tauriWindowLogger.warn('External link fallback unavailable', { error: normalizedFallbackError.message })
     notifyExternalBlocked(href)
     recordExternalLinkAttempt({
       normalizedUrl: href,
@@ -856,7 +870,7 @@ const openExternalWithWhitelist = async (target: string): Promise<OpenExternalRe
 }
 
 const apiLang: ApiLang = {
-  update: () => {}
+  update: () => { }
 }
 
 const apiUrl: ApiUrl = {
@@ -865,7 +879,7 @@ const apiUrl: ApiUrl = {
       await openExternalWithWhitelist(url)
     } catch (error) {
       const normalized = isError(error) ? error : new Error(String(error))
-      console.warn(`[tauri-windowApi] Failed to open external link: ${normalized.message}`)
+      void tauriWindowLogger.warn('Failed to open external link', { error: normalized.message })
     }
   }
 }
@@ -890,6 +904,11 @@ const apiAddressStorage = createFileStoreApi('userAddresses', DEFAULT_STORAGES.u
 const apiAssetStorage = createFileStoreApi('userAssets', DEFAULT_STORAGES.userAssets)
 const apiPoolsStorage = createFileStoreApi('pools', DEFAULT_STORAGES.pools)
 
+/**
+ * Phase 2 stub: Tauri builds do not perform in-app updates yet.
+ * We keep the Settings + modal UI functional by always reporting "no updates"
+ * and pointing users to GitHub Releases for manual downloads.
+ */
 const apiAppUpdate: ApiAppUpdate = {
   checkForAppUpdates: async (): Promise<AppUpdateRD> => RD.success(O.none)
 }
@@ -914,7 +933,19 @@ if (typeof window !== 'undefined') {
   Object.assign(window, windowApiSurface)
 }
 
+const resetStorageDirCache = () => {
+  storageDirPromise = undefined
+}
+
+const resetDeviceTypeCache = () => {
+  deviceTypePromise = undefined
+}
+
 export const __internalWindowApiHelpers = {
   selectSinglePath,
-  ensureJsonExtension
+  ensureJsonExtension,
+  secureStorageApi,
+  resolveStorageDirForTests: () => resolveStorageDir(),
+  resetStorageDirCache,
+  resetDeviceTypeCache
 }
