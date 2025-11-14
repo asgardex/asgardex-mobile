@@ -13,7 +13,6 @@ import {
   SecureKeystoreWallet
 } from '../../../shared/api/io'
 import { KeystoreId, SecureStorageApi } from '../../../shared/api/types'
-import { BiometricDowngradeError, isBiometricDowngradeError } from '../../../shared/errors/biometric'
 import { safeStringify } from '../../../shared/utils/safeStringify'
 import { isError } from '../../../shared/utils/guard'
 import { liveData } from '../../helpers/rx/liveData'
@@ -41,6 +40,12 @@ import {
   getLockedData,
   getInitialKeystoreData
 } from './util'
+import { getKeystoreMobileBridge } from './keystore-mobile'
+import {
+  createSecureStorageRequiredError,
+  createSecureStorageWriteError,
+  getSecureStorageFailureReason
+} from './secureStorageErrors'
 
 /**
  * State of importing a keystore wallet
@@ -137,6 +142,10 @@ const ensureVisibilityLifecycleHandlers = () => {
 
 ensureVisibilityLifecycleHandlers()
 
+const secureStorageBridge = getKeystoreMobileBridge()
+const { biometricNotice$, clearBiometricNotice, resolveBiometricOptIn, shouldBlockOnSecureFailure } =
+  secureStorageBridge
+
 const getSecureStorageApi = (): SecureStorageApi | null => {
   if (typeof window === 'undefined') return null
   if (window.apiKeystore?.secure) return window.apiKeystore.secure
@@ -173,10 +182,6 @@ const loadKeystoreFromSecure = async (wallet: SecureKeystoreWallet): Promise<Key
     scheduleRuntimeCacheIdleClear()
     return keystore
   } catch (error) {
-    if (isBiometricDowngradeError(error)) {
-      // Biometric downgrade flows will be fully wired once the biometric plugin is available.
-      throw error
-    }
     const normalized = isError(error) ? error : Error(String(error))
     recordSecureStorageEvent({
       action: 'unlock_failure',
@@ -220,7 +225,13 @@ const resolveKeystoreById = async (id: KeystoreId): Promise<Keystore> => {
 /**
  * Adds a keystore and saves it to disk
  */
-const addKeystoreWallet = async ({ phrase, name, id, password }: AddKeystoreParams): Promise<void> => {
+const addKeystoreWallet = async ({
+  phrase,
+  name,
+  id,
+  password,
+  biometricEnabled
+}: AddKeystoreParams): Promise<void> => {
   try {
     setImportingKeystoreState(RD.pending)
     const keystore: Keystore = await encryptToKeyStore(phrase, password)
@@ -235,25 +246,65 @@ const addKeystoreWallet = async ({ phrase, name, id, password }: AddKeystorePara
     let updatedWallets: KeystoreWallets
 
     if (secure) {
+      let secureKeyId: string | null = null
+      let secureWriteTimestamp: string | null = null
+
+      // Public API does not expose biometric flags; keep disabled by default for now.
+      const resolvedBiometricEnabled = await resolveBiometricOptIn(biometricEnabled === true)
+
       try {
-        const result = await secure.write({ payload: { type: 'keystore', keystore } })
+        const result = await secure.write({
+          payload: { type: 'keystore', keystore },
+          biometricRequired: resolvedBiometricEnabled
+        })
+        secureKeyId = result.secureKeyId
+        secureWriteTimestamp = result.updatedAt
+
         updatedWallets = [
           ...wallets,
           {
             id,
             name,
             selected: true,
-            secureKeyId: result.secureKeyId,
-            biometricEnabled: false,
-            lastSecureWriteAt: result.updatedAt,
+            secureKeyId,
+            biometricEnabled: resolvedBiometricEnabled,
+            lastSecureWriteAt: secureWriteTimestamp,
             lastSecureWriteStatus: 'success',
             exportAcknowledgedAt: null,
             lastExportAction: null,
             lastExportActionAt: null
           }
         ]
-      } catch {
-        // Fallback to legacy wallet on any secure storage failure
+      } catch (secureError) {
+        if (secureKeyId) {
+          await secure.remove(secureKeyId).catch(() => {})
+        }
+
+        if (shouldBlockOnSecureFailure()) {
+          const error = createSecureStorageRequiredError(secureError)
+          recordSecureStorageEvent({
+            action: 'onboarding_blocked',
+            walletId: id,
+            secureKeyId: secureKeyId ?? undefined,
+            metadata: {
+              reason: 'secure_storage_required',
+              message: error.message,
+              platform: 'mobile'
+            }
+          })
+          throw error
+        }
+
+        const writeError = createSecureStorageWriteError(secureError)
+        const failureReason = getSecureStorageFailureReason(writeError)
+        recordSecureStorageEvent({
+          action: 'write_failure',
+          walletId: id,
+          secureKeyId: secureKeyId ?? undefined,
+          metadata: { message: writeError.message, reason: failureReason }
+        })
+
+        // Fallback to legacy wallet on secure storage failure
         updatedWallets = [
           ...wallets,
           {
@@ -594,4 +645,10 @@ export const keystoreService: KeystoreService = {
   keystoreWalletsUI$,
   importingKeystoreState$,
   resetImportingKeystoreState: () => setImportingKeystoreState(RD.initial)
+}
+
+export const __internalKeystoreBiometric = {
+  biometricNotice$,
+  clearBiometricNotice,
+  resolveBiometricOptIn
 }

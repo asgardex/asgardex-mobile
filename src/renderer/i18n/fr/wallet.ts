@@ -45,6 +45,7 @@ const wallet: WalletMessages = {
   'wallet.imports.keystore.description': 'Importer un portefeuille keystore existant',
   'wallet.imports.phrase.title': 'Veuillez entrer la phrase de récupération avec un seul espace entre les mots',
   'wallet.imports.phrase.description': 'Importer un portefeuille existant avec une phrase de récupération',
+  'wallet.imports.enableBiometric': 'Activer l\'authentification biométrique',
   'wallet.imports.wallet': 'Importer un portefeuille existant',
   'wallet.imports.enterphrase': 'Entrez la phrase de récupération',
   'wallet.imports.error.instance': 'Impossible de créer une instance du Client',

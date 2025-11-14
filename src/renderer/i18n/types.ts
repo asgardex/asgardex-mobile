@@ -345,6 +345,7 @@ type WalletMessageKey =
   | 'wallet.imports.keystore.description'
   | 'wallet.imports.phrase.title'
   | 'wallet.imports.phrase.description'
+  | 'wallet.imports.enableBiometric'
   | 'wallet.imports.wallet'
   | 'wallet.imports.enterphrase'
   | 'wallet.imports.error.instance'

@@ -45,6 +45,7 @@ const wallet: WalletMessages = {
   'wallet.imports.keystore.description': 'Importar una cartera de keystore existente',
   'wallet.imports.phrase.title': 'Introduzca la frase de su cartera con un solo espacio entre las palabras',
   'wallet.imports.phrase.description': 'Importar una cartera existente con frase semilla',
+  'wallet.imports.enableBiometric': 'Habilitar autenticación biométrica',
   'wallet.imports.wallet': 'Importar monedero existente',
   'wallet.imports.enterphrase': 'Introduzca la frase',
   'wallet.imports.error.instance': 'No se ha podido crear una instancia de Cliente',

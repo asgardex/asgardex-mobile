@@ -80,7 +80,13 @@ export type ValidatePasswordHandler = (password: string) => LiveData<Error, void
 export type ValidatePasswordLD = LiveData<Error, void>
 
 export type ImportKeystoreParams = { id: KeystoreId; keystore: Keystore; password: string; name: string }
-export type AddKeystoreParams = { id: KeystoreId; phrase: Phrase; name: string; password: string }
+export type AddKeystoreParams = {
+  id: KeystoreId
+  phrase: Phrase
+  name: string
+  password: string
+  biometricEnabled?: boolean
+}
 export type LoadKeystoreLD = LiveData<Error, Keystore>
 
 export type ImportingKeystoreStateRD = RD.RemoteData<Error, boolean>

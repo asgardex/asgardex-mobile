@@ -44,6 +44,7 @@ const wallet: WalletMessages = {
   'wallet.imports.keystore.description': '기존 키스토어 지갑 가져오기',
   'wallet.imports.phrase.title': '지갑의 시드 구문을 단어 사이에 공백을 두고 입력해 주세요.',
   'wallet.imports.phrase.description': '시드 문구로 기존 지갑 가져오기',
+  'wallet.imports.enableBiometric': '생체 인증 활성화',
   'wallet.imports.wallet': '기존 지갑 가져오기',
   'wallet.imports.enterphrase': '시드 구문 입력',
   'wallet.imports.error.instance': '클라이언트 인스턴스를 생성할 수 없습니다.',

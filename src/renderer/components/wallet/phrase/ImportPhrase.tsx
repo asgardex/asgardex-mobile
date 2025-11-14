@@ -10,11 +10,13 @@ import { useIntl } from 'react-intl'
 
 import { defaultWalletName } from '../../../../shared/utils/wallet'
 import { KeystoreClientStates } from '../../../hooks/useKeystoreClientStates'
+import { useBiometryStatus } from '../../../hooks/useBiometryStatus'
 import { MAX_WALLET_NAME_CHARS } from '../../../services/wallet/const'
 import { AddKeystoreParams } from '../../../services/wallet/types'
 import { FlatButton } from '../../uielements/button'
 import { InputPassword, Input } from '../../uielements/input'
 import { Spin } from '../../uielements/spin'
+import { BiometricOptInToggle } from '../shared/BiometricOptInToggle'
 
 type FormValues = {
   phrase: string
@@ -54,6 +56,9 @@ export const ImportPhrase = (props: Props): JSX.Element => {
 
   const [importing, setImporting] = useState(false)
   const [importError, setImportError] = useState<O.Option<Error>>(O.none)
+  const [biometricEnabled, setBiometricEnabled] = useState(false)
+
+  const { isSupported: biometricSupported, isChecking: checkingBiometry } = useBiometryStatus()
 
   useEffect(() => {
     FP.pipe(
@@ -75,18 +80,28 @@ export const ImportPhrase = (props: Props): JSX.Element => {
     )
   }, [clientStates])
 
+  useEffect(() => {
+    if (!biometricSupported && biometricEnabled) {
+      setBiometricEnabled(false)
+    }
+  }, [biometricEnabled, biometricSupported])
+
   const submitForm = useCallback(
     async ({ phrase: newPhrase, password, name }: FormValues) => {
       setImportError(O.none)
       setImporting(true)
-      await addKeystore({ phrase: newPhrase, name: name || defaultWalletName(walletId), id: walletId, password }).catch(
-        (error) => {
-          setImporting(false)
-          setImportError(O.some(error))
-        }
-      )
+      await addKeystore({
+        phrase: newPhrase,
+        name: name || defaultWalletName(walletId),
+        id: walletId,
+        password,
+        biometricEnabled: biometricSupported ? biometricEnabled : undefined
+      }).catch((error) => {
+        setImporting(false)
+        setImportError(O.some(error))
+      })
     },
-    [addKeystore, walletId]
+    [addKeystore, biometricEnabled, biometricSupported, walletId]
   )
 
   const walletNameValidator = useCallback(
@@ -208,6 +223,14 @@ export const ImportPhrase = (props: Props): JSX.Element => {
               error={!!errors.name?.message}
             />
           </div>
+
+          {biometricSupported && !checkingBiometry && (
+            <BiometricOptInToggle
+              checked={biometricEnabled}
+              onChange={setBiometricEnabled}
+              label={intl.formatMessage({ id: 'wallet.imports.enableBiometric' })}
+            />
+          )}
 
           <FlatButton
             className="mt-4 min-w-[150px]"

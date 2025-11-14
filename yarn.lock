@@ -4840,6 +4840,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tauri-apps/plugin-biometric@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@tauri-apps/plugin-biometric@npm:2.3.1"
+  dependencies:
+    "@tauri-apps/api": "npm:^2.8.0"
+  checksum: 10/b05000bd474bc26ddc698bba5f0c6bc807fe48549b0b1aa41849526f84bd0767a9d75e6c6f489ac4447c27f54450875a6b4715d0502840a2ea8395275413aa5e
+  languageName: node
+  linkType: hard
+
 "@tauri-apps/plugin-dialog@npm:2.4.1":
   version: 2.4.1
   resolution: "@tauri-apps/plugin-dialog@npm:2.4.1"
@@ -6993,6 +7002,7 @@ __metadata:
     "@tanstack/react-table": "npm:^8.21.3"
     "@tauri-apps/api": "npm:2.9.0"
     "@tauri-apps/cli": "npm:2.9.1"
+    "@tauri-apps/plugin-biometric": "npm:2.3.1"
     "@tauri-apps/plugin-dialog": "npm:2.4.1"
     "@tauri-apps/plugin-fs": "npm:2.4.3"
     "@tauri-apps/plugin-log": "npm:2.7.0"

@@ -45,6 +45,7 @@ const wallet: WalletMessages = {
   'wallet.imports.keystore.title': 'Выберите файл для загрузки',
   'wallet.imports.keystore.description': 'Импортировать существующий кошелёк keystore',
   'wallet.imports.phrase.description': 'Импортировать существующий кошелёк по seed-фразе',
+  'wallet.imports.enableBiometric': 'Включить биометрическую аутентификацию',
   'wallet.imports.enterphrase': 'Введите фразу',
   'wallet.imports.error.instance': 'Не удалось создать экземпляр Клиента',
   'wallet.imports.error.keystore.load': 'Недопустимый Keystore',

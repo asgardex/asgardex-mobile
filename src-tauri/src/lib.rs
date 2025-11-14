@@ -2,7 +2,11 @@ use tauri_plugin_log::{Target, TargetKind};
 
 #[tauri::command]
 fn resolve_device_type() -> &'static str {
-    "desktop"
+    if cfg!(any(target_os = "ios", target_os = "android")) {
+        "mobile"
+    } else {
+        "desktop"
+    }
 }
 
 pub fn run() {
@@ -24,13 +28,20 @@ pub fn run() {
         .targets(log_targets)
         .build();
 
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(log_plugin)
         .plugin(tauri_plugin_store::Builder::default().build())
-        .plugin(tauri_plugin_secure_storage::init())
+        .plugin(tauri_plugin_secure_storage::init());
+
+    #[cfg(mobile)]
+    {
+        builder = builder.plugin(tauri_plugin_biometric::init());
+    }
+
+    builder
         .invoke_handler(tauri::generate_handler![resolve_device_type])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

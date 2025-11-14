@@ -37,9 +37,14 @@ import {
   SECURE_STORAGE_VERSION,
   VALID_SEGMENT_PATTERN
 } from '../../shared/const'
+import { isBiometricEnabled, DEFAULT_BIOMETRIC_PROMPT } from '../../shared/config/biometric'
+import { BiometricDowngradeReason } from '../../shared/errors/biometric'
 import { mapIOErrors } from '../../shared/utils/fp'
 import { isError } from '../../shared/utils/guard'
+import { safeStringify } from '../../shared/utils/safeStringify'
 import { createSecureStorageVersionMismatchError } from '../services/wallet/secureStorageErrors'
+import { recordSecureStorageEvent } from '../services/app/telemetry'
+import { setPlatformDevice } from '../../shared/utils/platform'
 import { defaultWalletName } from '../../shared/utils/wallet'
 
 const APP_NAME = 'ASGARDEX'
@@ -47,7 +52,7 @@ const STORAGE_SUBDIR = 'storage'
 const LEGACY_KEYSTORE_ID = 1
 
 let storageDirPromise: Promise<string> | undefined
-let deviceTypePromise: Promise<string> | undefined
+let deviceTypePromise: Promise<'mobile' | 'desktop' | 'unknown'> | undefined
 
 const normalizeError = (error: unknown): Error => (isError(error) ? error : new Error(String(error)))
 
@@ -111,6 +116,7 @@ const getLegacyKeystoreFilePath = async (): Promise<string> => {
 type StoredSecurePayload = {
   version: number
   payload: SecureStoragePayload
+  biometricRequired: boolean
   createdAt: string
   updatedAt: string
 }
@@ -125,13 +131,15 @@ const parseStoredSecurePayload = (raw: string): StoredSecurePayload => {
     throw new Error('Secure storage payload missing')
   }
 
-  const { version, payload, createdAt, updatedAt } = parsed as StoredSecurePayload
-  const actualVersion = typeof version === 'number' ? version : null
+  const candidate = parsed as Partial<StoredSecurePayload> & { version?: unknown }
+  const versionValue = candidate.version
+  const actualVersion = typeof versionValue === 'number' ? versionValue : null
 
   if (actualVersion !== SECURE_STORAGE_VERSION) {
     throw createSecureStorageVersionMismatchError(SECURE_STORAGE_VERSION, actualVersion)
   }
 
+  const payload = candidate.payload
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
     throw new Error('Secure storage payload malformed')
   }
@@ -140,16 +148,65 @@ const parseStoredSecurePayload = (raw: string): StoredSecurePayload => {
     throw new Error('Secure storage payload must contain an encrypted keystore')
   }
 
-  if (typeof createdAt !== 'string' || typeof updatedAt !== 'string') {
+  const createdAt = typeof candidate.createdAt === 'string' ? candidate.createdAt : undefined
+  const updatedAt = typeof candidate.updatedAt === 'string' ? candidate.updatedAt : undefined
+  if (!createdAt || !updatedAt) {
     throw new Error('Secure storage timestamps missing')
   }
+
+  const biometricRequired = typeof candidate.biometricRequired === 'boolean' ? candidate.biometricRequired : false
 
   return {
     version: SECURE_STORAGE_VERSION,
     payload: payload as SecureStoragePayload,
+    biometricRequired,
     createdAt,
     updatedAt
   }
+}
+
+const toErrorMessage = (value: unknown): string => {
+  if (isError(value)) return value.message
+  if (typeof value === 'string') return value
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+    return String(value)
+  }
+  if (value && typeof value === 'object') {
+    const serialized = safeStringify(value)
+    if (serialized !== '[unserializable]') return serialized
+  }
+  return String(value)
+}
+
+const normalizeUnknownError = (error: unknown): Error => {
+  if (isError(error)) return error
+  const normalized = new Error(toErrorMessage(error))
+  if (error && typeof error === 'object') {
+    ;(normalized as Error & { cause?: unknown }).cause = error
+  }
+  return normalized
+}
+
+const BIOMETRIC_ENROLLMENT_ERROR_CODES = new Set<BiometricDowngradeReason>([
+  'biometryNotEnrolled',
+  'passcodeNotSet',
+  'biometryNotAvailable'
+])
+
+type BiometricStatusLike = {
+  isAvailable?: boolean
+  errorCode?: string | null
+}
+
+const resolveDowngradeReasonFromStatus = (status: BiometricStatusLike): BiometricDowngradeReason | null => {
+  const code = status?.errorCode ?? null
+  if (!status?.isAvailable || (code && BIOMETRIC_ENROLLMENT_ERROR_CODES.has(code as BiometricDowngradeReason))) {
+    if (code && BIOMETRIC_ENROLLMENT_ERROR_CODES.has(code as BiometricDowngradeReason)) {
+      return code as BiometricDowngradeReason
+    }
+    return 'biometryNotAvailable'
+  }
+  return null
 }
 
 const secureStorageApi: SecureStorageApi = {
@@ -158,10 +215,10 @@ const secureStorageApi: SecureStorageApi = {
     payload,
     biometricRequired
   }: SecureStorageWriteParams): Promise<SecureStorageWriteResult> {
-    // biometricRequired is accepted for future parity but not acted upon yet
     const key = buildSecureKey(secureKeyId)
     const timestamp = nowIso()
     let createdAt = timestamp
+    let resolvedBiometric = biometricRequired ?? false
 
     if (secureKeyId) {
       try {
@@ -169,15 +226,19 @@ const secureStorageApi: SecureStorageApi = {
         if (existingRaw) {
           const existing = parseStoredSecurePayload(existingRaw)
           createdAt = existing.createdAt
+          resolvedBiometric = biometricRequired ?? existing.biometricRequired
         }
-      } catch {
-        // Ignore read failures; treat as new entry
+      } catch (error) {
+        // Ignore parse errors here (including version mismatch); callers will handle them on read.
+        const message = isError(error) ? error.message : String(error)
+        console.warn(`[tauri-windowApi] Failed to read existing secure entry ${key}: ${message}`)
       }
     }
 
     const record: StoredSecurePayload = {
       version: SECURE_STORAGE_VERSION,
       payload,
+      biometricRequired: resolvedBiometric,
       createdAt,
       updatedAt: timestamp
     }
@@ -192,7 +253,90 @@ const secureStorageApi: SecureStorageApi = {
       throw new Error(`Secure storage entry ${secureKeyId} not found`)
     }
 
-    const parsed = parseStoredSecurePayload(raw)
+    let parsed: StoredSecurePayload
+    try {
+      parsed = parseStoredSecurePayload(raw)
+    } catch (error) {
+      // Surface version mismatch and other parse errors to the caller; keystore
+      // service will emit dedicated telemetry for version mismatches.
+      throw error
+    }
+
+    const deviceType = await ensureDeviceType()
+    if (deviceType === 'mobile' && isBiometricEnabled() && parsed.biometricRequired) {
+      let biometricModule: typeof import('@tauri-apps/plugin-biometric') | undefined
+
+      try {
+        biometricModule = await import('@tauri-apps/plugin-biometric')
+      } catch (importError) {
+        const metadata: Record<string, string> = {
+          reason: 'pluginUnavailable',
+          message: toErrorMessage(importError)
+        }
+        recordSecureStorageEvent({
+          action: 'biometric_failure',
+          secureKeyId,
+          metadata
+        })
+        throw normalizeUnknownError(importError)
+      }
+
+      try {
+        const { checkStatus, authenticate } = biometricModule!
+        let status: BiometricStatusLike | undefined
+        try {
+          status = await checkStatus()
+        } catch (statusError) {
+          const metadata: Record<string, string> = {
+            reason: 'statusError',
+            message: toErrorMessage(statusError)
+          }
+          recordSecureStorageEvent({
+            action: 'biometric_failure',
+            secureKeyId,
+            metadata
+          })
+          throw normalizeUnknownError(statusError)
+        }
+
+        const downgradeReason = resolveDowngradeReasonFromStatus(status ?? {})
+        if (downgradeReason) {
+          const metadata: Record<string, string> = {
+            reason: downgradeReason
+          }
+          if (status?.errorCode) {
+            metadata.statusError = status.errorCode
+          }
+          recordSecureStorageEvent({
+            action: 'biometric_failure',
+            secureKeyId,
+            metadata
+          })
+          throw new Error('Biometric authentication is required but not available on this device.')
+        }
+
+        await authenticate(DEFAULT_BIOMETRIC_PROMPT)
+        recordSecureStorageEvent({ action: 'biometric_success', secureKeyId })
+      } catch (error) {
+        const normalized = normalizeUnknownError(error)
+        const metadata: Record<string, string> = {
+          errorName: normalized.name || 'Error',
+          errorMessage: normalized.message
+        }
+        const rawError = toErrorMessage(error)
+        if (rawError && rawError !== normalized.message) {
+          metadata.raw = rawError
+        }
+        recordSecureStorageEvent({
+          action: 'biometric_failure',
+          secureKeyId,
+          metadata
+        })
+
+        throw normalized
+      }
+    }
+
     return parsed.payload
   },
 
@@ -286,9 +430,21 @@ const migrateLegacyWallet = async (): Promise<E.Either<Error, KeystoreWallets>> 
   }
 }
 
-const ensureDeviceType = async (): Promise<string> => {
+const ensureDeviceType = async (): Promise<'mobile' | 'desktop' | 'unknown'> => {
   if (!deviceTypePromise) {
-    deviceTypePromise = invoke<string>('resolve_device_type').catch(() => 'desktop')
+    deviceTypePromise = invoke<'mobile' | 'desktop' | 'unknown'>('resolve_device_type')
+      .then((classification) => {
+        if (classification === 'mobile' || classification === 'desktop') {
+          setPlatformDevice({
+            type: classification,
+            isMobile: classification === 'mobile',
+            source: 'platform'
+          })
+          return classification
+        }
+        return 'unknown'
+      })
+      .catch(() => 'unknown')
   }
   return deviceTypePromise
 }
