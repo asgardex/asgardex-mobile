@@ -31,6 +31,7 @@ import {
   type WindowApiSurface
 } from '../../shared/api/types'
 import {
+  BLOCKED_NOTIFICATION_COOLDOWN_MS,
   DEFAULT_STORAGES,
   INVALID_PATH_SEGMENT,
   SECURE_KEY_PREFIX,
@@ -42,8 +43,9 @@ import { BiometricDowngradeReason } from '../../shared/errors/biometric'
 import { mapIOErrors } from '../../shared/utils/fp'
 import { isError } from '../../shared/utils/guard'
 import { safeStringify } from '../../shared/utils/safeStringify'
+import { normalizeExternalUrl, isWhitelistedExternalHost } from '../../shared/url/whitelist'
 import { createSecureStorageVersionMismatchError } from '../services/wallet/secureStorageErrors'
-import { recordSecureStorageEvent } from '../services/app/telemetry'
+import { recordSecureStorageEvent, recordExternalLinkAttempt } from '../services/app/telemetry'
 import { setPlatformDevice } from '../../shared/utils/platform'
 import { defaultWalletName } from '../../shared/utils/wallet'
 
@@ -120,6 +122,115 @@ const detectMobileOs = (): 'android' | 'ios' | 'unknown' => {
     return 'ios'
   }
   return 'unknown'
+}
+
+type OpenExternalResult = 'opened' | 'fallback' | 'blocked'
+
+type ExternalLinkEventDetail = {
+  type: 'fallback' | 'blocked'
+  url: string
+}
+
+const EXTERNAL_LINK_EVENT_NAME = 'asgardex:external-link'
+
+const dispatchExternalLinkEvent = (detail: ExternalLinkEventDetail) => {
+  const win = typeof window === 'undefined' ? undefined : window
+  if (!win?.dispatchEvent) return
+
+  try {
+    const anyWin = win as typeof window & { CustomEvent?: typeof CustomEvent }
+    const EventCtor = anyWin.CustomEvent ?? globalThis.CustomEvent
+    if (typeof EventCtor === 'function') {
+      win.dispatchEvent(new EventCtor(EXTERNAL_LINK_EVENT_NAME, { detail }))
+      return
+    }
+
+    if (typeof document !== 'undefined' && typeof document.createEvent === 'function') {
+      const event = document.createEvent('CustomEvent') as CustomEvent<ExternalLinkEventDetail>
+      event.initCustomEvent(EXTERNAL_LINK_EVENT_NAME, false, false, detail)
+      win.dispatchEvent(event)
+      return
+    }
+
+    win.dispatchEvent(new Event(EXTERNAL_LINK_EVENT_NAME))
+  } catch (error) {
+    const normalized = isError(error) ? error : new Error(String(error))
+    console.warn(`[tauri-windowApi] Failed to dispatch external link event: ${normalized.message}`)
+  }
+}
+
+let lastBlockedNotificationAt = 0
+
+const notifyExternalFallback = (url: string): void => {
+  dispatchExternalLinkEvent({ type: 'fallback', url })
+}
+
+const notifyExternalBlocked = (url: string): void => {
+  const now = Date.now()
+  if (now - lastBlockedNotificationAt < BLOCKED_NOTIFICATION_COOLDOWN_MS) return
+  lastBlockedNotificationAt = now
+  dispatchExternalLinkEvent({ type: 'blocked', url })
+}
+
+const getNavigator = () => {
+  try {
+    return navigator
+  } catch (_error) {
+    return undefined
+  }
+}
+
+const tryOpenWithShell = async (href: string): Promise<{ ok: true } | { ok: false; error?: Error }> => {
+  try {
+    await shellOpen(href)
+    return { ok: true }
+  } catch (error) {
+    const normalized = isError(error) ? error : new Error(String(error))
+    console.warn(`[tauri-windowApi] Failed to open external link via plugin-shell: ${normalized.message}`)
+    return { ok: false, error: normalized }
+  }
+}
+
+const shareUrl = async (href: string): Promise<boolean> => {
+  const nav = getNavigator()
+  if (nav && typeof nav.share === 'function') {
+    try {
+      await nav.share({ url: href })
+      return true
+    } catch (error) {
+      const normalized = isError(error) ? error : new Error(String(error))
+      console.warn(`[tauri-windowApi] Share sheet rejected external link: ${normalized.message}`)
+    }
+  }
+  return false
+}
+
+const copyUrlToClipboard = async (href: string): Promise<boolean> => {
+  const nav = getNavigator()
+  if (nav?.clipboard && typeof nav.clipboard.writeText === 'function') {
+    try {
+      await nav.clipboard.writeText(href)
+      return true
+    } catch (error) {
+      const normalized = isError(error) ? error : new Error(String(error))
+      console.warn(`[tauri-windowApi] Clipboard fallback failed: ${normalized.message}`)
+    }
+  }
+  return false
+}
+
+const presentExternalFallback = async (href: string): Promise<OpenExternalResult> => {
+  if (await shareUrl(href)) {
+    notifyExternalFallback(href)
+    return 'fallback'
+  }
+
+  if (await copyUrlToClipboard(href)) {
+    notifyExternalFallback(href)
+    return 'fallback'
+  }
+
+  throw new Error('External link fallback is unavailable on this device')
 }
 
 const encodeBase64 = (value: string): string => {
@@ -674,12 +785,89 @@ const apiKeystore: ApiKeystore = {
   secure: secureStorageApi
 }
 
+const openExternalWithWhitelist = async (target: string): Promise<OpenExternalResult> => {
+  const normalized = normalizeExternalUrl(target)
+  if (!normalized) {
+    notifyExternalBlocked(target)
+    recordExternalLinkAttempt({
+      normalizedUrl: target,
+      whitelistStatus: 'blocked',
+      result: 'blocked',
+      capabilityState: 'native',
+      metadata: { reason: 'invalid-url' }
+    })
+    return 'blocked'
+  }
+
+  const href = normalized.href
+  const allowed = isWhitelistedExternalHost(normalized.hostname)
+
+  if (!allowed) {
+    notifyExternalBlocked(href)
+    recordExternalLinkAttempt({
+      normalizedUrl: href,
+      whitelistStatus: 'blocked',
+      result: 'blocked',
+      capabilityState: 'native',
+      metadata: { reason: 'not-whitelisted' }
+    })
+    return 'blocked'
+  }
+
+  const shellOutcome = await tryOpenWithShell(href)
+  if (shellOutcome.ok) {
+    recordExternalLinkAttempt({
+      normalizedUrl: href,
+      whitelistStatus: 'allowed',
+      result: 'opened',
+      capabilityState: 'native'
+    })
+    return 'opened'
+  }
+
+  try {
+    const fallbackResult = await presentExternalFallback(href)
+    recordExternalLinkAttempt({
+      normalizedUrl: href,
+      whitelistStatus: 'allowed',
+      result: fallbackResult,
+      capabilityState: 'fallback',
+      metadata: shellOutcome.error?.message
+        ? { reason: 'shell-error', message: shellOutcome.error.message }
+        : { reason: 'shell-unavailable' }
+    })
+    return fallbackResult
+  } catch (fallbackError) {
+    const normalizedFallbackError = isError(fallbackError) ? fallbackError : new Error(String(fallbackError))
+    console.warn(`[tauri-windowApi] External link fallback unavailable: ${normalizedFallbackError.message}`)
+    notifyExternalBlocked(href)
+    recordExternalLinkAttempt({
+      normalizedUrl: href,
+      whitelistStatus: 'allowed',
+      result: 'blocked',
+      capabilityState: 'fallback',
+      metadata: {
+        reason: 'fallback-unavailable',
+        message: normalizedFallbackError.message
+      }
+    })
+    return 'blocked'
+  }
+}
+
 const apiLang: ApiLang = {
   update: () => {}
 }
 
 const apiUrl: ApiUrl = {
-  openExternal: (url: string) => shellOpen(url)
+  openExternal: async (url: string): Promise<void> => {
+    try {
+      await openExternalWithWhitelist(url)
+    } catch (error) {
+      const normalized = isError(error) ? error : new Error(String(error))
+      console.warn(`[tauri-windowApi] Failed to open external link: ${normalized.message}`)
+    }
+  }
 }
 
 const apiHDWallet: ApiHDWallet = {

@@ -62,6 +62,8 @@ export enum ExternalUrl {
   LICENSE = 'https://github.com/asgardex/asgardex-desktop?tab=MIT-1-ov-file'
 }
 
+export const BLOCKED_NOTIFICATION_COOLDOWN_MS = 4000
+
 export const INVALID_PATH_SEGMENT = /[\\/]|\.\./
 export const VALID_SEGMENT_PATTERN = /^[a-zA-Z0-9._-]+$/
 

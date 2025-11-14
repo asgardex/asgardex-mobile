@@ -6,6 +6,7 @@ import { function as FP, option as O } from 'fp-ts'
 import { ExternalUrl } from '../../../shared/const'
 import { AppUpdate, AppUpdateModalProps } from '../../components/app'
 import { useAppUpdate } from '../../hooks/useAppUpdate'
+import { openExternalUrl } from '../../services/app/external'
 
 const ONE_HOUR_PERIOD = 1000 * 60 * 60
 
@@ -33,7 +34,7 @@ export const AppUpdateView = () => {
           (): AppUpdateModalProps => ({ isOpen: false }),
           (version): AppUpdateModalProps => ({
             isOpen: true,
-            goToUpdates: () => window.apiUrl.openExternal(`${ExternalUrl.GITHUB_RELEASE}${version}`),
+            goToUpdates: () => openExternalUrl(`${ExternalUrl.GITHUB_RELEASE}${version}`),
             version,
             close: resetAppUpdater
           })

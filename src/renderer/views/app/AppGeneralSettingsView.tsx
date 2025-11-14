@@ -9,6 +9,7 @@ import { AppGeneralSettings } from '../../components/settings/AppGeneralSettings
 import { useI18nContext } from '../../contexts/I18nContext'
 import { useAppUpdate } from '../../hooks/useAppUpdate'
 import { useNetwork } from '../../hooks/useNetwork'
+import { openExternalUrl } from '../../services/app/external'
 
 export const AppGeneralSettingsView = (): JSX.Element => {
   const { network, changeNetwork } = useNetwork()
@@ -17,10 +18,9 @@ export const AppGeneralSettingsView = (): JSX.Element => {
   const { changeLocale, locale$ } = useI18nContext()
   const currentLocale = useObservableState(locale$, DEFAULT_LOCALE)
 
-  const goToReleasePage = useCallback(
-    (version: string) => window.apiUrl.openExternal(`${ExternalUrl.GITHUB_RELEASE}${version}`),
-    []
-  )
+  const goToReleasePage = useCallback((version: string) => {
+    openExternalUrl(`${ExternalUrl.GITHUB_RELEASE}${version}`)
+  }, [])
 
   return (
     <AppGeneralSettings

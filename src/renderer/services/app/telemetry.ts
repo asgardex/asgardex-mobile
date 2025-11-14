@@ -99,6 +99,34 @@ const sha256Hex = (input: string): string => {
   return output
 }
 
+const redactExternalUrl = (value: string): string => {
+  try {
+    const url = new URL(value)
+    const redactedPath = url.pathname.replace(/\/tx\/[^/]+/gi, '/tx/<redacted>')
+    return `${url.origin}${redactedPath}`
+  } catch (_error) {
+    return '<invalid>'
+  }
+}
+
+export type ExternalLinkAttemptTelemetry = {
+  attemptId: string
+  occurredAt: string
+  sourceSurface: string
+  normalizedUrl: string
+  whitelistStatus: 'allowed' | 'blocked'
+  result: 'opened' | 'fallback' | 'blocked'
+  capabilityState: 'native' | 'fallback'
+  deviceType: 'ios' | 'android' | 'desktop'
+  appVersion: string
+  metadata: Record<string, string>
+}
+
+export type ExternalLinkTelemetryEvent = {
+  event: 'external_link_attempt'
+  payload: ExternalLinkAttemptTelemetry
+}
+
 export type SecureStorageAction =
   | 'write_success'
   | 'write_failure'
@@ -133,7 +161,7 @@ export type SecureStorageTelemetryEvent = {
   payload: SecureStorageTelemetry
 }
 
-type TelemetryEvent = SecureStorageTelemetryEvent
+type TelemetryEvent = ExternalLinkTelemetryEvent | SecureStorageTelemetryEvent
 
 export const TELEMETRY_EVENT = 'asgardex:telemetry'
 
@@ -168,6 +196,18 @@ const hashSecureIdentifier = (value: string | undefined): string | undefined => 
   if (!value) return undefined
   return sha256Hex(`${resolveTelemetrySalt()}::${value}`)
 }
+
+const sanitizeExternalLinkLogPayload = (payload: ExternalLinkAttemptTelemetry) => ({
+  attemptId: payload.attemptId,
+  occurredAt: payload.occurredAt,
+  sourceSurface: payload.sourceSurface,
+  normalizedUrl: payload.normalizedUrl,
+  whitelistStatus: payload.whitelistStatus,
+  result: payload.result,
+  capabilityState: payload.capabilityState,
+  deviceType: payload.deviceType,
+  appVersion: payload.appVersion
+})
 
 const SENSITIVE_METADATA_TOKENS = ['mnemonic', 'phrase', 'keystore', 'seed', 'privatekey', 'payload', 'raw', 'secret']
 
@@ -255,7 +295,7 @@ const dispatchTelemetryEvent = (record: TelemetryEvent): void => {
     }
   } catch (error) {
     const normalized = isError(error) ? error : Error(String(error))
-    console.warn(`[telemetry] Failed to emit secure storage event: ${normalized.message}`)
+    console.warn(`[telemetry] Failed to emit telemetry event: ${normalized.message}`)
   }
 }
 
@@ -280,6 +320,14 @@ const sanitizeSecureStorageLogPayload = (payload: SecureStorageTelemetry) => ({
   deviceType: payload.deviceType,
   appVersion: payload.appVersion
 })
+
+const createAttemptId = (): string => {
+  const cryptoApi = typeof crypto === 'undefined' ? undefined : crypto
+  if (cryptoApi?.randomUUID) {
+    return cryptoApi.randomUUID()
+  }
+  return `external-link-${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
 
 export type SecureStorageTelemetryParams = {
   action: SecureStorageAction
@@ -326,4 +374,41 @@ export type ExternalLinkTelemetryParams = {
   capabilityState: 'native' | 'fallback'
   sourceSurface?: string
   metadata?: Record<string, unknown>
+}
+
+export const recordExternalLinkAttempt = (params: ExternalLinkTelemetryParams): ExternalLinkAttemptTelemetry => {
+  const payload: ExternalLinkAttemptTelemetry = {
+    attemptId: createAttemptId(),
+    occurredAt: new Date().toISOString(),
+    sourceSurface: params.sourceSurface ?? 'unknown',
+    normalizedUrl: redactExternalUrl(params.normalizedUrl),
+    whitelistStatus: params.whitelistStatus,
+    result: params.result,
+    capabilityState: params.capabilityState,
+    deviceType: detectDeviceType(),
+    appVersion: resolveAppVersion(),
+    metadata: sanitizeMetadata(params.metadata) ?? {}
+  }
+
+  const record: ExternalLinkTelemetryEvent = {
+    event: 'external_link_attempt',
+    payload
+  }
+
+  dispatchTelemetryEvent(record)
+
+  if (
+    (forceConsoleLoggingInTests || !isTestEnv()) &&
+    typeof console !== 'undefined' &&
+    typeof console.info === 'function'
+  ) {
+    console.info('[telemetry]', 'external_link_attempt', safeStringify(sanitizeExternalLinkLogPayload(payload)))
+  }
+
+  return payload
+}
+
+export const resetTelemetryForTests = (): void => {
+  // Currently only the blocked notification path is rate-limited elsewhere.
+  // This helper exists for future stateful telemetry logic.
 }
