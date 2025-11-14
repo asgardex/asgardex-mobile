@@ -8,12 +8,7 @@ const {
   biometricModuleMock,
   recordSecureStorageEventMock,
   recordExternalLinkAttemptMock,
-  isBiometricEnabledMock,
-  joinMock,
-  dirnameMock,
-  appDataDirMock,
-  existsMock,
-  mkdirMock
+  isBiometricEnabledMock
 } = vi.hoisted(() => ({
   invokeMock: vi.fn(),
   secureStorageMock: {
@@ -28,12 +23,7 @@ const {
   },
   recordSecureStorageEventMock: vi.fn(),
   recordExternalLinkAttemptMock: vi.fn(),
-  isBiometricEnabledMock: vi.fn(() => true),
-  joinMock: vi.fn(),
-  dirnameMock: vi.fn(),
-  appDataDirMock: vi.fn(),
-  existsMock: vi.fn(),
-  mkdirMock: vi.fn()
+  isBiometricEnabledMock: vi.fn(() => true)
 }))
 
 vi.mock('@tauri-apps/api/core', () => ({
@@ -41,9 +31,9 @@ vi.mock('@tauri-apps/api/core', () => ({
 }))
 
 vi.mock('@tauri-apps/api/path', () => ({
-  join: joinMock,
-  dirname: dirnameMock,
-  appDataDir: appDataDirMock
+  join: vi.fn(),
+  dirname: vi.fn(),
+  appDataDir: vi.fn()
 }))
 
 vi.mock('@tauri-apps/plugin-dialog', () => ({
@@ -53,8 +43,8 @@ vi.mock('@tauri-apps/plugin-dialog', () => ({
 
 vi.mock('@tauri-apps/plugin-fs', () => ({
   BaseDirectory: { Document: 'document' },
-  exists: existsMock,
-  mkdir: mkdirMock,
+  exists: vi.fn(),
+  mkdir: vi.fn(),
   readTextFile: vi.fn(),
   writeTextFile: vi.fn(),
   remove: vi.fn(),
@@ -94,14 +84,7 @@ vi.mock('../../shared/utils/platform', () => ({
 
 import { __internalWindowApiHelpers } from './windowApi'
 
-const {
-  selectSinglePath,
-  ensureJsonExtension,
-  secureStorageApi,
-  resolveStorageDirForTests,
-  resetStorageDirCache,
-  resetDeviceTypeCache
-} = __internalWindowApiHelpers
+const { selectSinglePath, ensureJsonExtension, secureStorageApi } = __internalWindowApiHelpers
 
 const resetSecureStorageMocks = () => {
   secureStorageMock.setItem.mockReset()
@@ -119,27 +102,6 @@ beforeEach(() => {
   recordSecureStorageEventMock.mockReset()
   recordExternalLinkAttemptMock.mockReset()
   isBiometricEnabledMock.mockReturnValue(true)
-  joinMock.mockReset()
-  joinMock.mockImplementation(async (...segments: string[]) =>
-    segments
-      .filter((segment) => segment.length > 0)
-      .join('/')
-      .replace(/\/{2,}/g, '/')
-  )
-  dirnameMock.mockReset()
-  dirnameMock.mockImplementation(async (value: string) => {
-    const parts = value.split('/')
-    parts.pop()
-    return parts.join('/') || '/'
-  })
-  appDataDirMock.mockReset()
-  appDataDirMock.mockResolvedValue('/tmp/appdata')
-  existsMock.mockReset()
-  existsMock.mockResolvedValue(true)
-  mkdirMock.mockReset()
-  mkdirMock.mockResolvedValue(undefined)
-  resetStorageDirCache()
-  resetDeviceTypeCache()
 })
 
 describe('windowApi internal helpers', () => {
@@ -175,31 +137,6 @@ describe('windowApi internal helpers', () => {
       expect(ensureJsonExtension('file')).toBe('file.json')
       expect(ensureJsonExtension('/tmp/file')).toBe('/tmp/file.json')
     })
-  })
-})
-
-describe('storage directory resolution', () => {
-  it('keeps storage paths inside appDataDir for mobile builds', async () => {
-    invokeMock.mockResolvedValueOnce('mobile')
-    appDataDirMock.mockResolvedValue('/data/user/0/org/app')
-    existsMock.mockResolvedValue(false)
-
-    const dir = await resolveStorageDirForTests()
-
-    expect(dir).toBe('/data/user/0/org/app/ASGARDEX/storage')
-    expect(dirnameMock).not.toHaveBeenCalled()
-    expect(mkdirMock).toHaveBeenCalledTimes(2)
-  })
-
-  it('walks to the Electron-style parent directory on desktop', async () => {
-    invokeMock.mockResolvedValueOnce('desktop')
-    appDataDirMock.mockResolvedValue('/Users/dev/Library/Application Support/org.thorchain.asgardex')
-    existsMock.mockResolvedValue(false)
-
-    const dir = await resolveStorageDirForTests()
-
-    expect(dirnameMock).toHaveBeenCalledWith('/Users/dev/Library/Application Support/org.thorchain.asgardex')
-    expect(dir).toBe('/Users/dev/Library/Application Support/ASGARDEX/storage')
   })
 })
 

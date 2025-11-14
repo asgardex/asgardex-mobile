@@ -30,6 +30,7 @@ import {
   StoreFileName,
   type WindowApiSurface
 } from '../../shared/api/types'
+import { isBiometricEnabled, DEFAULT_BIOMETRIC_PROMPT } from '../../shared/config/biometric'
 import {
   BLOCKED_NOTIFICATION_COOLDOWN_MS,
   DEFAULT_STORAGES,
@@ -38,18 +39,17 @@ import {
   SECURE_STORAGE_VERSION,
   VALID_SEGMENT_PATTERN
 } from '../../shared/const'
-import { isBiometricEnabled, DEFAULT_BIOMETRIC_PROMPT } from '../../shared/config/biometric'
 import { BiometricDowngradeReason } from '../../shared/errors/biometric'
+import { normalizeExternalUrl, isWhitelistedExternalHost } from '../../shared/url/whitelist'
 import { mapIOErrors } from '../../shared/utils/fp'
 import { isError } from '../../shared/utils/guard'
-import { safeStringify } from '../../shared/utils/safeStringify'
-import { normalizeExternalUrl, isWhitelistedExternalHost } from '../../shared/url/whitelist'
-import { createSecureStorageVersionMismatchError } from '../services/wallet/secureStorageErrors'
-import { recordSecureStorageEvent, recordExternalLinkAttempt } from '../services/app/telemetry'
-import { createLogger } from '../services/app/logging'
 import { setPlatformDevice } from '../../shared/utils/platform'
+import { safeStringify } from '../../shared/utils/safeStringify'
 import { defaultWalletName } from '../../shared/utils/wallet'
 import { installPlatformLogBridge } from './platformLogBridge'
+import { createLogger } from '../services/app/logging'
+import { recordSecureStorageEvent, recordExternalLinkAttempt } from '../services/app/telemetry'
+import { createSecureStorageVersionMismatchError } from '../services/wallet/secureStorageErrors'
 
 installPlatformLogBridge()
 
@@ -64,6 +64,8 @@ let deviceTypePromise: Promise<'mobile' | 'desktop' | 'unknown'> | undefined
 const tauriWindowLogger = createLogger('tauri-windowApi')
 
 const normalizeError = (error: unknown): Error => (isError(error) ? error : new Error(String(error)))
+
+const isSecureStorageUnavailableError = (message: string): boolean => /No command|not found|permission/i.test(message)
 
 const ensureDir = async (path: string) => {
   const alreadyExists = await exists(path)
@@ -538,11 +540,12 @@ const secureStorageApi: SecureStorageApi = {
 
   async exists(secureKeyId: string): Promise<SecureStorageExistResult> {
     try {
+      await secureStorage.keys()
       const raw = await secureStorage.getItem(secureKeyId)
       return { exists: raw !== null, supported: true }
     } catch (error) {
       const message = isError(error) ? error.message : String(error)
-      if (/No command/i.test(message) && /secure-storage/i.test(message)) {
+      if (isSecureStorageUnavailableError(message)) {
         return { exists: false, supported: false }
       }
       throw normalizeError(error)
@@ -555,7 +558,7 @@ const secureStorageApi: SecureStorageApi = {
       return keys.filter((key) => key.startsWith(SECURE_KEY_PREFIX))
     } catch (error) {
       const message = isError(error) ? error.message : String(error)
-      if (/No command/i.test(message) && /secure-storage/i.test(message)) {
+      if (isSecureStorageUnavailableError(message)) {
         // Plugin not available; report as empty list but supported=false via exists()
         return []
       }

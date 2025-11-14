@@ -10,15 +10,12 @@
     "dialog:default",
     "shell:default",
     "fs:default",
-    "fs:allow-appdata-write-recursive",
-    "fs:scope-appdata-recursive",
+    "fs:allow-rename",
     {
       "identifier": "fs:scope",
       "allow": [
-        "$APPDATA/storage",
-        "$APPDATA/storage/**",
-        "$HOME",
-        "$HOME/**",
+        "$APPDATA/ASGARDEX",
+        "$APPDATA/ASGARDEX/**",
         "$DOCUMENT",
         "$DOCUMENT/**",
         "$DOWNLOAD",
