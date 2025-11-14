@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "ASGARDEX",
   "version": "1.41.3",
-  "identifier": "exchange.asgard.wallet",
+  "identifier": "org.thorchain.asgardex",
   "build": {
     "frontendDist": "../build/renderer",
     "devUrl": "http://localhost:3000",
@@ -42,7 +42,7 @@
     "active": true,
     "targets": "all",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
-    "resources": ["ios/App/Assets.xcassets"],
+    "resources": ["ios/App/Assets.xcassets", "../resources"],
     "android": {
       "minSdkVersion": 26
     },

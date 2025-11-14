@@ -37,3 +37,7 @@ dev-app-update.yml
 .trunk/logs/
 
 stats.html
+
+# Tauri build artifacts
+/src-tauri/gen/
+/src-tauri/target/
