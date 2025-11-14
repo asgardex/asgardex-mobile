@@ -35,7 +35,7 @@
         "worker-src": "'self' blob:",
         "connect-src": "'self' https: wss:"
       },
-      "capabilities": ["default", "android", "ios"]
+      "capabilities": ["default", "android", "ios", "mobile-safe-area"]
     }
   },
   "bundle": {

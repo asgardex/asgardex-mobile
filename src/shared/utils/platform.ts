@@ -47,7 +47,14 @@ const computeDevice = (): DeviceInfo => {
   return computeUaDevice() ?? DEFAULT_DEVICE
 }
 
+const syncDocumentPlatformDataset = (): void => {
+  if (typeof document === 'undefined' || !document?.documentElement) return
+  const root = document.documentElement
+  root.dataset.platform = currentDevice.isMobile ? 'mobile' : 'desktop'
+}
+
 let currentDevice: DeviceInfo = computeDevice()
+syncDocumentPlatformDataset()
 
 export let isMobile = currentDevice.isMobile
 
@@ -84,6 +91,7 @@ export const setPlatformDevice = (info: Partial<DeviceInfo> | null): void => {
 
   currentDevice = computeDevice()
   isMobile = currentDevice.isMobile
+  syncDocumentPlatformDataset()
 }
 
 /**
@@ -93,4 +101,5 @@ export const resetPlatformDeviceForTests = (): void => {
   platformOverride = null
   currentDevice = computeDevice()
   isMobile = currentDevice.isMobile
+  syncDocumentPlatformDataset()
 }

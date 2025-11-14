@@ -67,7 +67,9 @@ pub fn run() {
 
     #[cfg(mobile)]
     {
-        builder = builder.plugin(tauri_plugin_biometric::init());
+        builder = builder
+            .plugin(tauri_plugin_biometric::init())
+            .plugin(tauri_plugin_safe_area_insets::init());
     }
 
     #[cfg(target_os = "android")]

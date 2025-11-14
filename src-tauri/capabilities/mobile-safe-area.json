@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "mobile-safe-area",
+  "description": "Enable safe area insets query on mobile",
+  "windows": ["main"],
+  "permissions": ["safe-area-insets:allow-get-insets"]
+}

@@ -19,7 +19,7 @@ export const Drawer = ({ title, isOpen, onClose, children }: PropsWithChildren<D
       <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
-            <DialogPanel className="data-closed:translate-x-full pointer-events-auto relative w-screen max-w-md transform transition duration-500 ease-in-out sm:duration-700">
+            <DialogPanel className="data-closed:translate-x-full pt-safe pb-safe pl-safe pr-safe pointer-events-auto relative w-screen max-w-md transform transition duration-500 ease-in-out sm:duration-700">
               <div className="data-closed:opacity-0 absolute right-0 top-0 -ml-8 flex pr-2 pt-4 duration-500 ease-in-out sm:-ml-10 sm:pr-4">
                 <button
                   type="button"
