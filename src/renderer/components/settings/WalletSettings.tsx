@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import {
@@ -98,6 +98,7 @@ import { EditableWalletName } from '../uielements/wallet/EditableWalletName'
 import { AutoComplete } from './AutoComplete'
 import { WalletIndexInput } from './WalletIndexInput'
 import { WhitelistModal } from './WhitelistModal'
+import { resolveExportSuccessMessageId } from '../../services/app/notifications'
 
 // Convert derivation path index to HDMode for chains that support multiple paths
 const derivationIndexToHDMode = (chain: Chain, index: number): HDMode => {
@@ -131,19 +132,20 @@ const ActionButton = ({
   onClick: () => void
 }) => {
   return (
-    <div
+    <button
+      type="button"
+      onClick={onClick}
       className={clsx(
-        'flex min-w-[128px] cursor-pointer flex-col items-center',
+        'flex min-w-[128px] flex-col items-center',
         'space-y-2 px-4 py-2',
         'rounded-lg border border-solid border-gray1 dark:border-gray1d',
         'text-text2 dark:text-text2d',
-        'hover:bg-bg2 dark:hover:bg-bg2d',
+        'focus-visible:outline-primary0 bg-transparent hover:bg-bg2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 dark:hover:bg-bg2d',
         className
-      )}
-      onClick={onClick}>
+      )}>
       {icon}
       <span>{text}</span>
-    </div>
+    </button>
   )
 }
 
@@ -230,6 +232,28 @@ export const WalletSettings = (props: Props): JSX.Element => {
   const [showRemoveWalletModal, setShowRemoveWalletModal] = useState(false)
   const [showQRModal, setShowQRModal] = useState<O.Option<{ asset: Asset; address: Address }>>(O.none)
   const closeQrModal = useCallback(() => setShowQRModal(O.none), [setShowQRModal])
+  const [exportToastMessage, setExportToastMessage] = useState<string | null>(null)
+  const exportToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (exportToastTimerRef.current) {
+        clearTimeout(exportToastTimerRef.current)
+        exportToastTimerRef.current = null
+      }
+    }
+  }, [])
+
+  const showExportToast = useCallback((message: string) => {
+    setExportToastMessage(message)
+    if (exportToastTimerRef.current) {
+      clearTimeout(exportToastTimerRef.current)
+    }
+    exportToastTimerRef.current = setTimeout(() => {
+      setExportToastMessage(null)
+      exportToastTimerRef.current = null
+    }, 4000)
+  }, [])
 
   const removeWalletHandler = useCallback(async () => {
     const noWallets = await removeKeystoreWallet()
@@ -760,11 +784,13 @@ export const WalletSettings = (props: Props): JSX.Element => {
     try {
       setExportKeystoreErrorMsg(emptyString)
       await exportKeystore()
+      const messageId = resolveExportSuccessMessageId()
+      showExportToast(intl.formatMessage({ id: messageId }))
     } catch (error) {
       const errorMsg = isError(error) ? (error?.message ?? error.toString()) : `${error}`
       setExportKeystoreErrorMsg(errorMsg)
     }
-  }, [exportKeystore, setExportKeystoreErrorMsg])
+  }, [exportKeystore, intl, setExportKeystoreErrorMsg, showExportToast])
 
   const [trustedAddresses, setTrustedAddresses] = useState<TrustedAddresses>()
   const [newAddress, setNewAddress] = useState<Partial<TrustedAddress>>({})
@@ -1062,6 +1088,13 @@ export const WalletSettings = (props: Props): JSX.Element => {
             onClick={() => setShowRemoveWalletModal(true)}
           />
         </div>
+        {exportToastMessage && (
+          <div
+            role="status"
+            className="border-primary0/40 bg-primary0/10 text-primary0 mt-3 rounded-md border border-solid px-4 py-2 text-center font-main text-sm">
+            {exportToastMessage}
+          </div>
+        )}
       </div>
       <div key="accounts" className="mt-4 w-full border-t border-solid border-bg2 dark:border-bg2d">
         <Label className="pl-5 pt-5 text-center text-base md:text-left" textTransform="uppercase">

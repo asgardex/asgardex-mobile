@@ -1,17 +1,14 @@
 {
   "$schema": "../gen/schemas/capabilities.json",
-  "identifier": "default",
-  "description": "desktop baseline permissions",
-  "platforms": ["windows", "macOS", "linux"],
+  "identifier": "ios",
+  "description": "baseline capabilities for iOS builds",
+  "platforms": ["iOS"],
   "windows": ["main"],
   "permissions": [
     "core:default",
     "log:default",
     "dialog:default",
-    "shell:default",
     "fs:default",
-    "fs:allow-appdata-write-recursive",
-    "fs:scope-appdata-recursive",
     {
       "identifier": "fs:scope",
       "allow": [
@@ -22,17 +19,22 @@
         "$DOCUMENT",
         "$DOCUMENT/**",
         "$DOWNLOAD",
-        "$DOWNLOAD/**",
-        "$DESKTOP",
-        "$DESKTOP/**"
+        "$DOWNLOAD/**"
       ]
     },
     "fs:write-files",
     "fs:allow-read-text-file",
     "fs:allow-write-text-file",
+    "fs:allow-exists",
+    "fs:allow-mkdir",
     "store:default",
-    "updater:default",
+    {
+      "identifier": "shell:allow-open",
+      "scopes": ["https://*/*"]
+    },
     "secure-storage:default",
-    "notification:default"
+    "biometric:default",
+    "notification:default",
+    "safe-area-insets-css:default"
   ]
 }

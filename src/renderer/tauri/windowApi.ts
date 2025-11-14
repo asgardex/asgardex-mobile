@@ -2,7 +2,7 @@ import * as RD from '@devexperts/remote-data-ts'
 import { invoke } from '@tauri-apps/api/core'
 import { join, dirname, appDataDir } from '@tauri-apps/api/path'
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog'
-import { exists, mkdir, readTextFile, writeTextFile, remove, rename } from '@tauri-apps/plugin-fs'
+import { BaseDirectory, exists, mkdir, readTextFile, writeTextFile, remove, rename } from '@tauri-apps/plugin-fs'
 import { open as shellOpen } from '@tauri-apps/plugin-shell'
 import { Keystore } from '@xchainjs/xchain-crypto'
 import { either as E, option as O } from 'fp-ts'
@@ -50,6 +50,7 @@ import { defaultWalletName } from '../../shared/utils/wallet'
 const APP_NAME = 'ASGARDEX'
 const STORAGE_SUBDIR = 'storage'
 const LEGACY_KEYSTORE_ID = 1
+const ANDROID_EXPORT_COMMAND = 'save_keystore_to_downloads_android'
 
 let storageDirPromise: Promise<string> | undefined
 let deviceTypePromise: Promise<'mobile' | 'desktop' | 'unknown'> | undefined
@@ -90,6 +91,68 @@ const buildJsonFilePath = async (name: string, version: string): Promise<string>
   const safeName = sanitizeSegment(name, 'file name')
   const safeVersion = sanitizeSegment(version, 'version')
   return join(storageDir, `${safeName}-${safeVersion}.json`)
+}
+
+const selectSinglePath = (selection: string | string[] | Record<string, unknown> | null): string | null => {
+  if (Array.isArray(selection)) {
+    return selection.length > 0 ? selection[0] : null
+  }
+  if (selection && typeof selection === 'object') {
+    const candidate = (selection as Record<string, unknown>).path ?? (selection as Record<string, unknown>).filePath
+    const uriCandidate = (selection as Record<string, unknown>).uri
+    const value = candidate ?? uriCandidate
+    return typeof value === 'string' ? value : null
+  }
+  return typeof selection === 'string' ? selection : null
+}
+
+const ensureJsonExtension = (value: string): string => (/\.json$/i.test(value) ? value : `${value}.json`)
+
+const detectMobileOs = (): 'android' | 'ios' | 'unknown' => {
+  if (typeof navigator === 'undefined') {
+    return 'unknown'
+  }
+  const ua = navigator.userAgent ?? ''
+  if (/android/i.test(ua)) {
+    return 'android'
+  }
+  if (/iphone|ipad|ipod/i.test(ua)) {
+    return 'ios'
+  }
+  return 'unknown'
+}
+
+const encodeBase64 = (value: string): string => {
+  const encoder = new TextEncoder()
+  const bytes = encoder.encode(value)
+  let binary = ''
+  for (let i = 0; i < bytes.length; i += 1) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  if (typeof globalThis.btoa === 'function') {
+    return globalThis.btoa(binary)
+  }
+  throw new Error('Base64 encoder unavailable')
+}
+
+const writeKeystoreToDocument = async ({ finalName, serialized }: { finalName: string; serialized: string }) => {
+  await writeTextFile(finalName, serialized, {
+    baseDir: BaseDirectory.Document
+  })
+}
+
+const writeKeystoreToAndroidDownloads = async ({
+  finalName,
+  serialized
+}: {
+  finalName: string
+  serialized: string
+}) => {
+  await invoke(ANDROID_EXPORT_COMMAND, {
+    filename: finalName,
+    mime: 'application/json',
+    dataB64: encodeBase64(serialized)
+  })
 }
 
 const readJsonFile = async <T>(path: string): Promise<T> => {
@@ -376,6 +439,33 @@ const secureStorageApi: SecureStorageApi = {
   }
 }
 
+const withContentProtection = async <T>(operation: () => Promise<T>): Promise<T> => {
+  const deviceType = await ensureDeviceType()
+  if (deviceType !== 'mobile') {
+    return operation()
+  }
+
+  try {
+    const windowModule = await import('@tauri-apps/api/window')
+    const appWindow = typeof windowModule.getCurrentWindow === 'function' ? windowModule.getCurrentWindow() : null
+    if (!appWindow || typeof appWindow.setContentProtected !== 'function') {
+      return operation()
+    }
+    await appWindow.setContentProtected(true)
+    try {
+      return await operation()
+    } finally {
+      try {
+        await appWindow.setContentProtected(false)
+      } catch {
+        // Ignore failures when disabling content protection to avoid noisy logs
+      }
+    }
+  } catch {
+    return operation()
+  }
+}
+
 const readWalletsFromDisk = async (): Promise<E.Either<Error, KeystoreWallets>> => {
   try {
     const walletsPath = await getWalletsFilePath()
@@ -512,21 +602,47 @@ const apiKeystore: ApiKeystore = {
     return writeWalletsToDisk(validated.right)
   },
   exportKeystore: async ({ fileName, keystore }) => {
-    const target = await saveDialog({ defaultPath: fileName })
-    if (!target) return
-    await writeJsonFile(target, keystore)
+    const deviceType = await ensureDeviceType()
+    const finalName = ensureJsonExtension(fileName)
+    const serialized = JSON.stringify(keystore, null, 2)
+
+    await withContentProtection(async () => {
+      if (deviceType === 'mobile') {
+        const mobileOs = detectMobileOs()
+
+        if (mobileOs === 'android') {
+          await writeKeystoreToAndroidDownloads({ finalName, serialized })
+          return
+        }
+
+        await writeKeystoreToDocument({ finalName, serialized })
+        return
+      }
+
+      const selection = await saveDialog({
+        defaultPath: finalName,
+        filters: [{ name: 'JSON', extensions: ['json'] }]
+      })
+      const targetPath = selectSinglePath(selection as string | string[] | Record<string, unknown> | null)
+      if (!targetPath) return
+      const resolvedPath = ensureJsonExtension(targetPath)
+      await writeTextFile(resolvedPath, serialized)
+    })
   },
   load: async () => {
-    const selected = await openDialog({
+    const selection = await openDialog({
       multiple: false,
       directory: false,
       filters: [{ name: 'Keystore', extensions: ['json'] }]
     })
-    if (!selected) {
+    if (!selection) {
       // Electron preload returns `undefined` when the dialog is cancelled; preserve behavior for parity
       return undefined as unknown as Keystore
     }
-    const filePath = Array.isArray(selected) ? selected[0] : selected
+    const filePath = selectSinglePath(selection as string | string[] | Record<string, unknown> | null)
+    if (!filePath) {
+      return undefined as unknown as Keystore
+    }
     const data = await readJsonFile<unknown>(filePath)
     const decoded = pipe(keystoreIO.decode(data), E.mapLeft(mapIOErrors))
     if (E.isLeft(decoded)) {
@@ -610,4 +726,7 @@ if (typeof window !== 'undefined') {
   Object.assign(window, windowApiSurface)
 }
 
-export {}
+export const __internalWindowApiHelpers = {
+  selectSinglePath,
+  ensureJsonExtension
+}
