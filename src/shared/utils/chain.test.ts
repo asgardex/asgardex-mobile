@@ -46,7 +46,7 @@ describe('chain', () => {
       expect(chainToString(ETHChain)).toEqual('Ethereum')
     })
     it('AVAX', () => {
-      expect(chainToString(AVAXChain)).toEqual('Avax')
+      expect(chainToString(AVAXChain)).toEqual('Avalanche')
     })
     it('BASE', () => {
       expect(chainToString(BASEChain)).toEqual('Base')
@@ -56,7 +56,7 @@ describe('chain', () => {
       expect(chainToString(BSCChain)).toEqual('BNB Chain (BSC)')
     })
     it('GAIA', () => {
-      expect(chainToString(GAIAChain)).toEqual('GAIA')
+      expect(chainToString(GAIAChain)).toEqual('Cosmos')
     })
     it('LTC', () => {
       expect(chainToString(LTCChain)).toEqual('Litecoin')
@@ -71,7 +71,7 @@ describe('chain', () => {
       expect(chainToString(MAYAChain)).toEqual('MAYAChain')
     })
     it('XRD', () => {
-      expect(chainToString(RadixChain)).toEqual('RADIX')
+      expect(chainToString(RadixChain)).toEqual('Radix')
     })
   })
 })
