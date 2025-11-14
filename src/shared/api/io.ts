@@ -223,24 +223,65 @@ export const keystoreIO = new t.Type(
   t.identity
 )
 
-export const ipcKeystoreWalletIO = t.type({
+const secureWriteStatusIO = t.keyof({
+  success: null,
+  failed: null
+})
+
+const exportActionIO = t.keyof({
+  initiated: null,
+  completed: null,
+  canceled: null
+})
+
+const optionalString = t.union([t.string, t.null, t.undefined])
+const optionalExportAction = t.union([exportActionIO, t.null, t.undefined])
+
+const secureKeystoreWalletIO = t.intersection([
+  t.type({
+    id: t.number,
+    name: t.string,
+    selected: t.boolean,
+    secureKeyId: t.string,
+    biometricEnabled: t.boolean,
+    lastSecureWriteAt: t.string,
+    lastSecureWriteStatus: secureWriteStatusIO
+  }),
+  t.partial({
+    exportAcknowledgedAt: optionalString,
+    lastExportAction: optionalExportAction,
+    lastExportActionAt: optionalString
+  })
+])
+
+const legacyKeystoreWalletIO = t.type({
   id: t.number,
   name: t.string,
   selected: t.boolean,
   keystore: keystoreIO
 })
 
+export const ipcKeystoreWalletIO = t.union([secureKeystoreWalletIO, legacyKeystoreWalletIO])
+
 /**
  * Keystore Wallet
  * Created by users by importing or creating keystores in `Wallet` section
  */
-export type KeystoreWallet = ReturnType<typeof ipcKeystoreWalletIO.encode>
+export type SecureKeystoreWallet = t.TypeOf<typeof secureKeystoreWalletIO>
+export type LegacyKeystoreWallet = t.TypeOf<typeof legacyKeystoreWalletIO>
+
+export type KeystoreWallet = t.TypeOf<typeof ipcKeystoreWalletIO>
 
 export const ipcKeystoreWalletsIO = t.array(ipcKeystoreWalletIO)
 
 export type IPCKeystoreWallets = t.TypeOf<typeof ipcKeystoreWalletsIO>
 
-export type KeystoreWallets = ReturnType<typeof ipcKeystoreWalletsIO.encode>
+export type KeystoreWallets = t.TypeOf<typeof ipcKeystoreWalletsIO>
+
+export const isSecureKeystoreWallet = (wallet: KeystoreWallet): wallet is SecureKeystoreWallet =>
+  typeof (wallet as Partial<SecureKeystoreWallet>).secureKeyId === 'string'
+
+export const isLegacyKeystoreWallet = (wallet: KeystoreWallet): wallet is LegacyKeystoreWallet => 'keystore' in wallet
 
 export const ipcLedgerAddressIO = t.type({
   keystoreId: t.number,

@@ -142,3 +142,7 @@ export const DEFAULT_STORAGES: StoreFilesContent = {
   userBondProviders: USER_BOND_PROVIDERS_STORAGE_DEFAULT,
   pools: POOLS_STORAGE_DEFAULT
 }
+
+// Secure storage constants
+export const SECURE_STORAGE_VERSION = 1
+export const SECURE_KEY_PREFIX = 'asgardex-wallet'

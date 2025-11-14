@@ -86,11 +86,38 @@ export type KeystoreId = number
 export type IPCExportKeystoreParams = { fileName: string; keystore: Keystore }
 export type IPCSaveKeystoreParams = { id: KeystoreId; keystore: Keystore }
 
+export type SecureStoragePayload = { type: 'keystore'; keystore: Keystore }
+
+export type SecureStorageWriteParams = {
+  secureKeyId?: string
+  payload: SecureStoragePayload
+  biometricRequired?: boolean
+}
+
+export type SecureStorageWriteResult = {
+  secureKeyId: string
+  updatedAt: string
+}
+
+export type SecureStorageExistResult = {
+  exists: boolean
+  supported: boolean
+}
+
+export type SecureStorageApi = {
+  write: (params: SecureStorageWriteParams) => Promise<SecureStorageWriteResult>
+  read: (secureKeyId: string) => Promise<SecureStoragePayload>
+  remove: (secureKeyId: string) => Promise<void>
+  exists: (secureKeyId: string) => Promise<SecureStorageExistResult>
+  list: () => Promise<string[]>
+}
+
 export type ApiKeystore = {
   saveKeystoreWallets: (wallets: KeystoreWallets) => Promise<E.Either<Error, KeystoreWallets>>
   exportKeystore: (params: IPCExportKeystoreParams) => Promise<void>
   initKeystoreWallets: () => Promise<E.Either<Error, KeystoreWallets>>
   load: () => Promise<Keystore>
+  secure?: SecureStorageApi
 }
 
 /**
@@ -183,6 +210,7 @@ declare global {
      * expose appropriate API at the src/main/preload.ts
      */
     apiKeystore: ApiKeystore
+    apiSecure?: SecureStorageApi
     apiLang: ApiLang
     apiUrl: ApiUrl
     apiHDWallet: ApiHDWallet

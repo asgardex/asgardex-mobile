@@ -5,8 +5,8 @@ import { function as FP, array as A, either as E, option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
-import { ipcKeystoreWalletsIO, KeystoreWallets } from '../../../shared/api/io'
-import { KeystoreId } from '../../../shared/api/types'
+import { ipcKeystoreWalletsIO, KeystoreWallet, KeystoreWallets, isSecureKeystoreWallet } from '../../../shared/api/io'
+import { KeystoreId, SecureStorageApi } from '../../../shared/api/types'
 import { isError } from '../../../shared/utils/guard'
 import { liveData } from '../../helpers/rx/liveData'
 import { observableState, triggerStream } from '../../helpers/stateHelper'
@@ -54,6 +54,42 @@ const {
  */
 const { get$: keystoreWallets$, get: keystoreWallets, set: setKeystoreWallets } = observableState<KeystoreWallets>([])
 
+const getSecureStorageApi = (): SecureStorageApi | null => {
+  if (typeof window === 'undefined') return null
+  if (window.apiKeystore?.secure) return window.apiKeystore.secure
+  if (window.apiSecure) return window.apiSecure
+  return null
+}
+
+const resolveKeystoreForWallet = async (wallet: KeystoreWallet): Promise<Keystore> => {
+  if (isSecureKeystoreWallet(wallet)) {
+    const secure = getSecureStorageApi()
+    if (!secure) {
+      throw Error('Secure keystore storage is not available')
+    }
+    const payload = await secure.read(wallet.secureKeyId)
+    return payload.keystore
+  }
+
+  // Legacy wallet backed by disk
+  const legacy = wallet as KeystoreWallet & { keystore: Keystore }
+  return legacy.keystore
+}
+
+const resolveKeystoreById = async (id: KeystoreId): Promise<Keystore> => {
+  const wallet = FP.pipe(
+    keystoreWallets(),
+    A.findFirst((entry) => entry.id === id),
+    O.toNullable
+  )
+
+  if (!wallet) {
+    throw Error(`Wallet ${id} not found in memory`)
+  }
+
+  return resolveKeystoreForWallet(wallet)
+}
+
 /**
  * Adds a keystore and saves it to disk
  */
@@ -67,16 +103,52 @@ const addKeystoreWallet = async ({ phrase, name, id, password }: AddKeystorePara
       keystoreWallets(),
       A.map((wallet) => ({ ...wallet, selected: false }))
     )
-    // Add new wallet to wallet list + mark it `selected`
-    const updatedWallets: KeystoreWallets = [
-      ...wallets,
-      {
-        id,
-        name,
-        keystore,
-        selected: true
+    const secure = getSecureStorageApi()
+
+    let updatedWallets: KeystoreWallets
+
+    if (secure) {
+      try {
+        const result = await secure.write({ payload: { type: 'keystore', keystore } })
+        updatedWallets = [
+          ...wallets,
+          {
+            id,
+            name,
+            selected: true,
+            secureKeyId: result.secureKeyId,
+            biometricEnabled: false,
+            lastSecureWriteAt: result.updatedAt,
+            lastSecureWriteStatus: 'success',
+            exportAcknowledgedAt: null,
+            lastExportAction: null,
+            lastExportActionAt: null
+          }
+        ]
+      } catch {
+        // Fallback to legacy wallet on any secure storage failure
+        updatedWallets = [
+          ...wallets,
+          {
+            id,
+            name,
+            keystore,
+            selected: true
+          } as KeystoreWallet & { keystore: Keystore }
+        ]
       }
-    ]
+    } else {
+      // No secure storage available – keep legacy disk-backed wallet
+      updatedWallets = [
+        ...wallets,
+        {
+          id,
+          name,
+          keystore,
+          selected: true
+        } as KeystoreWallet & { keystore: Keystore }
+      ]
+    }
 
     const encodedWallets = ipcKeystoreWalletsIO.encode(updatedWallets)
     // Save wallets to disk
@@ -100,8 +172,25 @@ export const removeKeystoreWallet = async () => {
     throw Error(`Can't remove wallet - keystore id is missing`)
   }
   // Remove it from `wallets`
+  const currentWallets = keystoreWallets()
+  const secure = getSecureStorageApi()
+
+  const walletToRemove = FP.pipe(
+    currentWallets,
+    A.findFirst(({ id }) => id === keystoreId),
+    O.toNullable
+  )
+
+  if (walletToRemove && secure && isSecureKeystoreWallet(walletToRemove)) {
+    try {
+      await secure.remove(walletToRemove.secureKeyId)
+    } catch {
+      // ignore secure storage removal failures – disk state still wins
+    }
+  }
+
   const wallets = FP.pipe(
-    keystoreWallets(),
+    currentWallets,
     A.filter(({ id }) => id !== keystoreId)
   )
   const encodedWallets = ipcKeystoreWalletsIO.encode(wallets)
@@ -221,10 +310,16 @@ const exportKeystore = async () => {
     }
 
     const wallets = keystoreWallets()
-    const keystore = FP.pipe(wallets, getKeystore(id), O.toNullable)
-    if (!keystore) {
-      throw Error(`Can't export keystore - keystore is missing in wallet list`)
+    const wallet = FP.pipe(
+      wallets,
+      A.findFirst((entry) => entry.id === id),
+      O.toNullable
+    )
+    if (!wallet) {
+      throw Error(`Can't export keystore - wallet is missing in wallet list`)
     }
+
+    const keystore = await resolveKeystoreForWallet(wallet)
     const fileName = `asgardex-${FP.pipe(wallets, getKeystoreWalletName(id), O.toNullable) || 'keystore'}.json`
     return await window.apiKeystore.exportKeystore({ fileName, keystore })
   } catch (error) {
@@ -271,13 +366,9 @@ const unlock = async (password: string) => {
 
   const { id, name } = lockedData
 
-  // get keystore from wallet list (not stored in `KeystoreState`)
-  const keystore = FP.pipe(keystoreWallets(), getKeystore(id), O.toNullable)
-  if (!keystore) {
-    throw Error(`Can't unlock - keystore is missing in wallet list`)
-  }
   try {
     // decrypt phrase from keystore
+    const keystore = await resolveKeystoreById(id)
     const phrase = await decryptFromKeystore(keystore, password)
     setKeystoreState(O.some({ id, phrase, name }))
   } catch (error) {
@@ -331,27 +422,22 @@ const keystoreWalletsUI$: KeystoreWalletsUI$ = FP.pipe(
   RxOp.shareReplay(1)
 )
 
-const id = FP.pipe(keystoreState(), getKeystoreId)
-if (!id) {
-  throw Error(`Can't export keystore - keystore id is missing in KeystoreState`)
-}
-
 const validatePassword$ = (password: string): ValidatePasswordLD =>
   password
     ? FP.pipe(
-        keystoreState(),
-        getKeystoreId,
-        O.chain((id) => FP.pipe(keystoreWallets(), getKeystore(id))),
-        O.fold(
-          () => Rx.of(RD.failure(Error('Could not get current keystore to validate password'))),
-          (keystore) =>
-            FP.pipe(
-              Rx.from(decryptFromKeystore(keystore, password)),
-              // // don't store phrase in result
-              RxOp.map((_ /* phrase */) => RD.success(undefined)),
-              RxOp.catchError((err) => Rx.of(RD.failure(err)))
-            )
-        ),
+        FP.pipe(keystoreState(), getKeystoreId, O.toNullable),
+        (id) => {
+          if (!id) {
+            return Rx.of(RD.failure(Error('Could not get current keystore to validate password')))
+          }
+          return FP.pipe(
+            Rx.from(resolveKeystoreById(id)),
+            RxOp.switchMap((keystore) => Rx.from(decryptFromKeystore(keystore, password))),
+            // // don't store phrase in result
+            RxOp.map((_ /* phrase */) => RD.success(undefined)),
+            RxOp.catchError((err) => Rx.of(RD.failure(err)))
+          )
+        },
         RxOp.startWith(RD.pending)
       )
     : Rx.of(RD.initial)
