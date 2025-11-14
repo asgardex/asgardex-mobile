@@ -18,6 +18,42 @@ import * as mockApi from './shared/mock/api'
 // Mock URL.createObjectURL globally for all tests
 global.URL.createObjectURL = vi.fn()
 
+const createMemoryStorage = (): Storage => {
+  const store = new Map<string, string>()
+  return {
+    get length() {
+      return store.size
+    },
+    clear: () => store.clear(),
+    key: (index: number) => Array.from(store.keys())[index] ?? null,
+    getItem: (key: string) => (store.has(key) ? store.get(key)! : null),
+    removeItem: (key: string) => {
+      store.delete(key)
+    },
+    setItem: (key: string, value: string) => {
+      store.set(key, value)
+    }
+  }
+}
+
+const memoryStorage = createMemoryStorage()
+Object.defineProperty(global, 'localStorage', {
+  value: memoryStorage,
+  writable: false
+})
+Object.defineProperty(global, 'sessionStorage', {
+  value: createMemoryStorage(),
+  writable: false
+})
+Object.defineProperty(window, 'localStorage', {
+  value: memoryStorage,
+  writable: false
+})
+Object.defineProperty(window, 'sessionStorage', {
+  value: createMemoryStorage(),
+  writable: false
+})
+
 type RunObservableCallback<T> = (helpers: RunHelpers) => T
 type RunObservable = <T>(callback: RunObservableCallback<T>) => T
 

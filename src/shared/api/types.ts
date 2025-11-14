@@ -196,3 +196,7 @@ declare global {
     apiAppUpdate: ApiAppUpdate
   }
 }
+
+// Derive the public window API surface from the declared globals to keep Electron + Tauri in sync.
+export type WindowApiKeys = Extract<keyof Window, `api${string}`>
+export type WindowApiSurface = Required<Pick<Window, WindowApiKeys>>

@@ -16,6 +16,7 @@
     "package": "yarn package:electron",
     "package:electron": "tauri build",
     "package:ci": "yarn postinstall && yarn package:electron",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "postinstall": "git config blame.ignoreRevsFile .git-blame-ignore-revs && yarn force-rebuild-native-deps && electron-builder install-app-deps",
     "lint": "trunk check --filter=eslint --filter=prettier",
     "check:trunk": "cross-env-shell ./scripts/trunk-check.sh",
