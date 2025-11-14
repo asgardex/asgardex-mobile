@@ -39,6 +39,7 @@ import {
 } from '../../shared/const'
 import { mapIOErrors } from '../../shared/utils/fp'
 import { isError } from '../../shared/utils/guard'
+import { createSecureStorageVersionMismatchError } from '../services/wallet/secureStorageErrors'
 import { defaultWalletName } from '../../shared/utils/wallet'
 
 const APP_NAME = 'ASGARDEX'
@@ -125,11 +126,10 @@ const parseStoredSecurePayload = (raw: string): StoredSecurePayload => {
   }
 
   const { version, payload, createdAt, updatedAt } = parsed as StoredSecurePayload
+  const actualVersion = typeof version === 'number' ? version : null
 
-  if (version !== SECURE_STORAGE_VERSION) {
-    throw new Error(
-      `Secure storage payload version mismatch (expected ${SECURE_STORAGE_VERSION}, got ${version ?? 'unknown'})`
-    )
+  if (actualVersion !== SECURE_STORAGE_VERSION) {
+    throw createSecureStorageVersionMismatchError(SECURE_STORAGE_VERSION, actualVersion)
   }
 
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
@@ -145,7 +145,7 @@ const parseStoredSecurePayload = (raw: string): StoredSecurePayload => {
   }
 
   return {
-    version,
+    version: SECURE_STORAGE_VERSION,
     payload: payload as SecureStoragePayload,
     createdAt,
     updatedAt
@@ -384,8 +384,20 @@ const apiKeystore: ApiKeystore = {
     if (loaded.right.length) return loaded
 
     const migrated = await migrateLegacyWallet()
-    const wallets = E.getOrElse<Error, KeystoreWallets>(() => [] as KeystoreWallets)(migrated)
-    return writeWalletsToDisk(wallets)
+    if (E.isLeft(migrated)) {
+      const error = migrated.left
+      const message = error.message ?? ''
+      // If the legacy file is missing, treat it as "no wallets yet" and
+      // initialize an empty wallets list. For any other failure, propagate
+      // the error so the renderer can surface it instead of silently
+      // overwriting storage with an empty list.
+      if (!/file does not exist/i.test(message)) {
+        return E.left(error)
+      }
+      return writeWalletsToDisk([] as KeystoreWallets)
+    }
+
+    return writeWalletsToDisk(migrated.right)
   },
   secure: secureStorageApi
 }

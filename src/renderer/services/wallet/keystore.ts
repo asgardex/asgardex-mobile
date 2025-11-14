@@ -5,11 +5,20 @@ import { function as FP, array as A, either as E, option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
-import { ipcKeystoreWalletsIO, KeystoreWallet, KeystoreWallets, isSecureKeystoreWallet } from '../../../shared/api/io'
+import {
+  ipcKeystoreWalletsIO,
+  KeystoreWallet,
+  KeystoreWallets,
+  isSecureKeystoreWallet,
+  SecureKeystoreWallet
+} from '../../../shared/api/io'
 import { KeystoreId, SecureStorageApi } from '../../../shared/api/types'
+import { BiometricDowngradeError, isBiometricDowngradeError } from '../../../shared/errors/biometric'
+import { safeStringify } from '../../../shared/utils/safeStringify'
 import { isError } from '../../../shared/utils/guard'
 import { liveData } from '../../helpers/rx/liveData'
 import { observableState, triggerStream } from '../../helpers/stateHelper'
+import { recordSecureStorageEvent } from '../app/telemetry'
 import { INITIAL_KEYSTORE_STATE } from './const'
 import {
   KeystoreService,
@@ -54,6 +63,80 @@ const {
  */
 const { get$: keystoreWallets$, get: keystoreWallets, set: setKeystoreWallets } = observableState<KeystoreWallets>([])
 
+const runtimeKeystoreCache = new Map<KeystoreId, Keystore>()
+
+const RUNTIME_CACHE_IDLE_MS = 2 * 60 * 1000
+let runtimeCacheIdleTimer: ReturnType<typeof setTimeout> | null = null
+
+const clearRuntimeCacheIdleTimer = () => {
+  if (runtimeCacheIdleTimer) {
+    clearTimeout(runtimeCacheIdleTimer)
+    runtimeCacheIdleTimer = null
+  }
+}
+
+const clearAllRuntimeCache = () => {
+  clearRuntimeCacheIdleTimer()
+  if (runtimeKeystoreCache.size > 0) {
+    runtimeKeystoreCache.clear()
+  }
+}
+
+const scheduleRuntimeCacheIdleClear = () => {
+  clearRuntimeCacheIdleTimer()
+  runtimeCacheIdleTimer = setTimeout(() => {
+    runtimeCacheIdleTimer = null
+    clearAllRuntimeCache()
+  }, RUNTIME_CACHE_IDLE_MS)
+}
+
+const handleVisibilityChange = () => {
+  if (typeof document.visibilityState === 'string' && document.visibilityState !== 'visible') {
+    clearAllRuntimeCache()
+  }
+}
+
+let tauriFocusUnlisten: (() => void) | null = null
+let visibilityHandlersRegistered = false
+
+const ensureVisibilityLifecycleHandlers = () => {
+  if (visibilityHandlersRegistered) return
+  visibilityHandlersRegistered = true
+
+  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+  }
+
+  if (typeof window !== 'undefined' && typeof window === 'object' && '__TAURI__' in window) {
+    void import('@tauri-apps/api/window')
+      .then(async ({ getCurrentWindow }) => {
+        try {
+          const appWindow = getCurrentWindow()
+          const unlisten = await appWindow.onFocusChanged(({ payload: focused }) => {
+            if (!focused) {
+              clearAllRuntimeCache()
+            }
+          })
+          tauriFocusUnlisten = () => {
+            try {
+              unlisten()
+            } catch {
+              // ignore unlisten errors
+            }
+            tauriFocusUnlisten = null
+          }
+        } catch {
+          // Ignore focus subscription failures; visibility handlers remain active.
+        }
+      })
+      .catch(() => {
+        // Ignore dynamic import failures; visibility handlers remain opt-in.
+      })
+  }
+}
+
+ensureVisibilityLifecycleHandlers()
+
 const getSecureStorageApi = (): SecureStorageApi | null => {
   if (typeof window === 'undefined') return null
   if (window.apiKeystore?.secure) return window.apiKeystore.secure
@@ -61,22 +144,66 @@ const getSecureStorageApi = (): SecureStorageApi | null => {
   return null
 }
 
+const ensureKeystoreFromPayload = (payload: unknown, walletId: KeystoreId): Keystore => {
+  if (payload && typeof payload === 'object') {
+    const candidate = payload as { type?: unknown; keystore?: unknown }
+    if (candidate.type === 'keystore' && candidate.keystore) {
+      return candidate.keystore as Keystore
+    }
+  }
+  throw Error(`Secure storage payload for wallet ${walletId} must contain an encrypted keystore`)
+}
+
+const loadKeystoreFromSecure = async (wallet: SecureKeystoreWallet): Promise<Keystore> => {
+  const cached = runtimeKeystoreCache.get(wallet.id)
+  if (cached) {
+    return cached
+  }
+
+  const secure = getSecureStorageApi()
+  if (!secure) {
+    throw Error('Secure keystore storage is not available')
+  }
+
+  try {
+    const payload = await secure.read(wallet.secureKeyId)
+    recordSecureStorageEvent({ action: 'unlock_success', walletId: wallet.id, secureKeyId: wallet.secureKeyId })
+    const keystore = ensureKeystoreFromPayload(payload, wallet.id)
+    runtimeKeystoreCache.set(wallet.id, keystore)
+    scheduleRuntimeCacheIdleClear()
+    return keystore
+  } catch (error) {
+    if (isBiometricDowngradeError(error)) {
+      // Biometric downgrade flows will be fully wired once the biometric plugin is available.
+      throw error
+    }
+    const normalized = isError(error) ? error : Error(String(error))
+    recordSecureStorageEvent({
+      action: 'unlock_failure',
+      walletId: wallet.id,
+      secureKeyId: wallet.secureKeyId,
+      metadata: { message: normalized.message, raw: safeStringify(error) }
+    })
+    throw normalized
+  }
+}
+
 const resolveKeystoreForWallet = async (wallet: KeystoreWallet): Promise<Keystore> => {
   if (isSecureKeystoreWallet(wallet)) {
-    const secure = getSecureStorageApi()
-    if (!secure) {
-      throw Error('Secure keystore storage is not available')
-    }
-    const payload = await secure.read(wallet.secureKeyId)
-    return payload.keystore
+    return loadKeystoreFromSecure(wallet)
   }
 
   // Legacy wallet backed by disk
   const legacy = wallet as KeystoreWallet & { keystore: Keystore }
+  runtimeKeystoreCache.set(wallet.id, legacy.keystore)
+  scheduleRuntimeCacheIdleClear()
   return legacy.keystore
 }
 
 const resolveKeystoreById = async (id: KeystoreId): Promise<Keystore> => {
+  const cached = runtimeKeystoreCache.get(id)
+  if (cached) return cached
+
   const wallet = FP.pipe(
     keystoreWallets(),
     A.findFirst((entry) => entry.id === id),
@@ -155,6 +282,8 @@ const addKeystoreWallet = async ({ phrase, name, id, password }: AddKeystorePara
     const _ = await window.apiKeystore.saveKeystoreWallets(encodedWallets)
     // Update states
     setKeystoreWallets(updatedWallets)
+    runtimeKeystoreCache.set(id, keystore)
+    scheduleRuntimeCacheIdleClear()
     setKeystoreState(O.some({ id, phrase, name }))
     setImportingKeystoreState(RD.success(true))
     return Promise.resolve()
@@ -354,6 +483,7 @@ const lock = async () => {
     throw Error(`Can't lock - keystore 'id' and / or 'name' are missing`)
   }
   setKeystoreState(O.some(lockedState))
+  runtimeKeystoreCache.delete(lockedState.id)
 }
 
 const unlock = async (password: string) => {
@@ -409,6 +539,10 @@ keystoreWalletsPersistent$.subscribe((walletsRD) =>
       // update internal `KeystoreWallets` + `KeystoreState` stored in memory
       setKeystoreState(state)
       setKeystoreWallets(wallets)
+      const allowed = new Set(wallets.map(({ id }) => id))
+      Array.from(runtimeKeystoreCache.keys()).forEach((key) => {
+        if (!allowed.has(key)) runtimeKeystoreCache.delete(key)
+      })
       return true
     })
   )
