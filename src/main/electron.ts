@@ -17,18 +17,10 @@ import {
 import type { IPCExportKeystoreParams, IPCLedgerAddressParams, StoreFileName } from '../shared/api/types'
 import { DEFAULT_STORAGES } from '../shared/const'
 import type { Locale } from '../shared/i18n/types'
+import { getLedgerFlag } from '../shared/config/ledger'
 import { registerAppCheckUpdatedHandler } from './api/appUpdate'
 import { getFileStoreService } from './api/fileStore'
 import { exportKeystore, initKeystoreWallets, loadKeystore, saveKeystoreWallets } from './api/keystore'
-import {
-  getAddress as getLedgerAddress,
-  sendTx as sendLedgerTx,
-  deposit as depositLedgerTx,
-  verifyLedgerAddress,
-  getAddresses as getLedgerAddresses,
-  saveAddresses as saveLedgerAddresses
-} from './api/ledger'
-import { approveLedgerERC20Token } from './api/ledger/evm/approve'
 import { openExternal } from './api/url'
 import IPCMessages from './ipc/messages'
 import { setMenu } from './menu'
@@ -45,6 +37,8 @@ const BASE_URL_PROD = `file://${join(__dirname, '../renderer/index.html')}`
 export const BASE_URL = IS_DEV ? BASE_URL_DEV : BASE_URL_PROD
 // Application icon
 const APP_ICON = join(APP_ROOT, 'resources', process.platform.match('win32') ? 'icon.ico' : 'icon.png')
+
+const LEDGER_ENABLED = getLedgerFlag().toLowerCase() !== 'false'
 
 const initLogger = () => {
   log.transports.file.resolvePath = (variables: log.PathVariables) => {
@@ -163,7 +157,7 @@ const langChangeHandler = (locale: Locale) => {
   }
 }
 
-const initIPC = () => {
+const initIPC = async () => {
   // Lang
   ipcMain.on(IPCMessages.UPDATE_LANG, (_, locale: Locale) => langChangeHandler(locale))
   // Keystore
@@ -183,35 +177,53 @@ const initIPC = () => {
   // Url
   ipcMain.handle(IPCMessages.OPEN_EXTERNAL_URL, async (_, url) => openExternal(url))
   // Ledger
-  ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESS, async (_, params: IPCLedgerAddressParams) => getLedgerAddress(params))
-  ipcMain.handle(IPCMessages.VERIFY_LEDGER_ADDRESS, async (_, params: IPCLedgerAddressParams) =>
-    verifyLedgerAddress(params)
-  )
-  ipcMain.handle(IPCMessages.SEND_LEDGER_TX, async (_, params: unknown) => {
-    return FP.pipe(
-      // params need to be decoded
-      ipcLedgerSendTxParamsIO.decode(params),
-      E.fold((e) => Promise.reject(e), sendLedgerTx)
+  if (LEDGER_ENABLED) {
+    const ledger = await import('./api/ledger')
+    const { approveLedgerERC20Token } = await import('./api/ledger/evm/approve')
+
+    ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESS, async (_, params: IPCLedgerAddressParams) =>
+      ledger.getAddress(params)
     )
-  })
-  ipcMain.handle(IPCMessages.DEPOSIT_LEDGER_TX, async (_, params: unknown) => {
-    return FP.pipe(
-      // params need to be decoded
-      ipcLedgerDepositTxParamsIO.decode(params),
-      E.fold((e) => Promise.reject(e), depositLedgerTx)
+    ipcMain.handle(IPCMessages.VERIFY_LEDGER_ADDRESS, async (_, params: IPCLedgerAddressParams) =>
+      ledger.verifyLedgerAddress(params)
     )
-  })
-  ipcMain.handle(IPCMessages.APPROVE_LEDGER_ERC20_TOKEN, async (_, params: unknown) => {
-    return FP.pipe(
-      // params need to be decoded
-      ipcLedgerApproveERC20TokenParamsIO.decode(params),
-      E.fold((e) => Promise.reject(e), approveLedgerERC20Token)
+    ipcMain.handle(IPCMessages.SEND_LEDGER_TX, async (_, params: unknown) => {
+      return FP.pipe(
+        // params need to be decoded
+        ipcLedgerSendTxParamsIO.decode(params),
+        E.fold((e) => Promise.reject(e), ledger.sendTx)
+      )
+    })
+    ipcMain.handle(IPCMessages.DEPOSIT_LEDGER_TX, async (_, params: unknown) => {
+      return FP.pipe(
+        // params need to be decoded
+        ipcLedgerDepositTxParamsIO.decode(params),
+        E.fold((e) => Promise.reject(e), ledger.deposit)
+      )
+    })
+    ipcMain.handle(IPCMessages.APPROVE_LEDGER_ERC20_TOKEN, async (_, params: unknown) => {
+      return FP.pipe(
+        // params need to be decoded
+        ipcLedgerApproveERC20TokenParamsIO.decode(params),
+        E.fold((e) => Promise.reject(e), approveLedgerERC20Token)
+      )
+    })
+    ipcMain.handle(IPCMessages.SAVE_LEDGER_ADDRESSES, async (_, params: IPCLedgerAddressesIO) =>
+      ledger.saveAddresses(params)()
     )
-  })
-  ipcMain.handle(IPCMessages.SAVE_LEDGER_ADDRESSES, async (_, params: IPCLedgerAddressesIO) =>
-    saveLedgerAddresses(params)()
-  )
-  ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESSES, async () => getLedgerAddresses())
+    ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESSES, async () => ledger.getAddresses())
+  } else {
+    const disabled = (method: string) => () =>
+      Promise.reject(new Error(`Ledger disabled (VITE_LEDGER_ENABLED=false): ${method}`))
+
+    ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESS, disabled('getLedgerAddress'))
+    ipcMain.handle(IPCMessages.VERIFY_LEDGER_ADDRESS, disabled('verifyLedgerAddress'))
+    ipcMain.handle(IPCMessages.SEND_LEDGER_TX, disabled('sendLedgerTx'))
+    ipcMain.handle(IPCMessages.DEPOSIT_LEDGER_TX, disabled('depositLedgerTx'))
+    ipcMain.handle(IPCMessages.APPROVE_LEDGER_ERC20_TOKEN, disabled('approveLedgerERC20Token'))
+    ipcMain.handle(IPCMessages.SAVE_LEDGER_ADDRESSES, disabled('saveLedgerAddresses'))
+    ipcMain.handle(IPCMessages.GET_LEDGER_ADDRESSES, disabled('getLedgerAddresses'))
+  }
   // Update
   registerAppCheckUpdatedHandler(IS_DEV)
   // Register all file-stored data services
@@ -228,7 +240,7 @@ const init = async () => {
   await initMainWindow()
   app.on('window-all-closed', allClosedHandler)
   app.on('activate', activateHandler)
-  initIPC()
+  await initIPC()
 }
 
 try {

@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { KeystoreId } from '../../../../shared/api/types'
+import { isLedgerUiEnabled } from '../../../../shared/config/ledger'
 import { emptyString } from '../../../helpers/stringHelper'
 import { getUrlSearchParam } from '../../../helpers/url.helper'
 import { useSubscriptionState } from '../../../hooks/useSubscriptionState'
@@ -135,6 +136,7 @@ export const UnlockForm = ({ keystore, unlock, removeKeystore, changeKeystore$, 
 
   const { state: changeWalletState, subscribe: subscribeChangeWalletState } =
     useSubscriptionState<ChangeKeystoreWalletRD>(RD.initial)
+  const ledgerUiEnabled = isLedgerUiEnabled()
 
   const changeWalletHandler = useCallback(
     (id: KeystoreId) => {
@@ -238,15 +240,17 @@ export const UnlockForm = ({ keystore, unlock, removeKeystore, changeKeystore$, 
             </BorderButton>
             <div className="flex w-full flex-col items-center border-t border-solid border-gray1 dark:border-gray0d">
               <div className="flex w-full flex-col justify-between space-y-3 pt-4">
-                <BorderButton
-                  className="flex w-full min-w-[200px] items-center justify-center gap-2"
-                  size="normal"
-                  color="primary"
-                  onClick={useLedgerOnlyHandler}
-                  disabled={unlocking}>
-                  <CpuChipIcon width={16} height={16} />
-                  Use Only Ledger
-                </BorderButton>
+                {ledgerUiEnabled && (
+                  <BorderButton
+                    className="flex w-full min-w-[200px] items-center justify-center gap-2"
+                    size="normal"
+                    color="primary"
+                    onClick={useLedgerOnlyHandler}
+                    disabled={unlocking}>
+                    <CpuChipIcon width={16} height={16} />
+                    Use Only Ledger
+                  </BorderButton>
+                )}
                 {/* TODO: update locale */}
                 <h2 className="mb-2 w-full text-11 text-text2 dark:text-text2d">Don&apos;t you have a wallet yet?</h2>
                 <BorderButton

@@ -81,6 +81,7 @@ import {
   VerifiedLedgerAddressRD
 } from '../../services/wallet/types'
 import { walletTypeToI18n } from '../../services/wallet/util'
+import { isLedgerUiEnabled } from '../../../shared/config/ledger'
 import { useApp } from '../../store/app/hooks'
 import { AddressEllipsis } from '../uielements/addressEllipsis'
 import { ChainIcon } from '../uielements/assets/chainIcon/ChainIcon'
@@ -223,6 +224,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
     evmHDMode
   } = props
   const { isWhitelistModalOpen, setIsWhitelistModalOpen } = useApp()
+  const ledgerUiEnabled = isLedgerUiEnabled()
 
   const intl = useIntl()
   const navigate = useNavigate()
@@ -893,9 +895,11 @@ export const WalletSettings = (props: Props): JSX.Element => {
                 <div className="mt-10px w-full">
                   {/* Render keystore and ledger addresses as before */}
                   {renderKeystoreAddress(chain, keystore)}
-                  {isEnabledLedger(chain, network) && isSupportedChain(chain)
-                    ? renderLedgerAddress(chain, oLedger)
-                    : renderLedgerNotSupported}
+                  {ledgerUiEnabled
+                    ? isEnabledLedger(chain, network) && isSupportedChain(chain)
+                      ? renderLedgerAddress(chain, oLedger)
+                      : renderLedgerNotSupported
+                    : null}
                 </div>
                 <div className="mt-10px flex w-full items-center px-40px">
                   <SwitchButton active={enabledChains.includes(chain)} onChange={() => toggleChain(chain)} />
