@@ -114,3 +114,58 @@
     font-size: 18px;
   }
 }
+
+@media (max-width: 768px) {
+  /* Wallet assets */
+  .wallet-asset-actions .action-button-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--mobile-spacing-sm);
+    width: 100%;
+  }
+
+  .wallet-asset-actions .action-button-group > button {
+    margin: 0;
+  }
+
+  /* Make table rows display as cards */
+  .assets-table-collapsable table {
+    border-collapse: separate;
+    border-spacing: 0 var(--mobile-spacing-sm);
+  }
+
+  .assets-table-collapsable table > tbody {
+    display: block;
+  }
+
+  .assets-table-collapsable table > tbody > tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    border: 1px solid var(--color-gray-0);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  .dark .assets-table-collapsable table > tbody > tr {
+    border-color: var(--color-gray-0d);
+  }
+
+  .assets-table-collapsable table > tbody > tr > td {
+    border: none;
+    padding: var(--mobile-spacing-sm) var(--mobile-spacing-lg);
+  }
+
+  .assets-table-collapsable table > tbody > tr > td:nth-child(1) {
+    grid-column: 1;
+    padding-right: 0;
+  }
+  .assets-table-collapsable table > tbody > tr > td:nth-child(2) {
+    grid-column: 2;
+    text-align: right;
+  }
+  .assets-table-collapsable table > tbody > tr > td:nth-child(3) {
+    grid-column: 1 / span 2;
+    padding-top: 0;
+    padding-bottom: var(--mobile-spacing-md);
+  }
+}
