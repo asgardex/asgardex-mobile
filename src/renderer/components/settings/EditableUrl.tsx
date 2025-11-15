@@ -97,9 +97,12 @@ const EditableUrl = (props: Props): JSX.Element => {
       setEditableUrl(O.some(url))
     }
     return (
-      <div className="flex items-center">
+      <div className="editable-url-row flex items-center">
         <TextButton
-          className={clsx('flex items-center !p-0 text-[16px]', loading ? 'cursor-not-allowed' : 'cursor-pointer')}
+          className={clsx(
+            'editable-url-value flex items-center !p-0 text-[16px]',
+            loading ? 'cursor-not-allowed' : 'cursor-pointer'
+          )}
           color="neutral"
           uppercase={false}
           disabled={loading || RD.isPending(testUrlState)}
@@ -110,7 +113,7 @@ const EditableUrl = (props: Props): JSX.Element => {
           <PencilSquareIcon className="dark:text0d ml-[5px] h-[20px] w-[20px] text-turquoise" />
         </TextButton>
         <BorderButton
-          className="ml-10px"
+          className="editable-url-test-button ml-10px"
           loading={RD.isPending(testUrlState)}
           disabled={RD.isPending(testUrlState)}
           size="medium"
@@ -165,11 +168,11 @@ const EditableUrl = (props: Props): JSX.Element => {
       }
       return (
         <form className="flex w-full flex-col" onSubmit={handleSubmit(submit)}>
-          <div className="flex w-full items-center">
+          <div className="editable-url-row flex w-full items-center">
             <Input
               id="url"
               className={clsx(
-                'flex w-auto min-w-[300px] flex-grow text-[16px]',
+                'editable-url-input flex w-auto min-w-[300px] flex-grow text-[16px]',
                 RD.isSuccess(testUrlState) ? '!ring-turquoise' : ''
               )}
               size="normal"
@@ -180,14 +183,17 @@ const EditableUrl = (props: Props): JSX.Element => {
               error={!!errors.url || RD.isFailure(testUrlState)}
               onKeyDown={keyDownHandler}
             />
-            <BaseButton className="!p-0 text-turquoise" onClick={handleSubmit(submit)} type="submit">
+            <BaseButton
+              className="editable-url-icon-button !p-0 text-turquoise"
+              onClick={handleSubmit(submit)}
+              type="submit">
               <CheckCircleIcon className="ml-[5px] h-[24px] w-[24px]" />
             </BaseButton>
-            <BaseButton className="!p-0 text-error0" onClick={cancel}>
+            <BaseButton className="editable-url-icon-button !p-0 text-error0" onClick={cancel}>
               <XCircleIcon className="ml-[5px] h-[24px] w-[24px]" />
             </BaseButton>
             <BorderButton
-              className="ml-10px"
+              className="editable-url-test-button ml-10px"
               loading={RD.isPending(testUrlState)}
               disabled={RD.isPending(testUrlState)}
               size="medium"
@@ -216,7 +222,7 @@ const EditableUrl = (props: Props): JSX.Element => {
   )
 
   return (
-    <div className={className}>
+    <div className={clsx('editable-url', className)}>
       {FP.pipe(editableUrl, O.fold(renderUrl, renderEditableUrl))}
       {renderTestUrlResult}
     </div>

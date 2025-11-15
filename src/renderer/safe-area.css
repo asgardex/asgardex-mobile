@@ -169,3 +169,175 @@
     padding-bottom: var(--mobile-spacing-md);
   }
 }
+
+@media (max-width: 600px) {
+  /* Settings tabs – enable scroll + compact labels */
+  [role='tablist'] {
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 0.5rem !important;
+    padding-left: var(--mobile-spacing-sm);
+    padding-right: var(--mobile-spacing-sm);
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  [role='tablist'] > * {
+    flex: 0 0 auto;
+  }
+  [role='tablist']::-webkit-scrollbar {
+    display: none; /* WebKit */
+  }
+  [role='tablist'] .p-6 {
+    padding: 0.75rem !important;
+  }
+  [role='tablist'] .\!text-16 {
+    font-size: 14px !important;
+  }
+
+  /* Wallet Settings – action buttons grid */
+  .wallet-actions-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--mobile-spacing-sm);
+    grid-auto-rows: minmax(var(--mobile-hit-target-size), 1fr);
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100%;
+  }
+
+  .wallet-actions-row > * {
+    margin: 0 !important;
+    min-width: 0;
+    width: 100%;
+    min-height: var(--mobile-hit-target-size);
+  }
+
+  .wallet-actions-row > :not([hidden]) ~ :not([hidden]) {
+    margin: 0 !important;
+  }
+
+  /* Wallet Settings header – stack selector + button */
+  .settings-wallet-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: var(--mobile-spacing-sm);
+  }
+
+  .settings-wallet-header .min-w\[200px\] {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .settings-wallet-header button {
+    width: 100% !important;
+  }
+
+  /* Chain management header – vertical alignment */
+  .chain-management-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: var(--mobile-spacing-sm);
+    text-align: center;
+  }
+
+  .chain-management-header > * {
+    width: 100%;
+  }
+
+  .chain-management-header .mr-5 {
+    margin-right: 0 !important;
+  }
+
+  .chain-management-header .mt-5 {
+    margin-top: var(--mobile-spacing-sm) !important;
+  }
+
+  /* Expert Mode – stack sections + inputs */
+  .settings-expert-section {
+    padding-left: var(--mobile-spacing-sm);
+    padding-right: var(--mobile-spacing-sm);
+  }
+
+  .settings-expert-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--mobile-spacing-sm);
+  }
+
+  .settings-expert-toggle {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    gap: var(--mobile-spacing-sm);
+  }
+
+  .settings-expert-toggle-label {
+    text-align: left;
+    width: 100%;
+  }
+
+  .settings-expert-toggle-switch {
+    margin-left: auto;
+  }
+
+  .settings-expert-subsection {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: var(--mobile-spacing-sm);
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .settings-expert-subsection h2 {
+    margin-bottom: var(--mobile-spacing-sm);
+  }
+
+  .settings-expert-editable {
+    width: 100% !important;
+  }
+
+  .settings-expert-editable .editable-url-row {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: var(--mobile-spacing-sm);
+  }
+
+  .settings-expert-editable .editable-url-value {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+    white-space: normal;
+    word-break: break-all;
+  }
+
+  .settings-expert-editable .editable-url-input {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .settings-expert-editable .editable-url-icon-button,
+  .settings-expert-editable .editable-url-test-button {
+    width: 100%;
+    margin-left: 0 !important;
+    justify-content: center;
+  }
+
+  /* DEX settings – stack text above controls */
+  .settings-dex-section {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--mobile-spacing-sm);
+  }
+
+  .settings-dex-section-text,
+  .settings-dex-section-content {
+    width: 100%;
+  }
+
+  .settings-dex-section-content {
+    gap: var(--mobile-spacing-sm);
+  }
+}

@@ -234,26 +234,26 @@ export const WalletSettings = (props: Props): JSX.Element => {
   const [showRemoveWalletModal, setShowRemoveWalletModal] = useState(false)
   const [showQRModal, setShowQRModal] = useState<O.Option<{ asset: Asset; address: Address }>>(O.none)
   const closeQrModal = useCallback(() => setShowQRModal(O.none), [setShowQRModal])
-  const [exportToastMessage, setExportToastMessage] = useState<string | null>(null)
-  const exportToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     return () => {
-      if (exportToastTimerRef.current) {
-        clearTimeout(exportToastTimerRef.current)
-        exportToastTimerRef.current = null
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current)
+        toastTimerRef.current = null
       }
     }
   }, [])
 
-  const showExportToast = useCallback((message: string) => {
-    setExportToastMessage(message)
-    if (exportToastTimerRef.current) {
-      clearTimeout(exportToastTimerRef.current)
+  const showToast = useCallback((message: string) => {
+    setToastMessage(message)
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current)
     }
-    exportToastTimerRef.current = setTimeout(() => {
-      setExportToastMessage(null)
-      exportToastTimerRef.current = null
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null)
+      toastTimerRef.current = null
     }, 4000)
   }, [])
 
@@ -787,12 +787,12 @@ export const WalletSettings = (props: Props): JSX.Element => {
       setExportKeystoreErrorMsg(emptyString)
       await exportKeystore()
       const messageId = resolveExportSuccessMessageId()
-      showExportToast(intl.formatMessage({ id: messageId }))
+      showToast(intl.formatMessage({ id: messageId }))
     } catch (error) {
       const errorMsg = isError(error) ? (error?.message ?? error.toString()) : `${error}`
       setExportKeystoreErrorMsg(errorMsg)
     }
-  }, [exportKeystore, intl, setExportKeystoreErrorMsg, showExportToast])
+  }, [exportKeystore, intl, setExportKeystoreErrorMsg, showToast])
 
   const [trustedAddresses, setTrustedAddresses] = useState<TrustedAddresses>()
   const [newAddress, setNewAddress] = useState<Partial<TrustedAddress>>({})
@@ -806,18 +806,19 @@ export const WalletSettings = (props: Props): JSX.Element => {
     if (newAddress.name && newAddress.address && newAddress.chain) {
       addAddress({ name: newAddress.name, address: newAddress.address, chain: newAddress.chain })
       setNewAddress({})
-      // TODO: notification
-      // message.success(intl.formatMessage({ id: 'common.addAddress' }))
+      showToast(intl.formatMessage({ id: 'common.addAddress' }))
     } else {
       // message.error(intl.formatMessage({ id: 'common.error' }))
     }
-  }, [newAddress])
+  }, [newAddress, intl, showToast])
 
-  const handleRemoveAddress = useCallback((address: TrustedAddress) => {
-    removeAddress(address)
-    // TODO: notification
-    // message.success(intl.formatMessage({ id: 'common.removeAddress' }))
-  }, [])
+  const handleRemoveAddress = useCallback(
+    (address: TrustedAddress) => {
+      removeAddress(address)
+      showToast(intl.formatMessage({ id: 'common.removeAddress' }))
+    },
+    [intl, showToast]
+  )
 
   const renderAddAddressForm = useCallback(
     () => (
@@ -1044,7 +1045,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
 
       {renderVerifyAddressModal(ledgerAddressToVerify)}
       <div className="w-full px-4">
-        <div className="flex flex-row items-center justify-between">
+        <div className="settings-wallet-header flex flex-row items-center justify-between">
           <h1 className="font-main text-16 uppercase text-text0 dark:text-text0d">
             {intl.formatMessage({ id: 'settings.wallet.management' })}
           </h1>
@@ -1070,7 +1071,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
           loading={RD.isPending(renameWalletState)}
         />
         {renderRenameWalletError}
-        <div className="mt-10 flex flex-row items-center justify-center space-x-2">
+        <div className="wallet-actions-row mt-10 flex flex-row items-center justify-center space-x-2">
           <ActionButton
             icon={<ArrowUpTrayIcon width={24} height={24} />}
             text={intl.formatMessage({ id: 'settings.export.title' })}
@@ -1092,11 +1093,11 @@ export const WalletSettings = (props: Props): JSX.Element => {
             onClick={() => setShowRemoveWalletModal(true)}
           />
         </div>
-        {exportToastMessage && (
+        {toastMessage && (
           <div
             role="status"
             className="border-primary0/40 bg-primary0/10 text-primary0 mt-3 rounded-md border border-solid px-4 py-2 text-center font-main text-sm">
-            {exportToastMessage}
+            {toastMessage}
           </div>
         )}
       </div>
@@ -1112,7 +1113,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
           />
         </div>
         <div className="mt-10px border-b border-solid border-bg2 px-4 dark:border-bg2d">{renderAddAddressForm()}</div>
-        <div className="flex items-center justify-center">
+        <div className="chain-management-header flex items-center justify-center">
           <Label className="pl-5 pt-5 text-center text-base md:text-left" textTransform="uppercase">
             {intl.formatMessage({ id: 'common.chainManagement' })}
           </Label>
