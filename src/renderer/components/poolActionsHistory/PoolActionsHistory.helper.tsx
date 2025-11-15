@@ -6,14 +6,21 @@ import { Action, Actions, ActionsPage, Tx } from '../../services/midgard/thorMid
 import { AssetWithAmount } from '../../types/asgardex'
 import { Filter } from './types'
 
+const ZERO_HASH_PATTERN = /^0+$/
+
+const isValidTxId = (txId: string): boolean => {
+  const normalized = txId.trim().toLowerCase().replace(/^0x/, '')
+  return normalized.length > 0 && !ZERO_HASH_PATTERN.test(normalized)
+}
+
 export const getTxId = (action: Action): O.Option<TxHash> => {
   return FP.pipe(
     action.in,
     A.head,
     O.alt(() => FP.pipe(action.out, A.head)),
     O.map(({ txID }) => txID),
-    // Filter out empty strings
-    O.filter((id) => !!id)
+    // Filter out empty strings + placeholder zero hashes Midgard can emit on native txs
+    O.filter(isValidTxId)
   )
 }
 

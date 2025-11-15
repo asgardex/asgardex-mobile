@@ -179,6 +179,21 @@ describe('PoolActionsHistory.helper', () => {
       // Date(0) is a default date property value for defaultPoolAction
       expect(getRowKey(defaultPoolAction)).toEqual(`${new Date(0)}-SWAP`)
     })
+
+    it('falls back to date for placeholder hashes', () => {
+      expect(
+        getRowKey({
+          ...defaultPoolAction,
+          date: new Date(10),
+          in: [
+            {
+              ...defaultTx,
+              txID: '0000000000000000000000000000000000000000000000000000000000000000'
+            }
+          ]
+        })
+      ).toEqual(`${new Date(10)}-SWAP`)
+    })
   })
 
   describe('historyFilterToViewblockFilter', () => {
