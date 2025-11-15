@@ -20,10 +20,8 @@
     "fs:allow-exists",
     "fs:allow-mkdir",
     "store:default",
-    {
-      "identifier": "shell:allow-open",
-      "scopes": ["https://*/*"]
-    },
+    "opener:allow-open-url",
+    "opener:allow-default-urls",
     "secure-storage:default",
     "biometric:default",
     "notification:default",

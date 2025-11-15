@@ -3,7 +3,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { join, dirname, appDataDir } from '@tauri-apps/api/path'
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog'
 import { BaseDirectory, exists, mkdir, readTextFile, writeTextFile, remove, rename } from '@tauri-apps/plugin-fs'
-import { open as shellOpen } from '@tauri-apps/plugin-shell'
+import { openUrl } from '@tauri-apps/plugin-opener'
 import { Keystore } from '@xchainjs/xchain-crypto'
 import { either as E, option as O } from 'fp-ts'
 import { pipe } from 'fp-ts/function'
@@ -66,6 +66,14 @@ const tauriWindowLogger = createLogger('tauri-windowApi')
 const normalizeError = (error: unknown): Error => (isError(error) ? error : new Error(String(error)))
 
 const isSecureStorageUnavailableError = (message: string): boolean => /No command|not found|permission/i.test(message)
+
+const buildNativeFallbackMetadata = (error?: Error): Record<string, string> => {
+  if (!error) return { reason: 'native-unavailable' }
+  return {
+    reason: 'native-error',
+    message: error.message
+  }
+}
 
 const ensureDir = async (path: string) => {
   const alreadyExists = await exists(path)
@@ -142,6 +150,8 @@ const detectMobileOs = (): 'android' | 'ios' | 'unknown' => {
 
 type OpenExternalResult = 'opened' | 'fallback' | 'blocked'
 
+type NativeOpenAttemptResult = { ok: true } | { ok: false; error: Error }
+
 type ExternalLinkEventDetail = {
   type: 'fallback' | 'blocked'
   url: string
@@ -196,13 +206,13 @@ const getNavigator = () => {
   }
 }
 
-const tryOpenWithShell = async (href: string): Promise<{ ok: true } | { ok: false; error?: Error }> => {
+const tryOpenWithOpener = async (href: string): Promise<NativeOpenAttemptResult> => {
   try {
-    await shellOpen(href)
+    await openUrl(href)
     return { ok: true }
   } catch (error) {
     const normalized = isError(error) ? error : new Error(String(error))
-    void tauriWindowLogger.warn('Failed to open external link via plugin-shell', { error: normalized.message })
+    void tauriWindowLogger.warn('Failed to open external link via plugin-opener', { error: normalized.message })
     return { ok: false, error: normalized }
   }
 }
@@ -831,8 +841,8 @@ const openExternalWithWhitelist = async (target: string): Promise<OpenExternalRe
     return 'blocked'
   }
 
-  const shellOutcome = await tryOpenWithShell(href)
-  if (shellOutcome.ok) {
+  const nativeOutcome = await tryOpenWithOpener(href)
+  if (nativeOutcome.ok) {
     recordExternalLinkAttempt({
       normalizedUrl: href,
       whitelistStatus: 'allowed',
@@ -849,9 +859,7 @@ const openExternalWithWhitelist = async (target: string): Promise<OpenExternalRe
       whitelistStatus: 'allowed',
       result: fallbackResult,
       capabilityState: 'fallback',
-      metadata: shellOutcome.error?.message
-        ? { reason: 'shell-error', message: shellOutcome.error.message }
-        : { reason: 'shell-unavailable' }
+      metadata: buildNativeFallbackMetadata(nativeOutcome.error)
     })
     return fallbackResult
   } catch (fallbackError) {
@@ -881,7 +889,7 @@ const apiUrl: ApiUrl = {
     try {
       await openExternalWithWhitelist(url)
     } catch (error) {
-      const normalized = isError(error) ? error : new Error(String(error))
+      const normalized = normalizeError(error)
       void tauriWindowLogger.warn('Failed to open external link', { error: normalized.message })
     }
   }

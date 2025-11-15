@@ -8,7 +8,8 @@
     "core:default",
     "log:default",
     "dialog:default",
-    "shell:default",
+    "opener:allow-open-url",
+    "opener:allow-default-urls",
     "fs:default",
     "fs:allow-rename",
     {

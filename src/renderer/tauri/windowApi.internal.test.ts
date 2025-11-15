@@ -51,10 +51,6 @@ vi.mock('@tauri-apps/plugin-fs', () => ({
   rename: vi.fn()
 }))
 
-vi.mock('@tauri-apps/plugin-shell', () => ({
-  open: vi.fn()
-}))
-
 vi.mock('tauri-plugin-secure-storage', () => ({
   secureStorage: secureStorageMock
 }))
