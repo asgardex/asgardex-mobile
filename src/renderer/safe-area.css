@@ -340,4 +340,61 @@
   .settings-dex-section-content {
     gap: var(--mobile-spacing-sm);
   }
+
+  /* Pools filters */
+  .assets-filter-row {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: var(--mobile-spacing-sm);
+    column-gap: var(--mobile-spacing-sm);
+  }
+
+  .assets-filter-row .assets-filter-search {
+    width: min(240px, 100%) !important;
+    max-width: 100% !important;
+  }
+
+  /* Pools tables */
+  .pools-table table {
+    table-layout: auto;
+  }
+
+  .pools-table table th,
+  .pools-table table td {
+    font-size: 14px;
+    padding-left: var(--mobile-spacing-sm);
+    padding-right: var(--mobile-spacing-sm);
+  }
+
+  .pools-table table td {
+    max-width: 1%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pool-actions {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .pool-actions .pool-action-buttons {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--mobile-spacing-sm);
+    width: auto;
+  }
+
+  .pool-actions .pool-action-buttons > * {
+    margin-left: 0 !important;
+  }
+
+  .pool-actions .pool-action-buttons .group {
+    min-width: 70px;
+    width: min(88px, 30vw);
+    justify-content: center;
+  }
 }

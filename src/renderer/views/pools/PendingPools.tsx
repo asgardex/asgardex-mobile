@@ -280,7 +280,9 @@ export const PendingPools = (): JSX.Element => {
           />
           <ProtocolLimit limit={limitRD} />
           <IncentivePendulum incentivePendulum={incentivePendulumRD} protocol={protocol} />
-          <Table columns={columns} data={dataSource} loading={loading} />
+          <div className="pools-table">
+            <Table columns={columns} data={dataSource} loading={loading} />
+          </div>
         </>
       )
     },
