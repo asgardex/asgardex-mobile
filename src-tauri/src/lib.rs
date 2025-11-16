@@ -1,4 +1,6 @@
+#[cfg(target_os = "android")]
 use base64::engine::general_purpose::STANDARD;
+#[cfg(target_os = "android")]
 use base64::Engine;
 use tauri_plugin_log::{Target, TargetKind};
 
@@ -56,7 +58,7 @@ pub fn run() {
         .targets(log_targets)
         .build();
 
-    let mut builder = tauri::Builder::default()
+    let builder = tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_fs::init())
@@ -66,16 +68,12 @@ pub fn run() {
         .plugin(tauri_plugin_secure_storage::init());
 
     #[cfg(mobile)]
-    {
-        builder = builder
-            .plugin(tauri_plugin_biometric::init())
-            .plugin(tauri_plugin_safe_area_insets::init());
-    }
+    let builder = builder
+        .plugin(tauri_plugin_biometric::init())
+        .plugin(tauri_plugin_safe_area_insets::init());
 
     #[cfg(target_os = "android")]
-    {
-        builder = builder.plugin(tauri_plugin_android_fs::init());
-    }
+    let builder = builder.plugin(tauri_plugin_android_fs::init());
 
     #[cfg(target_os = "android")]
     builder
