@@ -23,24 +23,24 @@ import { ZECChain } from '@xchainjs/xchain-zcash'
 export const CHAIN_STRINGS: Record<Chain, string> = {
   [BCHChain]: 'Bitcoin Cash',
   [BTCChain]: 'Bitcoin',
-  [GAIAChain]: 'GAIA',
+  [GAIAChain]: 'Cosmos',
   [DOGEChain]: 'Dogecoin',
   [ETHChain]: 'Ethereum',
   [LTCChain]: 'Litecoin',
   [THORChain]: 'THORChain',
   [ARBChain]: 'Arbitrum',
-  [AVAXChain]: 'Avax',
+  [AVAXChain]: 'Avalanche',
   [BSCChain]: 'BNB Chain (BSC)',
   [MAYAChain]: 'MAYAChain',
-  [DASHChain]: 'DASH',
-  [KUJIChain]: 'KUJI',
-  [RADIXChain]: 'RADIX',
+  [DASHChain]: 'Dash',
+  [KUJIChain]: 'Kujira',
+  [RADIXChain]: 'Radix',
   [SOLChain]: 'Solana',
   [BASEChain]: 'Base',
   [ADAChain]: 'Cardano',
   [ZECChain]: 'Zcash',
   [XRPChain]: 'Ripple',
-  [TRONChain]: 'TRON'
+  [TRONChain]: 'Tron'
 }
 
 export const DEFAULT_ENABLED_CHAINS: Record<Chain, string> = {

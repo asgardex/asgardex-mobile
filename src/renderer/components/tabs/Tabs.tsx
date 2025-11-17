@@ -21,7 +21,7 @@ export const Tabs = ({
   onChange = (_: number) => {}
 }: Props): JSX.Element => {
   return (
-    <TabGroup defaultIndex={defaultIndex} onChange={onChange}>
+    <TabGroup className={className} defaultIndex={defaultIndex} onChange={onChange}>
       <TabList className={clsx('flex gap-4 border-b border-solid border-gray0 dark:border-gray0d', className)}>
         {tabs.map(({ key, label, disabled }) => (
           <Tab key={key} as={Fragment} disabled={disabled}>

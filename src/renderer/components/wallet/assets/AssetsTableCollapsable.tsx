@@ -67,6 +67,7 @@ import { GECKO_MAP } from '../../../types/generated/geckoMap'
 import { ErrorView } from '../../shared/error/'
 import { Table } from '../../table'
 import { AssetIcon } from '../../uielements/assets/assetIcon'
+import { ChainIcon } from '../../uielements/assets/chainIcon/ChainIcon'
 import { Action as ActionButtonAction, ActionButton } from '../../uielements/button/ActionButton'
 import { IconButton } from '../../uielements/button/IconButton'
 import { Collapse } from '../../uielements/collapse'
@@ -614,6 +615,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
       return (
         <div className="flex w-full justify-between space-x-4 bg-bg0 py-1 dark:bg-bg0d">
           <div className="flex flex-row items-center space-x-2">
+            <ChainIcon chain={chain} />
             <Label className="!w-auto" textTransform="uppercase">
               {chainToString(chain)}
             </Label>
@@ -703,7 +705,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
 
   return (
     <>
-      <div className="flex items-center space-x-2">
+      <div className="flex w-full items-center justify-between space-x-2">
         <div
           className="my-2 cursor-pointer rounded-md border border-solid border-turquoise bg-bg0 px-2 py-1 text-14 text-text2 dark:border-gray1d dark:bg-bg0d dark:text-text2d"
           onClick={handleCollapseAll}>
@@ -713,7 +715,9 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
         </div>
         {disabledChains.length > 0 ? (
           <div className="flex items-center text-14 text-text2 dark:border-gray1d dark:text-text2d">
-            <p className="m-2">{intl.formatMessage({ id: 'common.disabledChains' })}</p>
+            <p className="m-2 text-warning0 dark:text-warning0d">
+              {intl.formatMessage({ id: 'common.disabledChains' })}
+            </p>
             <div className="flex space-x-2">
               {disabledChains.map((chain) => (
                 <span key={chain} className="rounded bg-gray-200 px-2 py-1 dark:bg-gray0d">

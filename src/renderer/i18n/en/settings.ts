@@ -15,7 +15,7 @@ const settings: SettingMessages = {
   'settings.connected.title': 'Connected',
   'settings.notconnected.title': 'Not connected',
   'settings.add.device.title': 'ADD DEVICE',
-  'settings.wallet.whitelist.modal': 'Add / Remove tokens for whitelist',
+  'settings.wallet.whitelist.modal': 'Import Tokens',
   'settings.custom.token.modal.title': 'Add Custom Token',
   'settings.custom.token.modal.chain': 'Select Chain',
   'settings.custom.token.modal.address': 'Contract Address',
@@ -62,7 +62,9 @@ const settings: SettingMessages = {
   'settings.expert.mayachain.title': 'Mayachain URLs',
   'settings.expert.midgardMaya.title': 'Midgard Mayachain',
   'settings.expert.mayanodeApi.title': 'MayaNode API',
-  'settings.ledgerMode.lockWalletWarning': 'Lock wallet first to enter Ledger mode'
+  'settings.ledgerMode.lockWalletWarning': 'Lock wallet first to enter Ledger mode',
+  'settings.wallet.whitelist': 'Whitelist',
+  'settings.wallet.customToken': 'Custom token'
 }
 
 export default settings

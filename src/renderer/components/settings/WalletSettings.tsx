@@ -52,7 +52,6 @@ import { HDMode, WalletAddress, WalletType } from '../../../shared/wallet/types'
 import RemoveIcon from '../../assets/svg/icon-remove.svg?react'
 import { WalletPasswordConfirmationModal } from '../../components/modal/confirmation'
 import { RemoveWalletConfirmationModal } from '../../components/modal/confirmation/RemoveWalletConfirmationModal'
-import { AssetIcon } from '../../components/uielements/assets/assetIcon/AssetIcon'
 import { QRCodeModal } from '../../components/uielements/qrCodeModal/QRCodeModal'
 import { RadioGroup, Radio } from '../../components/uielements/radio'
 import { PhraseCopyModal } from '../../components/wallet/phrase/PhraseCopyModal'
@@ -84,6 +83,7 @@ import {
 import { walletTypeToI18n } from '../../services/wallet/util'
 import { useApp } from '../../store/app/hooks'
 import { AddressEllipsis } from '../uielements/addressEllipsis'
+import { ChainIcon } from '../uielements/assets/chainIcon/ChainIcon'
 import { FlatButton, Button } from '../uielements/button'
 import { SwitchButton } from '../uielements/button/SwitchButton'
 import { WalletTypeLabel } from '../uielements/common'
@@ -859,9 +859,9 @@ export const WalletSettings = (props: Props): JSX.Element => {
             {walletAccounts.map(({ chain, accounts: { keystore, ledger: oLedger } }, i: number) => (
               <div key={i} className="flex flex-col border-b border-solid border-b-gray0 p-4 dark:border-b-gray0d">
                 <div className="flex w-full items-center justify-start">
-                  <AssetIcon asset={getChainAsset(chain)} size="small" network={Network.Mainnet} />
+                  <ChainIcon chain={chain} size="small" />
                   <Label className="p-0 pl-[10px] text-xl leading-[25px] tracking-[2px]" textTransform="uppercase">
-                    {chain}
+                    {chainToString(chain)}
                   </Label>
                 </div>
                 <div className="mt-10px w-full">
@@ -1079,11 +1079,13 @@ export const WalletSettings = (props: Props): JSX.Element => {
           <Label className="pl-5 pt-5 text-center text-base md:text-left" textTransform="uppercase">
             {intl.formatMessage({ id: 'common.chainManagement' })}
           </Label>
-          <ActionButton
-            className="mr-5 mt-5"
-            text={intl.formatMessage({ id: 'common.whitelist' })}
-            onClick={() => setIsWhitelistModalOpen(true)}
-          />
+          <FlatButton
+            size="normal"
+            color="primary"
+            className="mr-5 mt-5 w-[160px]"
+            onClick={() => setIsWhitelistModalOpen(true)}>
+            {intl.formatMessage({ id: 'common.importTokens' })}
+          </FlatButton>
         </div>
         {renderAccounts}
       </div>

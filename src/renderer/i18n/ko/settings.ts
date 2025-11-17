@@ -64,7 +64,9 @@ const settings: SettingMessages = {
   'settings.expert.mayachain.title': 'Mayachain URLs',
   'settings.expert.midgardMaya.title': 'Midgard Mayachain',
   'settings.expert.mayanodeApi.title': 'MayaNode API',
-  'settings.ledgerMode.lockWalletWarning': 'Ledger 모드로 진입하려면 먼저 지갑을 잠금하세요'
+  'settings.ledgerMode.lockWalletWarning': 'Ledger 모드로 진입하려면 먼저 지갑을 잠금하세요',
+  'settings.wallet.whitelist': 'Whitelist',
+  'settings.wallet.customToken': 'Custom token'
 }
 
 export default settings

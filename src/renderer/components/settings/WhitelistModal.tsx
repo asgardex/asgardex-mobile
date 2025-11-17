@@ -13,9 +13,7 @@ import { function as FP, option as O } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 
-import { getChainAsset } from '../../helpers/chainHelper'
 import { emptyString } from '../../helpers/stringHelper'
-import { useNetwork } from '../../hooks/useNetwork'
 import { EVMChains } from '../../services/evm/const'
 
 // Supported whitelist chains (EVM + TRON)
@@ -27,14 +25,14 @@ import { BASE_TOKEN_WHITELIST } from '../../types/generated/thorchain/baseerc20w
 import { BSC_TOKEN_WHITELIST } from '../../types/generated/thorchain/bscerc20whitelist'
 import { ETH_TOKEN_WHITELIST } from '../../types/generated/thorchain/etherc20whitelist'
 import { TRON_TOKEN_WHITELIST } from '../../types/generated/thorchain/trontrc20whitelist'
+import { Tabs } from '../tabs'
 import { AssetData } from '../uielements/assets/assetData'
-import { AssetIcon } from '../uielements/assets/assetIcon'
-import { Button } from '../uielements/button'
+import { ChainIcon } from '../uielements/assets/chainIcon/ChainIcon'
 import { SwitchButton } from '../uielements/button/SwitchButton'
 import { InputSearch } from '../uielements/input'
 import { Label } from '../uielements/label'
 import { HeadlessModal } from '../uielements/modal/Modal'
-import { CustomTokenModal } from './CustomTokenModal'
+import { CustomTokenPanel } from './CustomTokenPanel'
 
 type Props = {
   open: boolean
@@ -73,11 +71,9 @@ export const WhitelistModal = ({ open, onClose }: Props): JSX.Element => {
   const [page, setPage] = useState(1)
   const [searchValue, setSearchValue] = useState<string>(emptyString)
   const [chain, setChain] = useState<(typeof WhitelistChains)[number]>(ETHChain)
-  const [customTokenModalOpen, setCustomTokenModalOpen] = useState(false)
 
   const inputSearchRef = useRef(null)
   const intl = useIntl()
-  const { network } = useNetwork()
 
   const chainAssets = useObservableState(
     useMemo(() => getUserAssetsByChain$(chain), [chain]),
@@ -143,27 +139,26 @@ export const WhitelistModal = ({ open, onClose }: Props): JSX.Element => {
 
   const chainFilter = useMemo(
     () => (
-      <div className="flex w-full flex-col px-4 py-4">
+      <div className="flex w-full flex-col items-center px-4 py-4">
         <div className="flex flex-row space-x-2 overflow-x-auto">
           {WhitelistChains.map((supportedChain) => (
             <div key={supportedChain} className="cursor-pointer" onClick={() => changeChain(supportedChain)}>
               <div
                 className={clsx(
                   'flex flex-col items-center',
-                  'space-y-2 px-4 py-2',
+                  'space-y-2 px-3 py-2',
                   'rounded-lg border border-solid border-bg2 dark:border-bg2d',
                   'hover:bg-bg2 dark:hover:bg-bg2d',
-                  { 'bg-bg2 dark:bg-bg2d': chain === supportedChain }
+                  { 'border-turquoise bg-bg2 dark:border-turquoise dark:bg-bg2d': chain === supportedChain }
                 )}>
-                <AssetIcon asset={getChainAsset(supportedChain)} network={network} />
-                <span className="text-text2 dark:text-text2d">{supportedChain}</span>
+                <ChainIcon chain={supportedChain} />
               </div>
             </div>
           ))}
         </div>
       </div>
     ),
-    [chain, network, changeChain]
+    [chain, changeChain]
   )
 
   const onToggleAsset = useCallback((active: boolean, asset: TokenAsset) => {
@@ -175,67 +170,91 @@ export const WhitelistModal = ({ open, onClose }: Props): JSX.Element => {
     setPage((prev) => prev + 1)
   }, [])
 
-  const openCustomTokenModal = useCallback(() => {
-    setCustomTokenModalOpen(true)
-  }, [])
+  const whitelistTokenContent = useMemo(
+    () => (
+      <div className="flex h-[510px] flex-col items-center">
+        {chainFilter}
+        <div className="w-full px-4">
+          <InputSearch
+            ref={inputSearchRef}
+            className="mb-1 w-full"
+            classNameInput="rounded-lg py-2"
+            size="normal"
+            onChange={searchHandler}
+            onCancel={clearSearchValue}
+            placeholder={intl.formatMessage({ id: 'common.searchToken' })}
+          />
+        </div>
+        <div className="w-[calc(100%-32px)] overflow-y-auto rounded-lg">
+          {whitelistAssets.slice(0, 20 * page).map(({ asset }) => (
+            <div
+              key={asset.symbol}
+              className={clsx(
+                'flex items-center justify-between rounded-lg',
+                'px-4 py-[3px] pr-5',
+                'w-full cursor-pointer text-[14px]',
+                'hover:bg-gray0 hover:dark:bg-gray0d'
+              )}>
+              <AssetData asset={asset} network={Network.Mainnet} />
+              <SwitchButton active={checkIsActive(asset)} onChange={(active) => onToggleAsset(active, asset)} />
+            </div>
+          ))}
+          {whitelistAssets.length > 20 * page && (
+            <div
+              className={clsx(
+                'mt-2 flex w-full cursor-pointer items-center justify-center py-2',
+                'rounded-lg border border-solid border-bg2 dark:border-bg2d',
+                'hover:bg-bg2 dark:hover:bg-bg2d',
+                'hover:border-turquoise dark:hover:border-turquoise'
+              )}
+              onClick={handleLoadMore}>
+              <Label color="primary" align="center">
+                Load More
+              </Label>
+            </div>
+          )}
+        </div>
+      </div>
+    ),
+    [
+      chainFilter,
+      checkIsActive,
+      clearSearchValue,
+      handleLoadMore,
+      intl,
+      onToggleAsset,
+      page,
+      searchHandler,
+      whitelistAssets
+    ]
+  )
 
-  const closeCustomTokenModal = useCallback(() => {
-    setCustomTokenModalOpen(false)
-  }, [])
+  const tabs = useMemo(
+    () => [
+      {
+        key: 'settings-wallet-whitelist',
+        disabled: false,
+        label: intl.formatMessage({ id: 'settings.wallet.whitelist' }),
+        content: whitelistTokenContent
+      },
+      {
+        key: 'settings-wallet-custom-token',
+        disabled: false,
+        label: intl.formatMessage({ id: 'settings.wallet.customToken' }),
+        content: <CustomTokenPanel />
+      }
+    ],
+    [intl, whitelistTokenContent]
+  )
 
   return (
     <HeadlessModal
-      className="h-3/4 max-h-[600px] min-h-[350px]"
+      className="h-3/4 max-h-[640px] min-h-[350px]"
       title={intl.formatMessage({ id: 'settings.wallet.whitelist.modal' })}
       initialFocus={inputSearchRef}
       isOpen={open}
       onClose={onClose}>
-      <div className="w-full px-4">
-        <InputSearch
-          ref={inputSearchRef}
-          className="w-full"
-          classNameInput="rounded-lg py-2"
-          size="normal"
-          onChange={searchHandler}
-          onCancel={clearSearchValue}
-          placeholder={intl.formatMessage({ id: 'common.searchAsset' })}
-        />
-      </div>
-      {chainFilter}
-      <div className="flex w-full justify-center px-4 pb-2">
-        <Button color="primary" onClick={openCustomTokenModal}>
-          {intl.formatMessage({ id: 'settings.custom.token.modal.title' })}
-        </Button>
-      </div>
-      <div className="w-[calc(100%-32px)] overflow-y-auto rounded-lg">
-        {whitelistAssets.slice(0, 20 * page).map(({ asset }) => (
-          <div
-            key={asset.symbol}
-            className={clsx(
-              'flex items-center justify-between rounded-lg',
-              'px-4 py-[3px] pr-5',
-              'w-full cursor-pointer text-[14px]',
-              'hover:bg-gray0 hover:dark:bg-gray0d'
-            )}>
-            <AssetData asset={asset} network={Network.Mainnet} />
-            <SwitchButton active={checkIsActive(asset)} onChange={(active) => onToggleAsset(active, asset)} />
-          </div>
-        ))}
-        {whitelistAssets.length > 20 * page && (
-          <div
-            className={clsx(
-              'mt-2 flex w-full cursor-pointer items-center justify-center py-2',
-              'rounded-lg border border-solid border-bg2 dark:border-bg2d',
-              'hover:bg-bg2 dark:hover:bg-bg2d'
-            )}
-            onClick={handleLoadMore}>
-            <Label color="primary" align="center">
-              Load More
-            </Label>
-          </div>
-        )}
-      </div>
-      <CustomTokenModal open={customTokenModalOpen} onClose={closeCustomTokenModal} />
+      <Tabs className="-mt-4 w-full justify-center rounded-md" tabs={tabs} defaultIndex={0} />
     </HeadlessModal>
   )
 }
