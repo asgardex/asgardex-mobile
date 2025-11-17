@@ -16,6 +16,7 @@ import {
   assetAmount,
   assetToBase,
   assetToString,
+  baseAmount,
   baseToAsset,
   bn,
   formatAssetAmountCurrency
@@ -36,9 +37,12 @@ import {
   getBondMemoMayanode,
   getLeaveMemo,
   getUnbondMemoMayanode,
-  getWhitelistMemo
+  getWhitelistMemo,
+  Action,
+  getProtocolPoolMemo
 } from '../../../../helpers/memoHelper'
 import { getUSDValue } from '../../../../helpers/poolHelperMaya'
+import { emptyString } from '../../../../helpers/stringHelper'
 import { useBondableAssets } from '../../../../hooks/useBondableAssets'
 import { useNetwork } from '../../../../hooks/useNetwork'
 import { usePricePoolMaya } from '../../../../hooks/usePricePoolMaya'
@@ -51,7 +55,10 @@ import {
   InteractStateHandler,
   MayaLpUnits,
   NodeInfos,
-  NodeInfosRD
+  NodeInfosRD,
+  CacaoPoolProvider,
+  CacaoPoolProviderRD,
+  LastblockItems
 } from '../../../../services/mayachain/types'
 import { PoolShare, PoolSharesRD } from '../../../../services/midgard/midgardTypes'
 import { ValidatePasswordHandler, WalletBalance } from '../../../../services/wallet/types'
@@ -68,6 +75,7 @@ import { InfoIcon } from '../../../uielements/info'
 import { Input, InputBigNumber } from '../../../uielements/input'
 import { Label } from '../../../uielements/label'
 import { RadioGroup, Radio } from '../../../uielements/radio'
+import { Switch } from '../../../uielements/switch'
 import { Tooltip } from '../../../uielements/tooltip'
 import { validateTxAmountInput } from '../TxForm.util'
 import * as H from './Interact.helpers'
@@ -114,6 +122,9 @@ type Props = {
   poolDetails: PoolDetails
   nodes: NodeInfosRD
   poolShares: PoolSharesRD
+  cacaoPoolProvider: CacaoPoolProviderRD
+  mayachainLastblockRD: RD.RemoteData<Error, LastblockItems>
+  mimirRD: RD.RemoteData<Error, { [key: string]: number }>
 }
 export const InteractFormMaya = (props: Props) => {
   const {
@@ -134,7 +145,10 @@ export const InteractFormMaya = (props: Props) => {
     mayachainQuery,
     network,
     nodes: nodesRD,
-    poolShares
+    poolShares,
+    cacaoPoolProvider: cacaoPoolProviderRd,
+    mayachainLastblockRD,
+    mimirRD
   } = props
   const intl = useIntl()
 
@@ -144,6 +158,7 @@ export const InteractFormMaya = (props: Props) => {
 
   const [userNodeInfo, setUserNodeInfo] = useState<UserNodeInfo | undefined>(undefined)
   const [_amountToSend, setAmountToSend] = useState<BaseAmount>(ZERO_BASE_AMOUNT)
+  const [cacaoPoolAction, setCacaoPoolAction] = useState<Action>(Action.add)
 
   const nodes: NodeInfos = useMemo(
     () =>
@@ -153,7 +168,72 @@ export const InteractFormMaya = (props: Props) => {
       ),
     [nodesRD]
   )
+  const cacaoPoolProvider: CacaoPoolProvider = useMemo(() => {
+    const defaultCacaoPoolProvider: CacaoPoolProvider = {
+      address: '',
+      value: baseAmount(0),
+      pnl: baseAmount(0),
+      depositAmount: baseAmount(0),
+      withdrawAmount: baseAmount(0),
+      addHeight: O.none,
+      withdrawHeight: O.none,
+      walletType: undefined
+    }
 
+    if (!cacaoPoolProviderRd) {
+      return defaultCacaoPoolProvider
+    }
+
+    const provider = FP.pipe(
+      cacaoPoolProviderRd,
+      RD.getOrElse(() => {
+        return defaultCacaoPoolProvider
+      })
+    )
+    return provider
+  }, [cacaoPoolProviderRd])
+
+  // Maya maturity period logic similar to Thor
+  const useCacaoPoolProviderMaturity = (
+    cacaoPoolProviderRd: RD.RemoteData<Error, { addHeight: O.Option<number> }>,
+    mayachainLastblockRd: RD.RemoteData<Error, LastblockItems>,
+    mimirKeys: { [key: string]: number }
+  ) => {
+    return useMemo(() => {
+      return FP.pipe(
+        RD.combine(cacaoPoolProviderRd, mayachainLastblockRd),
+        RD.chain(([cacaoPoolProvider, lastblocks]) => {
+          return FP.pipe(
+            cacaoPoolProvider.addHeight,
+            O.fold(
+              () => RD.failure(new Error('addHeight is not available')),
+              (addHeight) => {
+                const mayaBlock = lastblocks.find((block) => block.mayachain)
+                return mayaBlock
+                  ? RD.success({
+                      addHeight,
+                      lastBlock: mayaBlock.mayachain,
+                      cacaoPoolMimir: mimirKeys['CACAOPOOLDEPOSITMATURITYBLOCKS']
+                    })
+                  : RD.failure(new Error('Maya block not found'))
+              }
+            )
+          )
+        }),
+        RD.map(({ addHeight, lastBlock, cacaoPoolMimir }) => {
+          return H.getBlocksLeft(lastBlock, addHeight, cacaoPoolMimir)
+        })
+      )
+    }, [cacaoPoolProviderRd, mayachainLastblockRd, mimirKeys])
+  }
+
+  const mimirKeys = FP.pipe(
+    mimirRD,
+    RD.getOrElse(() => ({}) as { [key: string]: number })
+  )
+
+  const cacaoPoolData = useCacaoPoolProviderMaturity(cacaoPoolProviderRd, mayachainLastblockRD, mimirKeys)
+  const cacaoPoolAvailable = mimirKeys['CACAOPOOLENABLED'] === 1
   useEffect(() => {
     let foundNodeInfo: UserNodeInfo | undefined = undefined
 
@@ -191,8 +271,12 @@ export const InteractFormMaya = (props: Props) => {
       case InteractType.Unbond:
       case InteractType.Leave:
         return ZERO_BASE_AMOUNT
+      case InteractType.CacaoPool: {
+        const amnt = cacaoPoolAction === Action.add ? _amountToSend : ZERO_BASE_AMOUNT
+        return amnt
+      }
     }
-  }, [_amountToSend, interactType])
+  }, [_amountToSend, interactType, cacaoPoolAction])
 
   const {
     state: interactState,
@@ -297,10 +381,17 @@ export const InteractFormMaya = (props: Props) => {
         O.fold(
           // Set maxAmount to zero if we dont know anything about fees
           () => ZERO_BASE_AMOUNT,
-          (fee) => balance.amount.minus(fee)
+          (fee) => {
+            if (interactType === InteractType.CacaoPool && cacaoPoolAction === Action.withdraw) {
+              return cacaoPoolProvider.value.gt(0) ? cacaoPoolProvider.value : ZERO_BASE_AMOUNT
+            } else {
+              // For other interaction types, use the balance amount minus fee
+              return balance.amount.minus(fee)
+            }
+          }
         )
       ),
-    [oFee, balance.amount]
+    [oFee, balance.amount, interactType, cacaoPoolAction, cacaoPoolProvider.value]
   )
 
   const [maxAmountPriceValue, setMaxAmountPriceValue] = useState<CryptoAmount>(new CryptoAmount(maxAmount, asset)) // Initial state can be null or a suitable default
@@ -312,7 +403,11 @@ export const InteractFormMaya = (props: Props) => {
       pricePool
     })
 
-    if ((maxAmount && interactType === InteractType.Bond) || interactType === InteractType.Custom) {
+    if (
+      (maxAmount && interactType === InteractType.Bond) ||
+      interactType === InteractType.Custom ||
+      interactType === InteractType.CacaoPool
+    ) {
       if (O.isSome(maxAmountPrice)) {
         const maxCryptoAmount = new CryptoAmount(maxAmountPrice.value, pricePool.asset)
         setMaxAmountPriceValue(maxCryptoAmount)
@@ -354,6 +449,15 @@ export const InteractFormMaya = (props: Props) => {
               }
             })
             return true
+          case InteractType.CacaoPool:
+            await H.validateCustomAmountInput({
+              input: value,
+              errors: {
+                msg1: intl.formatMessage({ id: 'wallet.errors.amount.shouldBeNumber' }),
+                msg2: intl.formatMessage({ id: 'wallet.errors.amount.shouldBeGreaterOrEqualThan' }, { amount: '0' })
+              }
+            })
+            return true
           case InteractType.Leave:
             return true
           default:
@@ -382,7 +486,7 @@ export const InteractFormMaya = (props: Props) => {
           setMayanameRegister(true)
         }
       } catch (error) {
-        console.log(error)
+        // Handle error silently or with appropriate error handling
       }
     },
     500
@@ -496,6 +600,14 @@ export const InteractFormMaya = (props: Props) => {
         createMemo = getWhitelistMemo(whitelisting, MAYAChain, mayaNodeAddress, whitelistAdd, feeInBasisPoints)
         break
       }
+      case InteractType.CacaoPool: {
+        createMemo = getProtocolPoolMemo({
+          action: cacaoPoolAction,
+          bps: H.getProtocolPoolWithdrawBps(cacaoPoolProvider.value, _amountToSend),
+          network
+        })
+        break
+      }
       case InteractType.Custom: {
         createMemo = currentMemo
         break
@@ -507,7 +619,17 @@ export const InteractFormMaya = (props: Props) => {
     }
     setMemo(createMemo)
     return createMemo
-  }, [currentMemo, watch, interactType, memo, whitelisting])
+  }, [
+    watch,
+    interactType,
+    whitelisting,
+    cacaoPoolAction,
+    cacaoPoolProvider.value,
+    _amountToSend,
+    network,
+    currentMemo,
+    memo
+  ])
 
   const onChangeInput = useCallback(
     async (value: BigNumber) => {
@@ -578,13 +700,18 @@ export const InteractFormMaya = (props: Props) => {
       aliasAddress: ''
     })
     setMemo('')
-    setAmountToSend(ONE_CACAO_BASE_AMOUNT)
+    // Reset amount appropriately based on interaction type
+    if (interactType === InteractType.Bond || interactType === InteractType.Whitelist) {
+      setAmountToSend(ONE_CACAO_BASE_AMOUNT)
+    } else {
+      setAmountToSend(ZERO_BASE_AMOUNT)
+    }
     setMayaname(O.none)
     setIsOwner(false)
     setMayanameQuoteValid(false)
     setMayanameUpdate(false)
     setMayanameAvailable(false)
-  }, [reset, resetInteractState, balance.walletAddress])
+  }, [reset, resetInteractState, balance.walletAddress, interactType])
 
   const renderConfirmationModal = useMemo(() => {
     const onSuccessHandler = () => {
@@ -704,6 +831,13 @@ export const InteractFormMaya = (props: Props) => {
         return whitelisting
           ? intl.formatMessage({ id: 'deposit.interact.actions.whitelist' })
           : intl.formatMessage({ id: 'common.remove' })
+      case InteractType.CacaoPool: {
+        const label =
+          cacaoPoolAction === Action.add
+            ? intl.formatMessage({ id: 'wallet.action.deposit' })
+            : intl.formatMessage({ id: 'deposit.withdraw.sym' })
+        return label
+      }
       case InteractType.MAYAName:
         if (isOwner) {
           return intl.formatMessage({ id: 'common.isUpdateMayaname' })
@@ -711,7 +845,7 @@ export const InteractFormMaya = (props: Props) => {
           return intl.formatMessage({ id: 'deposit.interact.actions.buyMayaname' })
         }
     }
-  }, [interactType, intl, isOwner, whitelisting])
+  }, [interactType, intl, isOwner, whitelisting, cacaoPoolAction])
 
   const uiFeesRD: UIFeesRD = useMemo(
     () =>
@@ -757,6 +891,14 @@ export const InteractFormMaya = (props: Props) => {
     resetForm()
     setMemo('')
   }, [interactType, resetForm])
+
+  // Reset form when switching between deposit and withdraw for CacaoPool
+  useEffect(() => {
+    if (interactType === InteractType.CacaoPool) {
+      resetForm()
+      setMemo('')
+    }
+  }, [cacaoPoolAction, resetForm, interactType])
 
   // Call estimate handler when mayaname becomes available
   useEffect(() => {
@@ -927,6 +1069,20 @@ export const InteractFormMaya = (props: Props) => {
           </div>
         )}
 
+        {/** Cacao Pool */}
+        {interactType === InteractType.CacaoPool && (
+          <div className="mb-2">
+            <span className="inline-block">
+              <Switch
+                labels={['DEPOSIT', 'WITHDRAW']}
+                colors={['#3B82F6', '#EF4444']}
+                onChange={(value) => {
+                  setCacaoPoolAction(value === 'DEPOSIT' ? Action.add : Action.withdraw)
+                }}
+              />
+            </span>
+          </div>
+        )}
         {/* Provider address input (whitelist only) */}
         {interactType === InteractType.Whitelist && (
           <>
@@ -974,7 +1130,7 @@ export const InteractFormMaya = (props: Props) => {
         )}
 
         {/* Amount input (BOND/UNBOND/CUSTOM only) */}
-        {interactType === InteractType.Custom && (
+        {(interactType === InteractType.Custom || interactType === InteractType.CacaoPool) && (
           <div className="w-full sm:max-w-[630px]">
             <Label color="input" size="big" textTransform="uppercase">
               {intl.formatMessage({ id: 'common.amount' })}
@@ -998,7 +1154,10 @@ export const InteractFormMaya = (props: Props) => {
                     decimal={CACAO_DECIMAL}
                     onChange={(value) => {
                       field.onChange(value)
-                      onChangeInput(value)
+                      // Skip onChangeInput for CacaoPool withdrawals to avoid precision loss
+                      if (!(interactType === InteractType.CacaoPool && cacaoPoolAction === Action.withdraw)) {
+                        onChangeInput(value)
+                      }
                     }}
                   />
                 )}
@@ -1008,13 +1167,20 @@ export const InteractFormMaya = (props: Props) => {
               )}
             </div>
             {/* max. amount button (BOND/CUSTOM only) */}
-            {interactType === InteractType.Custom && (
+            {(interactType === InteractType.Custom || interactType === InteractType.CacaoPool) && (
               <MaxBalanceButton
                 className="mb-10px"
                 color="neutral"
                 balance={{ amount: maxAmount, asset: asset }}
                 maxDollarValue={maxAmountPriceValue}
-                onClick={() => addMaxAmountHandler(maxAmount)}
+                onClick={() => {
+                  if (interactType === InteractType.CacaoPool && cacaoPoolAction === Action.withdraw) {
+                    // Use exact provider value to avoid precision loss
+                    addMaxAmountHandler(cacaoPoolProvider.value)
+                  } else {
+                    addMaxAmountHandler(maxAmount)
+                  }
+                }}
                 disabled={isLoading}
                 onChange={() => getMemo()}
               />
@@ -1325,7 +1491,26 @@ export const InteractFormMaya = (props: Props) => {
             {submitLabel}
           </FlatButton>
         )}
-        {interactType !== InteractType.MAYAName && (
+
+        {interactType === InteractType.CacaoPool && (
+          <FlatButton
+            className="mt-20px min-w-[200px]"
+            loading={isLoading}
+            disabled={
+              isLoading ||
+              !cacaoPoolAvailable ||
+              (cacaoPoolAction === Action.withdraw &&
+                cacaoPoolData &&
+                RD.isSuccess(cacaoPoolData) &&
+                cacaoPoolData.value.blocksLeft > 0)
+            }
+            type="submit"
+            size="large">
+            {submitLabel}
+          </FlatButton>
+        )}
+
+        {interactType !== InteractType.CacaoPool && interactType !== InteractType.MAYAName && (
           <FlatButton
             className="mt-10px min-w-[200px]"
             loading={isLoading}
@@ -1385,6 +1570,31 @@ export const InteractFormMaya = (props: Props) => {
                   return null
                 }),
                 O.toNullable
+              )}
+              {interactType === InteractType.CacaoPool && (
+                <>
+                  <div className="ml-[-2px] flex w-full justify-between pt-10px font-mainBold text-[14px]">
+                    {intl.formatMessage({ id: 'protocolPool.detail.daysLeft' })}
+                    <div className="truncate pl-10px font-main text-[12px]">
+                      {RD.fold(
+                        () => <p>{emptyString}</p>,
+                        () => <p>{emptyString}</p>,
+                        (error: Error) => (
+                          <p>
+                            {intl.formatMessage({ id: 'common.error' })}: {error.message}
+                          </p>
+                        ),
+                        (data: { daysLeft: number; blocksLeft: number }) => (
+                          <div>
+                            <p>
+                              {intl.formatMessage({ id: 'common.time.days' }, { days: `${data.daysLeft.toFixed(1)}` })}
+                            </p>
+                          </div>
+                        )
+                      )(cacaoPoolData)}
+                    </div>
+                  </div>
+                </>
               )}
               <div className="ml-[-2px] flex w-full justify-between pt-10px font-mainBold text-[14px]">
                 {intl.formatMessage({ id: 'common.amount' })}

@@ -35,7 +35,7 @@ import {
   Action,
   getBondMemo,
   getLeaveMemo,
-  getRunePoolMemo,
+  getProtocolPoolMemo,
   getUnbondMemo,
   getWhitelistMemo
 } from '../../../../helpers/memoHelper'
@@ -70,6 +70,7 @@ import { InfoIcon } from '../../../uielements/info'
 import { Input, InputBigNumber } from '../../../uielements/input'
 import { Label } from '../../../uielements/label'
 import { RadioGroup, Radio } from '../../../uielements/radio'
+import { Switch } from '../../../uielements/switch'
 import { Tooltip } from '../../../uielements/tooltip'
 import { validateTxAmountInput } from '../TxForm.util'
 import * as H from './Interact.helpers'
@@ -276,6 +277,9 @@ export const InteractFormThor = ({
         const amnt = runePoolAction === Action.add ? _amountToSend : ZERO_BASE_AMOUNT
         return amnt
       }
+      case InteractType.CacaoPool: {
+        return ZERO_BASE_AMOUNT
+      }
     }
   }, [_amountToSend, interactType, runePoolAction])
 
@@ -376,7 +380,7 @@ export const InteractFormThor = ({
   const renderRunePoolWarning = useMemo(
     () => (
       <Label size="big" color="warning">
-        {intl.formatMessage({ id: 'runePool.detail.warning' })}
+        {intl.formatMessage({ id: 'protocolPool.detail.warning' })}
       </Label>
     ),
     [intl]
@@ -624,9 +628,9 @@ export const InteractFormThor = ({
         break
       }
       case InteractType.RunePool: {
-        createMemo = getRunePoolMemo({
+        createMemo = getProtocolPoolMemo({
           action: runePoolAction,
-          bps: H.getRunePoolWithdrawBps(runePoolProvider.value, _amountToSend),
+          bps: H.getProtocolPoolWithdrawBps(runePoolProvider.value, _amountToSend),
           network
         })
         break
@@ -710,6 +714,7 @@ export const InteractFormThor = ({
     setThornameQuoteValid(false)
     setThornameUpdate(false)
     setThornameAvailable(false)
+    setRunePoolAction(Action.add)
   }, [reset, resetInteractState, watch, balance.walletAddress])
 
   const renderConfirmationModal = useMemo(() => {
@@ -926,6 +931,14 @@ export const InteractFormThor = ({
     setMemo('')
   }, [interactType, resetForm])
 
+  // Reset form when switching between deposit and withdraw for RunePool
+  useEffect(() => {
+    if (interactType === InteractType.RunePool) {
+      resetForm()
+      setMemo('')
+    }
+  }, [runePoolAction, resetForm, interactType])
+
   const [showDetails, setShowDetails] = useState<boolean>(true)
   const bondBaseAmount = userNodeInfo?.bondAmount ? userNodeInfo.bondAmount : baseAmount(0)
 
@@ -993,22 +1006,20 @@ export const InteractFormThor = ({
             </div>
           </div>
         )}
-        {/** Rune Pool Only */}
+        {/** Rune Pool */}
         {interactType === InteractType.RunePool && (
-          <div>
+          <div className="mb-2">
             <span className="inline-block">
-              <SwitchButton
-                active={runePoolAction === Action.add}
-                onChange={(active) => setRunePoolAction(active ? Action.add : Action.withdraw)}
+              <Switch
+                labels={['DEPOSIT', 'WITHDRAW']}
+                colors={['#3B82F6', '#EF4444']}
+                onChange={(value) => {
+                  setRunePoolAction(value === 'DEPOSIT' ? Action.add : Action.withdraw)
+                }}
               />
             </span>
             <span className="ml-2 inline-block">
-              <Label color="input" size="big" textTransform="uppercase">
-                {runePoolAction === Action.add
-                  ? intl.formatMessage({ id: 'runePool.detail.titleDeposit' })
-                  : intl.formatMessage({ id: 'runePool.detail.titleWithdraw' })}
-              </Label>
-              {!runePoolAvialable && intl.formatMessage({ id: 'runePool.detail.availability' })}
+              {!runePoolAvialable && intl.formatMessage({ id: 'protocolPool.detail.availability' })}
             </span>
             {runePoolProvider.value.gt(0) && runePoolAction === Action.add && renderRunePoolWarning}
           </div>
@@ -1479,7 +1490,7 @@ export const InteractFormThor = ({
 
         {interactType === InteractType.RunePool && (
           <FlatButton
-            className="mt-10px min-w-[200px]"
+            className="mt-20px min-w-[200px]"
             loading={isLoading}
             disabled={
               isLoading ||
@@ -1568,7 +1579,7 @@ export const InteractFormThor = ({
               {interactType === InteractType.RunePool && (
                 <>
                   <div className="ml-[-2px] flex w-full justify-between pt-10px font-mainBold text-[14px]">
-                    {intl.formatMessage({ id: 'runePool.detail.daysLeft' })}
+                    {intl.formatMessage({ id: 'protocolPool.detail.daysLeft' })}
                     <div className="truncate pl-10px font-main text-[12px]">
                       {RD.fold(
                         () => <p>{emptyString}</p>,
