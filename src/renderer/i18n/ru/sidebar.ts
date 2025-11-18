@@ -1,14 +1,13 @@
 import { SidebarMessages } from '../types'
 
 const sidebar: SidebarMessages = {
-  // TODO: Need Russian translation by native speaker
-  'sidebar.tooltip.website': 'Asgardex Website',
-  'sidebar.tooltip.github': 'Asgardex GitHub',
-  'sidebar.tooltip.discord': 'Asgardex Discord',
-  'sidebar.tooltip.twitter': 'Asgardex X',
-  'sidebar.tooltip.license': 'MIT License',
-  'sidebar.tooltip.commitHash': 'Commit Hash',
-  'sidebar.tooltip.playground': 'Playground'
+  'sidebar.tooltip.website': 'Веб-сайт Asgardex',
+  'sidebar.tooltip.github': 'GitHub Asgardex',
+  'sidebar.tooltip.discord': 'Discord Asgardex',
+  'sidebar.tooltip.twitter': 'X Asgardex',
+  'sidebar.tooltip.license': 'Лицензия MIT',
+  'sidebar.tooltip.commitHash': 'Хеш коммита',
+  'sidebar.tooltip.playground': 'Песочница'
 }
 
 export default sidebar

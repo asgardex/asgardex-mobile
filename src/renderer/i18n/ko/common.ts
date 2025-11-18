@@ -214,16 +214,15 @@ const common: CommonMessages = {
   'common.runeScan': 'RuneScan',
   'common.mayaScan': 'MayaScan',
   'common.whitelist': 'Whitelist',
-  // TODO: Need Korean translation by native speaker
-  'common.fetchFromLedger': 'Fetch from Ledger',
+  'common.fetchFromLedger': 'Ledger에서 가져오기',
   'common.nativeSegwit': 'Native Segwit',
   'common.taproot': 'Taproot',
-  'common.protocols': 'Protocols',
-  'common.resetToDefault': 'Reset to streaming default',
-  'common.importTokens': 'Import Tokens',
-  'common.searchToken': 'Search token',
+  'common.protocols': '프로토콜',
+  'common.resetToDefault': '기본값으로 재설정',
+  'common.importTokens': '토큰 가져오기',
+  'common.searchToken': '토큰 검색',
   'common.warning.token.import':
-    'Anyone can create tokens, including fake versions of existing ones. Please be cautious of scams and security risks.'
+    '누구나 토큰을 생성할 수 있으며, 기존 토큰의 가짜 버전도 포함됩니다. 사기 및 보안 위험에 주의하시기 바랍니다.'
 }
 
 export default common

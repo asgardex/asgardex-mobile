@@ -1,14 +1,13 @@
 import { SidebarMessages } from '../types'
 
 const sidebar: SidebarMessages = {
-  // TODO: Need Korean translation by native speaker
-  'sidebar.tooltip.website': 'Asgardex Website',
+  'sidebar.tooltip.website': 'Asgardex 웹사이트',
   'sidebar.tooltip.github': 'Asgardex GitHub',
   'sidebar.tooltip.discord': 'Asgardex Discord',
   'sidebar.tooltip.twitter': 'Asgardex X',
-  'sidebar.tooltip.license': 'MIT License',
-  'sidebar.tooltip.commitHash': 'Commit Hash',
-  'sidebar.tooltip.playground': 'Playground'
+  'sidebar.tooltip.license': 'MIT 라이선스',
+  'sidebar.tooltip.commitHash': '커밋 해시',
+  'sidebar.tooltip.playground': '플레이그라운드'
 }
 
 export default sidebar

@@ -64,8 +64,8 @@ const settings: SettingMessages = {
   'settings.expert.midgardMaya.title': 'Midgard Mayachain',
   'settings.expert.mayanodeApi.title': 'API de MayaNode',
   'settings.ledgerMode.lockWalletWarning': 'Bloquea la cartera primero para entrar en el modo Ledger',
-  'settings.wallet.whitelist': 'Whitelist',
-  'settings.wallet.customToken': 'Custom token'
+  'settings.wallet.whitelist': 'Lista blanca',
+  'settings.wallet.customToken': 'Token personalizado'
 }
 
 export default settings

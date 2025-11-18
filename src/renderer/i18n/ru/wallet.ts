@@ -118,7 +118,7 @@ const wallet: WalletMessages = {
   // TODO: Need Russian translation by native speaker
   'wallet.derivationPath.nativeSegwit': 'Native Segwit P2WPKH',
   'wallet.derivationPath.taproot': 'Taproot P2TR',
-  'wallet.ledger.fetchDescription': 'Get address from your hardware wallet'
+  'wallet.ledger.fetchDescription': 'Получить адрес с вашего аппаратного кошелька'
 }
 
 export default wallet

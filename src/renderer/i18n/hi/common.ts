@@ -214,15 +214,14 @@ const common: CommonMessages = {
   'common.runeScan': 'RuneScan',
   'common.mayaScan': 'MayaScan',
   'common.whitelist': 'Whitelist',
-  // TODO: Need Hindi translation by native speaker
-  'common.fetchFromLedger': 'Fetch from Ledger',
+  'common.fetchFromLedger': 'Ledger से प्राप्त करें',
   'common.nativeSegwit': 'Native Segwit',
   'common.taproot': 'Taproot',
-  'common.protocols': 'Protocols',
-  'common.resetToDefault': 'Reset to streaming default',
-  'common.importTokens': 'Import Tokens',
-  'common.searchToken': 'Search token',
+  'common.protocols': 'प्रोटोकॉल',
+  'common.resetToDefault': 'डिफ़ॉल्ट पर रीसेट करें',
+  'common.importTokens': 'टोकन आयात करें',
+  'common.searchToken': 'टोकन खोजें',
   'common.warning.token.import':
-    'Anyone can create tokens, including fake versions of existing ones. Please be cautious of scams and security risks.'
+    'कोई भी टोकन बना सकता है, जिसमें मौजूदा टोकन के नकली संस्करण शामिल हैं। कृपया घोटालों और सुरक्षा जोखिमों से सावधान रहें।'
 }
 export default common
