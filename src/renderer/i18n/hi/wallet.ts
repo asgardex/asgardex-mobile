@@ -118,7 +118,7 @@ const wallet: WalletMessages = {
   // TODO: Need Hindi translation by native speaker
   'wallet.derivationPath.nativeSegwit': 'Native Segwit P2WPKH',
   'wallet.derivationPath.taproot': 'Taproot P2TR',
-  'wallet.ledger.fetchDescription': 'Get address from your hardware wallet'
+  'wallet.ledger.fetchDescription': 'अपने हार्डवेयर वॉलेट से पता प्राप्त करें'
 }
 
 export default wallet

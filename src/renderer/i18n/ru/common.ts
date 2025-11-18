@@ -215,16 +215,15 @@ const common: CommonMessages = {
   'common.runeScan': 'RuneScan',
   'common.mayaScan': 'MayaScan',
   'common.whitelist': 'Whitelist',
-  // TODO: Need Russian translation by native speaker
-  'common.fetchFromLedger': 'Fetch from Ledger',
+  'common.fetchFromLedger': 'Получить с Ledger',
   'common.nativeSegwit': 'Native Segwit',
   'common.taproot': 'Taproot',
-  'common.protocols': 'Protocols',
-  'common.resetToDefault': 'Reset to streaming default',
-  'common.importTokens': 'Import Tokens',
-  'common.searchToken': 'Search token',
+  'common.protocols': 'Протоколы',
+  'common.resetToDefault': 'Сбросить к значениям по умолчанию',
+  'common.importTokens': 'Импортировать токены',
+  'common.searchToken': 'Поиск токена',
   'common.warning.token.import':
-    'Anyone can create tokens, including fake versions of existing ones. Please be cautious of scams and security risks.'
+    'Любой может создавать токены, включая поддельные версии существующих. Пожалуйста, будьте осторожны с мошенничеством и рисками безопасности.'
 }
 
 export default common

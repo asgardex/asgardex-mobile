@@ -221,10 +221,10 @@ const common: CommonMessages = {
   'common.taproot': 'Taproot',
   'common.protocols': 'Protokolle',
   'common.resetToDefault': 'Auf Standard zurücksetzen',
-  'common.importTokens': 'Import Tokens',
-  'common.searchToken': 'Search token',
+  'common.importTokens': 'Token importieren',
+  'common.searchToken': 'Token suchen',
   'common.warning.token.import':
-    'Anyone can create tokens, including fake versions of existing ones. Please be cautious of scams and security risks.'
+    'Jeder kann Token erstellen, einschließlich gefälschter Versionen bestehender Token. Bitte seien Sie vorsichtig bei Betrügereien und Sicherheitsrisiken.'
 }
 
 export default common

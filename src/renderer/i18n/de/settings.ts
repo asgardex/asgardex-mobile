@@ -67,7 +67,7 @@ const settings: SettingMessages = {
   'settings.expert.mayanodeApi.title': 'MayaNode-API',
   'settings.ledgerMode.lockWalletWarning': 'Wallet zuerst sperren, um in den Ledger-Modus zu wechseln',
   'settings.wallet.whitelist': 'Whitelist',
-  'settings.wallet.customToken': 'Custom token'
+  'settings.wallet.customToken': 'Benutzerdefinierter Token'
 }
 
 export default settings

@@ -1,9 +1,8 @@
 import { NetstatusMessages } from '../types'
 
 const netstatus: NetstatusMessages = {
-  // TODO: Need Russian translation by native speaker
-  'netstatus.midgard.title': 'Midgard API',
-  'netstatus.midgardMaya.title': 'Midgard Mayachain API'
+  'netstatus.midgard.title': 'API Midgard',
+  'netstatus.midgardMaya.title': 'API Midgard Mayachain'
 }
 
 export default netstatus
