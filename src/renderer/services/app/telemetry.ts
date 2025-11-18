@@ -1,6 +1,6 @@
 import { KeystoreId } from '../../../shared/api/types'
-import { safeStringify } from '../../../shared/utils/safeStringify'
 import { isError } from '../../../shared/utils/guard'
+import { safeStringify } from '../../../shared/utils/safeStringify'
 import { createLogger } from './logging'
 
 const telemetryLogger = createLogger('telemetry')
@@ -325,7 +325,10 @@ const isTestEnv = (): boolean => {
   try {
     const envMode = (import.meta as unknown as { env?: { MODE?: string } } | undefined)?.env?.MODE
     if (envMode === 'test') return true
-  } catch (_) {}
+  } catch (error) {
+    const message = isError(error) ? error.message : safeStringify(error)
+    void telemetryLogger.debug('Failed to detect Vite env while checking test mode', { error: message })
+  }
   return typeof process !== 'undefined' && process.env?.NODE_ENV === 'test'
 }
 

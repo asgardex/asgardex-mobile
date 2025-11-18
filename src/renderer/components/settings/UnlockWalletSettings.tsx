@@ -4,12 +4,12 @@ import { function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
+import { isLedgerUiEnabled } from '../../../shared/config/ledger'
 import { useWalletContext } from '../../contexts/WalletContext'
 import * as walletRoutes from '../../routes/wallet'
 import { KeystoreState, isKeystoreUnlocked } from '../../services/wallet/types'
 import { hasImportedKeystore, isLocked } from '../../services/wallet/util'
 import { FlatButton, BorderButton } from '../uielements/button'
-import { isLedgerUiEnabled } from '../../../shared/config/ledger'
 
 type Props = {
   keystoreState: KeystoreState

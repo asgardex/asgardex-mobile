@@ -22,7 +22,7 @@ import { WalletType } from '../wallet/types'
 import { MOCK_KEYSTORE } from './wallet'
 
 const mockSecureStorage: SecureStorageApi = {
-  write: async ({ secureKeyId, payload }): Promise<{ secureKeyId: string; updatedAt: string }> => ({
+  write: async ({ secureKeyId, payload: _payload }): Promise<{ secureKeyId: string; updatedAt: string }> => ({
     secureKeyId: secureKeyId ?? 'mock-secure-key',
     updatedAt: new Date().toISOString()
   }),

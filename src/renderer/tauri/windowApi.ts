@@ -382,7 +382,7 @@ const normalizeUnknownError = (error: unknown): Error => {
   if (isError(error)) return error
   const normalized = new Error(toErrorMessage(error))
   if (error && typeof error === 'object') {
-    ; (normalized as Error & { cause?: unknown }).cause = error
+    ;(normalized as Error & { cause?: unknown }).cause = error
   }
   return normalized
 }
@@ -457,8 +457,15 @@ const secureStorageApi: SecureStorageApi = {
     try {
       parsed = parseStoredSecurePayload(raw)
     } catch (error) {
-      // Surface version mismatch and other parse errors to the caller; keystore
-      // service will emit dedicated telemetry for version mismatches.
+      const metadata: Record<string, string> = {
+        reason: 'parse_failed',
+        message: toErrorMessage(error)
+      }
+      recordSecureStorageEvent({
+        action: 'version_mismatch',
+        secureKeyId,
+        metadata
+      })
       throw error
     }
 
@@ -881,7 +888,7 @@ const openExternalWithWhitelist = async (target: string): Promise<OpenExternalRe
 }
 
 const apiLang: ApiLang = {
-  update: () => { }
+  update: () => {}
 }
 
 const apiUrl: ApiUrl = {

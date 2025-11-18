@@ -6,6 +6,7 @@ import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
+import { isLedgerUiEnabled } from '../../../../shared/config/ledger'
 import FolderKeyIcon from '../../../assets/svg/folder-key.svg?react'
 import AsgardexLogo from '../../../assets/svg/logo-asgardex.svg?react'
 import SproutIcon from '../../../assets/svg/sprout.svg?react'
@@ -15,7 +16,6 @@ import { BackLinkButton } from '../../../components/uielements/button'
 import { useWalletContext } from '../../../contexts/WalletContext'
 import * as walletRoutes from '../../../routes/wallet'
 import { hasImportedKeystore } from '../../../services/wallet/util'
-import { isLedgerUiEnabled } from '../../../../shared/config/ledger'
 
 export const NoWalletView = () => {
   const navigate = useNavigate()

@@ -39,6 +39,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
 import { KeystoreId, TrustedAddress, TrustedAddresses } from '../../../shared/api/types'
+import { isLedgerUiEnabled } from '../../../shared/config/ledger'
 import { getDerivationPath as getEvmDerivationPath } from '../../../shared/evm/ledger'
 import { EvmHDMode } from '../../../shared/evm/types'
 import { chainToString, EnabledChain, isSupportedChain } from '../../../shared/utils/chain'
@@ -63,6 +64,7 @@ import { getWalletNamesFromKeystoreWallets, isEnabledLedger } from '../../helper
 import { useSubscriptionState } from '../../hooks/useSubscriptionState'
 import * as appRoutes from '../../routes/app'
 import * as walletRoutes from '../../routes/wallet'
+import { resolveExportSuccessMessageId } from '../../services/app/notifications'
 import { userAddresses$, addAddress, removeAddress } from '../../services/storage/userAddresses'
 import { userChains$, addChain, removeChain } from '../../services/storage/userChains'
 import {
@@ -81,7 +83,6 @@ import {
   VerifiedLedgerAddressRD
 } from '../../services/wallet/types'
 import { walletTypeToI18n } from '../../services/wallet/util'
-import { isLedgerUiEnabled } from '../../../shared/config/ledger'
 import { useApp } from '../../store/app/hooks'
 import { AddressEllipsis } from '../uielements/addressEllipsis'
 import { ChainIcon } from '../uielements/assets/chainIcon/ChainIcon'
@@ -99,7 +100,6 @@ import { EditableWalletName } from '../uielements/wallet/EditableWalletName'
 import { AutoComplete } from './AutoComplete'
 import { WalletIndexInput } from './WalletIndexInput'
 import { WhitelistModal } from './WhitelistModal'
-import { resolveExportSuccessMessageId } from '../../services/app/notifications'
 
 // Convert derivation path index to HDMode for chains that support multiple paths
 const derivationIndexToHDMode = (chain: Chain, index: number): HDMode => {
@@ -939,7 +939,8 @@ export const WalletSettings = (props: Props): JSX.Element => {
       intl,
       trustedAddresses?.addresses,
       renderTrustedAddresses,
-      toggleChain
+      toggleChain,
+      ledgerUiEnabled
     ]
   )
 

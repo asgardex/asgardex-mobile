@@ -1,9 +1,9 @@
 import { option as O } from 'fp-ts'
 
 import { isBiometricEnabled } from '../../../shared/config/biometric'
+import { BiometricDowngradeReason } from '../../../shared/errors/biometric'
 import { getDeviceInfo, isMobile } from '../../../shared/utils/platform'
 import { observableState } from '../../helpers/stateHelper'
-import { BiometricDowngradeReason } from '../../../shared/errors/biometric'
 
 const SECURE_STORAGE_ENV_KEY = 'VITE_TAURI_SECURE_STORAGE_ENABLED'
 

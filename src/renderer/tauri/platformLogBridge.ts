@@ -6,8 +6,8 @@ import {
   warn as pluginWarn
 } from '@tauri-apps/plugin-log'
 
-import { safeStringify } from '../../shared/utils/safeStringify'
 import { isError } from '../../shared/utils/guard'
+import { safeStringify } from '../../shared/utils/safeStringify'
 
 type ConsoleMethod = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'log'
 

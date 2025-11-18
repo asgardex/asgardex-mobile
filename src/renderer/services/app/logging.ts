@@ -1,7 +1,7 @@
 import { info as pluginInfo, warn as pluginWarn, error as pluginError } from '@tauri-apps/plugin-log'
 
-import { safeStringify } from '../../../shared/utils/safeStringify'
 import { isError } from '../../../shared/utils/guard'
+import { safeStringify } from '../../../shared/utils/safeStringify'
 
 type LoggerContext = Record<string, unknown>
 type NormalizedContext = Record<string, string>
