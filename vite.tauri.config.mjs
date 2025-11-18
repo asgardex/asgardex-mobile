@@ -2,10 +2,10 @@ import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import inject from '@rollup/plugin-inject'
 import react from '@vitejs/plugin-react'
 import simpleGit from 'simple-git'
 import { defineConfig } from 'vite'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgr from 'vite-plugin-svgr'
 import wasm from 'vite-plugin-wasm'
 
@@ -39,12 +39,7 @@ export default defineConfig(async ({ mode }) => {
             vendor: ['react', 'react-dom', 'react-router-dom'],
             crypto: ['crypto-browserify', 'stream-browserify', 'readable-stream']
           }
-        },
-        plugins: [
-          inject({
-            Buffer: ['buffer', 'Buffer']
-          })
-        ]
+        }
       },
       commonjsOptions: {
         transformMixedEsModules: true,
@@ -56,28 +51,40 @@ export default defineConfig(async ({ mode }) => {
     },
     resolve: {
       alias: {
-        process: 'process/browser',
-        stream: 'stream-browserify',
-        crypto: 'crypto-browserify',
-        assert: 'assert',
-        path: path.resolve(__dirname, 'empty.js'),
-        url: path.resolve(__dirname, 'empty.js'),
-        https: path.resolve(__dirname, 'empty.js'),
-        http: path.resolve(__dirname, 'empty.js'),
-        zlib: path.resolve(__dirname, 'empty.js'),
+        // Use asm.js build to avoid WASM top-level await issues with CommonJS consumers (bip32, bitcoinjs-lib)
+        'tiny-secp256k1': '@bitcoin-js/tiny-secp256k1-asmjs',
         // Force @mayaprotocol/zcash-js to use CommonJS build instead of browser bundle
         '@mayaprotocol/zcash-js': path.resolve(__dirname, 'node_modules/@mayaprotocol/zcash-js/dist/src/index.js')
       }
     },
     optimizeDeps: {
-      include: ['process', 'buffer', 'assert', '@mayaprotocol/zcash-js'],
-      esbuildOptions: {
-        inject: ['./src/shims/buffer-shim.js']
-      }
+      include: ['@mayaprotocol/zcash-js']
     },
-    plugins: [wasm(), react(), svgr()],
+    plugins: [
+      wasm(),
+      react(),
+      svgr(),
+      // Node.js polyfills for browser compatibility.
+      // Required because crypto dependencies (pbkdf2, readable-stream@2.x, hash-base)
+      // use Node built-ins like `util`, `stream`, `crypto`, and `process.version`.
+      // These packages are pinned via resolutions in package.json for security fixes,
+      // but their latest versions still depend on Node APIs.
+      // See: https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility
+      nodePolyfills({
+        include: ['process', 'buffer', 'stream', 'crypto', 'assert', 'util', 'events'],
+        globals: {
+          Buffer: true,
+          global: true,
+          process: true
+        }
+      })
+    ],
     define: {
       'process.env': {},
+      // Required by readable-stream@2.x which calls process.version.slice() at init time.
+      // Without this, the app crashes with "Cannot read properties of undefined (reading 'slice')".
+      'process.version': JSON.stringify('v18.0.0'),
+      'process.browser': JSON.stringify(true),
       global: 'globalThis',
       $COMMIT_HASH: JSON.stringify(commitHash || 'dev'),
       $VERSION: JSON.stringify(pkg.version),
