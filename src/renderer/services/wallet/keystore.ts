@@ -13,13 +13,19 @@ import {
   SecureKeystoreWallet
 } from '../../../shared/api/io'
 import { KeystoreId, SecureStorageApi } from '../../../shared/api/types'
-import { safeStringify } from '../../../shared/utils/safeStringify'
 import { isError } from '../../../shared/utils/guard'
+import { safeStringify } from '../../../shared/utils/safeStringify'
 import { liveData } from '../../helpers/rx/liveData'
 import { observableState, triggerStream } from '../../helpers/stateHelper'
-import { recordSecureStorageEvent } from '../app/telemetry'
 import { createLogger } from '../app/logging'
+import { recordSecureStorageEvent } from '../app/telemetry'
 import { INITIAL_KEYSTORE_STATE } from './const'
+import { getKeystoreMobileBridge } from './keystore-mobile'
+import {
+  createSecureStorageRequiredError,
+  createSecureStorageWriteError,
+  getSecureStorageFailureReason
+} from './secureStorageErrors'
 import {
   KeystoreService,
   KeystoreState,
@@ -34,19 +40,12 @@ import {
   isKeystoreUnlocked
 } from './types'
 import {
-  getKeystore,
   getKeystoreWalletName,
   getKeystoreId,
   hasImportedKeystore,
   getLockedData,
   getInitialKeystoreData
 } from './util'
-import { getKeystoreMobileBridge } from './keystore-mobile'
-import {
-  createSecureStorageRequiredError,
-  createSecureStorageWriteError,
-  getSecureStorageFailureReason
-} from './secureStorageErrors'
 
 /**
  * State of importing a keystore wallet
@@ -73,6 +72,19 @@ const runtimeKeystoreCache = new Map<KeystoreId, Keystore>()
 
 const RUNTIME_CACHE_IDLE_MS = 2 * 60 * 1000
 let runtimeCacheIdleTimer: ReturnType<typeof setTimeout> | null = null
+let tauriFocusUnlisten: (() => void) | null = null
+let windowUnloadCleanupRegistered = false
+
+const cleanupTauriFocusListener = () => {
+  if (tauriFocusUnlisten) {
+    try {
+      tauriFocusUnlisten()
+    } catch {
+      // ignore cleanup failures
+    }
+    tauriFocusUnlisten = null
+  }
+}
 
 const clearRuntimeCacheIdleTimer = () => {
   if (runtimeCacheIdleTimer) {
@@ -98,11 +110,11 @@ const scheduleRuntimeCacheIdleClear = () => {
 
 const handleVisibilityChange = () => {
   if (typeof document.visibilityState === 'string' && document.visibilityState !== 'visible') {
+    cleanupTauriFocusListener()
     clearAllRuntimeCache()
   }
 }
 
-let tauriFocusUnlisten: (() => void) | null = null
 let visibilityHandlersRegistered = false
 
 const ensureVisibilityLifecycleHandlers = () => {
@@ -130,6 +142,10 @@ const ensureVisibilityLifecycleHandlers = () => {
               // ignore unlisten errors
             }
             tauriFocusUnlisten = null
+          }
+          if (!windowUnloadCleanupRegistered && typeof window.addEventListener === 'function') {
+            window.addEventListener('beforeunload', cleanupTauriFocusListener, { once: true })
+            windowUnloadCleanupRegistered = true
           }
         } catch {
           // Ignore focus subscription failures; visibility handlers remain active.

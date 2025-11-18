@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- nosemgrep semgrep/swift.insecure-communication.ats.ats-pinning: Dynamic node endpoints prevent safe static ATS pinning; defaults already enforce HTTPS. -->
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>

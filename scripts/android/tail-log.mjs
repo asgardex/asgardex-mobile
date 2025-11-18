@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { execSync, spawn } from 'node:child_process'
 import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const LOG_RELATIVE_PATH = 'logs/ASGARDEX.log'
 
@@ -10,8 +10,17 @@ function repoRoot() {
   return path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 }
 
+function resolveConfigPath() {
+  const candidate = path.resolve(repoRoot(), 'src-tauri', 'tauri.conf.json')
+  if (!candidate.startsWith(repoRoot())) {
+    throw new Error('Refusing to read config outside repo root')
+  }
+  return candidate
+}
+
 function loadPackageId() {
-  const configPath = path.join(repoRoot(), 'src-tauri', 'tauri.conf.json')
+  const configPath = resolveConfigPath()
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   const json = JSON.parse(readFileSync(configPath, 'utf8'))
   return json.identifier || 'org.thorchain.asgardex'
 }

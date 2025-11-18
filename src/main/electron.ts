@@ -15,9 +15,9 @@ import {
   ipcLedgerSendTxParamsIO
 } from '../shared/api/io'
 import type { IPCExportKeystoreParams, IPCLedgerAddressParams, StoreFileName } from '../shared/api/types'
+import { getLedgerFlag } from '../shared/config/ledger'
 import { DEFAULT_STORAGES } from '../shared/const'
 import type { Locale } from '../shared/i18n/types'
-import { getLedgerFlag } from '../shared/config/ledger'
 import { registerAppCheckUpdatedHandler } from './api/appUpdate'
 import { getFileStoreService } from './api/fileStore'
 import { exportKeystore, initKeystoreWallets, loadKeystore, saveKeystoreWallets } from './api/keystore'
