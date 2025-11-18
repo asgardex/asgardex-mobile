@@ -1,0 +1,134 @@
+name: Android Build & Publish
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-android-internal:
+    name: Build & publish internal AAB
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_NDK_VERSION: 26.1.10909125
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Derive version and changelog
+        run: |
+          VERSION=$(jq -r .version package.json)
+          # Base code from semver (1.41.3 → 1041003), then add run number for uniqueness
+          # Formula: major * 1000000 + minor * 1000 + patch
+          BASE_CODE=$(echo "$VERSION" | awk -F. '{printf "%d%03d%03d", $1, $2, $3}')
+          RUN_SUFFIX=$(( ${{ github.run_number }} % 1000 ))
+          VERSION_CODE="${BASE_CODE}$(printf '%03d' $RUN_SUFFIX)"
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "APP_VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
+          echo "Using versionCode: $VERSION_CODE (base: $BASE_CODE, run: $RUN_SUFFIX)"
+          mkdir -p whatsnew
+          perl -0777 -ne "print \$1 if /^# $VERSION\\b(.*?)(?=^# \\d|\\z)/ms" CHANGELOG.md > whatsnew/en-US.txt
+          if [ ! -s whatsnew/en-US.txt ]; then echo "Internal build $VERSION" > whatsnew/en-US.txt; fi
+          head -c 500 whatsnew/en-US.txt > whatsnew/en-US.txt.tmp && mv whatsnew/en-US.txt.tmp whatsnew/en-US.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android components
+        run: |
+          sdk_root="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          sdkmanager_bin="$sdk_root/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$sdkmanager_bin" --licenses >/dev/null
+          yes | "$sdkmanager_bin" --install \
+            "build-tools;36.0.0" \
+            "platform-tools" \
+            "platforms;android-36" \
+            "ndk;${ANDROID_NDK_VERSION}"
+
+      - name: Configure NDK paths
+        run: |
+          echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Add Android Rust targets
+        run: |
+          rustup target add \
+            aarch64-linux-android \
+            armv7-linux-androideabi \
+            i686-linux-android \
+            x86_64-linux-android
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install HID build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudev-dev libusb-1.0-0-dev
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Prepare signing keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_ALIAS_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.keystore"
+          echo "ANDROID_UPLOAD_KEYSTORE=$RUNNER_TEMP/upload.keystore" >> $GITHUB_ENV
+          echo "ANDROID_UPLOAD_KEYSTORE_PASSWORD=$ANDROID_KEYSTORE_PASSWORD" >> $GITHUB_ENV
+          echo "ANDROID_UPLOAD_KEY_ALIAS=$ANDROID_KEY_ALIAS" >> $GITHUB_ENV
+          echo "ANDROID_UPLOAD_KEY_PASSWORD=$ANDROID_KEY_ALIAS_PASSWORD" >> $GITHUB_ENV
+
+      - name: Build Android AAB
+        env:
+          ANDROID_UPLOAD_KEYSTORE: ${{ env.ANDROID_UPLOAD_KEYSTORE }}
+          ANDROID_UPLOAD_KEYSTORE_PASSWORD: ${{ env.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+          ANDROID_UPLOAD_KEY_ALIAS: ${{ env.ANDROID_UPLOAD_KEY_ALIAS }}
+          ANDROID_UPLOAD_KEY_PASSWORD: ${{ env.ANDROID_UPLOAD_KEY_PASSWORD }}
+          TAURI_ANDROID_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
+        run: |
+          echo "Building with versionCode: $TAURI_ANDROID_VERSION_CODE"
+          yarn tauri android build --aab true --ci
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-universal-aab
+          path: |
+            src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab
+            src-tauri/gen/android/app/build/outputs/mapping/universalRelease/mapping.txt
+          if-no-files-found: error
+
+      - name: Publish to Play internal track
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: org.thorchain.asgardex
+          releaseFiles: src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab
+          track: internal
+          status: draft
+          releaseName: v${{ env.APP_VERSION }}
+          whatsNewDirectory: whatsnew
