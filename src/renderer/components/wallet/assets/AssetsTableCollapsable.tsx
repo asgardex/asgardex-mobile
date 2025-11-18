@@ -592,7 +592,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
   )
 
   const renderHeader = useCallback(
-    ({ chain, walletType, walletAddress: oWalletAddress, balances: balancesRD }: ChainBalance) => {
+    ({ chain, walletType, walletAddress: oWalletAddress, balances: balancesRD }: ChainBalance, isOpen: boolean) => {
       const walletAddress = FP.pipe(
         oWalletAddress,
         O.getOrElse(() => intl.formatMessage({ id: 'wallet.errors.address.invalid' }))
@@ -615,7 +615,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
       return (
         <div className="flex w-full justify-between space-x-4 bg-bg0 py-1 dark:bg-bg0d">
           <div className="flex flex-row items-center space-x-2">
-            <ChainIcon chain={chain} />
+            {!isOpen && <ChainIcon chain={chain} />}
             <Label className="!w-auto" textTransform="uppercase">
               {chainToString(chain)}
             </Label>
@@ -732,17 +732,21 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
       </div>
 
       <div className="space-y-2">
-        {chainBalances.map((chainBalance, index) => (
-          <Collapse
-            key={`${chainBalance.chain}${index}${openPanelKeys.includes(index)}`}
-            className="bg-bg0 dark:bg-bg0d"
-            header={renderHeader(chainBalance)}
-            isOpen={openPanelKeys.includes(index)}
-            onToggle={() => toggleOne(index)}>
-            {renderPanel(chainBalance, index)}
-            {renderQRCodeModal}
-          </Collapse>
-        ))}
+        {chainBalances.map((chainBalance, index) => {
+          const isOpen = openPanelKeys.includes(index)
+
+          return (
+            <Collapse
+              key={`${chainBalance.chain}${index}${isOpen}`}
+              className="bg-bg0 dark:bg-bg0d"
+              header={renderHeader(chainBalance, isOpen)}
+              isOpen={isOpen}
+              onToggle={() => toggleOne(index)}>
+              {renderPanel(chainBalance, index)}
+              {renderQRCodeModal}
+            </Collapse>
+          )
+        })}
       </div>
     </>
   )
