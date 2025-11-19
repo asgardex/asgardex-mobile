@@ -1,11 +1,16 @@
-import { info as pluginInfo, warn as pluginWarn, error as pluginError } from '@tauri-apps/plugin-log'
+import {
+  info as pluginInfo,
+  warn as pluginWarn,
+  error as pluginError,
+  debug as pluginDebug
+} from '@tauri-apps/plugin-log'
 
 import { isError } from '../../../shared/utils/guard'
 import { safeStringify } from '../../../shared/utils/safeStringify'
 
 type LoggerContext = Record<string, unknown>
 type NormalizedContext = Record<string, string>
-type LogLevel = 'info' | 'warn' | 'error'
+type LogLevel = 'info' | 'warn' | 'error' | 'debug'
 
 type LoggerMethod = (message: string, context?: LoggerContext) => Promise<void>
 
@@ -13,12 +18,14 @@ export type Logger = {
   info: LoggerMethod
   warn: LoggerMethod
   error: LoggerMethod
+  debug: LoggerMethod
 }
 
 const PLUGIN_LOGGERS: Record<LogLevel, typeof pluginInfo> = {
   info: pluginInfo,
   warn: pluginWarn,
-  error: pluginError
+  error: pluginError,
+  debug: pluginDebug
 }
 
 const LOG_PREFIX = '[app]'
@@ -113,9 +120,10 @@ const normalizeContext = (context?: LoggerContext): NormalizedContext | undefine
   return Object.keys(normalizedEntries).length > 0 ? normalizedEntries : undefined
 }
 
-const resolveConsoleMethod = (level: LogLevel): 'error' | 'warn' | 'info' => {
+const resolveConsoleMethod = (level: LogLevel): 'error' | 'warn' | 'info' | 'debug' => {
   if (level === 'error') return 'error'
   if (level === 'warn') return 'warn'
+  if (level === 'debug') return 'debug'
   return 'info'
 }
 
@@ -188,7 +196,8 @@ export const createLogger = (scope?: string): Logger => {
   return {
     info: (message: string, context?: LoggerContext) => logInternal('info', trimmedScope, message, context),
     warn: (message: string, context?: LoggerContext) => logInternal('warn', trimmedScope, message, context),
-    error: (message: string, context?: LoggerContext) => logInternal('error', trimmedScope, message, context)
+    error: (message: string, context?: LoggerContext) => logInternal('error', trimmedScope, message, context),
+    debug: (message: string, context?: LoggerContext) => logInternal('debug', trimmedScope, message, context)
   }
 }
 
