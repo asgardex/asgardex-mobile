@@ -5,21 +5,25 @@ import { createLogger, __setAppLoggerConsoleLoggingForTests } from './logging'
 type PluginInfoFn = (typeof import('@tauri-apps/plugin-log'))['info']
 type PluginWarnFn = (typeof import('@tauri-apps/plugin-log'))['warn']
 type PluginErrorFn = (typeof import('@tauri-apps/plugin-log'))['error']
+type PluginDebugFn = (typeof import('@tauri-apps/plugin-log'))['debug']
 
-const { infoMock, warnMock, errorMock } = vi.hoisted(() => {
+const { infoMock, warnMock, errorMock, debugMock } = vi.hoisted(() => {
   const info = vi.fn<PluginInfoFn>()
   const warn = vi.fn<PluginWarnFn>()
   const error = vi.fn<PluginErrorFn>()
+  const debug = vi.fn<PluginDebugFn>()
   info.mockResolvedValue(undefined)
   warn.mockResolvedValue(undefined)
   error.mockResolvedValue(undefined)
-  return { infoMock: info, warnMock: warn, errorMock: error }
+  debug.mockResolvedValue(undefined)
+  return { infoMock: info, warnMock: warn, errorMock: error, debugMock: debug }
 })
 
 vi.mock('@tauri-apps/plugin-log', () => ({
   info: infoMock,
   warn: warnMock,
-  error: errorMock
+  error: errorMock,
+  debug: debugMock
 }))
 
 const setTauriRuntimeAvailable = (enabled: boolean) => {
@@ -80,5 +84,13 @@ describe('app logging service', () => {
 
     expect(consoleSpy).toHaveBeenCalledTimes(1)
     consoleSpy.mockRestore()
+  })
+
+  it('sends debug logs to the plugin when available', async () => {
+    const logger = createLogger('telemetry')
+    await logger.debug('sanity check', { event: 'foo' })
+
+    expect(debugMock).toHaveBeenCalledTimes(1)
+    expect(debugMock).toHaveBeenCalledWith('[telemetry] sanity check', { keyValues: { event: 'foo' } })
   })
 })
