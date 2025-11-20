@@ -1,20 +1,29 @@
 import { useMemo } from 'react'
 
-import { QuoteSwap, QuoteSwap as QuoteSwapProtocol } from '@xchainjs/xchain-aggregator'
+import { QuoteSwap } from '@xchainjs/xchain-aggregator'
 import clsx from 'clsx'
 import { option as O } from 'fp-ts'
 
 import Amount from '../../assets/svg/amount.svg?react'
+import BoostIcon from '../../assets/svg/boost.svg'
 import StopWatch from '../../assets/svg/stopwatch.svg?react'
 import { protocolMapping } from '../../helpers/protocolHelper'
+import { useAggregator } from '../../store/aggregator/hooks'
+import { SwitchButton } from '../uielements/button/SwitchButton'
 import { Collapse } from '../uielements/collapse'
 import { ProviderIcon } from './ProviderIcon'
 
+// Extended QuoteSwap type to include boost information
+type ExtendedQuoteSwap = QuoteSwap & {
+  isBoostQuote?: boolean
+}
+
 type Props = {
+  isBoostable: boolean
   targetAsset: string
-  quote: O.Option<QuoteSwap>
-  quotes: O.Option<QuoteSwap[]>
-  onSelectQuote: (selectedQuote: QuoteSwap) => void // Callback for quote selection
+  quote: O.Option<ExtendedQuoteSwap>
+  quotes: O.Option<ExtendedQuoteSwap[]>
+  onSelectQuote: (selectedQuote: ExtendedQuoteSwap) => void // Callback for quote selection
 }
 
 const formatTime = (seconds: number): string => {
@@ -26,26 +35,45 @@ const formatTime = (seconds: number): string => {
 
 const Route = ({
   className,
+  isBoostable,
   quote,
   targetAsset,
   isBestRate,
-  isFastest
+  isFastest,
+  isBoostEnabled,
+  onToggleBoost
 }: {
   className?: string
-  quote: QuoteSwapProtocol
+  isBoostable: boolean
+  quote: ExtendedQuoteSwap
   targetAsset: string
   isBestRate: boolean
   isFastest: boolean
+  isBoostEnabled?: boolean
+  onToggleBoost?: (enabled: boolean) => void
 }) => {
+  const isChainflip = quote.protocol === 'Chainflip'
+
   return (
-    <div className={clsx('flex flex-col', className)}>
-      <div className="flex w-full items-center space-x-2">
-        <ProviderIcon protocol={quote.protocol} />
-        <span className="m-0 font-main text-[14px] text-text0 dark:text-gray2d">
-          {protocolMapping?.[quote.protocol as keyof typeof protocolMapping] ?? quote.protocol}
-        </span>
-        {isBestRate && <span className="rounded bg-warning0 px-1 text-11 dark:bg-warning0d">BEST RATE</span>}
-        {isFastest && <span className="rounded bg-turquoise px-1 text-11">FASTEST</span>}
+    <div className={clsx('flex flex-grow flex-col', className)}>
+      <div className="flex w-full items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <ProviderIcon protocol={quote.protocol} />
+          <span className="m-0 font-main text-[14px] text-text0 dark:text-gray2d">
+            {protocolMapping?.[quote.protocol as keyof typeof protocolMapping] ?? quote.protocol}
+          </span>
+          {isBestRate && <span className="rounded bg-warning0 px-1 text-11 dark:bg-warning0d">BEST RATE</span>}
+          {isFastest && <span className="rounded bg-turquoise px-1 text-11 text-white">FASTEST</span>}
+        </div>
+        {isBoostable && isChainflip && onToggleBoost && isBoostEnabled !== undefined && (
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center">
+              <img src={BoostIcon} alt="Boost" className="h-5 w-5" />
+              <span className="text-11 text-[#FF33AF]">Boost</span>
+            </div>
+            <SwitchButton active={isBoostEnabled} onChange={onToggleBoost} />
+          </div>
+        )}
       </div>
 
       <div className="mt-2 flex w-full flex-col space-y-1">
@@ -62,12 +90,12 @@ const Route = ({
           <div className="flex flex-row items-center space-x-1">
             <StopWatch className="text-text0 dark:text-gray2d" />
             <span className="text-[12px] text-text0 dark:text-gray2d">
-              Est. Streaming Time: <b>{formatTime(quote.totalSwapSeconds)}</b>
+              Est. Time: <b>{formatTime(quote.totalSwapSeconds)}</b>
             </span>
           </div>
         )}
         {quote.errors && quote.errors.length > 0 && (
-          <div className="text-red-600 dark:text-red-400 mt-1 text-[11px]">
+          <div className="mt-1 text-[11px] text-error0">
             {quote.errors.map((error, index) => (
               <span key={index}>
                 {error.includes('price limit')
@@ -83,7 +111,9 @@ const Route = ({
   )
 }
 
-export const SwapRoute = ({ targetAsset, quote, quotes, onSelectQuote }: Props) => {
+export const SwapRoute = ({ isBoostable, targetAsset, quote, quotes, onSelectQuote }: Props) => {
+  const { isBoostEnabled, setBoostEnabled } = useAggregator()
+
   const availableQuotes = useMemo(() => {
     if (O.isNone(quotes)) return []
     return quotes.value
@@ -99,13 +129,16 @@ export const SwapRoute = ({ targetAsset, quote, quotes, onSelectQuote }: Props) 
       return { bestQuote: null, fastestQuote: null, numOfAvailableRoutes: 0 }
     }
 
-    const sortedByAmount = [...quotes.value].sort((a, b) => {
+    // Only consider quotes that can actually swap for best/fastest calculations
+    const validQuotes = quotes.value
+
+    const sortedByAmount = [...validQuotes].sort((a, b) => {
       const amountA = parseFloat(a.expectedAmount.assetAmount.amount().toString())
       const amountB = parseFloat(b.expectedAmount.assetAmount.amount().toString())
       return amountB - amountA
     })
 
-    const sortedByTime = [...quotes.value].sort((a, b) => {
+    const sortedByTime = [...validQuotes].sort((a, b) => {
       const timeA = a.totalSwapSeconds
       const timeB = b.totalSwapSeconds
       return timeA - timeB
@@ -126,23 +159,40 @@ export const SwapRoute = ({ targetAsset, quote, quotes, onSelectQuote }: Props) 
             <Route
               className="mt-2"
               quote={activeQuote}
+              isBoostable={isBoostable}
               targetAsset={targetAsset}
               isBestRate={bestQuote ? activeQuote.expectedAmount.eq(bestQuote.expectedAmount) : false}
               isFastest={fastestQuote ? activeQuote.totalSwapSeconds === fastestQuote.totalSwapSeconds : false}
+              isBoostEnabled={isBoostEnabled}
+              onToggleBoost={setBoostEnabled}
             />
           }>
           {availableQuotes
-            .filter((route) => route.protocol !== activeQuote.protocol)
+            .filter((route) => {
+              // Only show boost/regular alternatives for Chainflip
+              if (route.protocol === 'Chainflip' && activeQuote.protocol === 'Chainflip') {
+                // Show the alternative boost/regular option for Chainflip
+                return (route as ExtendedQuoteSwap).isBoostQuote !== (activeQuote as ExtendedQuoteSwap).isBoostQuote
+              }
+              // For other protocols, only show different protocols
+              return route.protocol !== activeQuote.protocol
+            })
             .map((availableQuote, index) => (
               <div
-                key={`route-${availableQuote.protocol}-${index}`}
-                className="mx-2 mb-2 cursor-pointer rounded-lg border border-solid border-gray1 p-2 dark:border-gray0d"
+                key={`route-${availableQuote.protocol}-${(availableQuote as ExtendedQuoteSwap).isBoostQuote ? 'boost' : 'regular'}-${index}`}
+                className={clsx(
+                  'mx-2 mb-2 cursor-pointer rounded-lg border border-solid p-2',
+                  'border-gray1 dark:border-gray0d'
+                )}
                 onClick={() => onSelectQuote(availableQuote)}>
                 <Route
                   quote={availableQuote}
+                  isBoostable={isBoostable}
                   targetAsset={targetAsset}
                   isBestRate={bestQuote ? availableQuote.expectedAmount.eq(bestQuote.expectedAmount) : false}
                   isFastest={fastestQuote ? availableQuote.totalSwapSeconds === fastestQuote.totalSwapSeconds : false}
+                  isBoostEnabled={isBoostEnabled}
+                  onToggleBoost={setBoostEnabled}
                 />
               </div>
             ))}
