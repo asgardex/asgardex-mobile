@@ -169,6 +169,13 @@ While environment variables are not required (defaults are set), you can configu
 yarn dev
 ```
 
+- Tauri quickstart (current default runtime)
+  - `yarn dev` – runs `tauri dev` (native shell + renderer dev server)
+  - `yarn dev:tauri` – renderer-only Vite dev server used by `beforeDevCommand`
+  - `yarn build` – builds the renderer bundle for `tauri build`
+  - `yarn package` / `yarn package:electron` – invoke `tauri build`
+  - Mobile helpers: `yarn tauri android dev <emulator>`, `yarn android:tail` / `yarn ios:tail`, `yarn tauri:clean` to reset generated mobile artifacts. Console forwarding to native logs is enabled by default on Tauri; set `VITE_USE_PLATFORM_LOG=false` if you want logs to stay in the webview console during debugging.
+
 In case Node might run into memory issues locally set `--max-old-space-size` as follow:
 
 ```json
