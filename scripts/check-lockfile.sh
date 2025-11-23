@@ -89,16 +89,19 @@ fi
 # Was package.json changed?
 package_json_changed=$(git diff "$TARGET_REMOTE/$TARGET_BRANCH" HEAD -- package.json | wc -l)
 
-# Diff summary
-git diff "$TARGET_REMOTE/$TARGET_BRANCH" HEAD -- yarn.lock | grep -E '^[+-] {0,2}"?[^ "@]+@[^:]+":$' | sed 's/^[+-] *//;s/":$//;s/"//g' | while read -r line; do
-  pkg=$(echo "$line" | cut -d'@' -f1)
-  version=$(echo "$line" | cut -d'@' -f2-)
-  if [[ $line == +* ]]; then
-    echo "+ $pkg@$version" >>"$tmp_diff_report"
-  elif [[ $line == -* ]]; then
-    echo "- $pkg@$version" >>"$tmp_diff_report"
+# Diff summary - extract added/removed packages from yarn.lock diff
+# Pattern matches lines like: +"@package/name@npm:1.0.0": or -"package@npm:1.0.0":
+while IFS= read -r line; do
+  # Extract the prefix (+/-) and package info
+  prefix="${line:0:1}"
+  # Remove prefix, quotes, and trailing colon; extract first package@version
+  pkg_line=$(echo "${line:1}" | sed 's/^"//;s/":$//;s/"//g' | cut -d',' -f1)
+  pkg=$(echo "$pkg_line" | sed 's/@[^@]*$//')                     # Remove version suffix
+  version=$(echo "$pkg_line" | grep -oE '@[^@]+$' | sed 's/^@//') # Extract version
+  if [[ -n $pkg && -n $version ]]; then
+    echo "$prefix $pkg@$version" >>"$tmp_diff_report"
   fi
-done
+done < <(git diff "$TARGET_REMOTE/$TARGET_BRANCH" HEAD -- yarn.lock | grep -E '^[+-]"[^@]+@')
 
 if [ -n "$undeclared_packages" ]; then
   echo "🚨 Undeclared packages in yarn.lock (not in $TARGET_REMOTE/$TARGET_BRANCH package.json):"

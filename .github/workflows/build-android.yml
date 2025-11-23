@@ -23,11 +23,12 @@ jobs:
       - name: Derive version and changelog
         run: |
           VERSION=$(jq -r .version package.json)
-          # Base code from semver (1.41.3 → 1041003), then add run number for uniqueness
-          # Formula: major * 1000000 + minor * 1000 + patch
-          BASE_CODE=$(echo "$VERSION" | awk -F. '{printf "%d%03d%03d", $1, $2, $3}')
+          # versionCode formula: (major * 1000000 + minor * 1000 + patch) * 1000 + run_suffix
+          # Example: 1.41.4 run 5 → (1*1000000 + 41*1000 + 4) * 1000 + 5 = 1041004005
+          # This allows 1000 builds per version while maintaining monotonic ordering
+          BASE_CODE=$(echo "$VERSION" | awk -F. '{print ($1 * 1000000) + ($2 * 1000) + $3}')
           RUN_SUFFIX=$(( ${{ github.run_number }} % 1000 ))
-          VERSION_CODE="${BASE_CODE}$(printf '%03d' $RUN_SUFFIX)"
+          VERSION_CODE=$(( BASE_CODE * 1000 + RUN_SUFFIX ))
           echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
           echo "APP_VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
           echo "Using versionCode: $VERSION_CODE (base: $BASE_CODE, run: $RUN_SUFFIX)"
