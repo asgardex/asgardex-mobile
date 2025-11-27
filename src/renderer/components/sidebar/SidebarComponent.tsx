@@ -40,7 +40,7 @@ import * as walletRoutes from '../../routes/wallet'
 import { mayaIconT } from '../icons'
 import { Label } from '../uielements/label'
 import { Tooltip } from '../uielements/tooltip'
-import { TransactionTracker, ChainflipTransactionTracker } from '../uielements/transactionProgress'
+import { TransactionSlideshow } from '../uielements/transactionProgress/TransactionSlideshow'
 
 type IconProps = {
   className?: string
@@ -254,19 +254,11 @@ export const SidebarComponent = (props: Props): JSX.Element => {
         <div className="flex flex-1 flex-col">
           {renderLogo}
           {renderMainNav}
-          <TransactionTracker
-            transactionTrackingService={transactionTrackingService}
+          <TransactionSlideshow
+            thorchainTransactionTrackingService={transactionTrackingService}
+            mayachainTransactionTrackingService={mayaTransactionTrackingService}
+            chainflipTransactionTrackingService={chainflipTransactionTrackingService}
             className="mx-4 mt-6"
-            protocol="Thorchain"
-          />
-          <TransactionTracker
-            transactionTrackingService={mayaTransactionTrackingService}
-            className="mx-4 mt-2"
-            protocol="Mayachain"
-          />
-          <ChainflipTransactionTracker
-            transactionTrackingService={chainflipTransactionTrackingService}
-            className="mx-4 mt-2"
           />
           <div className="flex-1" />
         </div>
