@@ -311,7 +311,7 @@ export const SwapDetailsPanel = ({
   const feesSection = (
     <div className="flex w-full items-center justify-between font-mainBold">
       <BaseButton
-        disabled={swapFeesRD === RD.pending || swapFeesRD === RD.initial}
+        disabled={RD.isPending(swapFeesRD) || RD.isInitial(swapFeesRD)}
         className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d"
         onClick={onReloadFees}>
         {intl.formatMessage({ id: 'common.fees.estimated' })}
