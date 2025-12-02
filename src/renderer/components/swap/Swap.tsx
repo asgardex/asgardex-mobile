@@ -1992,7 +1992,6 @@ export const Swap = ({
   const swapSettingsSection = useMemo(
     () => (
       <SwapSettings
-        intl={intl}
         slider={slider}
         streamingInterval={streamingInterval}
         streamingQuantity={streamingQuantity}
@@ -2004,7 +2003,6 @@ export const Swap = ({
     [
       handleStreamingQuantityChange,
       handleStreamingSliderChange,
-      intl,
       resetToDefault,
       slider,
       streamingInterval,

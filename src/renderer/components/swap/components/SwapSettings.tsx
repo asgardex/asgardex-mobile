@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
-import { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import { BaseButton } from '../../uielements/button'
 import { Collapse } from '../../uielements/collapse'
@@ -9,7 +9,6 @@ import { Slider } from '../../uielements/slider'
 import { Tooltip } from '../../uielements/tooltip'
 
 type Props = {
-  intl: IntlShape
   slider: number
   streamingInterval: number
   streamingQuantity: number
@@ -25,7 +24,6 @@ const getModeLabel = (slider: number) => {
 }
 
 export const SwapSettings = ({
-  intl,
   slider,
   streamingInterval,
   streamingQuantity,
@@ -34,6 +32,7 @@ export const SwapSettings = ({
   onReset
 }: Props) => {
   const labelMin = useMemo(() => getModeLabel(slider), [slider])
+  const intl = useIntl()
 
   const quantityLabel = useMemo(() => {
     if (streamingInterval === 0) return ['Limit swap']
@@ -51,12 +50,7 @@ export const SwapSettings = ({
       }>
       <div className="flex flex-col p-4">
         <div className="flex w-full flex-col space-y-4 px-2">
-          <Slider
-            value={slider}
-            onChange={onSliderChange}
-            max={100}
-            labels={[labelMin, `${streamingInterval}`]}
-          />
+          <Slider value={slider} onChange={onSliderChange} max={100} labels={[labelMin, `${streamingInterval}`]} />
           <Slider value={streamingQuantity} onChange={onQuantityChange} labels={quantityLabel} />
         </div>
         <div className="flex justify-end">
@@ -72,4 +66,3 @@ export const SwapSettings = ({
     </Collapse>
   )
 }
-
