@@ -298,6 +298,29 @@ export const SwapDetailsPanel = ({
     </>
   )
 
+  const rateSection = (
+    <div className="flex w-full justify-between font-mainBold text-[14px]">
+      <BaseButton className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d" onClick={onToggleRateDirection}>
+        {intl.formatMessage({ id: 'common.rate' })}
+        <ArrowsRightLeftIcon className="ease ml-5px h-[15px] w-[15px] group-hover:rotate-180" />
+      </BaseButton>
+      <div className="text-text2 dark:text-text2d">{rateLabel}</div>
+    </div>
+  )
+
+  const feesSection = (
+    <div className="flex w-full items-center justify-between font-mainBold">
+      <BaseButton
+        disabled={swapFeesRD === RD.pending || swapFeesRD === RD.initial}
+        className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d"
+        onClick={onReloadFees}>
+        {intl.formatMessage({ id: 'common.fees.estimated' })}
+        <ArrowPathIcon className="ease ml-5px h-[15px] w-[15px] group-hover:rotate-180" />
+      </BaseButton>
+      <div className="text-text2 dark:text-text2d">{priceSwapFeesLabel}</div>
+    </div>
+  )
+
   const unlockedContent = (
     <div className="w-full px-4 pb-4 font-main text-[12px] uppercase dark:border-gray1d">
       <BaseButton
@@ -312,26 +335,8 @@ export const SwapDetailsPanel = ({
       </BaseButton>
 
       <div className="pt-10px font-main text-[14px] text-gray2 dark:text-gray2d">
-        <div className="flex w-full justify-between font-mainBold text-[14px]">
-          <BaseButton
-            className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d"
-            onClick={onToggleRateDirection}>
-            {intl.formatMessage({ id: 'common.rate' })}
-            <ArrowsRightLeftIcon className="ease ml-5px h-[15px] w-[15px] group-hover:rotate-180" />
-          </BaseButton>
-          <div className="text-text2 dark:text-text2d">{rateLabel}</div>
-        </div>
-
-        <div className="flex w-full items-center justify-between font-mainBold">
-          <BaseButton
-            disabled={swapFeesRD === RD.pending || swapFeesRD === RD.initial}
-            className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d"
-            onClick={onReloadFees}>
-            {intl.formatMessage({ id: 'common.fees.estimated' })}
-            <ArrowPathIcon className="ease ml-5px h-[15px] w-[15px] group-hover:rotate-180" />
-          </BaseButton>
-          <div className="text-text2 dark:text-text2d">{priceSwapFeesLabel}</div>
-        </div>
+        {rateSection}
+        {feesSection}
 
         {showDetails && (
           <>
@@ -370,39 +375,15 @@ export const SwapDetailsPanel = ({
   const lockedContent = (
     <div className="w-full px-4 pb-4 font-main text-[12px] uppercase dark:border-gray1d">
       <div className="font-main text-[14px] text-gray2 dark:text-gray2d">
-        <div className="flex w-full justify-between font-mainBold text-[14px]">
-          <BaseButton
-            className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d"
-            onClick={onToggleRateDirection}>
-            {intl.formatMessage({ id: 'common.rate' })}
-            <ArrowsRightLeftIcon className="ease ml-5px h-[15px] w-[15px] group-hover:rotate-180" />
-          </BaseButton>
-          <div className="text-text2 dark:text-text2d">{rateLabel}</div>
-        </div>
-        <div className="flex w-full items-center justify-between font-mainBold">
-          <BaseButton
-            disabled={swapFeesRD === RD.pending || swapFeesRD === RD.initial}
-            className="group !p-0 !font-mainBold !text-text2 dark:!text-text2d"
-            onClick={onReloadFees}>
-            {intl.formatMessage({ id: 'common.fees.estimated' })}
-            <ArrowPathIcon className="ease ml-5px h-[15px] w-[15px] group-hover:rotate-180" />
-          </BaseButton>
-          <div className="text-text2 dark:text-text2d">{priceSwapFeesLabel}</div>
-        </div>
+        {rateSection}
+        {feesSection}
         <div className="flex w-full justify-between pl-10px text-[12px]">
           <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'common.fee.inbound' })}</div>
           <div className="text-text2 dark:text-text2d">{priceSwapInFeeLabel}</div>
         </div>
         <div className="flex w-full justify-between pl-10px text-[12px]">
           <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'swap.slip.title' })}</div>
-          <div className="text-text2 dark:text-text2d">
-            {formatAssetAmountCurrency({
-              amount: priceAmountToSwap.assetAmount.times(swapSlippage / 100),
-              asset: priceAmountToSwap.asset,
-              decimal: isUSDAsset(priceAmountToSwap.asset) ? 2 : 6,
-              trimZeros: !isUSDAsset(priceAmountToSwap.asset)
-            }) + ` (${swapSlippage.toFixed(2)}%)`}
-          </div>
+          <div className="text-text2 dark:text-text2d">{slippageValue}</div>
         </div>
         <div className="flex w-full justify-between pl-10px text-[12px]">
           <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'common.fee.outbound' })}</div>
