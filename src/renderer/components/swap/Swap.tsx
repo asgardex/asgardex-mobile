@@ -9,7 +9,6 @@ import {
   MagnifyingGlassPlusIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline'
-import { QuoteSwap } from '@xchainjs/xchain-aggregator'
 import { BTCChain } from '@xchainjs/xchain-bitcoin'
 import { Network } from '@xchainjs/xchain-client'
 import { AssetCacao, MAYAChain } from '@xchainjs/xchain-mayachain'
@@ -48,13 +47,7 @@ import * as RxOp from 'rxjs/operators'
 import { ASGARDEX_AFFILIATE_FEE_MIN, getAsgardexAffiliateFee, getAsgardexThorname } from '../../../shared/const'
 import { ONE_RUNE_BASE_AMOUNT } from '../../../shared/mock/amount'
 import { isMayaSupportedAsset, isTCSupportedAsset } from '../../../shared/utils/asset'
-import {
-  chainToString,
-  DEFAULT_ENABLED_CHAINS,
-  DefaultChainAttributes,
-  EnabledChain,
-  isChainOfThor
-} from '../../../shared/utils/chain'
+import { chainToString, DEFAULT_ENABLED_CHAINS, EnabledChain, isChainOfThor } from '../../../shared/utils/chain'
 import { isLedgerWallet } from '../../../shared/utils/guard'
 import { HDMode, WalletType } from '../../../shared/wallet/types'
 import { ZERO_BASE_AMOUNT } from '../../const'
@@ -81,7 +74,6 @@ import { getSwapMemo, updateMemo } from '../../helpers/memoHelper'
 import * as PoolHelpers from '../../helpers/poolHelper'
 import * as PoolHelpersMaya from '../../helpers/poolHelperMaya'
 import { emptyString, hiddenString, loadingString, noDataString } from '../../helpers/stringHelper'
-import { formatSwapTime } from '../../helpers/timeHelper'
 import { addSwapToTracker } from '../../helpers/transactionTracker'
 import {
   filterWalletBalancesByAssets,
@@ -118,28 +110,18 @@ import { WalletTypeLabel } from '../uielements/common'
 import { Fees, UIFeesRD } from '../uielements/fees'
 import { InfoIcon } from '../uielements/info'
 import { CopyLabel } from '../uielements/label/CopyLabel'
-import { Slider } from '../uielements/slider'
 import { Spin } from '../uielements/spin'
 import { Tooltip } from '../uielements/tooltip'
+import { ErrorLabel } from './components/ErrorLabel'
+import { SwapSettings } from './components/SwapSettings'
+import { TransactionTime } from './components/TransactionTime'
 import { EditableAddress } from './EditableAddress'
 import { SelectableSlipTolerance } from './SelectableSlipTolerance'
-import { ModalState, RateDirection, SwapProps } from './Swap.types'
+import { ExtendedQuoteSwap, ModalState, RateDirection, SwapProps } from './Swap.types'
 import * as Utils from './Swap.utils'
 import SwapExpiryProgressBar from './SwapExpiryProgressBar'
 import { SwapRoute } from './SwapRoute'
 import { SwapTxModal } from './SwapTxModal'
-
-// Extended QuoteSwap type to include boost information
-type ExtendedQuoteSwap = QuoteSwap & {
-  isBoostQuote?: boolean
-}
-
-const ErrorLabel = ({ children, className }: { children: React.ReactNode; className?: string }): JSX.Element => (
-  <div
-    className={clsx('mb-[14px] text-center font-main text-[12px] uppercase text-error0 dark:text-error0d', className)}>
-    {children}
-  </div>
-)
 
 export const Swap = ({
   keystore,
@@ -1754,7 +1736,9 @@ export const Swap = ({
         (quoteSwap) => quoteSwap.errors
       )
     )
-    return !quoteOnly && errors.some((error) => error.includes('router has not been approved to spend this amount'))
+    return (
+      !quoteOnly && errors.some((error: string) => error.includes('router has not been approved to spend this amount'))
+    )
   }, [oQuoteProtocol, quoteOnly])
 
   const reloadApproveFeesHandler = useCallback(() => {
@@ -1991,12 +1975,12 @@ export const Swap = ({
   )
 
   // Function to reset the slider to default position
-  const resetToDefault = () => {
+  const resetToDefault = useCallback(() => {
     setStreamingInterval(1) // Default position
     setStreamingQuantity(0) // thornode | mayanode decides the swap quantity
     setSlider(26)
     setIsStreaming(true)
-  }
+  }, [])
 
   const quoteOnlyButton = () => {
     setQuoteOnly(!quoteOnly)
@@ -2004,84 +1988,39 @@ export const Swap = ({
     setQuoteProtocol(O.none)
   }
 
-  const labelMin = useMemo(
-    () => (slider <= 0 ? `Limit Swap` : slider < 50 ? 'Time Optimised' : `Price Optimised`),
-    [slider]
-  )
+  const handleStreamingSliderChange = useCallback((value: number) => {
+    const interval = value >= 75 ? 3 : value >= 50 ? 2 : value >= 25 ? 1 : 0
+    setSlider(value)
+    setStreamingInterval(interval)
+    setStreamingQuantity(0)
+    setIsStreaming(interval !== 0)
+  }, [])
 
-  // Streaming Interval slider
-  const renderStreamerInterval = useMemo(() => {
-    const calculateStreamingInterval = (slider: number) => {
-      if (slider >= 75) return 3
-      if (slider >= 50) return 2
-      if (slider >= 25) return 1
-      return 0
-    }
-    const streamingIntervalValue = calculateStreamingInterval(slider)
-    const setInterval = (slider: number) => {
-      setSlider(slider)
-      setStreamingInterval(streamingIntervalValue)
-      setStreamingQuantity(0)
-      setIsStreaming(streamingIntervalValue !== 0)
-    }
+  const handleStreamingQuantityChange = useCallback((quantity: number) => {
+    setStreamingQuantity(quantity)
+  }, [])
 
-    return (
-      <div>
-        <Slider
-          key={'Streamer Interval slider'}
-          value={slider}
-          onChange={setInterval}
-          max={100}
-          labels={[`${labelMin}`, `${streamingInterval}`]}
-        />
-      </div>
-    )
-  }, [labelMin, slider, streamingInterval])
-
-  // Streaming Quantity slider
-  const renderStreamerQuantity = useMemo(() => {
-    const quantity = streamingQuantity
-    const setQuantity = (quantity: number) => {
-      setStreamingQuantity(quantity)
-    }
-    let quantityLabel: string[]
-    if (streamingInterval === 0) {
-      quantityLabel = [`Limit swap`]
-    } else {
-      quantityLabel = quantity === 0 ? [`Auto swap count`] : [`Sub swaps`, `${quantity}`]
-    }
-    return (
-      <div>
-        <Slider key={'Streamer Quantity slider'} value={quantity} onChange={setQuantity} labels={quantityLabel} />
-      </div>
-    )
-  }, [streamingQuantity, streamingInterval])
-
-  const renderSwapSettings = () => (
-    <Collapse
-      header={
-        <div className="flex flex-row items-center justify-between">
-          <span className="m-0 font-main text-[14px] text-text2 dark:text-text2d">
-            {intl.formatMessage({ id: 'common.swap' })} {intl.formatMessage({ id: 'common.settings' })} ({labelMin})
-          </span>
-        </div>
-      }>
-      <div className="flex flex-col p-4">
-        <div className="flex w-full flex-col space-y-4 px-2">
-          <div>{renderStreamerInterval}</div>
-          <div>{renderStreamerQuantity}</div>
-        </div>
-        <div className="flex justify-end">
-          <Tooltip title={intl.formatMessage({ id: 'common.resetToDefault' })}>
-            <BaseButton
-              onClick={resetToDefault}
-              className="rounded-full hover:shadow-full group-hover:rotate-180 dark:hover:shadow-fulld">
-              <ArrowPathIcon className="ease h-[25px] w-[25px] text-turquoise" />
-            </BaseButton>
-          </Tooltip>
-        </div>
-      </div>
-    </Collapse>
+  const swapSettingsSection = useMemo(
+    () => (
+      <SwapSettings
+        intl={intl}
+        slider={slider}
+        streamingInterval={streamingInterval}
+        streamingQuantity={streamingQuantity}
+        onSliderChange={handleStreamingSliderChange}
+        onQuantityChange={handleStreamingQuantityChange}
+        onReset={resetToDefault}
+      />
+    ),
+    [
+      handleStreamingQuantityChange,
+      handleStreamingSliderChange,
+      intl,
+      resetToDefault,
+      slider,
+      streamingInterval,
+      streamingQuantity
+    ]
   )
 
   const submitSwapTx = useCallback(() => {
@@ -2767,62 +2706,6 @@ export const Swap = ({
       ),
     [oSwapParams]
   )
-  // Time of transaction from source chain and quote details
-  const TransactionTime = () => {
-    const transactionTime = FP.pipe(
-      oQuoteProtocol,
-      O.fold(
-        () =>
-          DefaultChainAttributes[targetAsset.chain].avgBlockTimeInSecs +
-          DefaultChainAttributes[sourceChain].avgBlockTimeInSecs,
-        (txDetails) =>
-          txDetails.totalSwapSeconds
-            ? txDetails.totalSwapSeconds
-            : DefaultChainAttributes[targetAsset.chain].avgBlockTimeInSecs +
-              DefaultChainAttributes[sourceChain].avgBlockTimeInSecs
-      )
-    )
-
-    return (
-      <>
-        <div className={clsx('flex w-full justify-between font-mainBold text-[14px]', { 'pt-10px': showDetails })}>
-          <div className="text-text2 dark:text-text2d">{intl.formatMessage({ id: 'common.time.title' })}</div>
-          <div className="text-text2 dark:text-text2d">{formatSwapTime(transactionTime)}</div>
-        </div>
-        {showDetails && (
-          <>
-            <div className="flex w-full justify-between pl-10px text-[12px]">
-              <div className="flex items-center text-text2 dark:text-text2d">
-                {intl.formatMessage({ id: 'common.inbound.time' })}
-              </div>
-              <div className="text-text2 dark:text-text2d">
-                {formatSwapTime(Number(DefaultChainAttributes[sourceChain].avgBlockTimeInSecs))}
-              </div>
-            </div>
-            <div className="flex w-full justify-between pl-10px text-[12px]">
-              <div className="flex items-center text-text2 dark:text-text2d">
-                {intl.formatMessage(
-                  { id: 'common.confirmation.time' },
-                  {
-                    chain:
-                      targetAsset.type === AssetType.SYNTH
-                        ? MAYAChain
-                        : targetAsset.type === AssetType.SECURED
-                          ? THORChain
-                          : targetAsset.chain
-                  }
-                )}
-              </div>
-              <div className="text-text2 dark:text-text2d">
-                {formatSwapTime(Number(DefaultChainAttributes[targetAsset.chain].avgBlockTimeInSecs))}
-              </div>
-            </div>
-          </>
-        )}
-      </>
-    )
-  }
-
   const [showDetails, setShowDetails] = useState<boolean>(false)
 
   return (
@@ -2934,13 +2817,8 @@ export const Swap = ({
           {FP.pipe(
             oQuoteProtocol,
             O.fold(
-              () => renderSwapSettings(), // O.none: show settings
-              (quoteSwap) =>
-                quoteSwap.protocol === 'Chainflip' ? (
-                  <></> // Chainflip: hide settings
-                ) : (
-                  renderSwapSettings() // Other protocols: show settings
-                )
+              () => swapSettingsSection,
+              (quoteSwap) => (quoteSwap.protocol === 'Chainflip' ? <></> : swapSettingsSection)
             )
           )}
           <Collapse
@@ -3086,7 +2964,13 @@ export const Swap = ({
                     )}
                   </>
                   {/* Swap Time Inbound / swap / Outbound */}
-                  <TransactionTime />
+                  <TransactionTime
+                    intl={intl}
+                    showDetails={showDetails}
+                    sourceChain={sourceChain}
+                    targetAsset={targetAsset}
+                    oQuoteProtocol={oQuoteProtocol}
+                  />
                   {/* addresses */}
                   {showDetails && (
                     <>
@@ -3258,7 +3142,13 @@ export const Swap = ({
                   </div>
 
                   {/* Transaction time */}
-                  <TransactionTime />
+                  <TransactionTime
+                    intl={intl}
+                    showDetails={showDetails}
+                    sourceChain={sourceChain}
+                    targetAsset={targetAsset}
+                    oQuoteProtocol={oQuoteProtocol}
+                  />
                 </div>
               </div>
             )}

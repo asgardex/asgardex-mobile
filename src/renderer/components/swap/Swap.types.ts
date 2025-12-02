@@ -1,3 +1,4 @@
+import { QuoteSwap } from '@xchainjs/xchain-aggregator'
 import { Network } from '@xchainjs/xchain-client'
 import { Address, AnyAsset, Asset, CryptoAmount } from '@xchainjs/xchain-util'
 import BigNumber from 'bignumber.js'
@@ -28,6 +29,10 @@ export enum ModalState {
 export enum RateDirection {
   Source = 'fromSource',
   Target = 'fromTarget'
+}
+
+export type ExtendedQuoteSwap = QuoteSwap & {
+  isBoostQuote?: boolean
 }
 
 export type SwapProps = {
