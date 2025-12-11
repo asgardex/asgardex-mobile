@@ -3,9 +3,7 @@ layout: page
 title: Privacy Policy
 ---
 
-# Privacy Policy for Asgardex Mobile
-
-**Last updated: December 9, 2025**
+Last updated: December 9, 2025
 
 This application is an open-source project and is a port of the [Asgardex wallet](https://github.com/thorchain/asgardex-electron).
 
