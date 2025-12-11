@@ -1,6 +1,6 @@
 [package]
 name = "asgardex-tauri"
-version = "1.41.3"
+version = "1.41.4"
 description = "ASGARDEX desktop wallet running on Tauri"
 authors = ["ASGARDEX Maintainers"]
 license = "MIT"

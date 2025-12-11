@@ -26,6 +26,6 @@
     "secure-storage:default",
     "biometric:default",
     "notification:default",
-    "safe-area-insets-css:default"
+    "safe-area-insets:default"
   ]
 }

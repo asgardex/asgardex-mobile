@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "ASGARDEX",
-  "version": "1.41.3",
+  "version": "1.41.4",
   "identifier": "org.thorchain.asgardex",
   "build": {
     "frontendDist": "../build/renderer",
@@ -48,7 +48,7 @@
     },
     "iOS": {
       "developmentTeam": "ABCDE12345",
-      "bundleVersion": "1.41.3",
+      "bundleVersion": "1.41.4",
       "minimumSystemVersion": "15.0"
     }
   }
