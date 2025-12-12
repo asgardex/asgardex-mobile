@@ -39,7 +39,7 @@ import {
   SECURE_STORAGE_VERSION,
   VALID_SEGMENT_PATTERN
 } from '../../shared/const'
-import { BiometricDowngradeReason } from '../../shared/errors/biometric'
+import { BiometricDowngradeError, BiometricDowngradeReason } from '../../shared/errors/biometric'
 import { normalizeExternalUrl, isWhitelistedExternalHost } from '../../shared/url/whitelist'
 import { mapIOErrors } from '../../shared/utils/fp'
 import { isError } from '../../shared/utils/guard'
@@ -485,7 +485,11 @@ const secureStorageApi: SecureStorageApi = {
           secureKeyId,
           metadata
         })
-        throw normalizeUnknownError(importError)
+        throw new BiometricDowngradeError('Biometric authentication is required but unavailable.', {
+          secureKeyId,
+          reason: 'pluginUnavailable',
+          payload: parsed.payload
+        })
       }
 
       try {
@@ -503,7 +507,11 @@ const secureStorageApi: SecureStorageApi = {
             secureKeyId,
             metadata
           })
-          throw normalizeUnknownError(statusError)
+          throw new BiometricDowngradeError('Biometric authentication status is unavailable.', {
+            secureKeyId,
+            reason: 'statusError',
+            payload: parsed.payload
+          })
         }
 
         const downgradeReason = resolveDowngradeReasonFromStatus(status ?? {})
@@ -519,12 +527,20 @@ const secureStorageApi: SecureStorageApi = {
             secureKeyId,
             metadata
           })
-          throw new Error('Biometric authentication is required but not available on this device.')
+          throw new BiometricDowngradeError('Biometric authentication is required but unavailable.', {
+            secureKeyId,
+            reason: downgradeReason,
+            payload: parsed.payload,
+            statusError: status?.errorCode ?? undefined
+          })
         }
 
         await authenticate(DEFAULT_BIOMETRIC_PROMPT)
         recordSecureStorageEvent({ action: 'biometric_success', secureKeyId })
       } catch (error) {
+        if (error instanceof BiometricDowngradeError) {
+          throw error
+        }
         const normalized = normalizeUnknownError(error)
         const metadata: Record<string, string> = {
           errorName: normalized.name || 'Error',

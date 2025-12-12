@@ -5,27 +5,22 @@ import { function as FP, array as A, either as E, option as O } from 'fp-ts'
 import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
-import {
-  ipcKeystoreWalletsIO,
-  KeystoreWallet,
-  KeystoreWallets,
-  isSecureKeystoreWallet,
-  SecureKeystoreWallet
-} from '../../../shared/api/io'
-import { KeystoreId, SecureStorageApi } from '../../../shared/api/types'
+import { ipcKeystoreWalletsIO, KeystoreWallets, isSecureKeystoreWallet } from '../../../shared/api/io'
+import { KeystoreId } from '../../../shared/api/types'
 import { isError } from '../../../shared/utils/guard'
-import { safeStringify } from '../../../shared/utils/safeStringify'
 import { liveData } from '../../helpers/rx/liveData'
 import { observableState, triggerStream } from '../../helpers/stateHelper'
 import { createLogger } from '../app/logging'
-import { recordSecureStorageEvent } from '../app/telemetry'
 import { INITIAL_KEYSTORE_STATE } from './const'
 import { getKeystoreMobileBridge } from './keystore-mobile'
+import { persistWalletsOrThrow } from './keystore-persist'
+import { runtimeKeystoreCache } from './keystore-runtime-cache'
 import {
-  createSecureStorageRequiredError,
-  createSecureStorageWriteError,
-  getSecureStorageFailureReason
-} from './secureStorageErrors'
+  removeSecureEntryIfNeeded,
+  resolveEncryptedKeystoreById,
+  resolveEncryptedKeystoreForWallet,
+  writeNewWalletEntry
+} from './keystore-storage'
 import {
   KeystoreService,
   KeystoreState,
@@ -67,97 +62,7 @@ const {
  * Internal state of keystore wallets - not shared to outside world
  */
 const { get$: keystoreWallets$, get: keystoreWallets, set: setKeystoreWallets } = observableState<KeystoreWallets>([])
-
-const runtimeKeystoreCache = new Map<KeystoreId, Keystore>()
-
-const RUNTIME_CACHE_IDLE_MS = 2 * 60 * 1000
-let runtimeCacheIdleTimer: ReturnType<typeof setTimeout> | null = null
-let tauriFocusUnlisten: (() => void) | null = null
-let windowUnloadCleanupRegistered = false
-
-const cleanupTauriFocusListener = () => {
-  if (tauriFocusUnlisten) {
-    try {
-      tauriFocusUnlisten()
-    } catch {
-      // ignore cleanup failures
-    }
-    tauriFocusUnlisten = null
-  }
-}
-
-const clearRuntimeCacheIdleTimer = () => {
-  if (runtimeCacheIdleTimer) {
-    clearTimeout(runtimeCacheIdleTimer)
-    runtimeCacheIdleTimer = null
-  }
-}
-
-const clearAllRuntimeCache = () => {
-  clearRuntimeCacheIdleTimer()
-  if (runtimeKeystoreCache.size > 0) {
-    runtimeKeystoreCache.clear()
-  }
-}
-
-const scheduleRuntimeCacheIdleClear = () => {
-  clearRuntimeCacheIdleTimer()
-  runtimeCacheIdleTimer = setTimeout(() => {
-    runtimeCacheIdleTimer = null
-    clearAllRuntimeCache()
-  }, RUNTIME_CACHE_IDLE_MS)
-}
-
-const handleVisibilityChange = () => {
-  if (typeof document.visibilityState === 'string' && document.visibilityState !== 'visible') {
-    cleanupTauriFocusListener()
-    clearAllRuntimeCache()
-  }
-}
-
-let visibilityHandlersRegistered = false
-
-const ensureVisibilityLifecycleHandlers = () => {
-  if (visibilityHandlersRegistered) return
-  visibilityHandlersRegistered = true
-
-  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-  }
-
-  if (typeof window !== 'undefined' && typeof window === 'object' && '__TAURI__' in window) {
-    void import('@tauri-apps/api/window')
-      .then(async ({ getCurrentWindow }) => {
-        try {
-          const appWindow = getCurrentWindow()
-          const unlisten = await appWindow.onFocusChanged(({ payload: focused }) => {
-            if (!focused) {
-              clearAllRuntimeCache()
-            }
-          })
-          tauriFocusUnlisten = () => {
-            try {
-              unlisten()
-            } catch {
-              // ignore unlisten errors
-            }
-            tauriFocusUnlisten = null
-          }
-          if (!windowUnloadCleanupRegistered && typeof window.addEventListener === 'function') {
-            window.addEventListener('beforeunload', cleanupTauriFocusListener, { once: true })
-            windowUnloadCleanupRegistered = true
-          }
-        } catch {
-          // Ignore focus subscription failures; visibility handlers remain active.
-        }
-      })
-      .catch(() => {
-        // Ignore dynamic import failures; visibility handlers remain opt-in.
-      })
-  }
-}
-
-ensureVisibilityLifecycleHandlers()
+runtimeKeystoreCache.ensureLifecycleHandlers()
 
 const walletLogger = createLogger('wallet-keystore')
 
@@ -179,84 +84,7 @@ const normalizeErrorMessage = (error: unknown): string => {
 }
 
 const secureStorageBridge = getKeystoreMobileBridge()
-const { biometricNotice$, clearBiometricNotice, resolveBiometricOptIn, shouldBlockOnSecureFailure } =
-  secureStorageBridge
-
-const getSecureStorageApi = (): SecureStorageApi | null => {
-  if (typeof window === 'undefined') return null
-  if (window.apiKeystore?.secure) return window.apiKeystore.secure
-  if (window.apiSecure) return window.apiSecure
-  return null
-}
-
-const ensureKeystoreFromPayload = (payload: unknown, walletId: KeystoreId): Keystore => {
-  if (payload && typeof payload === 'object') {
-    const candidate = payload as { type?: unknown; keystore?: unknown }
-    if (candidate.type === 'keystore' && candidate.keystore) {
-      return candidate.keystore as Keystore
-    }
-  }
-  throw Error(`Secure storage payload for wallet ${walletId} must contain an encrypted keystore`)
-}
-
-const loadKeystoreFromSecure = async (wallet: SecureKeystoreWallet): Promise<Keystore> => {
-  const cached = runtimeKeystoreCache.get(wallet.id)
-  if (cached) {
-    return cached
-  }
-
-  const secure = getSecureStorageApi()
-  if (!secure) {
-    throw Error('Secure keystore storage is not available')
-  }
-
-  try {
-    const payload = await secure.read(wallet.secureKeyId)
-    recordSecureStorageEvent({ action: 'unlock_success', walletId: wallet.id, secureKeyId: wallet.secureKeyId })
-    const keystore = ensureKeystoreFromPayload(payload, wallet.id)
-    runtimeKeystoreCache.set(wallet.id, keystore)
-    scheduleRuntimeCacheIdleClear()
-    return keystore
-  } catch (error) {
-    const normalized = isError(error) ? error : Error(String(error))
-    recordSecureStorageEvent({
-      action: 'unlock_failure',
-      walletId: wallet.id,
-      secureKeyId: wallet.secureKeyId,
-      metadata: { message: normalized.message, raw: safeStringify(error) }
-    })
-    throw normalized
-  }
-}
-
-const resolveKeystoreForWallet = async (wallet: KeystoreWallet): Promise<Keystore> => {
-  if (isSecureKeystoreWallet(wallet)) {
-    return loadKeystoreFromSecure(wallet)
-  }
-
-  // Legacy wallet backed by disk
-  const legacy = wallet as KeystoreWallet & { keystore: Keystore }
-  runtimeKeystoreCache.set(wallet.id, legacy.keystore)
-  scheduleRuntimeCacheIdleClear()
-  return legacy.keystore
-}
-
-const resolveKeystoreById = async (id: KeystoreId): Promise<Keystore> => {
-  const cached = runtimeKeystoreCache.get(id)
-  if (cached) return cached
-
-  const wallet = FP.pipe(
-    keystoreWallets(),
-    A.findFirst((entry) => entry.id === id),
-    O.toNullable
-  )
-
-  if (!wallet) {
-    throw Error(`Wallet ${id} not found in memory`)
-  }
-
-  return resolveKeystoreForWallet(wallet)
-}
+const { biometricNotice$, clearBiometricNotice, resolveBiometricOptIn } = secureStorageBridge
 
 /**
  * Adds a keystore and saves it to disk
@@ -277,113 +105,32 @@ const addKeystoreWallet = async ({
       keystoreWallets(),
       A.map((wallet) => ({ ...wallet, selected: false }))
     )
-    const secure = getSecureStorageApi()
+    const {
+      wallet: newWallet,
+      storageMode,
+      rollback
+    } = await writeNewWalletEntry({
+      id,
+      name,
+      keystore,
+      biometricEnabled
+    })
 
-    let updatedWallets: KeystoreWallets
-
-    let storageMode: 'secure' | 'legacy' = 'legacy'
-
-    if (secure) {
-      let secureKeyId: string | null = null
-      let secureWriteTimestamp: string | null = null
-
-      // Public API does not expose biometric flags; keep disabled by default for now.
-      const resolvedBiometricEnabled = await resolveBiometricOptIn(biometricEnabled === true)
-
-      try {
-        const result = await secure.write({
-          payload: { type: 'keystore', keystore },
-          biometricRequired: resolvedBiometricEnabled
-        })
-        secureKeyId = result.secureKeyId
-        secureWriteTimestamp = result.updatedAt
-        storageMode = 'secure'
-
-        updatedWallets = [
-          ...wallets,
-          {
-            id,
-            name,
-            selected: true,
-            secureKeyId,
-            biometricEnabled: resolvedBiometricEnabled,
-            lastSecureWriteAt: secureWriteTimestamp,
-            lastSecureWriteStatus: 'success',
-            exportAcknowledgedAt: null,
-            lastExportAction: null,
-            lastExportActionAt: null
-          }
-        ]
-      } catch (secureError) {
-        if (secureKeyId) {
-          await secure.remove(secureKeyId).catch(() => {})
-        }
-
-        if (shouldBlockOnSecureFailure()) {
-          const error = createSecureStorageRequiredError(secureError)
-          logWalletError('secure storage required for wallet onboarding', {
-            walletId: id,
-            name,
-            reason: error.message
-          })
-          recordSecureStorageEvent({
-            action: 'onboarding_blocked',
-            walletId: id,
-            secureKeyId: secureKeyId ?? undefined,
-            metadata: {
-              reason: 'secure_storage_required',
-              message: error.message,
-              platform: 'mobile'
-            }
-          })
-          throw error
-        }
-
-        const writeError = createSecureStorageWriteError(secureError)
-        const failureReason = getSecureStorageFailureReason(writeError)
-        logWalletWarn('secure storage write failed, falling back to legacy keystore', {
-          walletId: id,
-          name,
-          reason: failureReason
-        })
-        recordSecureStorageEvent({
-          action: 'write_failure',
-          walletId: id,
-          secureKeyId: secureKeyId ?? undefined,
-          metadata: { message: writeError.message, reason: failureReason }
-        })
-
-        // Fallback to legacy wallet on secure storage failure
-        updatedWallets = [
-          ...wallets,
-          {
-            id,
-            name,
-            keystore,
-            selected: true
-          } as KeystoreWallet & { keystore: Keystore }
-        ]
-      }
-    } else {
-      // No secure storage available – keep legacy disk-backed wallet
-      updatedWallets = [
-        ...wallets,
-        {
-          id,
-          name,
-          keystore,
-          selected: true
-        } as KeystoreWallet & { keystore: Keystore }
-      ]
-    }
+    const updatedWallets: KeystoreWallets = [...wallets, { ...newWallet, selected: true }]
 
     const encodedWallets = ipcKeystoreWalletsIO.encode(updatedWallets)
-    // Save wallets to disk
-    const _ = await window.apiKeystore.saveKeystoreWallets(encodedWallets)
+    await persistWalletsOrThrow(
+      encodedWallets,
+      {
+        action: 'add_wallet',
+        walletId: id,
+        secureKeyId: isSecureKeystoreWallet(newWallet) ? newWallet.secureKeyId : undefined
+      },
+      rollback
+    )
     // Update states
     setKeystoreWallets(updatedWallets)
     runtimeKeystoreCache.set(id, keystore)
-    scheduleRuntimeCacheIdleClear()
     setKeystoreState(O.some({ id, phrase, name }))
     setImportingKeystoreState(RD.success(true))
     logWalletInfo('keystore wallet saved', {
@@ -412,7 +159,6 @@ export const removeKeystoreWallet = async () => {
   }
   // Remove it from `wallets`
   const currentWallets = keystoreWallets()
-  const secure = getSecureStorageApi()
 
   const walletToRemove = FP.pipe(
     currentWallets,
@@ -420,26 +166,26 @@ export const removeKeystoreWallet = async () => {
     O.toNullable
   )
 
-  if (walletToRemove && secure && isSecureKeystoreWallet(walletToRemove)) {
-    try {
-      await secure.remove(walletToRemove.secureKeyId)
-    } catch {
-      // ignore secure storage removal failures – disk state still wins
-    }
-  }
-
   const wallets = FP.pipe(
     currentWallets,
     A.filter(({ id }) => id !== keystoreId)
   )
   const encodedWallets = ipcKeystoreWalletsIO.encode(wallets)
-  // Save updated `wallets` to disk
-  const _ = await window.apiKeystore.saveKeystoreWallets(encodedWallets)
+  await persistWalletsOrThrow(encodedWallets, {
+    action: 'remove_wallet',
+    walletId: keystoreId,
+    secureKeyId: walletToRemove && isSecureKeystoreWallet(walletToRemove) ? walletToRemove.secureKeyId : undefined
+  })
   // Update states
   setKeystoreWallets(wallets)
   // Set previous to current wallets (if available)
   const prevWallet = FP.pipe(wallets, A.last)
   setKeystoreState(prevWallet)
+  runtimeKeystoreCache.delete(keystoreId)
+
+  if (walletToRemove) {
+    await removeSecureEntryIfNeeded(walletToRemove)
+  }
   logWalletInfo('keystore wallet removed', {
     walletId: keystoreId,
     remainingWallets: wallets.length
@@ -468,27 +214,19 @@ const changeKeystoreWallet: ChangeKeystoreWalletHandler = (keystoreId: KeystoreI
   )
 
   return FP.pipe(
-    // encode wallets first
-    Rx.of(ipcKeystoreWalletsIO.encode(updatedWallets)),
-    // Save updated `wallets` to disk
-    RxOp.switchMap((wallets) => Rx.from(window.apiKeystore.saveKeystoreWallets(wallets))),
-    RxOp.map((eWallets) =>
-      FP.pipe(
-        eWallets,
-        E.fold(
-          (error) => RD.failure(Error(`Could not save wallets on disk ${error?.message ?? error.toString()}`)),
-          (_) => {
-            // Update states
-            setKeystoreWallets(updatedWallets)
-            // set selected wallet as locked wallet
-            setKeystoreState(O.some({ id, name }))
-            logWalletInfo('keystore selection changed', { walletId: id, name })
-
-            return RD.success(true)
-          }
-        )
-      )
+    Rx.from(
+      persistWalletsOrThrow(ipcKeystoreWalletsIO.encode(updatedWallets), {
+        action: 'change_wallet',
+        walletId: id,
+        secureKeyId: selectedWallet && isSecureKeystoreWallet(selectedWallet) ? selectedWallet.secureKeyId : undefined
+      })
     ),
+    RxOp.map(() => {
+      setKeystoreWallets(updatedWallets)
+      setKeystoreState(O.some({ id, name }))
+      logWalletInfo('keystore selection changed', { walletId: id, name })
+      return RD.success(true)
+    }),
     RxOp.catchError((err) => Rx.of(RD.failure(err))),
     RxOp.startWith(RD.pending)
   )
@@ -513,21 +251,24 @@ const renameKeystoreWallet: RenameKeystoreWalletHandler = (id, name) => {
     A.map((wallet) => (id === wallet.id ? { ...wallet, name } : wallet))
   )
   return FP.pipe(
-    updatedWallets,
-    // encode wallets first
-    ipcKeystoreWalletsIO.encode,
-    // Save updated `wallets` to disk
-    (wallets) => Rx.from(window.apiKeystore.saveKeystoreWallets(wallets)),
-    RxOp.catchError((err) => Rx.of(RD.failure(err))),
+    Rx.from(
+      persistWalletsOrThrow(ipcKeystoreWalletsIO.encode(updatedWallets), {
+        action: 'rename_wallet',
+        walletId: id,
+        secureKeyId: (() => {
+          const wallet = updatedWallets.find((entry) => entry.id === id)
+          return wallet && isSecureKeystoreWallet(wallet) ? wallet.secureKeyId : undefined
+        })()
+      })
+    ),
     RxOp.map(() => RD.success(true)),
-    liveData.map((_) => {
-      // Update states of all wallets
+    liveData.map(() => {
       setKeystoreWallets(updatedWallets)
-      // set selected wallet - still unlocked
       setKeystoreState(O.some(updatedKeystoreState))
       logWalletInfo('keystore renamed', { walletId: id, name })
       return true
     }),
+    RxOp.catchError((err) => Rx.of(RD.failure(err))),
     RxOp.startWith(RD.pending)
   )
 }
@@ -564,7 +305,7 @@ const exportKeystore = async () => {
       throw Error(`Can't export keystore - wallet is missing in wallet list`)
     }
 
-    const keystore = await resolveKeystoreForWallet(wallet)
+    const keystore = await resolveEncryptedKeystoreForWallet(wallet)
     const fileName = `asgardex-${FP.pipe(wallets, getKeystoreWalletName(id), O.toNullable) || 'keystore'}.json`
     return await window.apiKeystore.exportKeystore({ fileName, keystore })
   } catch (error) {
@@ -615,7 +356,7 @@ const unlock = async (password: string) => {
 
   try {
     // decrypt phrase from keystore
-    const keystore = await resolveKeystoreById(id)
+    const keystore = await resolveEncryptedKeystoreById(keystoreWallets(), id)
     const phrase = await decryptFromKeystore(keystore, password)
     setKeystoreState(O.some({ id, phrase, name }))
     logWalletInfo('keystore unlocked', { walletId: id, name })
@@ -659,9 +400,7 @@ keystoreWalletsPersistent$.subscribe((walletsRD) =>
       setKeystoreState(state)
       setKeystoreWallets(wallets)
       const allowed = new Set(wallets.map(({ id }) => id))
-      Array.from(runtimeKeystoreCache.keys()).forEach((key) => {
-        if (!allowed.has(key)) runtimeKeystoreCache.delete(key)
-      })
+      runtimeKeystoreCache.prune(allowed)
       return true
     })
   )
@@ -684,7 +423,7 @@ const validatePassword$ = (password: string): ValidatePasswordLD =>
             return Rx.of(RD.failure(Error('Could not get current keystore to validate password')))
           }
           return FP.pipe(
-            Rx.from(resolveKeystoreById(id)),
+            Rx.from(resolveEncryptedKeystoreById(keystoreWallets(), id)),
             RxOp.switchMap((keystore) => Rx.from(decryptFromKeystore(keystore, password))),
             // // don't store phrase in result
             RxOp.map((_ /* phrase */) => RD.success(undefined)),

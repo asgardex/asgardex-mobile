@@ -171,9 +171,9 @@ const TEXT_EXPECTATIONS: TextExpectation[] = [
     mustInclude: ['placeholder hashes']
   },
   {
-    file: 'src/renderer/services/wallet/keystore.ts',
-    description: 'Keystore service still references secure storage bridge',
-    mustInclude: ['window.apiKeystore?.secure']
+    file: 'src/renderer/services/wallet/keystore-storage.ts',
+    description: 'Keystore storage seam still selects secure API surface',
+    mustInclude: ['window.apiKeystore?.secure', 'window.apiSecure']
   },
   {
     file: 'src/renderer/services/wallet/types.ts',
@@ -199,6 +199,11 @@ const TEXT_EXPECTATIONS: TextExpectation[] = [
     file: 'src/shared/mock/api.ts',
     description: 'Test mocks keep secure storage implementation',
     mustInclude: ['mockSecureStorage', 'secure: mockSecureStorage']
+  },
+  {
+    file: 'src/shared/api/apiKeystore.surface-guard.ts',
+    description: 'ApiKeystore surface guard exists',
+    mustInclude: ['ApiKeystore', 'AllowedApiKeystoreKeys']
   },
   {
     file: 'src/renderer/components/settings/AppGeneralSettings.tsx',
