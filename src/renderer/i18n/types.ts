@@ -221,6 +221,7 @@ export type CommonMessageKey =
   | 'common.importTokens'
   | 'common.searchToken'
   | 'common.warning.token.import'
+  | 'common.noData'
 
 export type CommonMessages = {
   [key in CommonMessageKey]: string
