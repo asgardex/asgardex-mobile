@@ -35,7 +35,6 @@ import { CheckButton } from '../../../components/uielements/button/CheckButton'
 import { WalletTypeLabel, WalletTypeTinyLabel } from '../../../components/uielements/common'
 import { InputBigNumber } from '../../../components/uielements/input'
 import { Label } from '../../../components/uielements/label'
-import { Slider } from '../../../components/uielements/slider'
 import { Tooltip } from '../../../components/uielements/tooltip'
 import { AssetsNav } from '../../../components/wallet/assets'
 import { getInteractiveDescription } from '../../../components/wallet/txs/interact/Interact.helpers'
@@ -61,7 +60,7 @@ import { WalletBalances } from '../../../services/clients'
 import { PoolAddress } from '../../../services/midgard/midgardTypes'
 import { INITIAL_INTERACT_STATE } from '../../../services/thorchain/const'
 import { InteractState, TcyClaim, TcyStakeLD } from '../../../services/thorchain/types'
-import { balancesState$ } from '../../../services/wallet'
+import { balancesState$, reloadBalancesByChain } from '../../../services/wallet'
 import { DEFAULT_BALANCES_FILTER, INITIAL_BALANCES_STATE } from '../../../services/wallet/const'
 import { WalletBalance } from '../../../services/wallet/types'
 import { walletTypeToI18n } from '../../../services/wallet/util'
@@ -195,16 +194,62 @@ export const TcyView = () => {
     )
   }, [oWalletBalances])
 
+  const runeKeystoreBalance: O.Option<WalletBalance> = useMemo(() => {
+    return FP.pipe(
+      oWalletBalances,
+      O.chain((balances) =>
+        O.fromNullable(
+          balances.find(
+            ({ asset, walletType }) =>
+              asset.chain === 'THOR' && walletType === WalletType.Keystore && asset.symbol === 'RUNE'
+          )
+        )
+      )
+    )
+  }, [oWalletBalances])
+
+  const runeLedgerBalance: O.Option<WalletBalance> = useMemo(() => {
+    return FP.pipe(
+      oWalletBalances,
+      O.chain((balances) =>
+        O.fromNullable(
+          balances.find(
+            ({ asset, walletType }) =>
+              asset.chain === 'THOR' && walletType === WalletType.Ledger && asset.symbol === 'RUNE'
+          )
+        )
+      )
+    )
+  }, [oWalletBalances])
+
+  const hasRuneBalance = useMemo(() => {
+    const runeBalance = useLedger ? runeLedgerBalance : runeKeystoreBalance
+    return O.isSome(runeBalance) && runeBalance.value.amount.gt(ZERO_BASE_AMOUNT)
+  }, [useLedger, runeLedgerBalance, runeKeystoreBalance])
+
   const walletType = useMemo(
     () =>
       useLedger
         ? O.isSome(tcyLedgerBalance)
           ? tcyLedgerBalance.value.walletType
           : DEFAULT_WALLET_TYPE
-        : O.isSome(tcyKeystoreBalance)
-          ? tcyKeystoreBalance.value.walletType
-          : DEFAULT_WALLET_TYPE,
-    [useLedger, tcyLedgerBalance, tcyKeystoreBalance]
+        : WalletType.Keystore,
+    [useLedger, tcyLedgerBalance]
+  )
+
+  const walletAccount = useMemo(
+    () => (useLedger ? (O.isSome(tcyLedgerBalance) ? tcyLedgerBalance.value.walletAccount : 0) : 0),
+    [useLedger, tcyLedgerBalance]
+  )
+
+  const walletIndex = useMemo(
+    () => (useLedger ? (O.isSome(tcyLedgerBalance) ? tcyLedgerBalance.value.walletIndex : 0) : 0),
+    [useLedger, tcyLedgerBalance]
+  )
+
+  const wallethdMode = useMemo(
+    () => (useLedger ? (O.isSome(tcyLedgerBalance) ? tcyLedgerBalance.value.hdMode : 'default') : 'default'),
+    [useLedger, tcyLedgerBalance]
   )
 
   const tcyClaims$ = useMemo(() => {
@@ -212,17 +257,20 @@ export const TcyView = () => {
     if (allBalances.length === 0) return of(RD.initial)
 
     const filteredBalances = allBalances.filter(({ asset }) => !['AVAX', 'BSC', 'BASE', 'XRP'].includes(asset.chain))
-    const uniqueBalances = Array.from(new Map(filteredBalances.map((item) => [item.walletAddress, item])).values())
 
-    // Return early if no balances to check
-    if (uniqueBalances.length === 0) return of(RD.initial)
+    // Deduplicate by address only (not by wallet type) since TCY claims are address-based
+    const uniqueAddresses = Array.from(new Set(filteredBalances.map((item) => item.walletAddress)))
 
-    // Share the inner observables before combineLatest
-    const sharedClaims$ = (address: Address, type: WalletType) => getTcyClaim$(address, type).pipe(shareReplay(1))
+    // Return early if no addresses to check
+    if (uniqueAddresses.length === 0) return of(RD.initial)
 
-    return combineLatest(
-      uniqueBalances.map(({ walletAddress, walletType }) => sharedClaims$(walletAddress, walletType))
-    ).pipe(
+    // Share the inner observables before combineLatest - use first wallet type found for each address
+    const sharedClaims$ = (address: Address) => {
+      const firstBalance = filteredBalances.find((b) => b.walletAddress === address)
+      return getTcyClaim$(address, firstBalance?.walletType || WalletType.Keystore).pipe(shareReplay(1))
+    }
+
+    return combineLatest(uniqueAddresses.map((address) => sharedClaims$(address))).pipe(
       map((rds) => {
         const successes = rds
           .filter(RD.isSuccess)
@@ -354,6 +402,18 @@ export const TcyView = () => {
     [activeTab, amountValidator, maxAmountToUnstake, tcyStakePosRD]
   )
 
+  // Initialize memos for stake and unstake operations
+  useEffect(() => {
+    if (activeTab === TcyOperation.Stake) {
+      setCurrentMemo(getStakeMemo())
+    } else if (activeTab === TcyOperation.Unstake) {
+      if (RD.isSuccess(tcyStakePosRD) && maxAmountToUnstake.gt(ZERO_BASE_AMOUNT)) {
+        // Default to 0 bps for unstake memo when no amount is entered
+        setCurrentMemo(getUnstakeMemo('0'))
+      }
+    }
+  }, [activeTab, tcyStakePosRD, maxAmountToUnstake])
+
   const submitAsymDepositTx = useCallback(() => {
     const oAssetWB: O.Option<WalletBalance> = FP.pipe(
       sequenceTOption(oClaimAssetAmount, claimAddress),
@@ -418,6 +478,11 @@ export const TcyView = () => {
     }
   }, [activeTab, reloadTcyClaim, reloadTcyStaker])
 
+  const refreshThorBalances = useCallback(() => {
+    const lazyReload = reloadBalancesByChain(THORChain, useLedger ? WalletType.Ledger : DEFAULT_WALLET_TYPE)
+    lazyReload()
+  }, [useLedger])
+
   const handleClaim = useCallback((tcyInfo: TcyInfo) => {
     setSelectedAsset(tcyInfo)
     const assetAmount: AssetWithAmount1e8 = {
@@ -462,27 +527,21 @@ export const TcyView = () => {
 
   const submitTx = useCallback(
     (memo: string) => {
-      const walletBalance = useLedger ? tcyLedgerBalance : tcyKeystoreBalance
-
-      if (O.isNone(walletBalance)) return
-
-      const { walletType, walletIndex, walletAccount, hdMode } = walletBalance.value
-
       setSendTxStartTime(Date.now())
 
-      subscribeInteractState(
-        interact$({
-          walletType,
-          walletAccount,
-          walletIndex,
-          hdMode,
-          amount: amountToSend,
-          memo,
-          asset: AssetTCY
-        })
-      )
+      const txParams = {
+        walletType,
+        walletAccount,
+        walletIndex,
+        hdMode: wallethdMode,
+        amount: amountToSend,
+        memo,
+        asset: AssetTCY
+      }
+
+      subscribeInteractState(interact$(txParams))
     },
-    [useLedger, tcyLedgerBalance, tcyKeystoreBalance, subscribeInteractState, interact$, amountToSend]
+    [walletType, walletAccount, walletIndex, wallethdMode, amountToSend, subscribeInteractState, interact$]
   )
 
   const onSuccess = useCallback(() => {
@@ -498,35 +557,6 @@ export const TcyView = () => {
     setPasswordModalVisible(false)
   }, [activeTab, submitTx, currentMemo, submitAsymDepositTx])
 
-  const renderSlider = useMemo(() => {
-    // Calculate percentage based on amountToSend and maxAmount
-    const percentage =
-      RD.isSuccess(tcyStakePosRD) && maxAmountToUnstake.gt(ZERO_BASE_AMOUNT)
-        ? (baseToAsset(_amountToSend).amount().toNumber() / baseToAsset(maxAmountToUnstake).amount().toNumber()) * 100
-        : 0
-
-    const setAmountToSendFromPercentValue = (percents: number) => {
-      if (RD.isSuccess(tcyStakePosRD)) {
-        // Calculate basis points (bps) for memo
-        const bps = percents * 100
-        setCurrentMemo(getUnstakeMemo(bps.toString()))
-
-        // Calculate amount to send based on percentage of maxAmount
-        const newAmount = maxAmountToUnstake.times(percents / 100)
-        setAmountToSend(newAmount)
-      }
-    }
-
-    return (
-      <Slider
-        key={'Tcy Unstake percentage slider'}
-        value={percentage}
-        onChange={setAmountToSendFromPercentValue}
-        max={100}
-        disabled={isLoading || !RD.isSuccess(tcyStakePosRD) || maxAmountToUnstake.eq(ZERO_BASE_AMOUNT)}
-      />
-    )
-  }, [_amountToSend, isLoading, maxAmountToUnstake, tcyStakePosRD])
   // need to separate these
   const resetStake = useCallback(() => {
     resetInteractState()
@@ -774,6 +804,22 @@ export const TcyView = () => {
                 </div>
               ))}
             </div>
+
+            {/* RUNE balance warning for all TCY actions */}
+            {!hasRuneBalance && (
+              <div className="mx-4 mb-4 flex items-center space-x-2 rounded-lg border border-warning0 bg-warning0/10 p-3 dark:border-warning0d dark:bg-warning0d/10">
+                <InformationCircleIcon className="h-5 w-5 text-warning0 dark:text-warning0d" />
+                <span className="text-sm text-text1 dark:text-text1d">
+                  {intl.formatMessage(
+                    { id: 'wallet.errors.fee.notCovered' },
+                    {
+                      balance: 'RUNE'
+                    }
+                  )}
+                </span>
+              </div>
+            )}
+
             <div className="flex flex-col px-4">
               {activeTab === TcyOperation.Claim && (
                 <div>
@@ -889,6 +935,16 @@ export const TcyView = () => {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
+                      <FlatButton
+                        className="h-8 px-3 py-1 text-xs"
+                        color="primary"
+                        size="small"
+                        disabled={isLoading || maxAmountToStake.eq(ZERO_BASE_AMOUNT)}
+                        onClick={() => {
+                          setAmountToSend(maxAmountToStake)
+                        }}>
+                        {intl.formatMessage({ id: 'common.max' })}
+                      </FlatButton>
                       <AssetIcon asset={AssetTCY} network={network} />
                       <div className="flex flex-col">
                         <Label size="big" textTransform="uppercase" weight="bold">
@@ -912,11 +968,17 @@ export const TcyView = () => {
                       </CheckButton>
                     </div>
                   )}
+                  {/* Memo Display */}
+                  <div className="rounded-lg bg-gray0 p-3 dark:bg-gray0d">
+                    <Label size="small" color="primary">
+                      {currentMemo || getStakeMemo()}
+                    </Label>
+                  </div>
                   <FlatButton
                     className="my-30px min-w-[200px]"
                     size="large"
                     color="primary"
-                    disabled={isLoading}
+                    disabled={isLoading || !hasRuneBalance}
                     onClick={() => (useLedger ? setShowLedgerModal(true) : setPasswordModalVisible(true))}>
                     {intl.formatMessage({ id: 'tcy.stake' })}
                   </FlatButton>
@@ -951,6 +1013,20 @@ export const TcyView = () => {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
+                      <FlatButton
+                        className="h-8 px-3 py-1 text-xs"
+                        color="primary"
+                        size="small"
+                        disabled={isLoading || !RD.isSuccess(tcyStakePosRD) || maxAmountToUnstake.eq(ZERO_BASE_AMOUNT)}
+                        onClick={() => {
+                          if (RD.isSuccess(tcyStakePosRD)) {
+                            // Set to 100% (10000 basis points)
+                            setCurrentMemo(getUnstakeMemo('10000'))
+                            setAmountToSend(maxAmountToUnstake)
+                          }
+                        }}>
+                        {intl.formatMessage({ id: 'common.max' })}
+                      </FlatButton>
                       <AssetIcon asset={AssetTCY} network={network} />
                       <div className="flex flex-col">
                         <Label size="big" textTransform="uppercase" weight="bold">
@@ -974,12 +1050,24 @@ export const TcyView = () => {
                       </CheckButton>
                     </div>
                   )}
-                  {renderSlider}
+                  {/* Memo Display */}
+                  <div className="rounded-lg bg-gray0 p-3 dark:bg-gray0d">
+                    <Label size="small" color="primary">
+                      {currentMemo || getUnstakeMemo('0')}
+                    </Label>
+                  </div>
+
                   <FlatButton
                     className="my-30px min-w-[200px]"
                     size="large"
                     color="primary"
-                    disabled={isLoading || !RD.isSuccess(tcyStakePosRD)}
+                    disabled={
+                      isLoading ||
+                      !RD.isSuccess(tcyStakePosRD) ||
+                      _amountToSend.eq(ZERO_BASE_AMOUNT) ||
+                      !currentMemo ||
+                      !hasRuneBalance
+                    }
                     onClick={() => (useLedger ? setShowLedgerModal(true) : setPasswordModalVisible(true))}>
                     {intl.formatMessage({ id: 'tcy.unstake' })}
                   </FlatButton>
@@ -1016,13 +1104,16 @@ export const TcyView = () => {
             </div>
 
             <div className="mt-4 flex flex-col space-y-2 px-4">
-              <div className="flex items-center space-x-2">
-                <Label className="!w-auto" color="gray" size="big">
-                  Wallet Balance
-                </Label>
-                <Tooltip title={intl.formatMessage({ id: 'tcy.walletBalanceTooltip' })}>
-                  <InformationCircleIcon className="h-4 w-4 cursor-pointer text-turquoise" />
-                </Tooltip>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Label className="!w-auto" color="gray" size="big">
+                    {intl.formatMessage({ id: 'tcy.walletBalance' })}
+                  </Label>
+                  <Tooltip title={intl.formatMessage({ id: 'tcy.walletBalanceTooltip' })}>
+                    <InformationCircleIcon className="h-4 w-4 cursor-pointer text-turquoise" />
+                  </Tooltip>
+                </div>
+                <RefreshButton onClick={refreshThorBalances} size="small" />
               </div>
 
               {/* Warning Message */}
