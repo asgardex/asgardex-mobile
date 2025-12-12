@@ -220,6 +220,7 @@ const common: CommonMessages = {
   'common.taproot': 'Taproot',
   'common.protocols': 'Protocols',
   'common.resetToDefault': 'Reset to streaming default',
+  'common.noData': 'No data',
   'common.importTokens': 'Import Tokens',
   'common.searchToken': 'Search token',
   'common.warning.token.import':

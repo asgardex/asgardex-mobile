@@ -143,7 +143,7 @@ export const Table = <T extends object>({
               colSpan={table.getAllLeafColumns().length || 1}>
               <div className="flex min-h-28 w-full items-center justify-center bg-bg1 dark:bg-bg1d">
                 <Label className="!w-auto" textTransform="uppercase">
-                  No data
+                  {intl.formatMessage({ id: 'common.noData' })}
                 </Label>
               </div>
             </td>

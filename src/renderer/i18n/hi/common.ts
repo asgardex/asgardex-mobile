@@ -219,6 +219,7 @@ const common: CommonMessages = {
   'common.taproot': 'Taproot',
   'common.protocols': 'प्रोटोकॉल',
   'common.resetToDefault': 'डिफ़ॉल्ट पर रीसेट करें',
+  'common.noData': 'कोई डेटा नहीं',
   'common.importTokens': 'टोकन आयात करें',
   'common.searchToken': 'टोकन खोजें',
   'common.warning.token.import':
