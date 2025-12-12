@@ -25,6 +25,7 @@
     "lint": "trunk check --filter=eslint --filter=prettier",
     "check:trunk": "cross-env-shell ./scripts/trunk-check.sh",
     "check:yarn-lock": "cross-env-shell ./scripts/check-lockfile.sh",
+    "validate:bundle": "node scripts/validate-prod-bundle.mjs",
     "generate:erc20whitelist": "./node_modules/.bin/ts-node --project tsconfig.scripts.json ./scripts/generateERC20Whitelist.ts",
     "generate:arberc20whitelist": "npm run generate:erc20whitelist -- ARB",
     "generate:avaxerc20whitelist": "npm run generate:erc20whitelist -- AVAX",
