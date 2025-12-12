@@ -219,6 +219,7 @@ const common: CommonMessages = {
   'common.taproot': 'Taproot',
   'common.protocols': '프로토콜',
   'common.resetToDefault': '기본값으로 재설정',
+  'common.noData': '데이터 없음',
   'common.importTokens': '토큰 가져오기',
   'common.searchToken': '토큰 검색',
   'common.warning.token.import':

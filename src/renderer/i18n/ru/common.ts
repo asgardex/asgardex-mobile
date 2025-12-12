@@ -220,6 +220,7 @@ const common: CommonMessages = {
   'common.taproot': 'Taproot',
   'common.protocols': 'Протоколы',
   'common.resetToDefault': 'Сбросить к значениям по умолчанию',
+  'common.noData': 'Нет данных',
   'common.importTokens': 'Импортировать токены',
   'common.searchToken': 'Поиск токена',
   'common.warning.token.import':
