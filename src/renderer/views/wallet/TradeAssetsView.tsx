@@ -10,7 +10,9 @@ import * as Rx from 'rxjs'
 import * as RxOp from 'rxjs/operators'
 
 import { WalletType } from '../../../shared/wallet/types'
-import { RefreshButton } from '../../components/uielements/button'
+import { TradeDepositModal } from '../../components/modal/tradeDeposit'
+import { RefreshButton, Button } from '../../components/uielements/button'
+import { Label } from '../../components/uielements/label'
 import { Spin } from '../../components/uielements/spin'
 import { AssetsNav } from '../../components/wallet/assets'
 import { TotalAssetValue } from '../../components/wallet/assets/TotalAssetValue'
@@ -27,6 +29,7 @@ import { getPoolPriceValue as getPoolPriceValueMaya, MAYA_PRICE_POOL } from '../
 import { useObserveMayaScanPrice } from '../../hooks/useMayascanPrice'
 import { useThorchainMimirHalt } from '../../hooks/useMimirHalt'
 import { useNetwork } from '../../hooks/useNetwork'
+import { useTradeDepositAddresses } from '../../hooks/useTradeDepositAddresses'
 import { TradeAccount } from '../../services/thorchain/types'
 import { INITIAL_BALANCES_STATE, DEFAULT_BALANCES_FILTER } from '../../services/wallet/const'
 import { ChainBalance, SelectedWalletAsset } from '../../services/wallet/types'
@@ -34,14 +37,39 @@ import { useApp } from '../../store/app/hooks'
 
 export const TradeAssetsView = (): JSX.Element => {
   const intl = useIntl()
-  const { balancesState$, setSelectedAsset } = useWalletContext()
+  const { balancesState$, setSelectedAsset, keystoreService } = useWalletContext()
   const { getTradeAccount$: getTradeAccountThor, reloadTradeAccount: reloadTradeAccountThor } = useThorchainContext()
   const { getTradeAccount$: getTradeAccountMaya, reloadTradeAccount: reloadTradeAccountMaya } = useMayachainContext()
   const { chainBalances$ } = useWalletContext()
   const { network } = useNetwork()
-  const { isPrivate } = useApp()
+  const { isPrivate, protocol } = useApp()
   const { mayaScanPriceRD } = useObserveMayaScanPrice()
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [showDepositModal, setShowDepositModal] = useState(false)
+
+  // Get chain balances for the modal
+  const chainBalances = useObservableState(chainBalances$, [])
+
+  // Get protocol addresses for trade deposit - both keystore and ledger
+  const { protocolAddress: thorKeystoreProtocolAddress } = useTradeDepositAddresses({
+    protocol: THORChain,
+    walletType: WalletType.Keystore
+  })
+
+  const { protocolAddress: thorLedgerProtocolAddress } = useTradeDepositAddresses({
+    protocol: THORChain,
+    walletType: WalletType.Ledger
+  })
+
+  const { protocolAddress: mayaKeystoreProtocolAddress } = useTradeDepositAddresses({
+    protocol: MAYAChain,
+    walletType: WalletType.Keystore
+  })
+
+  const { protocolAddress: mayaLedgerProtocolAddress } = useTradeDepositAddresses({
+    protocol: MAYAChain,
+    walletType: WalletType.Ledger
+  })
 
   const {
     service: {
@@ -171,18 +199,19 @@ export const TradeAssetsView = (): JSX.Element => {
   ])
 
   const refreshHandler = useCallback(
-    async (protocol?: Chain) => {
+    (protocol?: Chain) => {
       setIsRefreshing(true)
       try {
         if (protocol === THORChain) {
-          await reloadTradeAccountThor()
+          reloadTradeAccountThor()
         } else if (protocol === MAYAChain) {
-          await reloadTradeAccountMaya()
+          reloadTradeAccountMaya()
         } else {
-          await Promise.all([reloadTradeAccountThor(), reloadTradeAccountMaya()])
+          reloadTradeAccountThor()
+          reloadTradeAccountMaya()
         }
       } finally {
-        setIsRefreshing(false) // Reset loading state
+        setTimeout(() => setIsRefreshing(false), 1000) // Reset loading state after a short delay
       }
     },
     [reloadTradeAccountThor, reloadTradeAccountMaya]
@@ -286,7 +315,15 @@ export const TradeAssetsView = (): JSX.Element => {
 
   return (
     <>
-      <div className="flex w-full justify-end pb-20px">
+      <div className="flex w-full justify-between pb-20px">
+        <Button
+          className="rounded-lg bg-turquoise !p-2 hover:bg-turquoise/80"
+          onClick={() => setShowDepositModal(true)}
+          disabled={disableRefresh}>
+          <Label size="big" color="white">
+            {intl.formatMessage({ id: 'wallet.action.deposit' })} Trade Assets
+          </Label>
+        </Button>
         <RefreshButton onClick={() => refreshHandler()} disabled={disableRefresh} />
       </div>
       <AssetsNav />
@@ -324,6 +361,42 @@ export const TradeAssetsView = (): JSX.Element => {
           />
         </>
       )}
+      <TradeDepositModal
+        visible={showDepositModal}
+        chainBalances={chainBalances}
+        initialProtocol={protocol}
+        thorKeystoreProtocolAddress={FP.pipe(
+          thorKeystoreProtocolAddress,
+          O.fold(
+            () => undefined,
+            (address) => address.address
+          )
+        )}
+        thorLedgerProtocolAddress={FP.pipe(
+          thorLedgerProtocolAddress,
+          O.fold(
+            () => undefined,
+            (address) => address.address
+          )
+        )}
+        mayaKeystoreProtocolAddress={FP.pipe(
+          mayaKeystoreProtocolAddress,
+          O.fold(
+            () => undefined,
+            (address) => address.address
+          )
+        )}
+        mayaLedgerProtocolAddress={FP.pipe(
+          mayaLedgerProtocolAddress,
+          O.fold(
+            () => undefined,
+            (address) => address.address
+          )
+        )}
+        network={network}
+        validatePassword$={keystoreService.validatePassword$}
+        onClose={() => setShowDepositModal(false)}
+      />
     </>
   )
 }
