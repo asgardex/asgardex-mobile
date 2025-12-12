@@ -35,15 +35,19 @@ export default defineConfig(async ({ mode }) => {
       rollupOptions: {
         input: path.resolve(__dirname, 'src/renderer/index.html'),
         output: {
+          // Only split vendor chunk - don't manually chunk crypto polyfills
+          // as they contain CommonJS code that needs proper transformation
           manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom'],
-            crypto: ['crypto-browserify', 'stream-browserify', 'readable-stream']
+            vendor: ['react', 'react-dom', 'react-router-dom']
           }
         }
       },
       commonjsOptions: {
         transformMixedEsModules: true,
-        include: [/node_modules/, /@mayaprotocol\/zcash-js/]
+        // Ensure all node_modules are transformed from CommonJS to ESM
+        include: [/node_modules/],
+        // Force CommonJS detection for problematic packages
+        requireReturnsDefault: 'auto'
       }
     },
     esbuild: {
@@ -54,10 +58,17 @@ export default defineConfig(async ({ mode }) => {
         // Use asm.js build to avoid WASM top-level await issues with CommonJS consumers (bip32, bitcoinjs-lib)
         'tiny-secp256k1': '@bitcoin-js/tiny-secp256k1-asmjs',
         // Force @mayaprotocol/zcash-js to use CommonJS build instead of browser bundle
-        '@mayaprotocol/zcash-js': path.resolve(__dirname, 'node_modules/@mayaprotocol/zcash-js/dist/src/index.js')
+        '@mayaprotocol/zcash-js': path.resolve(__dirname, 'node_modules/@mayaprotocol/zcash-js/dist/src/index.js'),
+        // ESM shims for crypto-browserify dependencies to avoid "exports is not defined" error.
+        // These packages use CJS module.exports which leaks into the ESM bundle
+        // and crashes in browser environments without a CommonJS runtime.
+        randombytes: path.resolve(__dirname, 'src/shims/randombytes-esm.ts'),
+        'safe-buffer': path.resolve(__dirname, 'src/shims/safe-buffer-esm.ts'),
+        randomfill: path.resolve(__dirname, 'src/shims/randomfill-esm.ts')
       }
     },
     optimizeDeps: {
+      // Dev-only pre-bundling for a few known CJS packages.
       include: ['@mayaprotocol/zcash-js']
     },
     plugins: [
@@ -65,18 +76,33 @@ export default defineConfig(async ({ mode }) => {
       react(),
       svgr(),
       // Node.js polyfills for browser compatibility.
-      // Required because crypto dependencies (pbkdf2, readable-stream@2.x, hash-base)
-      // use Node built-ins like `util`, `stream`, `crypto`, and `process.version`.
-      // These packages are pinned via resolutions in package.json for security fixes,
-      // but their latest versions still depend on Node APIs.
-      // See: https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility
+      // Use protocolImports: true to get ESM-compatible polyfills that work in production builds.
+      // This avoids the "exports is not defined" error from CJS polyfills in ESM bundles.
       nodePolyfills({
-        include: ['process', 'buffer', 'stream', 'crypto', 'assert', 'util', 'events'],
+        // Polyfill Node built-ins used by upstream libs (solana/web3, bls, node-fetch, etc.).
+        // Missing polyfills cause Vite to externalize these modules and break runtime networking on Android.
+        include: [
+          'process',
+          'buffer',
+          'stream',
+          'crypto',
+          'assert',
+          'util',
+          'events',
+          'path',
+          'http',
+          'https',
+          'zlib',
+          'vm',
+          'fs'
+        ],
         globals: {
           Buffer: true,
           global: true,
           process: true
-        }
+        },
+        // Use ESM-compatible protocol imports instead of CJS polyfills
+        protocolImports: true
       })
     ],
     define: {

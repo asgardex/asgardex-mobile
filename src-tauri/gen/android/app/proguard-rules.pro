@@ -5,17 +5,38 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# =============================================================================
+# Tauri WebView / JavaScript Bridge Rules
+# =============================================================================
+# These rules are REQUIRED for Tauri apps to work in release builds.
+# R8/ProGuard strips classes it thinks are unused, breaking the JS bridge.
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep all Tauri classes and their members
+-keep class app.tauri.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep Tauri plugin classes
+-keep class com.plugin.** { *; }
+
+# Keep all classes with @JavascriptInterface methods (critical for IPC)
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# Preserve the JavascriptInterface annotation itself
+-keepattributes JavascriptInterface
+
+# Keep WebView client classes
+-keepclassmembers class * extends android.webkit.WebViewClient { *; }
+-keepclassmembers class * extends android.webkit.WebChromeClient { *; }
+
+# Keep WebView JavaScript interface classes
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface *;
+}
+
+# =============================================================================
+# Debugging (optional but recommended)
+# =============================================================================
+# Preserve line numbers for better crash stack traces
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
