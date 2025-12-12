@@ -363,20 +363,23 @@ export const BondsTable = ({
             </div>
             <div className="mt-2 flex items-center justify-between">{renderSubWalletType(bondAddress)}</div>
           </div>
-          <div className="mt-4 flex items-center justify-center">
+          <div className="mt-4 flex items-center justify-center space-x-2">
             <TextButton
+              className={clsx({ 'rounded-md bg-turquoise !text-white': isWalletAddress })}
               disabled={!isWalletAddress}
               size="normal"
               onClick={() => goToAction('bond', matchedAddresses[0] || nodeAddress, walletType)}>
               {intl.formatMessage({ id: 'deposit.interact.actions.bond' })}
             </TextButton>
             <TextButton
+              className={clsx({ 'rounded-md bg-turquoise !text-white': !(!isWalletAddress || unbondDisabled) })}
               disabled={!isWalletAddress || unbondDisabled}
               size="normal"
               onClick={() => goToAction('unbond', matchedAddresses[0] || nodeAddress, walletType)}>
               {intl.formatMessage({ id: 'deposit.interact.actions.unbond' })}
             </TextButton>
             <TextButton
+              className={clsx({ 'rounded-md bg-turquoise !text-white': !(!isWalletAddress || !isLeaveEligible) })}
               disabled={!isWalletAddress || !isLeaveEligible}
               size="normal"
               onClick={() => goToAction('leave', matchedAddresses[0] || nodeAddress, walletType)}>

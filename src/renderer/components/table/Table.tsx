@@ -72,6 +72,8 @@ export const Table = <T extends object>({
         })
   })
 
+  const rows = table.getRowModel().rows
+
   return (
     <table className="w-full table-fixed">
       {!hideHeader && (
@@ -134,8 +136,21 @@ export const Table = <T extends object>({
             </td>
           </tr>
         )}
+        {!loading && rows.length === 0 && (
+          <tr>
+            <td
+              className="border border-solid border-gray0/40 dark:border-gray0d/40"
+              colSpan={table.getAllLeafColumns().length || 1}>
+              <div className="flex min-h-28 w-full items-center justify-center bg-bg1 dark:bg-bg1d">
+                <Label className="!w-auto" textTransform="uppercase">
+                  No data
+                </Label>
+              </div>
+            </td>
+          </tr>
+        )}
         {!loading &&
-          table.getRowModel().rows.map((row) => (
+          rows.map((row) => (
             <Fragment key={row.id}>
               <tr
                 className="group cursor-pointer hover:bg-[#ededed] dark:hover:bg-[#252c33]"
