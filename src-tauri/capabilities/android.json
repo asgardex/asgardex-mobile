@@ -1,0 +1,31 @@
+{
+  "$schema": "../gen/schemas/capabilities.json",
+  "identifier": "android",
+  "description": "baseline capabilities for Android builds",
+  "platforms": ["android"],
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "log:default",
+    "dialog:default",
+    "fs:default",
+    "fs:allow-rename",
+    {
+      "identifier": "fs:scope",
+      "allow": ["$APPDATA/ASGARDEX", "$APPDATA/ASGARDEX/**", "$DOCUMENT", "$DOCUMENT/**", "$DOWNLOAD", "$DOWNLOAD/**"]
+    },
+    "fs:write-files",
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
+    "fs:allow-exists",
+    "fs:allow-mkdir",
+    "android-fs:default",
+    "store:default",
+    "opener:allow-open-url",
+    "opener:allow-default-urls",
+    "secure-storage:default",
+    "biometric:default",
+    "notification:default",
+    "safe-area-insets:default"
+  ]
+}

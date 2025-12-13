@@ -1,0 +1,36 @@
+{
+  "$schema": "../gen/schemas/capabilities.json",
+  "identifier": "default",
+  "description": "desktop baseline permissions",
+  "platforms": ["windows", "macOS", "linux"],
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "log:default",
+    "dialog:default",
+    "opener:allow-open-url",
+    "opener:allow-default-urls",
+    "fs:default",
+    "fs:allow-rename",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        "$APPDATA/ASGARDEX",
+        "$APPDATA/ASGARDEX/**",
+        "$DOCUMENT",
+        "$DOCUMENT/**",
+        "$DOWNLOAD",
+        "$DOWNLOAD/**",
+        "$DESKTOP",
+        "$DESKTOP/**"
+      ]
+    },
+    "fs:write-files",
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
+    "store:default",
+    "updater:default",
+    "secure-storage:default",
+    "notification:default"
+  ]
+}

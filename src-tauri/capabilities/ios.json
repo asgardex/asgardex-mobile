@@ -1,0 +1,30 @@
+{
+  "$schema": "../gen/schemas/capabilities.json",
+  "identifier": "ios",
+  "description": "baseline capabilities for iOS builds",
+  "platforms": ["iOS"],
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "log:default",
+    "dialog:default",
+    "fs:default",
+    "fs:allow-rename",
+    {
+      "identifier": "fs:scope",
+      "allow": ["$APPDATA/ASGARDEX", "$APPDATA/ASGARDEX/**", "$DOCUMENT", "$DOCUMENT/**", "$DOWNLOAD", "$DOWNLOAD/**"]
+    },
+    "fs:write-files",
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
+    "fs:allow-exists",
+    "fs:allow-mkdir",
+    "store:default",
+    "opener:allow-open-url",
+    "opener:allow-default-urls",
+    "secure-storage:default",
+    "biometric:default",
+    "notification:default",
+    "safe-area-insets:default"
+  ]
+}
