@@ -1,6 +1,7 @@
 import { Keystore } from '@xchainjs/xchain-crypto'
 
 import { KeystoreId } from '../../../shared/api/types'
+import { isTauri } from '../../../shared/utils/platform'
 
 const runtimeKeystoreCacheMap = new Map<KeystoreId, Keystore>()
 
@@ -57,7 +58,7 @@ const ensureLifecycleHandlers = () => {
     document.addEventListener('visibilitychange', handleVisibilityChange)
   }
 
-  if (typeof window !== 'undefined' && typeof window === 'object' && '__TAURI__' in window) {
+  if (isTauri()) {
     void import('@tauri-apps/api/window')
       .then(async ({ getCurrentWindow }) => {
         try {

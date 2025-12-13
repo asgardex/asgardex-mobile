@@ -8,11 +8,12 @@ import * as RxOp from 'rxjs/operators'
 import { ipcKeystoreWalletsIO, KeystoreWallets, isSecureKeystoreWallet } from '../../../shared/api/io'
 import { KeystoreId } from '../../../shared/api/types'
 import { isError } from '../../../shared/utils/guard'
+import { isTauri } from '../../../shared/utils/platform'
 import { liveData } from '../../helpers/rx/liveData'
 import { observableState, triggerStream } from '../../helpers/stateHelper'
 import { createLogger } from '../app/logging'
 import { INITIAL_KEYSTORE_STATE } from './const'
-import { getKeystoreMobileBridge } from './keystore-mobile'
+import type { KeystoreMobileBridge } from './keystore-mobile'
 import { persistWalletsOrThrow } from './keystore-persist'
 import { runtimeKeystoreCache } from './keystore-runtime-cache'
 import {
@@ -83,8 +84,78 @@ const normalizeErrorMessage = (error: unknown): string => {
   return normalized.message
 }
 
-const secureStorageBridge = getKeystoreMobileBridge()
-const { biometricNotice$, clearBiometricNotice, resolveBiometricOptIn } = secureStorageBridge
+// ---------------------------------------------------------------------------
+// Lazy-loaded Keystore Mobile Bridge
+// ---------------------------------------------------------------------------
+// The bridge is only loaded in Tauri environments to avoid coupling upstream
+// code to Tauri-specific modules at module load time.
+// ---------------------------------------------------------------------------
+
+let cachedBridge: KeystoreMobileBridge | null = null
+let cachedBridgePromise: Promise<KeystoreMobileBridge | null> | null = null
+
+/**
+ * Lazily loads the KeystoreMobileBridge. Returns null in non-Tauri environments.
+ * Uses async import() for ESM compatibility in Vite/Tauri WebView.
+ */
+const getKeystoreMobileBridgeLazy = async (): Promise<KeystoreMobileBridge | null> => {
+  if (cachedBridge) return cachedBridge
+  if (!isTauri()) return null
+  if (cachedBridgePromise) return cachedBridgePromise
+
+  cachedBridgePromise = import('./keystore-mobile')
+    .then((mod) => {
+      cachedBridge = mod.getKeystoreMobileBridge()
+      return cachedBridge
+    })
+    .catch((error) => {
+      logWalletError('Failed to load KeystoreMobileBridge', { error })
+      return null
+    })
+
+  return cachedBridgePromise
+}
+
+// Create proxy observables/functions that delegate to the lazy bridge
+// This maintains the same interface while deferring the actual bridge loading
+
+/**
+ * Biometric notice observable - delegates to lazy bridge or provides inert fallback
+ * In non-Tauri environments, emits O.none once and never emits notices
+ */
+const biometricNotice$ = new Rx.Observable<O.Option<import('./keystore-mobile').BiometricNotice>>((subscriber) => {
+  let innerSub: Rx.Subscription | undefined
+  let disposed = false
+  void getKeystoreMobileBridgeLazy().then((bridge) => {
+    if (disposed) return
+
+    if (bridge) {
+      innerSub = bridge.biometricNotice$.subscribe(subscriber)
+    } else {
+      // Non-Tauri: emit O.none once and complete the observable behavior
+      subscriber.next(O.none)
+    }
+  })
+  return () => {
+    disposed = true
+    innerSub?.unsubscribe()
+  }
+})
+
+/**
+ * Clear biometric notice - delegates to lazy bridge or no-op (fire and forget)
+ */
+const clearBiometricNotice = (): void => {
+  void getKeystoreMobileBridgeLazy().then((bridge) => bridge?.clearBiometricNotice())
+}
+
+/**
+ * Resolve biometric opt-in - delegates to lazy bridge or returns false
+ */
+const resolveBiometricOptIn = async (requested: boolean): Promise<boolean> => {
+  const bridge = await getKeystoreMobileBridgeLazy()
+  return bridge ? bridge.resolveBiometricOptIn(requested) : false
+}
 
 /**
  * Adds a keystore and saves it to disk

@@ -1,3 +1,29 @@
+/**
+ * windowApi.ts - Tauri Window API Surface
+ *
+ * CRITICAL: This module MUST be imported BEFORE any service modules.
+ *
+ * This module attaches the window.api* surface that all renderer services depend on:
+ * - window.apiKeystore   - Wallet keystore operations
+ * - window.apiSecure     - Secure storage for sensitive data
+ * - window.apiUrl        - External URL handling
+ * - window.apiHDWallet   - HD wallet / Ledger operations
+ * - window.api*Storage   - File-based storage services
+ * - window.apiAppUpdate  - App update checking
+ *
+ * Bootstrap sequence (in src/renderer/index.tsx):
+ * 1. await import('./tauri/windowApi')  ← THIS FILE - attaches window.api*
+ * 2. await import('./App')               ← Services can now access window.api*
+ *
+ * If this ordering is violated, services will encounter undefined window.api*
+ * properties, leading to runtime crashes like:
+ *   "Cannot read properties of undefined (reading 'initKeystoreWallets')"
+ *
+ * The ordering invariant is tested in bootstrap-ordering.test.ts.
+ *
+ * @see src/renderer/index.tsx - bootstrap sequence
+ * @see src/renderer/tauri/bootstrap-ordering.test.ts - invariant tests
+ */
 import * as RD from '@devexperts/remote-data-ts'
 import { invoke } from '@tauri-apps/api/core'
 import { join, dirname, appDataDir } from '@tauri-apps/api/path'

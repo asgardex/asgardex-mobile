@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import { generatePhrase } from '@xchainjs/xchain-crypto'
 import { useObservableCallback, useSubscription } from 'observable-hooks'
@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl'
 import * as RxOp from 'rxjs/operators'
 
 import { defaultWalletName } from '../../../../shared/utils/wallet'
-import { useBiometryStatus } from '../../../hooks/useBiometryStatus'
+import { useBiometricOptIn } from '../../../hooks/useBiometricOptIn'
 import { MAX_WALLET_NAME_CHARS } from '../../../services/wallet/const'
 import { FlatButton, RefreshButton } from '../../uielements/button'
 import { Input, InputPassword } from '../../uielements/input'
@@ -33,8 +33,7 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
   const intl = useIntl()
 
   const [phrase, setPhrase] = useState(generatePhrase())
-  const [biometricEnabled, setBiometricEnabled] = useState(false)
-  const { isSupported: biometricSupported, isChecking: checkingBiometry } = useBiometryStatus()
+  const bio = useBiometricOptIn()
 
   const initialWalletName = useMemo(() => defaultWalletName(walletId), [walletId])
 
@@ -62,12 +61,6 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
 
   const password = watch('password')
 
-  useEffect(() => {
-    if (!biometricSupported && biometricEnabled) {
-      setBiometricEnabled(false)
-    }
-  }, [biometricEnabled, biometricSupported])
-
   const handleFormFinish = useCallback(
     ({ password, name }: FormValues) => {
       if (!loading) {
@@ -77,14 +70,14 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
             phrase,
             password,
             name: name || initialWalletName,
-            biometricEnabled: biometricSupported ? biometricEnabled : undefined
+            biometricEnabled: bio.value
           })
         } catch (_err) {
           setLoading(false)
         }
       }
     },
-    [biometricEnabled, biometricSupported, initialWalletName, loading, onSubmit, phrase]
+    [bio.value, initialWalletName, loading, onSubmit, phrase]
   )
 
   const walletNameValidator = useCallback(
@@ -178,10 +171,10 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
             />
           </div>
 
-          {biometricSupported && !checkingBiometry && (
+          {bio.isSupported && !bio.isChecking && (
             <BiometricOptInToggle
-              checked={biometricEnabled}
-              onChange={setBiometricEnabled}
+              checked={bio.enabled}
+              onChange={bio.setEnabled}
               label={intl.formatMessage({ id: 'wallet.imports.enableBiometric' })}
             />
           )}

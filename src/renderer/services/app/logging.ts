@@ -6,6 +6,7 @@ import {
 } from '@tauri-apps/plugin-log'
 
 import { isError } from '../../../shared/utils/guard'
+import { isTauri } from '../../../shared/utils/platform'
 import { safeStringify } from '../../../shared/utils/safeStringify'
 
 type LoggerContext = Record<string, unknown>
@@ -75,10 +76,7 @@ const shouldMirrorToConsole = (): boolean => {
   return isTestEnv() || isConsoleFlagEnabled()
 }
 
-const isTauriRuntimeAvailable = (): boolean => {
-  if (typeof window === 'undefined') return false
-  return Boolean((window as typeof window & { __TAURI__?: unknown }).__TAURI__)
-}
+const isTauriRuntimeAvailable = (): boolean => isTauri()
 
 const safeStringifyContext = (value: unknown): string | undefined => {
   try {

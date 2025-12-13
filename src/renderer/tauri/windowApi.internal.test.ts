@@ -75,7 +75,8 @@ vi.mock('../../shared/config/biometric', () => ({
 }))
 
 vi.mock('../../shared/utils/platform', () => ({
-  setPlatformDevice: vi.fn()
+  setPlatformDevice: vi.fn(),
+  isTauri: vi.fn(() => false)
 }))
 
 import { __internalWindowApiHelpers } from './windowApi'

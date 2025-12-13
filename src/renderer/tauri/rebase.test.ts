@@ -57,8 +57,18 @@ const TEXT_EXPECTATIONS: TextExpectation[] = [
   },
   {
     file: 'src/renderer/index.tsx',
-    description: 'Renderer bootstrap still wires safe-area watcher',
-    mustInclude: ['watchSafeArea', './tauri/safeArea']
+    description: 'Renderer bootstrap enforces windowApi-first ordering',
+    mustInclude: [
+      'watchSafeArea',
+      './tauri/safeArea',
+      "await import('./tauri/windowApi')",
+      'MUST be imported BEFORE App'
+    ]
+  },
+  {
+    file: 'src/renderer/tauri/windowApi.ts',
+    description: 'windowApi documents bootstrap ordering requirement',
+    mustInclude: ['MUST be imported BEFORE any service modules', 'window.apiKeystore', 'window.apiSecure']
   },
   {
     file: 'src/renderer/components/settings/WalletSettings.tsx',

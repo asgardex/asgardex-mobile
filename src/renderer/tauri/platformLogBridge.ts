@@ -7,6 +7,7 @@ import {
 } from '@tauri-apps/plugin-log'
 
 import { isError } from '../../shared/utils/guard'
+import { isTauri } from '../../shared/utils/platform'
 import { safeStringify } from '../../shared/utils/safeStringify'
 
 type ConsoleMethod = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'log'
@@ -16,7 +17,6 @@ type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error'
 type ConsoleSnapshot = Partial<Record<ConsoleMethod, (...args: unknown[]) => void>>
 
 type WindowWithBridge = typeof window & {
-  __TAURI__?: unknown
   __ASGARDEX_PLATFORM_LOG_BRIDGE__?: boolean
   __ASGARDEX_USE_PLATFORM_LOG__?: string
 }
@@ -51,9 +51,8 @@ const readEnvValue = (key: string): string | undefined => {
 }
 
 const shouldEnableBridge = (): boolean => {
-  if (typeof window === 'undefined') return false
+  if (!isTauri()) return false
   const w = window as WindowWithBridge
-  if (!w.__TAURI__) return false
 
   const explicitFlag = parseFlag(readEnvValue('VITE_USE_PLATFORM_LOG') ?? readEnvValue('ASGARDEX_USE_PLATFORM_LOG'))
   if (explicitFlag !== undefined) return explicitFlag

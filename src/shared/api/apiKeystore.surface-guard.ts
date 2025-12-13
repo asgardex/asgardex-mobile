@@ -10,3 +10,6 @@ type Assert<T extends true> = T
 
 // Compile-time guard: update intentionally if upstream expands the surface.
 export type __ApiKeystoreSurfaceGuard = Assert<IsExact<ApiKeystoreKeys, AllowedApiKeystoreKeys>>
+
+// Signature guard: ensures method signatures match at compile time
+export type __ApiKeystoreSignatureGuard = ApiKeystore

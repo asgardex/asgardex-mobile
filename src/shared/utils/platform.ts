@@ -103,3 +103,12 @@ export const resetPlatformDeviceForTests = (): void => {
   isMobile = currentDevice.isMobile
   syncDocumentPlatformDataset()
 }
+
+/**
+ * Returns true if running in a Tauri environment.
+ * Safe to call in SSR/test/node contexts (returns false).
+ */
+export const isTauri = (): boolean => {
+  if (typeof window === 'undefined') return false
+  return '__TAURI__' in window
+}

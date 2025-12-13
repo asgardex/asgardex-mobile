@@ -6,6 +6,12 @@ import * as IOD from 'io-ts/Decoder'
 import * as IOG from 'io-ts/Guard'
 
 import { enabledChainGuard, isAsset, isBaseAmount, isEvmHDMode, isFeeOption, isHDMode, isNetwork } from '../utils/guard'
+// Tauri-specific secure keystore codec (mobile biometric storage)
+import { secureKeystoreWalletIO } from './io.secure'
+
+// Re-export secure types for backward compatibility
+export type { SecureKeystoreWallet } from './io.secure'
+export { isSecureKeystoreWallet } from './io.secure'
 
 const assetDecoder: IOD.Decoder<unknown, AnyAsset> = FP.pipe(
   IOD.string,
@@ -223,37 +229,6 @@ export const keystoreIO = new t.Type(
   t.identity
 )
 
-const secureWriteStatusIO = t.keyof({
-  success: null,
-  failed: null
-})
-
-const exportActionIO = t.keyof({
-  initiated: null,
-  completed: null,
-  canceled: null
-})
-
-const optionalString = t.union([t.string, t.null, t.undefined])
-const optionalExportAction = t.union([exportActionIO, t.null, t.undefined])
-
-const secureKeystoreWalletIO = t.intersection([
-  t.type({
-    id: t.number,
-    name: t.string,
-    selected: t.boolean,
-    secureKeyId: t.string,
-    biometricEnabled: t.boolean,
-    lastSecureWriteAt: t.string,
-    lastSecureWriteStatus: secureWriteStatusIO
-  }),
-  t.partial({
-    exportAcknowledgedAt: optionalString,
-    lastExportAction: optionalExportAction,
-    lastExportActionAt: optionalString
-  })
-])
-
 const legacyKeystoreWalletIO = t.type({
   id: t.number,
   name: t.string,
@@ -261,13 +236,13 @@ const legacyKeystoreWalletIO = t.type({
   keystore: keystoreIO
 })
 
+// Union of secure (Tauri mobile) and legacy (Electron desktop) wallet formats
 export const ipcKeystoreWalletIO = t.union([secureKeystoreWalletIO, legacyKeystoreWalletIO])
 
 /**
  * Keystore Wallet
  * Created by users by importing or creating keystores in `Wallet` section
  */
-export type SecureKeystoreWallet = t.TypeOf<typeof secureKeystoreWalletIO>
 export type LegacyKeystoreWallet = t.TypeOf<typeof legacyKeystoreWalletIO>
 
 export type KeystoreWallet = t.TypeOf<typeof ipcKeystoreWalletIO>
@@ -277,9 +252,6 @@ export const ipcKeystoreWalletsIO = t.array(ipcKeystoreWalletIO)
 export type IPCKeystoreWallets = t.TypeOf<typeof ipcKeystoreWalletsIO>
 
 export type KeystoreWallets = t.TypeOf<typeof ipcKeystoreWalletsIO>
-
-export const isSecureKeystoreWallet = (wallet: KeystoreWallet): wallet is SecureKeystoreWallet =>
-  typeof (wallet as Partial<SecureKeystoreWallet>).secureKeyId === 'string'
 
 export const isLegacyKeystoreWallet = (wallet: KeystoreWallet): wallet is LegacyKeystoreWallet => 'keystore' in wallet
 
