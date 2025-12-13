@@ -37,6 +37,7 @@ import * as playgroundRoutes from '../../routes/playground'
 import * as poolsRoutes from '../../routes/pools'
 import * as portfolioRoutes from '../../routes/portfolio'
 import * as walletRoutes from '../../routes/wallet'
+import { openExternalUrl } from '../../services/app/external'
 import { mayaIconT } from '../icons'
 import { Label } from '../uielements/label'
 import { Tooltip } from '../uielements/tooltip'
@@ -243,7 +244,7 @@ export const SidebarComponent = (props: Props): JSX.Element => {
   )
 
   const clickIconHandler = useCallback((url: string) => {
-    window.apiUrl.openExternal(url)
+    openExternalUrl(url)
   }, [])
 
   const gotoPlayground = useCallback(() => navigate(playgroundRoutes.base.path()), [navigate])
