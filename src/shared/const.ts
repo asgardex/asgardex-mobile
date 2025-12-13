@@ -62,6 +62,8 @@ export enum ExternalUrl {
   LICENSE = 'https://github.com/asgardex/asgardex-desktop?tab=MIT-1-ov-file'
 }
 
+export const BLOCKED_NOTIFICATION_COOLDOWN_MS = 4000
+
 export const INVALID_PATH_SEGMENT = /[\\/]|\.\./
 export const VALID_SEGMENT_PATTERN = /^[a-zA-Z0-9._-]+$/
 
@@ -142,3 +144,7 @@ export const DEFAULT_STORAGES: StoreFilesContent = {
   userBondProviders: USER_BOND_PROVIDERS_STORAGE_DEFAULT,
   pools: POOLS_STORAGE_DEFAULT
 }
+
+// Secure storage constants
+export const SECURE_STORAGE_VERSION = 1
+export const SECURE_KEY_PREFIX = 'asgardex-wallet'

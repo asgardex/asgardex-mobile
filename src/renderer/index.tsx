@@ -1,16 +1,46 @@
-import React from 'react'
-
 import './index.css'
+import './safe-area.css'
 import { createRoot } from 'react-dom/client'
 
-import { App } from './App'
+import { getInsets as getSafeAreaInsets, watchSafeArea } from './tauri/safeArea'
 
-// // Registers custom headers (9R endpoints only)
-// register9Rheader('')
+/**
+ * CRITICAL: Bootstrap Ordering Invariant
+ *
+ * windowApi.ts MUST be imported BEFORE App (and all service modules).
+ *
+ * The windowApi module attaches the window.api* surface (apiKeystore, apiSecure,
+ * apiUrl, apiHDWallet, storage APIs, etc.) that services depend on. If App is
+ * imported first, service modules will encounter undefined window.api* properties,
+ * causing runtime crashes.
+ *
+ * This ordering is enforced by:
+ * 1. Dynamic imports with explicit await (this file)
+ * 2. Tests in bootstrap-ordering.test.ts that validate the invariant
+ * 3. rebase.test.ts which checks this file contains the required pattern
+ *
+ * @see src/renderer/tauri/windowApi.ts - attaches window.api* surface
+ * @see src/renderer/tauri/bootstrap-ordering.test.ts - invariant tests
+ */
+async function bootstrap() {
+  // Step 1: Initialize window.api* surface (MUST be first)
+  await import('./tauri/windowApi')
 
-// React 18 introduces a new root API
-// @see https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-client-rendering-apis
-const container = document.getElementById('root')
+  // Step 2: Import App (services can now safely access window.api*)
+  const { App } = await import('./App')
 
-const root = createRoot(container!) // createRoot(container!) if you use TypeScript
-root.render(<App />)
+  void watchSafeArea(getSafeAreaInsets)
+
+  const container = document.getElementById('root')
+  if (!container) {
+    throw new Error('[BOOT] root container "#root" not found')
+  }
+
+  const root = createRoot(container)
+  root.render(<App />)
+}
+
+bootstrap().catch((error) => {
+  // Keep a minimal error log for release diagnostics.
+  console.error('[BOOT] bootstrap failed', error)
+})
