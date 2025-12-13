@@ -9,12 +9,14 @@ import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
 import { defaultWalletName } from '../../../../shared/utils/wallet'
+import { useBiometricOptIn } from '../../../hooks/useBiometricOptIn'
 import { KeystoreClientStates } from '../../../hooks/useKeystoreClientStates'
 import { MAX_WALLET_NAME_CHARS } from '../../../services/wallet/const'
 import { AddKeystoreParams } from '../../../services/wallet/types'
 import { FlatButton } from '../../uielements/button'
 import { InputPassword, Input } from '../../uielements/input'
 import { Spin } from '../../uielements/spin'
+import { BiometricOptInToggle } from '../shared/BiometricOptInToggle'
 
 type FormValues = {
   phrase: string
@@ -55,6 +57,8 @@ export const ImportPhrase = (props: Props): JSX.Element => {
   const [importing, setImporting] = useState(false)
   const [importError, setImportError] = useState<O.Option<Error>>(O.none)
 
+  const bio = useBiometricOptIn()
+
   useEffect(() => {
     FP.pipe(
       clientStates,
@@ -79,14 +83,18 @@ export const ImportPhrase = (props: Props): JSX.Element => {
     async ({ phrase: newPhrase, password, name }: FormValues) => {
       setImportError(O.none)
       setImporting(true)
-      await addKeystore({ phrase: newPhrase, name: name || defaultWalletName(walletId), id: walletId, password }).catch(
-        (error) => {
-          setImporting(false)
-          setImportError(O.some(error))
-        }
-      )
+      await addKeystore({
+        phrase: newPhrase,
+        name: name || defaultWalletName(walletId),
+        id: walletId,
+        password,
+        biometricEnabled: bio.value
+      }).catch((error) => {
+        setImporting(false)
+        setImportError(O.some(error))
+      })
     },
-    [addKeystore, walletId]
+    [addKeystore, bio.value, walletId]
   )
 
   const walletNameValidator = useCallback(
@@ -208,6 +216,14 @@ export const ImportPhrase = (props: Props): JSX.Element => {
               error={!!errors.name?.message}
             />
           </div>
+
+          {bio.isSupported && !bio.isChecking && (
+            <BiometricOptInToggle
+              checked={bio.enabled}
+              onChange={bio.setEnabled}
+              label={intl.formatMessage({ id: 'wallet.imports.enableBiometric' })}
+            />
+          )}
 
           <FlatButton
             className="mt-4 min-w-[150px]"

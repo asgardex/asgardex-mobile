@@ -7,10 +7,12 @@ import { useIntl } from 'react-intl'
 import * as RxOp from 'rxjs/operators'
 
 import { defaultWalletName } from '../../../../shared/utils/wallet'
+import { useBiometricOptIn } from '../../../hooks/useBiometricOptIn'
 import { MAX_WALLET_NAME_CHARS } from '../../../services/wallet/const'
 import { FlatButton, RefreshButton } from '../../uielements/button'
 import { Input, InputPassword } from '../../uielements/input'
 import { CopyLabel } from '../../uielements/label'
+import { BiometricOptInToggle } from '../shared/BiometricOptInToggle'
 import type { WordType } from './NewPhraseConfirm.types'
 import { PhraseInfo } from './Phrase.types'
 
@@ -31,6 +33,7 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
   const intl = useIntl()
 
   const [phrase, setPhrase] = useState(generatePhrase())
+  const bio = useBiometricOptIn()
 
   const initialWalletName = useMemo(() => defaultWalletName(walletId), [walletId])
 
@@ -63,13 +66,18 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
       if (!loading) {
         try {
           setLoading(true)
-          onSubmit({ phrase, password, name: name || initialWalletName })
+          onSubmit({
+            phrase,
+            password,
+            name: name || initialWalletName,
+            biometricEnabled: bio.value
+          })
         } catch (_err) {
           setLoading(false)
         }
       }
     },
-    [initialWalletName, loading, onSubmit, phrase]
+    [bio.value, initialWalletName, loading, onSubmit, phrase]
   )
 
   const walletNameValidator = useCallback(
@@ -162,6 +170,14 @@ export const NewPhraseGenerate = ({ onSubmit, walletId, walletNames }: Props) =>
               error={!!errors.name?.message}
             />
           </div>
+
+          {bio.isSupported && !bio.isChecking && (
+            <BiometricOptInToggle
+              checked={bio.enabled}
+              onChange={bio.setEnabled}
+              label={intl.formatMessage({ id: 'wallet.imports.enableBiometric' })}
+            />
+          )}
 
           <FlatButton
             className="mt-4 min-w-40"

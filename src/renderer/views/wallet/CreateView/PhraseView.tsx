@@ -30,10 +30,18 @@ export const PhraseView = () => {
           }}
         />
       ),
-      ({ phrase, password, name }) => (
+      ({ phrase, password, name, biometricEnabled }) => (
         <NewPhraseConfirm
           mnemonic={phrase}
-          onConfirm={() => keystoreService.addKeystoreWallet({ phrase, password, id: walletId, name })}
+          onConfirm={() =>
+            keystoreService.addKeystoreWallet({
+              phrase,
+              password,
+              id: walletId,
+              name,
+              biometricEnabled
+            })
+          }
         />
       )
     )

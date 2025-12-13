@@ -6,6 +6,8 @@ import {
   ApiKeystore,
   ApiUrl,
   ApiHDWallet,
+  SecureStorageApi,
+  SecureStoragePayload,
   UserNodesStorage,
   IPCExportKeystoreParams,
   UserChainStorage,
@@ -19,12 +21,27 @@ import { Locale } from '../i18n/types'
 import { WalletType } from '../wallet/types'
 import { MOCK_KEYSTORE } from './wallet'
 
+const mockSecureStorage: SecureStorageApi = {
+  write: async ({ secureKeyId, payload: _payload }): Promise<{ secureKeyId: string; updatedAt: string }> => ({
+    secureKeyId: secureKeyId ?? 'mock-secure-key',
+    updatedAt: new Date().toISOString()
+  }),
+  read: async (_secureKeyId: string): Promise<SecureStoragePayload> => ({
+    type: 'keystore',
+    keystore: MOCK_KEYSTORE
+  }),
+  remove: async () => Promise.resolve(),
+  exists: async () => Promise.resolve({ exists: true, supported: false }),
+  list: async () => Promise.resolve([])
+}
+
 // Mock "empty" `apiKeystore`
 export const apiKeystore: ApiKeystore = {
   saveKeystoreWallets: (_) => Promise.resolve(E.right([])),
   exportKeystore: (_: IPCExportKeystoreParams) => Promise.resolve(),
   load: () => Promise.resolve(MOCK_KEYSTORE),
-  initKeystoreWallets: () => Promise.resolve(E.right([]))
+  initKeystoreWallets: () => Promise.resolve(E.right([])),
+  secure: mockSecureStorage
 }
 
 // Mock `apiLang`

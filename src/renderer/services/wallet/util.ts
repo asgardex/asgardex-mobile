@@ -76,8 +76,8 @@ export const getInitialKeystoreData = (
 
 export const getKeystore: (id: KeystoreId) => (wallets: KeystoreWallets) => O.Option<Keystore> = (id) => (wallets) =>
   FP.pipe(
-    wallets,
-    A.filterMap(({ keystore, id: walletId }) => (walletId === id ? O.some(keystore) : O.none)),
+    wallets as Array<{ id: KeystoreId; keystore?: Keystore }>,
+    A.filterMap(({ keystore, id: walletId }) => (walletId === id && keystore ? O.some(keystore) : O.none)),
     A.head
   )
 

@@ -1,22 +1,30 @@
+import * as RD from '@devexperts/remote-data-ts'
 import { useObservableState } from 'observable-hooks'
 import { Navigate, useLocation } from 'react-router-dom'
 
 import { useWalletContext } from '../../contexts/WalletContext'
 import { ReferrerState } from '../../routes/types'
 import * as walletRoutes from '../../routes/wallet'
-import { isStandaloneLedgerMode } from '../../services/wallet/types'
+import { isStandaloneLedgerMode, KeystoreWalletsRD } from '../../services/wallet/types'
 import { hasImportedKeystore, isLocked } from '../../services/wallet/util'
 
 export const WalletAuth = ({ children }: { children: JSX.Element }): JSX.Element => {
-  const { appWalletService } = useWalletContext()
+  const { appWalletService, keystoreService } = useWalletContext()
 
   const location = useLocation()
 
   // Use the new app wallet state that can be either keystore or standalone ledger
   const appWalletState = useObservableState(appWalletService.appWalletState$, undefined)
+  const keystoreWalletsPersistentRD = useObservableState<KeystoreWalletsRD>(
+    keystoreService.keystoreWalletsPersistent$,
+    RD.initial as KeystoreWalletsRD
+  )
+
+  const isKeystorePersistenceLoading =
+    RD.isInitial(keystoreWalletsPersistentRD) || RD.isPending(keystoreWalletsPersistentRD)
 
   // Special case: app wallet state can be `undefined` during initialization
-  if (appWalletState === undefined) {
+  if (appWalletState === undefined || isKeystorePersistenceLoading) {
     return <></>
   }
 
