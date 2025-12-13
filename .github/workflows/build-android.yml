@@ -34,9 +34,8 @@ jobs:
           echo "APP_VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
           echo "Using versionCode: $VERSION_CODE (base: $BASE_CODE, run: $RUN_SUFFIX)"
           mkdir -p whatsnew
-          perl -0777 -ne "print \$1 if /^# $VERSION\\b(.*?)(?=^# \\d|\\z)/ms" CHANGELOG.md > whatsnew/en-US.txt
-          if [ ! -s whatsnew/en-US.txt ]; then echo "Internal build $VERSION" > whatsnew/en-US.txt; fi
-          head -c 500 whatsnew/en-US.txt > whatsnew/en-US.txt.tmp && mv whatsnew/en-US.txt.tmp whatsnew/en-US.txt
+          python3 scripts/extract-changelog.py "$VERSION" > whatsnew/whatsnew-en-US
+          if [ ! -s whatsnew/whatsnew-en-US ]; then echo "Internal build $VERSION" > whatsnew/whatsnew-en-US; fi
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -101,6 +100,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --immutable
+
+      - name: Sync Tauri version from package.json
+        run: node scripts/sync-tauri-version.mjs
 
       - name: Prepare signing keystore
         env:
