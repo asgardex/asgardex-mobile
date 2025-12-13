@@ -4,6 +4,7 @@ import { function as FP, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
+import { isLedgerUiEnabled } from '../../../shared/config/ledger'
 import { useWalletContext } from '../../contexts/WalletContext'
 import * as walletRoutes from '../../routes/wallet'
 import { KeystoreState, isKeystoreUnlocked } from '../../services/wallet/types'
@@ -19,6 +20,7 @@ export const UnlockWalletSettings = ({ keystoreState, unlockHandler }: Props): J
   const intl = useIntl()
   const navigate = useNavigate()
   const { appWalletService } = useWalletContext()
+  const ledgerUiEnabled = isLedgerUiEnabled()
 
   // Check if keystore is currently unlocked
   const isUnlocked = FP.pipe(
@@ -48,26 +50,30 @@ export const UnlockWalletSettings = ({ keystoreState, unlockHandler }: Props): J
           : isLocked(keystoreState) && intl.formatMessage({ id: 'wallet.unlock.label' })}
       </FlatButton>
 
-      <div className="flex items-center gap-2 text-text2 dark:text-text2d">
-        <span className="text-sm">or</span>
-      </div>
+      {ledgerUiEnabled && (
+        <>
+          <div className="flex items-center gap-2 text-text2 dark:text-text2d">
+            <span className="text-sm">or</span>
+          </div>
 
-      <div className="flex flex-col items-center gap-2">
-        <BorderButton
-          size="normal"
-          onClick={handleLedgerModeClick}
-          disabled={isUnlocked}
-          className={`flex min-w-[200px] items-center gap-2 ${isUnlocked ? 'cursor-not-allowed opacity-50' : ''}`}
-          title={isUnlocked ? 'Lock wallet to enter Ledger mode' : 'Enter Ledger Mode'}>
-          <CpuChipIcon className="h-5 w-5" />
-          Enter Ledger Mode
-        </BorderButton>
-        {isUnlocked && (
-          <span className="text-xs text-warning0 dark:text-warning0d">
-            {intl.formatMessage({ id: 'settings.ledgerMode.lockWalletWarning' })}
-          </span>
-        )}
-      </div>
+          <div className="flex flex-col items-center gap-2">
+            <BorderButton
+              size="normal"
+              onClick={handleLedgerModeClick}
+              disabled={isUnlocked}
+              className={`flex min-w-[200px] items-center gap-2 ${isUnlocked ? 'cursor-not-allowed opacity-50' : ''}`}
+              title={isUnlocked ? 'Lock wallet to enter Ledger mode' : 'Enter Ledger Mode'}>
+              <CpuChipIcon className="h-5 w-5" />
+              Enter Ledger Mode
+            </BorderButton>
+            {isUnlocked && (
+              <span className="text-xs text-warning0 dark:text-warning0d">
+                {intl.formatMessage({ id: 'settings.ledgerMode.lockWalletWarning' })}
+              </span>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 
+import { isLedgerUiEnabled } from '../../shared/config/ledger'
 import * as appRoutes from '../routes/app'
 import * as bondsRoutes from '../routes/bonds'
 import * as historyRoutes from '../routes/history'
@@ -35,6 +36,7 @@ import { WalletAuth } from './wallet/WalletAuth'
 
 export const ViewRoutes = (): JSX.Element => {
   const location = useLocation()
+  const ledgerUiEnabled = isLedgerUiEnabled()
   return (
     <Routes>
       {/* home */}
@@ -74,7 +76,11 @@ export const ViewRoutes = (): JSX.Element => {
       {/* wallet routes */}
       <Route path={walletRoutes.noWallet.template} element={<NoWalletView />} />
       <Route path={historyRoutes.base.template} element={<HistoryView />} />
-      <Route path={walletRoutes.ledgerChainSelect.template} element={<LedgerChainSelectView />} />
+      {ledgerUiEnabled ? (
+        <Route path={walletRoutes.ledgerChainSelect.template} element={<LedgerChainSelectView />} />
+      ) : (
+        <Route path={walletRoutes.ledgerChainSelect.template} element={<Navigate to={walletRoutes.assets.path()} />} />
+      )}
       <Route path={`${walletRoutes.create.base.template}/*`} element={<CreateView />} />
       <Route path={walletRoutes.locked.template} element={<UnlockView />} />
       <Route path={walletRoutes.imports.keystore.template} element={<ImportKeystoreView />} />

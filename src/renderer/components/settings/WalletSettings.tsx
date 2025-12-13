@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
 import {
@@ -39,6 +39,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
 import { KeystoreId, TrustedAddress, TrustedAddresses } from '../../../shared/api/types'
+import { isLedgerUiEnabled } from '../../../shared/config/ledger'
 import { getDerivationPath as getEvmDerivationPath } from '../../../shared/evm/ledger'
 import { EvmHDMode } from '../../../shared/evm/types'
 import { chainToString, EnabledChain, isSupportedChain } from '../../../shared/utils/chain'
@@ -63,6 +64,7 @@ import { getWalletNamesFromKeystoreWallets, isEnabledLedger } from '../../helper
 import { useSubscriptionState } from '../../hooks/useSubscriptionState'
 import * as appRoutes from '../../routes/app'
 import * as walletRoutes from '../../routes/wallet'
+import { resolveExportSuccessMessageId } from '../../services/app/notifications'
 import { userAddresses$, addAddress, removeAddress } from '../../services/storage/userAddresses'
 import { userChains$, addChain, removeChain } from '../../services/storage/userChains'
 import {
@@ -131,19 +133,20 @@ const ActionButton = ({
   onClick: () => void
 }) => {
   return (
-    <div
+    <button
+      type="button"
+      onClick={onClick}
       className={clsx(
-        'flex min-w-[128px] cursor-pointer flex-col items-center',
+        'flex min-w-[128px] flex-col items-center',
         'space-y-2 px-4 py-2',
         'rounded-lg border border-solid border-gray1 dark:border-gray1d',
         'text-text2 dark:text-text2d',
-        'hover:bg-bg2 dark:hover:bg-bg2d',
+        'focus-visible:outline-primary0 bg-transparent hover:bg-bg2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 dark:hover:bg-bg2d',
         className
-      )}
-      onClick={onClick}>
+      )}>
       {icon}
       <span>{text}</span>
-    </div>
+    </button>
   )
 }
 
@@ -221,6 +224,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
     evmHDMode
   } = props
   const { isWhitelistModalOpen, setIsWhitelistModalOpen } = useApp()
+  const ledgerUiEnabled = isLedgerUiEnabled()
 
   const intl = useIntl()
   const navigate = useNavigate()
@@ -230,6 +234,28 @@ export const WalletSettings = (props: Props): JSX.Element => {
   const [showRemoveWalletModal, setShowRemoveWalletModal] = useState(false)
   const [showQRModal, setShowQRModal] = useState<O.Option<{ asset: Asset; address: Address }>>(O.none)
   const closeQrModal = useCallback(() => setShowQRModal(O.none), [setShowQRModal])
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current)
+        toastTimerRef.current = null
+      }
+    }
+  }, [])
+
+  const showToast = useCallback((message: string) => {
+    setToastMessage(message)
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current)
+    }
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null)
+      toastTimerRef.current = null
+    }, 4000)
+  }, [])
 
   const removeWalletHandler = useCallback(async () => {
     const noWallets = await removeKeystoreWallet()
@@ -760,11 +786,13 @@ export const WalletSettings = (props: Props): JSX.Element => {
     try {
       setExportKeystoreErrorMsg(emptyString)
       await exportKeystore()
+      const messageId = resolveExportSuccessMessageId()
+      showToast(intl.formatMessage({ id: messageId }))
     } catch (error) {
       const errorMsg = isError(error) ? (error?.message ?? error.toString()) : `${error}`
       setExportKeystoreErrorMsg(errorMsg)
     }
-  }, [exportKeystore, setExportKeystoreErrorMsg])
+  }, [exportKeystore, intl, setExportKeystoreErrorMsg, showToast])
 
   const [trustedAddresses, setTrustedAddresses] = useState<TrustedAddresses>()
   const [newAddress, setNewAddress] = useState<Partial<TrustedAddress>>({})
@@ -778,18 +806,19 @@ export const WalletSettings = (props: Props): JSX.Element => {
     if (newAddress.name && newAddress.address && newAddress.chain) {
       addAddress({ name: newAddress.name, address: newAddress.address, chain: newAddress.chain })
       setNewAddress({})
-      // TODO: notification
-      // message.success(intl.formatMessage({ id: 'common.addAddress' }))
+      showToast(intl.formatMessage({ id: 'common.addAddress' }))
     } else {
       // message.error(intl.formatMessage({ id: 'common.error' }))
     }
-  }, [newAddress])
+  }, [newAddress, intl, showToast])
 
-  const handleRemoveAddress = useCallback((address: TrustedAddress) => {
-    removeAddress(address)
-    // TODO: notification
-    // message.success(intl.formatMessage({ id: 'common.removeAddress' }))
-  }, [])
+  const handleRemoveAddress = useCallback(
+    (address: TrustedAddress) => {
+      removeAddress(address)
+      showToast(intl.formatMessage({ id: 'common.removeAddress' }))
+    },
+    [intl, showToast]
+  )
 
   const renderAddAddressForm = useCallback(
     () => (
@@ -867,9 +896,11 @@ export const WalletSettings = (props: Props): JSX.Element => {
                 <div className="mt-10px w-full">
                   {/* Render keystore and ledger addresses as before */}
                   {renderKeystoreAddress(chain, keystore)}
-                  {isEnabledLedger(chain, network) && isSupportedChain(chain)
-                    ? renderLedgerAddress(chain, oLedger)
-                    : renderLedgerNotSupported}
+                  {ledgerUiEnabled
+                    ? isEnabledLedger(chain, network) && isSupportedChain(chain)
+                      ? renderLedgerAddress(chain, oLedger)
+                      : renderLedgerNotSupported
+                    : null}
                 </div>
                 <div className="mt-10px flex w-full items-center px-40px">
                   <SwitchButton active={enabledChains.includes(chain)} onChange={() => toggleChain(chain)} />
@@ -908,7 +939,8 @@ export const WalletSettings = (props: Props): JSX.Element => {
       intl,
       trustedAddresses?.addresses,
       renderTrustedAddresses,
-      toggleChain
+      toggleChain,
+      ledgerUiEnabled
     ]
   )
 
@@ -1014,7 +1046,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
 
       {renderVerifyAddressModal(ledgerAddressToVerify)}
       <div className="w-full px-4">
-        <div className="flex flex-row items-center justify-between">
+        <div className="settings-wallet-header flex flex-row items-center justify-between">
           <h1 className="font-main text-16 uppercase text-text0 dark:text-text0d">
             {intl.formatMessage({ id: 'settings.wallet.management' })}
           </h1>
@@ -1040,7 +1072,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
           loading={RD.isPending(renameWalletState)}
         />
         {renderRenameWalletError}
-        <div className="mt-10 flex flex-row items-center justify-center space-x-2">
+        <div className="wallet-actions-row mt-10 flex flex-row items-center justify-center space-x-2">
           <ActionButton
             icon={<ArrowUpTrayIcon width={24} height={24} />}
             text={intl.formatMessage({ id: 'settings.export.title' })}
@@ -1062,6 +1094,13 @@ export const WalletSettings = (props: Props): JSX.Element => {
             onClick={() => setShowRemoveWalletModal(true)}
           />
         </div>
+        {toastMessage && (
+          <div
+            role="status"
+            className="border-primary0/40 bg-primary0/10 text-primary0 mt-3 rounded-md border border-solid px-4 py-2 text-center font-main text-sm">
+            {toastMessage}
+          </div>
+        )}
       </div>
       <div key="accounts" className="mt-4 w-full border-t border-solid border-bg2 dark:border-bg2d">
         <Label className="pl-5 pt-5 text-center text-base md:text-left" textTransform="uppercase">
@@ -1075,7 +1114,7 @@ export const WalletSettings = (props: Props): JSX.Element => {
           />
         </div>
         <div className="mt-10px border-b border-solid border-bg2 px-4 dark:border-bg2d">{renderAddAddressForm()}</div>
-        <div className="flex items-center justify-center">
+        <div className="chain-management-header flex items-center justify-center">
           <Label className="pl-5 pt-5 text-center text-base md:text-left" textTransform="uppercase">
             {intl.formatMessage({ id: 'common.chainManagement' })}
           </Label>

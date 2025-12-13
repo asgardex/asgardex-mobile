@@ -176,8 +176,8 @@ export const ActivePools = (): JSX.Element => {
             ]
 
       return (
-        <div className="flex items-center justify-center [&>*:not(:first-child)]:ml-10px">
-          <ActionButton size="normal" actions={actions} />
+        <div className="pool-actions flex items-center justify-center">
+          <ActionButton className="pool-action-buttons" size="normal" actions={actions} />
         </div>
       )
     },
@@ -358,7 +358,9 @@ export const ActivePools = (): JSX.Element => {
           />
           <ProtocolLimit limit={limitRD} />
           <IncentivePendulum incentivePendulum={incentivePendulumRD} protocol={protocol} />
-          <Table columns={columns} data={dataSource} loading={loading} />
+          <div className="pools-table">
+            <Table columns={columns} data={dataSource} loading={loading} />
+          </div>
         </>
       )
     },

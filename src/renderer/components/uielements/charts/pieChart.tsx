@@ -71,17 +71,20 @@ export const PieChart = ({
               borderRadius: 'full'
             },
             label: showLabelLine
-              ? { color: textColor, formatter: isPrivate ? `{b}: ${hiddenString}` : '{b}: ${c}' }
+              ? {
+                  color: isLightTheme ? textColor : '#ffffff',
+                  formatter: isPrivate ? `{b}: ${hiddenString}` : '{b}',
+                  position: 'inside',
+                  fontSize: 10,
+                  fontWeight: isLightTheme ? 'normal' : 'bold',
+                  textShadowColor: isLightTheme ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.95)',
+                  textShadowBlur: isLightTheme ? 3 : 4
+                }
               : { show: false },
             emphasis: showLabelLine ? {} : { label: { show: false } },
             labelLine: showLabelLine
               ? {
-                  lineStyle: {
-                    color: textColor
-                  },
-                  smooth: 0.2,
-                  length: 10,
-                  length2: 40
+                  show: false
                 }
               : { show: false },
             data: chartData

@@ -28,15 +28,15 @@ const AllProtocols: Protocol[] = ['Thorchain', 'Mayachain', 'Chainflip']
 const Section = ({ title, subtitle, className, children }: SectionProps) => (
   <div
     className={clsx(
-      'flex w-full items-start justify-between px-4 py-6',
+      'settings-dex-section flex w-full items-start justify-between px-4 py-6',
       'border-b border-solid border-gray0 last:border-none dark:border-gray0d',
       className
     )}>
-    <div className="flex flex-col">
+    <div className="settings-dex-section-text flex flex-col">
       <h2 className="mb-5px font-main text-[16px] uppercase text-text2 dark:text-text2d">{title}</h2>
       <span className="font-main text-gray1 dark:text-gray1d">{subtitle}</span>
     </div>
-    <div className="flex flex-col">{children}</div>
+    <div className="settings-dex-section-content flex flex-col">{children}</div>
   </div>
 )
 

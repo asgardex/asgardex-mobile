@@ -9,6 +9,7 @@ import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
+import { isLedgerUiEnabled } from '../../../shared/config/ledger'
 import { Locale } from '../../../shared/i18n/types'
 import { useWalletContext } from '../../contexts/WalletContext'
 import { LOCALES } from '../../i18n'
@@ -72,6 +73,7 @@ export const AppGeneralSettings = (props: Props) => {
   const intl = useIntl()
   const navigate = useNavigate()
   const { appWalletService } = useWalletContext()
+  const ledgerUiEnabled = isLedgerUiEnabled()
 
   // Get current wallet mode and keystore state
   const appWalletState = useObservableState(appWalletService.appWalletState$)
@@ -86,6 +88,7 @@ export const AppGeneralSettings = (props: Props) => {
   )
 
   const handleLedgerModeClick = useCallback(() => {
+    if (!ledgerUiEnabled) return
     if (isInStandaloneLedgerMode) {
       // Switch back to keystore mode
       appWalletService.switchToKeystoreMode()
@@ -93,14 +96,15 @@ export const AppGeneralSettings = (props: Props) => {
       // Only navigate to ledger chain selector if keystore is locked
       navigate(walletRoutes.ledgerChainSelect.path())
     }
-  }, [isInStandaloneLedgerMode, isUnlocked, appWalletService, navigate])
+  }, [isInStandaloneLedgerMode, isUnlocked, appWalletService, navigate, ledgerUiEnabled])
 
   const handleChangeChainClick = useCallback(() => {
+    if (!ledgerUiEnabled) return
     // Reset to chain selection phase
     appWalletService.standaloneLedgerService.resetToChainSelection()
     // Navigate to ledger chain selector with a parameter to force chain selection
     navigate(walletRoutes.ledgerChainSelect.path() + '?changeChain=true')
-  }, [appWalletService, navigate])
+  }, [appWalletService, navigate, ledgerUiEnabled])
 
   const langMenu = useMemo(
     () =>
@@ -270,34 +274,36 @@ export const AppGeneralSettings = (props: Props) => {
         subtitle={intl.formatMessage({ id: 'settings.privateData.subtitle' })}>
         <SwitchButton active={isPrivate} onChange={changePrivateData} />
       </Section>
-      <Section
-        title={intl.formatMessage({ id: 'settings.ledgerMode.title' })}
-        subtitle={intl.formatMessage({ id: 'settings.ledgerMode.subtitle' })}>
-        <div className="flex flex-col items-end gap-2">
-          {isInStandaloneLedgerMode && (
-            <BorderButton size="normal" onClick={handleChangeChainClick} className="flex items-center gap-2">
+      {ledgerUiEnabled && (
+        <Section
+          title={intl.formatMessage({ id: 'settings.ledgerMode.title' })}
+          subtitle={intl.formatMessage({ id: 'settings.ledgerMode.subtitle' })}>
+          <div className="flex flex-col items-end gap-2">
+            {isInStandaloneLedgerMode && (
+              <BorderButton size="normal" onClick={handleChangeChainClick} className="flex items-center gap-2">
+                <CpuChipIcon width={16} height={16} />
+                {intl.formatMessage({ id: 'settings.chain.changeButton' })}
+              </BorderButton>
+            )}
+            <BorderButton
+              size="normal"
+              onClick={handleLedgerModeClick}
+              disabled={!isInStandaloneLedgerMode && isUnlocked}
+              className={`flex items-center gap-2 ${
+                !isInStandaloneLedgerMode && isUnlocked ? 'cursor-not-allowed opacity-50' : ''
+              }`}
+              title={!isInStandaloneLedgerMode && isUnlocked ? 'Lock wallet to enter Ledger mode' : undefined}>
               <CpuChipIcon width={16} height={16} />
-              {intl.formatMessage({ id: 'settings.chain.changeButton' })}
+              {isInStandaloneLedgerMode ? 'Exit Ledger Mode' : 'Enter Ledger Mode'}
             </BorderButton>
-          )}
-          <BorderButton
-            size="normal"
-            onClick={handleLedgerModeClick}
-            disabled={!isInStandaloneLedgerMode && isUnlocked}
-            className={`flex items-center gap-2 ${
-              !isInStandaloneLedgerMode && isUnlocked ? 'cursor-not-allowed opacity-50' : ''
-            }`}
-            title={!isInStandaloneLedgerMode && isUnlocked ? 'Lock wallet to enter Ledger mode' : undefined}>
-            <CpuChipIcon width={16} height={16} />
-            {isInStandaloneLedgerMode ? 'Exit Ledger Mode' : 'Enter Ledger Mode'}
-          </BorderButton>
-          {!isInStandaloneLedgerMode && isUnlocked && (
-            <span className="mt-1 text-xs text-warning0 dark:text-warning0d">
-              {intl.formatMessage({ id: 'settings.ledgerMode.lockWalletWarning' })}
-            </span>
-          )}
-        </div>
-      </Section>
+            {!isInStandaloneLedgerMode && isUnlocked && (
+              <span className="mt-1 text-xs text-warning0 dark:text-warning0d">
+                {intl.formatMessage({ id: 'settings.ledgerMode.lockWalletWarning' })}
+              </span>
+            )}
+          </div>
+        </Section>
+      )}
       <Section
         title={intl.formatMessage({ id: 'settings.version.title' })}
         subtitle={intl.formatMessage({ id: 'settings.version.subtitle' })}>

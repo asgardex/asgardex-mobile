@@ -415,7 +415,7 @@ export const BondsTable = ({
             : intl.formatMessage({ id: 'common.expandAll' })}
         </BaseButton>
       </div>
-      <div className="p-2">
+      <div className="overflow-x-auto p-2">
         <Table
           loading={loading}
           columns={columns}

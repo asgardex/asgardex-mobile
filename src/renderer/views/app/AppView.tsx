@@ -7,6 +7,7 @@ import { function as FP } from 'fp-ts'
 import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
+import { isLedgerUiEnabled } from '../../../shared/config/ledger'
 import { DEFAULT_LOCALE } from '../../../shared/i18n/const'
 import { envOrDefault } from '../../../shared/utils/env'
 import { Header } from '../../components/header'
@@ -105,6 +106,8 @@ export const AppView = (): JSX.Element => {
   const { transactionTrackingService: mayachainTransactionTrackingService } = useMayachainContext()
   const { transactionTrackingService: chainflipTransactionTrackingService } = useChainflipContext()
 
+  const ledgerUiEnabled = isLedgerUiEnabled()
+
   const renderImportKeystoreWalletsError = useMemo(() => {
     const empty = () => <></>
     return FP.pipe(
@@ -131,6 +134,7 @@ export const AppView = (): JSX.Element => {
   }, [walletsPersistentRD, reloadPersistentWallets, intl])
 
   const renderImportLedgerAddressesError = useMemo(() => {
+    if (!ledgerUiEnabled) return <></>
     const empty = () => <></>
     return FP.pipe(
       ledgerAddressesPersistentRD,
@@ -153,7 +157,7 @@ export const AppView = (): JSX.Element => {
         empty
       )
     )
-  }, [ledgerAddressesPersistentRD, reloadPersistentLedgerAddresses, intl])
+  }, [ledgerUiEnabled, ledgerAddressesPersistentRD, reloadPersistentLedgerAddresses, intl])
 
   const getPublicIP = async () => {
     const response = await fetch('https://api.ipify.org?format=json')

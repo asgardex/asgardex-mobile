@@ -571,7 +571,7 @@ export const PortfolioView = (): JSX.Element => {
         </div>
         <div className="mt-4 space-y-2">
           {activeIndex === PortfolioTabKey.CardView && (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {cardItemInfo.map(({ title, value, route }) => (
                 <CardItem key={route} title={title} value={value} route={route} isPrivate={isPrivate} />
               ))}
@@ -579,7 +579,7 @@ export const PortfolioView = (): JSX.Element => {
           )}
           {activeIndex === PortfolioTabKey.ChartView && (
             <div className="flex flex-col">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                 <div className="flex flex-1 flex-col rounded-lg border border-solid border-gray0 p-4 dark:border-gray0d">
                   <Label className="px-1 text-[9px] uppercase sm:text-[11px] lg:text-[13px]" color="input">
                     {intl.formatMessage({ id: 'common.allocationByType' })}

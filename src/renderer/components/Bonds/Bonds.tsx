@@ -305,7 +305,7 @@ export const Bonds = ({
   return (
     <div className={clsx('bg-bg0 dark:bg-bg0d', className)}>
       <form className="flex items-center" onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex w-full flex-row items-center justify-between px-4 pb-2">
+        <div className="flex w-full flex-col items-start gap-2 px-4 pb-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start space-x-2">
             <div className="flex flex-col">
               <Input

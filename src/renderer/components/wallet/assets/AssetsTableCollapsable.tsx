@@ -482,7 +482,7 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
       }
 
       return (
-        <div className="flex justify-center">
+        <div className="wallet-asset-actions flex justify-center">
           <ActionButton size="normal" actions={actions} />
         </div>
       )
@@ -547,14 +547,16 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
   const renderAssetsTable = useCallback(
     ({ tableData, loading = false }: { tableData: WalletBalances; loading?: boolean }) => {
       return (
-        <Table
-          columns={columns}
-          data={tableData}
-          hideHeader
-          hideVerticalBorder
-          loading={loading}
-          onClickRow={onRowHandler}
-        />
+        <div className="assets-table-collapsable">
+          <Table
+            columns={columns}
+            data={tableData}
+            hideHeader
+            hideVerticalBorder
+            loading={loading}
+            onClickRow={onRowHandler}
+          />
+        </div>
       )
     },
     [columns, onRowHandler]
@@ -631,23 +633,22 @@ export const AssetsTableCollapsable = (props: Props): JSX.Element => {
         <div className="flex w-full justify-between space-x-4 bg-bg0 py-1 dark:bg-bg0d">
           <div className="flex flex-row items-center space-x-2">
             {!isOpen && <ChainIcon chain={chain} />}
-            <Label className="!w-auto" textTransform="uppercase">
-              {chainToString(chain)}
-            </Label>
+            <div className="flex flex-col">
+              <Label className="!w-auto" textTransform="uppercase">
+                {chainToString(chain)}
+              </Label>
+              <Label className="!w-auto" color={RD.isFailure(balancesRD) ? 'error' : 'gray'} textTransform="uppercase">
+                {assetsTxt}
+              </Label>
+            </div>
             {!isKeystoreWallet(walletType) && (
               <WalletTypeLabel className="border border-solid border-gray0 bg-bg2 dark:border-gray0d dark:bg-bg2d">
                 {walletTypeToI18n(walletType, intl)}
               </WalletTypeLabel>
             )}
-            <Label
-              className="flex !w-auto items-center space-x-2"
-              color={RD.isFailure(balancesRD) ? 'error' : 'gray'}
-              textTransform="uppercase">
-              <span>{assetsTxt}</span>
-              {isEvmChain(chain) && (
-                <InfoIcon tooltip={intl.formatMessage({ id: 'wallet.evmToken.tooltip' })} color="primary" />
-              )}
-            </Label>
+            {isEvmChain(chain) && (
+              <InfoIcon tooltip={intl.formatMessage({ id: 'wallet.evmToken.tooltip' })} color="primary" />
+            )}
           </div>
           <div className="flex items-center justify-end space-x-2">
             <Label className="flex items-center text-text0 dark:text-text0d" color="gray" textTransform="none">

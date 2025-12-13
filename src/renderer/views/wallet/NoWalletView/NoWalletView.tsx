@@ -6,6 +6,7 @@ import { useObservableState } from 'observable-hooks'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 
+import { isLedgerUiEnabled } from '../../../../shared/config/ledger'
 import FolderKeyIcon from '../../../assets/svg/folder-key.svg?react'
 import AsgardexLogo from '../../../assets/svg/logo-asgardex.svg?react'
 import SproutIcon from '../../../assets/svg/sprout.svg?react'
@@ -20,6 +21,7 @@ export const NoWalletView = () => {
   const navigate = useNavigate()
   const intl = useIntl()
   const { keystoreService } = useWalletContext()
+  const ledgerUiEnabled = isLedgerUiEnabled()
 
   const keystore = useObservableState(keystoreService.keystoreState$, undefined)
 
@@ -104,19 +106,21 @@ export const NoWalletView = () => {
           </div>
         </div>
 
-        <div
-          className={clsx(
-            'flex items-center gap-4',
-            'bg-bg2/50 hover:bg-bg2 dark:bg-bg2d/20 hover:dark:bg-bg2d/40',
-            'cursor-pointer rounded-lg p-6 text-center transition duration-300 ease-in-out'
-          )}
-          onClick={useLedgerHandler}>
-          <CpuChipIcon className="text-gray-500" width={40} height={40} />
-          <div className="flex flex-col items-start">
-            <span className="text-lg text-text1 dark:text-text1d">Use Ledger Device</span>
-            <span className="text-gray-500">Connect your hardware wallet for secure trading</span>
+        {ledgerUiEnabled && (
+          <div
+            className={clsx(
+              'flex items-center gap-4',
+              'bg-bg2/50 hover:bg-bg2 dark:bg-bg2d/20 hover:dark:bg-bg2d/40',
+              'cursor-pointer rounded-lg p-6 text-center transition duration-300 ease-in-out'
+            )}
+            onClick={useLedgerHandler}>
+            <CpuChipIcon className="text-gray-500" width={40} height={40} />
+            <div className="flex flex-col items-start">
+              <span className="text-lg text-text1 dark:text-text1d">Use Ledger Device</span>
+              <span className="text-gray-500">Connect your hardware wallet for secure trading</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
