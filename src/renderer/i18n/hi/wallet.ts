@@ -44,6 +44,7 @@ const wallet: WalletMessages = {
   'wallet.imports.keystore.description': 'मौजूदा कीस्टोर वॉलेट आयात करें',
   'wallet.imports.phrase.title': 'कृपया अपने वॉलेट का वाक्यांश शब्दों के बीच एक जगह के साथ दर्ज करें',
   'wallet.imports.phrase.description': 'मौजूदा वॉलेट को सीड फ़्रेज़ से आयात करें',
+  'wallet.imports.enableBiometric': 'बायोमेट्रिक प्रमाणीकरण सक्षम करें',
   'wallet.imports.wallet': 'मौजूदा वॉलेट आयात करें',
   'wallet.imports.enterphrase': 'वाक्यांश दर्ज करें',
   'wallet.imports.error.instance': 'क्लाइंट की एक इंस्टेंस बनाने में विफल',

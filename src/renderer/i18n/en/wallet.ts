@@ -44,6 +44,7 @@ const wallet: WalletMessages = {
   'wallet.imports.keystore.description': 'Import an existing keystore wallet',
   'wallet.imports.phrase.title': 'Please enter the phrase of your wallet with a single space between the words',
   'wallet.imports.phrase.description': 'Import an existing wallet with seed phrase',
+  'wallet.imports.enableBiometric': 'Enable biometric authentication',
   'wallet.imports.wallet': 'Import existing wallet',
   'wallet.imports.enterphrase': 'Enter phrase',
   'wallet.imports.error.instance': 'Could not create an instance of Client',

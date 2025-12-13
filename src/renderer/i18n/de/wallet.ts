@@ -46,6 +46,7 @@ const wallet: WalletMessages = {
   'wallet.imports.phrase.title':
     'Bitte gib die Phrase Deiner Wallet ein, jeweils mit einem Leerzeichen zwischen den Wörtern',
   'wallet.imports.phrase.description': 'Eine vorhandene Wallet mit Seed-Phrase importieren',
+  'wallet.imports.enableBiometric': 'Biometrische Authentifizierung aktivieren',
   'wallet.imports.wallet': 'Importiere eine bestehende Wallet',
   'wallet.imports.enterphrase': 'Phrase eingeben',
   'wallet.imports.error.instance': 'Es konnte keine Instanz vom Client erstellt werden',
