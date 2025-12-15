@@ -169,6 +169,8 @@ jobs:
                   continue
               # Strip markdown links: [text](url) -> text
               ln = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', ln)
+              # Strip trailing PR numbers (e.g., " #955")
+              ln = re.sub(r'\s+#\d+$', '', ln)
               lines.append(ln)
 
           result_lines: list[str] = []
@@ -214,3 +216,4 @@ jobs:
           status: draft
           releaseName: v${{ env.APP_VERSION }}
           whatsNewDirectory: whatsnew/publish
+          changesNotSentForReview: true
