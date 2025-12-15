@@ -1,6 +1,8 @@
+---
+# yamllint disable rule:line-length
 name: Android Build & Publish
 
-on:
+'on':
   push:
     branches:
       - main
@@ -9,6 +11,7 @@ on:
 permissions:
   contents: read
   actions: write
+  models: read
 
 jobs:
   build-android-internal:
@@ -34,8 +37,8 @@ jobs:
           echo "APP_VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
           echo "Using versionCode: $VERSION_CODE (base: $BASE_CODE, run: $RUN_SUFFIX)"
           mkdir -p whatsnew
-          python3 scripts/extract-changelog.py "$VERSION" > whatsnew/whatsnew-en-US
-          if [ ! -s whatsnew/whatsnew-en-US ]; then echo "Internal build $VERSION" > whatsnew/whatsnew-en-US; fi
+          python3 scripts/extract-changelog.py "$VERSION" > whatsnew/en-US.long.txt
+          if [ ! -s whatsnew/en-US.long.txt ]; then echo "Internal build $VERSION" > whatsnew/en-US.long.txt; fi
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -142,6 +145,90 @@ jobs:
             src-tauri/gen/android/app/build/outputs/mapping/universalRelease/mapping.txt
           if-no-files-found: error
 
+      - name: Restore cached Play release notes summary
+        id: cache_notes
+        uses: actions/cache@v4
+        with:
+          path: whatsnew/en-US.txt
+          key: play-whatsnew-en-US-${{ env.APP_VERSION }}-${{ hashFiles('whatsnew/en-US.long.txt') }}
+
+      - name: Prepare AI prompt for Play release notes
+        if: steps.cache_notes.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .tmp
+          PROMPT_FILE=".tmp/play-summarize-prompt.txt"
+          cat > "$PROMPT_FILE" << 'PROMPT_END'
+          Rewrite the following Google Play "What's new" notes to 500 characters or less.
+          Plain text only.
+          Keep the most important user-facing changes.
+          Sound slightly exciting and playful with a few emojis where it makes sense.
+          ---
+          PROMPT_END
+          cat whatsnew/en-US.long.txt >> "$PROMPT_FILE"
+
+      - name: Generate Play release notes summary with LLM
+        id: ai_notes
+        if: steps.cache_notes.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: actions/ai-inference@v2
+        with:
+          model: openai/gpt-4o-mini
+          prompt-file: .tmp/play-summarize-prompt.txt
+
+      - name: Write and validate Play release notes (cache miss)
+        if: steps.cache_notes.outputs.cache-hit != 'true'
+        env:
+          SUMMARY: ${{ steps.ai_notes.outputs.response }}
+        run: |
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import os
+          import re
+
+          long_path = 'whatsnew/en-US.long.txt'
+          out_path = 'whatsnew/en-US.txt'
+
+          with open(long_path, 'r', encoding='utf-8') as f:
+            original = f.read().strip()
+
+          summary = (os.environ.get('SUMMARY') or '').strip()
+          text = summary if summary else original
+
+          text = text.replace('\r\n', '\n').replace('\r', '\n')
+          text = re.sub(r'\s+', ' ', text).strip()
+
+          if len(text) > 500:
+            text = text[:500].rstrip()
+
+          with open(out_path, 'w', encoding='utf-8') as f:
+            f.write(text)
+            f.write('\n')
+
+          print(f"Release notes length: {len(text)} characters")
+          assert len(text) <= 500, f"Too long: {len(text)}"
+          PY
+
+      - name: Validate cached Play release notes (cache hit)
+        if: steps.cache_notes.outputs.cache-hit == 'true'
+        run: |
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          out_path = 'whatsnew/en-US.txt'
+
+          with open(out_path, 'r', encoding='utf-8') as f:
+            text = f.read().strip()
+
+          print(f"Release notes length: {len(text)} characters")
+          assert len(text) <= 500, f"Too long: {len(text)}"
+          PY
+
+      - name: Prepare Play whatsnew directory
+        run: |
+          mkdir -p whatsnew/publish
+          cp whatsnew/en-US.txt whatsnew/publish/en-US.txt
+
       - name: Publish to Play internal track
         uses: r0adkll/upload-google-play@v1
         with:
@@ -151,4 +238,4 @@ jobs:
           track: internal
           status: draft
           releaseName: v${{ env.APP_VERSION }}
-          whatsNewDirectory: whatsnew
+          whatsNewDirectory: whatsnew/publish
