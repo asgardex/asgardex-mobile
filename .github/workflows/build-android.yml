@@ -202,7 +202,7 @@ jobs:
       - name: Prepare Play whatsnew directory
         run: |
           mkdir -p whatsnew/publish
-          cp whatsnew/en-US.txt whatsnew/publish/en-US.txt
+          cp whatsnew/en-US.txt whatsnew/publish/whatsnew-en-US
 
       - name: Publish to Play internal track
         uses: r0adkll/upload-google-play@v1
