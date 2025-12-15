@@ -12,15 +12,10 @@ name: Android Build & Publish
         description: Skip building the Android AAB (debug)
         type: boolean
         default: false
-      enable_ai_notes:
-        description: Use GitHub Models to summarize Play notes
-        type: boolean
-        default: true
 
 permissions:
   contents: read
   actions: write
-  models: read
 
 jobs:
   build-android-internal:
@@ -29,7 +24,6 @@ jobs:
     env:
       ANDROID_NDK_VERSION: 26.1.10909125
       SKIP_AAB: ${{ (github.event_name == 'workflow_dispatch' && inputs.skip_aab) && 'true' || 'false' }}
-      ENABLE_AI_NOTES: ${{ (github.event_name != 'workflow_dispatch' || inputs.enable_ai_notes) && 'true' || 'false' }}
 
     steps:
       - name: Checkout repository
@@ -173,83 +167,59 @@ jobs:
             src-tauri/gen/android/app/build/outputs/mapping/universalRelease/mapping.txt
           if-no-files-found: error
 
-      - name: Restore cached Play release notes summary
-        id: cache_notes
-        uses: actions/cache@v4
-        with:
-          path: whatsnew/en-US.txt
-          key: play-whatsnew-en-US-${{ env.APP_VERSION }}-${{ hashFiles('whatsnew/en-US.long.txt') }}
-
-      - name: Prepare AI prompt for Play release notes
-        if: steps.cache_notes.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p .tmp
-          PROMPT_FILE=".tmp/play-summarize-prompt.txt"
-          cat > "$PROMPT_FILE" << 'PROMPT_END'
-          Rewrite the following Google Play "What's new" notes to 500 characters or less.
-          Plain text only.
-          Keep the most important user-facing changes.
-          Sound slightly exciting and playful with a few emojis where it makes sense.
-          ---
-          PROMPT_END
-          cat whatsnew/en-US.long.txt >> "$PROMPT_FILE"
-
-      - name: Generate Play release notes summary with LLM
-        id: ai_notes
-        if: steps.cache_notes.outputs.cache-hit != 'true'
-        continue-on-error: true
-        uses: actions/ai-inference@v2
-        with:
-          model: openai/gpt-4o-mini
-          prompt-file: .tmp/play-summarize-prompt.txt
-
-      - name: Write and validate Play release notes (cache miss)
-        if: steps.cache_notes.outputs.cache-hit != 'true'
-        env:
-          SUMMARY: ${{ steps.ai_notes.outputs.response }}
+      - name: Summarize Play release notes
         run: |
           python3 - <<'PY'
-          from __future__ import annotations
-
-          import os
+          """Summarize changelog to ≤500 chars by adding lines until limit reached."""
           import re
 
           long_path = 'whatsnew/en-US.long.txt'
           out_path = 'whatsnew/en-US.txt'
+          max_len = 500
+          suffix = '...and more!'
 
           with open(long_path, 'r', encoding='utf-8') as f:
-            original = f.read().strip()
+              raw_lines = f.readlines()
 
-          summary = (os.environ.get('SUMMARY') or '').strip()
-          text = summary if summary else original
+          # Filter and clean lines
+          lines: list[str] = []
+          for ln in raw_lines:
+              ln = ln.rstrip()
+              if not ln.strip():
+                  continue
+              # Skip markdown headers (lines starting with optional whitespace + #)
+              if re.match(r'^\s*#+', ln):
+                  continue
+              # Strip markdown links: [text](url) -> text
+              ln = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', ln)
+              lines.append(ln)
 
-          text = text.replace('\r\n', '\n').replace('\r', '\n')
-          text = re.sub(r'\s+', ' ', text).strip()
+          result_lines: list[str] = []
+          current_len = 0
 
-          if len(text) > 500:
-            text = text[:500].rstrip()
+          for line in lines:
+              # Calculate length if we add this line (with newline separator)
+              sep_len = 1 if result_lines else 0
+              new_len = current_len + sep_len + len(line)
+
+              if new_len <= max_len:
+                  result_lines.append(line)
+                  current_len = new_len
+              else:
+                  # Would exceed limit - add suffix instead and stop
+                  sep_len = 1 if result_lines else 0
+                  if current_len + sep_len + len(suffix) <= max_len:
+                      result_lines.append(suffix)
+                  break
+
+          text = '\n'.join(result_lines)
 
           with open(out_path, 'w', encoding='utf-8') as f:
-            f.write(text)
-            f.write('\n')
+              f.write(text)
+              f.write('\n')
 
-          print(f"Release notes length: {len(text)} characters")
-          assert len(text) <= 500, f"Too long: {len(text)}"
-          PY
-
-      - name: Validate cached Play release notes (cache hit)
-        if: steps.cache_notes.outputs.cache-hit == 'true'
-        run: |
-          python3 - <<'PY'
-          from __future__ import annotations
-
-          out_path = 'whatsnew/en-US.txt'
-
-          with open(out_path, 'r', encoding='utf-8') as f:
-            text = f.read().strip()
-
-          print(f"Release notes length: {len(text)} characters")
-          assert len(text) <= 500, f"Too long: {len(text)}"
+          print(f"Release notes: {len(text)} chars, {len(result_lines)} lines")
+          assert len(text) <= max_len, f"Too long: {len(text)}"
           PY
 
       - name: Prepare Play whatsnew directory
