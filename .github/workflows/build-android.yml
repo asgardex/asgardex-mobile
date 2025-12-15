@@ -7,6 +7,15 @@ name: Android Build & Publish
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      skip_aab:
+        description: Skip building the Android AAB (debug)
+        type: boolean
+        default: false
+      enable_ai_notes:
+        description: Use GitHub Models to summarize Play notes
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -19,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANDROID_NDK_VERSION: 26.1.10909125
+      SKIP_AAB: ${{ (github.event_name == 'workflow_dispatch' && inputs.skip_aab) && 'true' || 'false' }}
+      ENABLE_AI_NOTES: ${{ (github.event_name != 'workflow_dispatch' || inputs.enable_ai_notes) && 'true' || 'false' }}
 
     steps:
       - name: Checkout repository
@@ -41,12 +52,14 @@ jobs:
           if [ ! -s whatsnew/en-US.long.txt ]; then echo "Internal build $VERSION" > whatsnew/en-US.long.txt; fi
 
       - name: Set up Node.js
+        if: env.SKIP_AAB != 'true'
         uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
 
       - name: Set up Java 17
+        if: env.SKIP_AAB != 'true'
         uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -54,12 +67,15 @@ jobs:
           cache: gradle
 
       - name: Set up Gradle cache
+        if: env.SKIP_AAB != 'true'
         uses: gradle/actions/setup-gradle@v5
 
       - name: Set up Android SDK
+        if: env.SKIP_AAB != 'true'
         uses: android-actions/setup-android@v3
 
       - name: Install Android components
+        if: env.SKIP_AAB != 'true'
         run: |
           sdk_root="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
           sdkmanager_bin="$sdk_root/cmdline-tools/latest/bin/sdkmanager"
@@ -71,25 +87,31 @@ jobs:
             "ndk;${ANDROID_NDK_VERSION}"
 
       - name: Configure NDK paths
+        if: env.SKIP_AAB != 'true'
         run: |
           echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
           echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
 
       - name: Set up Rust toolchain
+        if: env.SKIP_AAB != 'true'
         uses: dtolnay/rust-toolchain@stable
 
       - name: Add Android Rust targets
+        if: env.SKIP_AAB != 'true'
         run: rustup target add aarch64-linux-android
 
       - name: Install sccache
+        if: env.SKIP_AAB != 'true'
         uses: mozilla-actions/sccache-action@v0.0.9
 
       - name: Configure sccache for Rust
+        if: env.SKIP_AAB != 'true'
         run: |
           echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
           echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
 
       - name: Cache cargo
+        if: env.SKIP_AAB != 'true'
         uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
@@ -97,17 +119,21 @@ jobs:
             src-tauri -> target
 
       - name: Install HID build dependencies
+        if: env.SKIP_AAB != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y libudev-dev libusb-1.0-0-dev
 
       - name: Install dependencies
+        if: env.SKIP_AAB != 'true'
         run: yarn install --immutable
 
       - name: Sync Tauri version from package.json
+        if: env.SKIP_AAB != 'true'
         run: node scripts/sync-tauri-version.mjs
 
       - name: Prepare signing keystore
+        if: env.SKIP_AAB != 'true'
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -121,6 +147,7 @@ jobs:
           echo "ANDROID_UPLOAD_KEY_PASSWORD=$ANDROID_KEY_ALIAS_PASSWORD" >> $GITHUB_ENV
 
       - name: Build Android AAB
+        if: env.SKIP_AAB != 'true'
         env:
           ANDROID_UPLOAD_KEYSTORE: ${{ env.ANDROID_UPLOAD_KEYSTORE }}
           ANDROID_UPLOAD_KEYSTORE_PASSWORD: ${{ env.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
@@ -137,6 +164,7 @@ jobs:
           yarn tauri android build --target aarch64 --aab true --ci
 
       - name: Upload AAB artifact
+        if: env.SKIP_AAB != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: android-universal-aab
@@ -225,11 +253,13 @@ jobs:
           PY
 
       - name: Prepare Play whatsnew directory
+        if: env.SKIP_AAB != 'true'
         run: |
           mkdir -p whatsnew/publish
           cp whatsnew/en-US.txt whatsnew/publish/en-US.txt
 
       - name: Publish to Play internal track
+        if: env.SKIP_AAB != 'true'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
