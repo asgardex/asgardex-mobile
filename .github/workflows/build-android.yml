@@ -253,7 +253,6 @@ jobs:
           PY
 
       - name: Prepare Play whatsnew directory
-        if: env.SKIP_AAB != 'true'
         run: |
           mkdir -p whatsnew/publish
           cp whatsnew/en-US.txt whatsnew/publish/en-US.txt
