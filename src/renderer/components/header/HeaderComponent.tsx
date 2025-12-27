@@ -1,20 +1,31 @@
 import { useMemo, useState, useCallback, useRef } from 'react'
 
 import * as RD from '@devexperts/remote-data-ts'
+import { AssetBTC } from '@xchainjs/xchain-bitcoin'
 import { Network } from '@xchainjs/xchain-client'
+import { AssetRuneNative } from '@xchainjs/xchain-thorchain'
+import { assetToString } from '@xchainjs/xchain-util'
 import clsx from 'clsx'
 import { function as FP, array as A, option as O } from 'fp-ts'
 import { useIntl } from 'react-intl'
 import { useMatch, Link, useNavigate, useLocation } from 'react-router-dom'
 
+import BondsIcon from '../../assets/svg/icon-bonds.svg?react'
 import CloseIcon from '../../assets/svg/icon-close.svg?react'
+import HistoryIcon from '../../assets/svg/icon-history.svg?react'
 import MenuIcon from '../../assets/svg/icon-menu.svg?react'
+import PoolIcon from '../../assets/svg/icon-pools.svg?react'
+import PortfolioIcon from '../../assets/svg/icon-portfolio.svg?react'
 import SwapIcon from '../../assets/svg/icon-swap.svg?react'
 import WalletIcon from '../../assets/svg/icon-wallet.svg?react'
 import AsgardexLogo from '../../assets/svg/logo-asgardex.svg?react'
+import { DEFAULT_WALLET_TYPE } from '../../const'
 import { useBreakpoint } from '../../hooks/useBreakpoint'
 import * as appRoutes from '../../routes/app'
+import * as bondsRoutes from '../../routes/bonds'
+import * as historyRoutes from '../../routes/history'
 import * as poolsRoutes from '../../routes/pools'
+import * as portfolioRoutes from '../../routes/portfolio'
 import * as walletRoutes from '../../routes/wallet'
 import {
   MidgardStatusRD,
@@ -41,8 +52,12 @@ import { HeaderStats } from './stats/HeaderStats'
 import { HeaderTheme } from './theme'
 
 enum TabKey {
-  POOLS = 'POOLS',
   WALLET = 'WALLET',
+  SWAP = 'SWAP',
+  BONDS = 'BONDS',
+  PORTFOLIO = 'PORTFOLIO',
+  POOLS = 'POOLS',
+  HISTORY = 'HISTORY',
   UNKNOWN = 'UNKNOWN'
 }
 
@@ -149,32 +164,65 @@ export const HeaderComponent = (props: Props): JSX.Element => {
     }
   }, [isDesktopView])
 
+  const matchBondsRoute = useMatch({ path: bondsRoutes.base.path(), end: false })
+  const matchHistoryRoute = useMatch({ path: historyRoutes.base.path(), end: false })
   const matchPoolsRoute = useMatch({ path: poolsRoutes.base.path(), end: false })
+  const matchPortfolioRoute = useMatch({ path: portfolioRoutes.base.path(), end: false })
   const matchWalletRoute = useMatch({ path: walletRoutes.base.path(), end: false })
+  const matchSwapRoute = useMatch({ path: poolsRoutes.swapBase.template, end: false })
 
   const activeKey: TabKey = useMemo(() => {
-    if (matchPoolsRoute) {
-      return TabKey.POOLS
-    } else if (matchWalletRoute) {
-      return TabKey.WALLET
-    } else {
-      return TabKey.UNKNOWN
-    }
-  }, [matchPoolsRoute, matchWalletRoute])
+    if (matchBondsRoute) return TabKey.BONDS
+    if (matchSwapRoute) return TabKey.SWAP
+    if (matchPoolsRoute) return TabKey.POOLS
+    if (matchPortfolioRoute) return TabKey.PORTFOLIO
+    if (matchWalletRoute) return TabKey.WALLET
+    if (matchHistoryRoute) return TabKey.HISTORY
+    return TabKey.UNKNOWN
+  }, [matchBondsRoute, matchSwapRoute, matchPoolsRoute, matchPortfolioRoute, matchWalletRoute, matchHistoryRoute])
 
   const items: Tab[] = useMemo(
     () => [
-      {
-        key: TabKey.POOLS,
-        label: intl.formatMessage({ id: 'common.pools' }),
-        path: poolsRoutes.base.path(),
-        icon: SwapIcon
-      },
       {
         key: TabKey.WALLET,
         label: intl.formatMessage({ id: 'common.wallet' }),
         path: walletRoutes.base.path(),
         icon: WalletIcon
+      },
+      {
+        key: TabKey.SWAP,
+        label: intl.formatMessage({ id: 'common.swap' }),
+        path: poolsRoutes.swap.path({
+          source: assetToString(AssetBTC),
+          target: assetToString(AssetRuneNative),
+          sourceWalletType: DEFAULT_WALLET_TYPE,
+          targetWalletType: DEFAULT_WALLET_TYPE
+        }),
+        icon: SwapIcon
+      },
+      {
+        key: TabKey.BONDS,
+        label: intl.formatMessage({ id: 'wallet.nav.bonds' }),
+        path: bondsRoutes.base.path(),
+        icon: BondsIcon
+      },
+      {
+        key: TabKey.PORTFOLIO,
+        label: intl.formatMessage({ id: 'wallet.nav.portfolio' }),
+        path: portfolioRoutes.base.path(),
+        icon: PortfolioIcon
+      },
+      {
+        key: TabKey.POOLS,
+        label: intl.formatMessage({ id: 'common.pools' }),
+        path: poolsRoutes.base.path(),
+        icon: PoolIcon
+      },
+      {
+        key: TabKey.HISTORY,
+        label: intl.formatMessage({ id: 'common.transaction' }),
+        path: historyRoutes.base.path(),
+        icon: HistoryIcon
       }
     ],
     [intl]
